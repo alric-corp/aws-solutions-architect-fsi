@@ -2,7 +2,7 @@
 
 > **Base:** `Cronograma_Preparacao_AWS_Solutions_Architect.xlsx`, fornecido nesta conversa.  
 > **Natureza:** proposta de integração ao repositório; não substitui o conteúdo original.  
-> **Caminho sugerido:** `preparacao/06-cronograma-integrado.md`.  
+> **Caminho:** `interview/interview-preparation-plan.md`.  
 > **Datas:** a origem registra 28/09 a 13/10, sem ano nas células. As referências abaixo usam Dia 1 a Dia 16; não assumem a data da entrevista.  
 > **Privacidade:** este guia usa apenas IDs das histórias. A planilha contém episódios e métricas profissionais e deve permanecer privada até revisão.
 
@@ -288,25 +288,15 @@ Esta é **cobertura planejada de recortes**, não atestado de domínio dos dez d
 
 | Case | Dias de contato planejado | Pergunta do recorte |
 |---|---|---|
-
 | [FSI-01 — Pagamentos e Pix](../cases/01-payment-processing-pix.md) | 1, 8, 16 | Quais requisitos faltam e como tratar uma operação repetida ou de resultado desconhecido? |
-
 | [FSI-02 — Open Finance APIs](../cases/02-open-finance-apis.md) | 4 | A instituição pode acessar este recurso e o consentimento ainda permite isso? |
-
 | [FSI-03 — Banking Event-Driven](../cases/03-banking-event-driven.md) | 7 | Quem decide cada etapa e como tratar efeitos de negócio diante de falhas? |
-
 | [FSI-04 — KYC e abertura de conta](../cases/04-kyc-abertura-de-conta.md) | 2 | Por onde passam a API e os documentos, e quem pode acessá-los? |
-
 | [FSI-05 — Modernização do core](../cases/05-modernizacao-core-banking.md) | 11 | Que evidência permite transferir uma capacidade e desativar o escritor antigo? |
-
 | [FSI-06 — GenAI para assessor financeiro](../cases/06-genai-assessor-financeiro.md) | 6, 13 | Onde roda o backend, quem autoriza a recuperação e como validar uma mudança? |
-
 | [FSI-07 — Fraude em tempo real](../cases/07-fraud-detection-tempo-real.md) | 10, 14 | O que deve responder agora e o que pode ser atualizado pelo stream? |
-
 | [FSI-08 — Data Lake financeiro](../cases/08-data-lake-financeiro.md) | 9 | O dado está pronto para análise e quem pode acessar também os resultados? |
-
 | [FSI-09 — Internet Banking Multi-Region](../cases/09-internet-banking-multi-region.md) | 5, 12, 15 | Que jornadas podem funcionar durante a falha e quais dependências permanecem? |
-
 | [FSI-10 — Autorização de cartões](../cases/10-plataforma-autorizacao-cartoes.md) | 3 | Que requisitos de protocolo, conexão e disponibilidade alteram a entrada da aplicação? |
 
 
@@ -320,37 +310,21 @@ O mapeamento abaixo foi extraído das colunas C e D da aba Cases STAR. Para comp
 
 | Leadership Principle | Associação principal registrada | Associação secundária registrada |
 |---|---|---|
-
 | Customer Obsession | — | STAR-01, STAR-02 |
-
 | Ownership | STAR-03 | STAR-01, STAR-05, STAR-06, STAR-07 |
-
 | Invent and Simplify | STAR-02 | STAR-03, STAR-04 |
-
 | Are Right, A Lot | — | STAR-06 |
-
 | Learn and Be Curious | STAR-07 | — |
-
 | Hire and Develop the Best | — | — |
-
 | Insist on the Highest Standards | STAR-04 | STAR-03, STAR-07 |
-
 | Think Big | — | — |
-
 | Bias for Action | STAR-06 | STAR-01 |
-
 | Frugality | STAR-05 | STAR-04 |
-
 | Earn Trust | — | — |
-
 | Dive Deep | STAR-01 | STAR-02, STAR-03, STAR-04, STAR-05, STAR-06, STAR-07 |
-
 | Have Backbone; Disagree and Commit | — | — |
-
 | Deliver Results | — | STAR-01, STAR-02, STAR-04, STAR-05, STAR-06 |
-
 | Strive to be Earth's Best Employer | — | — |
-
 | Success and Scale Bring Broad Responsibility | — | — |
 
 
@@ -403,17 +377,11 @@ As fórmulas de LP consideram os sete episódios atuais, nas linhas 2 a 8 de Cas
 
 ## 9. Como incorporar ao repositório
 
-Salve este guia como `preparacao/06-cronograma-integrado.md`. Depois de revisar, acrescente ao README:
+Este guia está em `interview/interview-preparation-plan.md` e já está listado no [README](../README.md).
 
-```markdown
-[Plano de 16 sessões integrado ao cronograma](preparacao/06-cronograma-integrado.md)
-```
-
-O guia depende dos arquivos do pacote de preparação já entregue. Se o repositório ainda contiver somente `cases/`, as referências a fundamentos, LPs, simulados e templates funcionarão após a incorporação daquele pacote.
+As referências deste guia apontam para os fundamentos em `technical-knowledge/fundamentals/`, os LPs em `leadership-principles/`, os simulados em `interview/simulations/` e os modelos em `templates/`.
 
 **Não publique a planilha original ou integrada sem revisar seu conteúdo.** As abas de histórias incluem episódios, identificadores e métricas profissionais. O Markdown aqui evita copiá-los e utiliza apenas IDs STAR.
-
-Nada foi commitado ou enviado ao GitHub.
 
 ## 10. Proveniência e limites
 
@@ -429,6 +397,6 @@ Leitura direta das células da planilha enviada:
 | Cenários gerais | System Design!A1:G7 |
 | Comparações rápidas | Revisão Rápida!A1:B21 |
 
-O [README proposto do pacote anterior](../README.md), quando adotado, fornece a navegação entre trilhas. Foram conferidos os nomes dos arquivos do pacote; não se presume que esses arquivos já tenham sido publicados no remoto.
+O [README](../README.md) fornece a navegação entre as trilhas do repositório.
 
 Toda proposta nova está identificada como integração, exercício, pergunta ou critério de estudo. Não houve pesquisa externa nem atualização silenciosa das definições técnicas da origem.

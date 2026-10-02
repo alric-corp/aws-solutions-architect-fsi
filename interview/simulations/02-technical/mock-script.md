@@ -1,6 +1,6 @@
 # Roteiro — entrevista técnica simulada
 
-Roteiro para quem conduz uma simulação de cerca de 45 minutos: comece amplo e aprofunde até o limite da resposta. Registre cada sessão em um arquivo próprio nesta pasta. Dedique a maior parte do tempo de preparação à prática com simulações.
+Roteiro para quem conduz uma simulação de cerca de 45 minutos: comece amplo e aprofunde até o limite da resposta. Os roteiros e templates permanecem públicos. Mantenha os registros reais de sessões, incluindo nomes, feedbacks e detalhes reais, em uma área privada fora do Git. Por padrão, não adicione registros preenchidos ao repositório público. Dedique a maior parte do tempo de preparação à prática com simulações.
 
 1. Um cliente abre o internet banking no navegador. Explique o que acontece até a página carregar. — [F01](../../../technical-knowledge/fundamentals/01-redes-dns-conectividade.md), [F02](../../../technical-knowledge/fundamentals/02-http-rest-openapi.md)
    - Aprofundamento: como o DNS chega ao endereço certo, passo a passo, e onde entra o cache?
