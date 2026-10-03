@@ -2,11 +2,11 @@
 
 Esta trilha separa **entender um princípio** de **ter uma experiência verdadeira que o evidencie**.
 
-As sínteses partem das anotações N01 e N02. Os nomes foram conferidos na [lista oficial](../referencias/README.md#s02). Perguntas, aplicações FSI e critérios de revisão são autorais. As traduções dos subtítulos são didáticas; mantenha o nome em inglês como referência estável.
+As sínteses partem das anotações N01 e N02. Os nomes foram conferidos na [lista oficial](../references/README.md#s02). Perguntas, aplicações FSI e critérios de revisão são autorais. As traduções dos subtítulos são didáticas; mantenha o nome em inglês como referência estável.
 
 Não são perguntas vazadas nem respostas a decorar. Os números organizam os arquivos; não expressam prioridade no processo. Não inferimos a distribuição dos princípios entre entrevistadores.
 
-Comece pelo [guia STAR e evidências](00-star-e-evidencias.md), depois use a [matriz LP × histórias](../progress/matrix-lp-stories.md) em uma cópia privada.
+Comece pelo [guia STAR e evidências](00-star-and-evidence.md), depois use a [matriz LP × histórias](../progress/leadership-principles-story-matrix.md) em uma cópia privada.
 
 | # | Princípio | Ênfase para reflexão |
 |---|---|---|
@@ -43,7 +43,7 @@ Na Amazon, os princípios funcionam como vocabulário comum para contratar, prom
 
 Cada arquivo de princípio traz o texto oficial traduzido, o que demonstrar na resposta, perguntas de treino e de entrevista e a explicação de Andy Jassy. Há exemplos STAR ilustrativos em [Customer Obsession](01-customer-obsession.md), [Ownership](02-ownership.md) e [Earn Trust](11-earn-trust.md).
 
-Veja também [o método STAR](00-star-e-evidencias.md), [a entrevista comportamental](../interview/interview-process.md) e as [dicas de entrevista](../interview/tips-and-strategies.md).
+Veja também [o método STAR](00-star-and-evidence.md), [a entrevista comportamental](../interview/interview-process.md) e as [dicas de entrevista](../interview/tips-and-strategies.md).
 
 ## Como Andy Jassy apresenta os princípios
 

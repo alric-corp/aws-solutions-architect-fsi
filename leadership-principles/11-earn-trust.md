@@ -2,7 +2,7 @@
 
 ## Conquistar confiança
 
-**Base:** síntese das anotações N01/N02. **Nome:** conferido na lista oficial S02. **Aplicação e perguntas abaixo:** exercícios autorais, não rubrica de entrevista. [Proveniência](../referencias/README.md)
+**Base:** síntese das anotações N01/N02. **Nome:** conferido na lista oficial S02. **Aplicação e perguntas abaixo:** exercícios autorais, não rubrica de entrevista. [Proveniência](../references/README.md)
 
 ### Ideia central
 
@@ -79,4 +79,4 @@ Exemplo para ilustrar a estrutura, **não uma história sua**. Os números fazem
 
 ### Próximo registro
 
-Em uma cópia privada do [template STAR](../templates/historia-star.md), identifique um episódio e escreva apenas os pontos que consegue sustentar. Deixe explícita qualquer lacuna; não peça que uma ferramenta a complete como fato.
+Em uma cópia privada do [template STAR](../templates/star-story.md), identifique um episódio e escreva apenas os pontos que consegue sustentar. Deixe explícita qualquer lacuna; não peça que uma ferramenta a complete como fato.

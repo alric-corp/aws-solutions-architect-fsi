@@ -8,7 +8,7 @@ Pergunte duração, volume, variação, necessidade de sessão persistente, depe
 
 Container empacota processo e dependências. ECS ou Kubernetes organizam execução e ciclo de vida. Fargate oferece uma forma gerenciada de executar workloads compatíveis; não é o nome da aplicação nem de uma subnet.
 
-No ECS, cluster agrupa logicamente serviços e tarefas. A representação de rede precisa mostrar onde as tasks executam e quais sub-redes e controles se aplicam; a caixa do cluster não cria nem possui as subnets. [Fonte T10](../../referencias/README.md#t10)
+No ECS, cluster agrupa logicamente serviços e tarefas. A representação de rede precisa mostrar onde as tasks executam e quais sub-redes e controles se aplicam; a caixa do cluster não cria nem possui as subnets. [Fonte T10](../../references/README.md#t10)
 
 ## Alternativas de estudo
 
@@ -23,7 +23,7 @@ A tabela é uma pauta de avaliação. Não significa que Lambda seja sempre mais
 
 ## Load balancer não resolve a aplicação sozinho
 
-ALB aplica roteamento de aplicação a protocolos suportados; NLB atende necessidades de transporte/conexão com outro contrato. A escolha exige saber protocolo e comportamento esperado, não apenas chamar um de “mais rápido”. [Fontes T29](../../referencias/README.md#t29), [T30](../../referencias/README.md#t30)
+ALB aplica roteamento de aplicação a protocolos suportados; NLB atende necessidades de transporte/conexão com outro contrato. A escolha exige saber protocolo e comportamento esperado, não apenas chamar um de “mais rápido”. [Fontes T29](../../references/README.md#t29), [T30](../../references/README.md#t30)
 
 Saúde de porta e saúde de negócio são diferentes. Uma task pode responder ao health check enquanto o banco necessário para sua jornada está indisponível.
 
@@ -66,4 +66,4 @@ A pergunta de arquitetura serverless está nas [perguntas de design](../../inter
 
 ## Exercício
 
-No [Case 10](../../cases/10-plataforma-autorizacao-cartoes.md), contraste uma requisição curta com uma sessão persistente. Proponha como interromper a entrada de trabalho, drenar ou recuperar o que estava em andamento e provar que uma repetição não criou outro efeito.
+No [Case 10](../../cases/10-card-authorization-platform.md), contraste uma requisição curta com uma sessão persistente. Proponha como interromper a entrada de trabalho, drenar ou recuperar o que estava em andamento e provar que uma repetição não criou outro efeito.

@@ -1,12 +1,12 @@
 # 06 — Bancos, transações, consistência e escala
 
-**Base:** N04 organiza ACID/BASE/CAP e microsserviços. **Revisão:** alguns trechos apresentam equivalências e garantias excessivas; a correção está separada em [Revisões](../../referencias/revisoes-das-anotacoes.md).
+**Base:** N04 organiza ACID/BASE/CAP e microsserviços. **Revisão:** alguns trechos apresentam equivalências e garantias excessivas; a correção está separada em [Revisões](../../references/study-notes-revisions.md).
 
 ## Três dimensões diferentes
 
 **Modelo de dados e acesso:** relações, documentos, chave-valor, séries e consultas. **Transação:** operações que precisam cumprir propriedades de integridade e isolamento. **Replicação e disponibilidade:** o que os clientes observam quando cópias se atrasam ou perdem comunicação.
 
-SQL/NoSQL não determina sozinho todas as outras dimensões. DynamoDB, por exemplo, documenta transações ACID. [Fonte T04](../../referencias/README.md#t04)
+SQL/NoSQL não determina sozinho todas as outras dimensões. DynamoDB, por exemplo, documenta transações ACID. [Fonte T04](../../references/README.md#t04)
 
 <a id="modelos"></a>
 ## Modelos de dados
@@ -42,11 +42,11 @@ No DynamoDB, a chave primária (partition key e, opcionalmente, sort key) define
 
 Atomicidade trata a unidade que confirma ou desfaz. Consistência ACID preserva invariantes definidas. Isolamento determina interações permitidas entre transações. Durabilidade descreve preservação do commit dentro do modelo de falhas e configuração considerados.
 
-Não presuma que todo leitor aguarda todo escritor. MVCC e níveis de isolamento permitem comportamentos de concorrência diferentes. [Fontes T06](../../referencias/README.md#t06), [T07](../../referencias/README.md#t07)
+Não presuma que todo leitor aguarda todo escritor. MVCC e níveis de isolamento permitem comportamentos de concorrência diferentes. [Fontes T06](../../references/README.md#t06), [T07](../../references/README.md#t07)
 
 ## CAP sem o atalho perigoso
 
-Durante uma partição de rede, não é possível garantir simultaneamente consistência no sentido de linearizabilidade e disponibilidade nos termos do teorema para todas as operações. “Escolha dois” não é uma tabela universal SQL versus NoSQL. O C de CAP também não é o mesmo C de ACID. [Fonte T05](../../referencias/README.md#t05)
+Durante uma partição de rede, não é possível garantir simultaneamente consistência no sentido de linearizabilidade e disponibilidade nos termos do teorema para todas as operações. “Escolha dois” não é uma tabela universal SQL versus NoSQL. O C de CAP também não é o mesmo C de ACID. [Fonte T05](../../references/README.md#t05)
 
 Pergunte qual operação pode esperar, qual leitura pode estar atrasada e que invariante não pode ser violada. Não classifique um banco inteiro por uma palavra sem delimitar configuração e acesso.
 
@@ -61,7 +61,7 @@ Pergunte qual operação pode esperar, qual leitura pode estar atrasada e que in
 
 Duas compras de R$ 800 consultam R$ 1.000 de limite disponível. Ler um valor correto em cada chamada não garante que ambas não reservem o mesmo limite. É preciso que a autoridade financeira faça a verificação e a mudança sob o contrato atômico necessário.
 
-Esse raciocínio é um exercício de invariante, não uma recomendação para implementar um ledger com uma variável em memória. Use o [Case 10](../../cases/10-plataforma-autorizacao-cartoes.md).
+Esse raciocínio é um exercício de invariante, não uma recomendação para implementar um ledger com uma variável em memória. Use o [Case 10](../../cases/10-card-authorization-platform.md).
 
 ## Perguntas de aprofundamento
 
@@ -75,7 +75,7 @@ Esse raciocínio é um exercício de invariante, não uma recomendação para im
 4. O que pode dar errado ao migrar um banco transacional crítico para a AWS, e como você reduziria o risco?
 5. Uma tabela do DynamoDB tem uma partição muito mais acessada que as outras. Como você identifica e corrige?
 
-Escala de dados está em [SD02](../system-design/02-dados-em-escala.md); consistência entre regiões, nas [perguntas de design](../../interview/simulations/03-system-design/design-questions.md); migração, em [F12](12-resiliencia-migracao.md).
+Escala de dados está em [SD02](../system-design/02-data-at-scale.md); consistência entre regiões, nas [perguntas de design](../../interview/simulations/03-system-design/design-questions.md); migração, em [F12](12-resilience-migration.md).
 
 ## Exercício
 

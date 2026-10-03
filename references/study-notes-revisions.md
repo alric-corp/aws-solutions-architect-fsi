@@ -51,7 +51,7 @@ Este registro não declara que todo o material foi auditado exaustivamente. Ele 
 
 **Motivo:** fim de suporte anunciado pela AWS ([T34](README.md#t34)).
 
-**Impacto:** `technical-knowledge/system-design/01-arquitetura-de-servicos.md` (Ambassador e Service mesh).
+**Impacto:** `technical-knowledge/system-design/01-service-architecture.md` (Ambassador e Service mesh).
 
 ### Envoy e Istio
 
@@ -61,7 +61,7 @@ Este registro não declara que todo o material foi auditado exaustivamente. Ele 
 
 **Motivo:** o Kubernetes não traz o Envoy por padrão; é a malha que o usa como data plane ([T35](README.md#t35)).
 
-**Impacto:** `technical-knowledge/system-design/01-arquitetura-de-servicos.md` (Ambassador e Service mesh).
+**Impacto:** `technical-knowledge/system-design/01-service-architecture.md` (Ambassador e Service mesh).
 
 ### Hystrix
 
@@ -71,7 +71,7 @@ Este registro não declara que todo o material foi auditado exaustivamente. Ele 
 
 **Motivo:** status declarado no próprio repositório do projeto ([T36](README.md#t36)).
 
-**Impacto:** `technical-knowledge/system-design/04-resiliencia-e-isolamento.md` (Circuit Breaker).
+**Impacto:** `technical-knowledge/system-design/04-resilience-isolation.md` (Circuit Breaker).
 
 ### Texto do LP 16
 
@@ -91,4 +91,4 @@ Este registro não declara que todo o material foi auditado exaustivamente. Ele 
 
 **Motivo:** o repositório é público e não republica material de terceiros.
 
-**Impacto:** `interview/` (guias e roteiros de simulação), `leadership-principles/` (texto do princípio, “O que demonstrar”, perguntas de entrevista, exemplos STAR e guia STAR), `technical-knowledge/fundamentals/00-computacao-em-nuvem.md`, `role/solutions-architect-role.md` e as perguntas de entrevista de F01, F03, F04, F05, F06 e F12.
+**Impacto:** `interview/` (guias e roteiros de simulação), `leadership-principles/` (texto do princípio, “O que demonstrar”, perguntas de entrevista, exemplos STAR e guia STAR), `technical-knowledge/fundamentals/00-cloud-computing.md`, `role/solutions-architect-role.md` e as perguntas de entrevista de F01, F03, F04, F05, F06 e F12.

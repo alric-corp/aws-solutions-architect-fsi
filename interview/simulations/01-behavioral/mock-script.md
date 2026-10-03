@@ -1,6 +1,6 @@
 # Roteiro — entrevista comportamental simulada
 
-Roteiro para quem conduz uma simulação de cerca de 45 minutos. Peça situações reais, estruturadas com [STAR](../../../leadership-principles/00-star-e-evidencias.md), e use os aprofundamentos para testar o papel individual. Dedique a maior parte do tempo de preparação à prática com simulações.
+Roteiro para quem conduz uma simulação de cerca de 45 minutos. Peça situações reais, estruturadas com [STAR](../../../leadership-principles/00-star-and-evidence.md), e use os aprofundamentos para testar o papel individual. Dedique a maior parte do tempo de preparação à prática com simulações.
 
 1. Apresente-se em um minuto e diga por que esta vaga agora. — [perguntas comuns](../../common-questions.md)
 2. O que atrai você na AWS e no setor financeiro? — [perguntas comuns](../../common-questions.md)
@@ -15,4 +15,4 @@ Roteiro para quem conduz uma simulação de cerca de 45 minutos. Peça situaçõ
 7. **Earn Trust:** fale de um erro seu que você precisou comunicar. — [LP 11](../../../leadership-principles/11-earn-trust.md)
 8. **Think Big:** descreva uma iniciativa que foi além do problema imediato. — [LP 08](../../../leadership-principles/08-think-big.md)
 
-**Encerramento:** deixe tempo para as perguntas da pessoa entrevistada ([sugestões](../../tips-and-strategies.md)) e registre as lacunas na [matriz LP × histórias](../../../progress/matrix-lp-stories.md).
+**Encerramento:** deixe tempo para as perguntas da pessoa entrevistada ([sugestões](../../tips-and-strategies.md)) e registre as lacunas na [matriz LP × histórias](../../../progress/leadership-principles-story-matrix.md).

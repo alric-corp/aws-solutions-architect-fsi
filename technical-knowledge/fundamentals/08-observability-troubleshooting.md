@@ -10,9 +10,9 @@ Logs, métricas e traces respondem a perguntas distintas. Um painel verde não i
 
 ## Recursos: utilização, saturação e erros
 
-O método USE propõe examinar utilização, saturação e erros por recurso. [Fonte T27](../../referencias/README.md#t27) Use-o como guia para CPU, memória, disco e rede, mas inclua também filas, pools e dependências da aplicação.
+O método USE propõe examinar utilização, saturação e erros por recurso. [Fonte T27](../../references/README.md#t27) Use-o como guia para CPU, memória, disco e rede, mas inclua também filas, pools e dependências da aplicação.
 
-CloudWatch não recebe automaticamente toda informação necessária. Métricas adicionais de sistema operacional e determinados logs exigem instrumentação, agente ou outra coleta configurada. [Fonte T15](../../referencias/README.md#t15)
+CloudWatch não recebe automaticamente toda informação necessária. Métricas adicionais de sistema operacional e determinados logs exigem instrumentação, agente ou outra coleta configurada. [Fonte T15](../../references/README.md#t15)
 
 <a id="slo"></a>
 ## Sinais de ouro, SLI e SLO
@@ -46,7 +46,7 @@ curl --silent --show-error --output /dev/null \
   'https://seu-servico-de-laboratorio.example/health'
 ```
 
-As medidas são acumuladas a partir do início da transferência, não durações independentes para somar. Cache, conexão reutilizada e protocolo alteram a interpretação. Não use `--insecure` para transformar falha de certificado em “sucesso”. [Fonte T26](../../referencias/README.md#t26)
+As medidas são acumuladas a partir do início da transferência, não durações independentes para somar. Cache, conexão reutilizada e protocolo alteram a interpretação. Não use `--insecure` para transformar falha de certificado em “sucesso”. [Fonte T26](../../references/README.md#t26)
 
 Esse comando não foi executado contra um serviço seu e não é um teste de capacidade. A URL é deliberadamente ilustrativa.
 
@@ -56,4 +56,4 @@ Esse comando não foi executado contra um serviço seu e não é um teste de cap
 
 ## Exercício
 
-No [Case 07](../../cases/07-fraud-detection-tempo-real.md), o modelo responde rápido, mas bloqueios indevidos aumentaram. Separe disponibilidade, atualidade, qualidade estatística e política de decisão. Apresente ao cliente o que já sabe e o que ainda não foi confirmado.
+No [Case 07](../../cases/07-real-time-fraud-detection.md), o modelo responde rápido, mas bloqueios indevidos aumentaram. Separe disponibilidade, atualidade, qualidade estatística e política de decisão. Apresente ao cliente o que já sabe e o que ainda não foi confirmado.

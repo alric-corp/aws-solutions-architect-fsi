@@ -12,7 +12,7 @@ As notas N01 e N02 enfatizam exemplos específicos, ação individual, resultado
 
 **Resultado:** o que mudou, como você sabe, o que não funcionou e qual aprendizado foi aplicado depois?
 
-A ação precisa revelar julgamento, não apenas “participei de reuniões”. O resultado pode incluir uma meta não atingida, desde que descrita honestamente. STAR e perguntas comportamentais aparecem no material oficial de preparação; isso não estabelece aprovação automática nem uma fórmula de pontuação. [Fonte S04](../referencias/README.md#s04)
+A ação precisa revelar julgamento, não apenas “participei de reuniões”. O resultado pode incluir uma meta não atingida, desde que descrita honestamente. STAR e perguntas comportamentais aparecem no material oficial de preparação; isso não estabelece aprovação automática nem uma fórmula de pontuação. [Fonte S04](../references/README.md#s04)
 
 ## STAR em detalhe
 
@@ -78,6 +78,6 @@ Treine perguntas como: por que essa opção? O que você fez pessoalmente? Como 
 
 A história responde à pergunta? Está claro o papel individual? As decisões têm motivos? Os resultados são verificáveis e permitidos de compartilhar? Há aprendizado sem autopromoção exagerada? A versão em inglês mantém o mesmo grau de certeza?
 
-Use o [template](../templates/historia-star.md) e a [matriz](../progress/matrix-lp-stories.md). Preenchimentos com dados reais ficam fora da parte pública. Os cases FSI servem para perguntas hipotéticas, não como biografia profissional.
+Use o [template](../templates/star-story.md) e a [matriz](../progress/leadership-principles-story-matrix.md). Preenchimentos com dados reais ficam fora da parte pública. Os cases FSI servem para perguntas hipotéticas, não como biografia profissional.
 
-**Origem:** [N01](../referencias/README.md#n01), [N02](../referencias/README.md#n02), [N03](../referencias/README.md#n03). Os exemplos genéricos deste guia não atribuem experiências à candidata.
+**Origem:** [N01](../references/README.md#n01), [N02](../references/README.md#n02), [N03](../references/README.md#n03). Os exemplos genéricos deste guia não atribuem experiências à candidata.

@@ -23,14 +23,14 @@ As fronteiras devem seguir o domínio, não a camada técnica. No DDD, um bounde
 
 Inspirado na figueira-estranguladora, que cresce em volta de uma árvore até substituí-la: em vez de uma migração big bang arriscada, partes do legado são trocadas aos poucos por componentes novos, atrás de uma fachada que encaminha cada capacidade para a implementação certa. Na AWS, a fachada costuma ser o API Gateway ou um ALB.
 
-**Cuidado:** a fachada muda o caminho do tráfego, mas não resolve sozinha a autoridade dos dados; enquanto o legado também escreve, há risco de divergência. O [Case 05](../../cases/05-modernizacao-core-banking.md) aprofunda strangler com fachada estável, anti-corruption layer e fencing.
+**Cuidado:** a fachada muda o caminho do tráfego, mas não resolve sozinha a autoridade dos dados; enquanto o legado também escreve, há risco de divergência. O [Case 05](../../cases/05-core-banking-modernization.md) aprofunda strangler com fachada estável, anti-corruption layer e fencing.
 
 <a id="api-gateway"></a>
 ## API gateway
 
 Ponto único de entrada para as APIs: roteia para o backend certo e centraliza preocupações comuns, como autenticação, limite de taxa (throttling) e cotas, validação de requisição, transformação, cache, versionamento e métricas. Na AWS, o Amazon API Gateway oferece APIs REST (mais recursos, como planos de uso e chaves de API), HTTP (mais simples e baratas) e WebSocket.
 
-A diferença para o load balancer: o balanceador distribui tráfego entre instâncias de um serviço; o gateway governa a API como produto, por cliente, rota e versão. Os dois costumam aparecer juntos, como no [Case 05](../../cases/05-modernizacao-core-banking.md): API Gateway → VPC Link → ALB interno.
+A diferença para o load balancer: o balanceador distribui tráfego entre instâncias de um serviço; o gateway governa a API como produto, por cliente, rota e versão. Os dois costumam aparecer juntos, como no [Case 05](../../cases/05-core-banking-modernization.md): API Gateway → VPC Link → ALB interno.
 
 **Cuidado:** o gateway valida identidade e aplica limites, mas não substitui a autorização de negócio no backend (“este token pode ver esta conta?”). Ele também tem limites de tempo e de tamanho de payload; processamento longo pede resposta assíncrona.
 
@@ -46,7 +46,7 @@ Um backend dedicado a cada experiência de cliente (web, app, parceiro), que agr
 
 Como o assistente que cuida da agenda e da comunicação de um CEO: um proxy ao lado da aplicação faz a comunicação com outros serviços e assume retries, timeouts, logs, métricas e TLS. Em Kubernetes, service meshes como o Istio usam o Envoy nesse papel. Na AWS, o ECS Service Connect adiciona um proxy gerenciado a cada task; o App Mesh, citado em materiais antigos, foi descontinuado em 30/09/2026. Aplicado a todos os serviços, o padrão vira um [service mesh](#service-mesh).
 
-**Cuidado:** o proxy é mais um salto na rede e mais um componente para operar. Retries no proxy e na aplicação ao mesmo tempo multiplicam as chamadas a uma dependência já sobrecarregada ([F09](../fundamentals/09-performance-custos.md)).
+**Cuidado:** o proxy é mais um salto na rede e mais um componente para operar. Retries no proxy e na aplicação ao mesmo tempo multiplicam as chamadas a uma dependência já sobrecarregada ([F09](../fundamentals/09-performance-costs.md)).
 
 <a id="service-mesh"></a>
 ## Service mesh

@@ -18,7 +18,7 @@ Nuvem não é “o servidor de outra empresa”: é um modelo de consumo de TI. 
 
 ## Modelos de serviço e responsabilidade compartilhada
 
-IaaS (por exemplo, EC2), serviços gerenciados ou PaaS (por exemplo, RDS) e SaaS mudam quanto da pilha fica com o provedor. A segurança segue o modelo de responsabilidade compartilhada: a AWS responde pela segurança **da** nuvem, a infraestrutura que executa os serviços; o cliente, pela segurança **na** nuvem, como identidades, permissões, configurações e dados. Quanto mais gerenciado o serviço, menor a parte do cliente, mas identidade e dados continuam sempre com ele. Veja [F03](03-seguranca-identidade.md).
+IaaS (por exemplo, EC2), serviços gerenciados ou PaaS (por exemplo, RDS) e SaaS mudam quanto da pilha fica com o provedor. A segurança segue o modelo de responsabilidade compartilhada: a AWS responde pela segurança **da** nuvem, a infraestrutura que executa os serviços; o cliente, pela segurança **na** nuvem, como identidades, permissões, configurações e dados. Quanto mais gerenciado o serviço, menor a parte do cliente, mas identidade e dados continuam sempre com ele. Veja [F03](03-security-identity.md).
 
 ## Benefícios e o que eles não garantem
 

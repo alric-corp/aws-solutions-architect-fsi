@@ -12,8 +12,8 @@ O scale cube organiza as três formas de escalar:
 | Eixo | Como escala | Exemplo |
 |---|---|---|
 | X | Clonar o mesmo serviço atrás de um balanceador | Mais tasks do mesmo serviço no ECS |
-| Y | Dividir por função ou domínio | Serviços de pagamentos, limites e cadastro ([SD01](01-arquitetura-de-servicos.md#microsservicos)) |
-| Z | Dividir por dados ou clientes: cada cópia atende um subconjunto | Sharding por cliente ([SD02](02-dados-em-escala.md#particionamento)), células ([SD04](04-resiliencia-e-isolamento.md#celulas)) |
+| Y | Dividir por função ou domínio | Serviços de pagamentos, limites e cadastro ([SD01](01-service-architecture.md#microsservicos)) |
+| Z | Dividir por dados ou clientes: cada cópia atende um subconjunto | Sharding por cliente ([SD02](02-data-at-scale.md#particionamento)), células ([SD04](04-resilience-isolation.md#celulas)) |
 
 **Cuidado:** escalar uma camada só move o gargalo para a seguinte; mais tasks podem esgotar as conexões do banco (o RDS Proxy ajuda a reaproveitá-las). Confira dependências, limites e cotas antes de prometer escala.
 

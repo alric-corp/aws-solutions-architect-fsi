@@ -48,18 +48,18 @@ O [README de Technical Knowledge](technical-knowledge/README.md) mostra a progre
 |---|---|
 | FSI01 | [Processamento de pagamentos e Pix na AWS](cases/01-payment-processing-pix.md) |
 | FSI02 | [APIs de Open Finance na AWS](cases/02-open-finance-apis.md) |
-| FSI03 | [Banking Event-Driven na AWS](cases/03-banking-event-driven.md) |
-| FSI04 | [KYC e abertura de conta na AWS](cases/04-kyc-abertura-de-conta.md) |
-| FSI05 | [Modernização de Core Banking na AWS](cases/05-modernizacao-core-banking.md) |
-| FSI06 | [GenAI para assessor financeiro na AWS](cases/06-genai-assessor-financeiro.md) |
-| FSI07 | [Detecção de fraude em tempo real na AWS](cases/07-fraud-detection-tempo-real.md) |
-| FSI08 | [Data Lake financeiro na AWS](cases/08-data-lake-financeiro.md) |
-| FSI09 | [Internet Banking Multi-Region na AWS](cases/09-internet-banking-multi-region.md) |
-| FSI10 | [Plataforma de autorização de cartões na AWS](cases/10-plataforma-autorizacao-cartoes.md) |
+| FSI03 | [Banking Event-Driven na AWS](cases/03-event-driven-banking.md) |
+| FSI04 | [KYC e abertura de conta na AWS](cases/04-kyc-account-opening.md) |
+| FSI05 | [Modernização de Core Banking na AWS](cases/05-core-banking-modernization.md) |
+| FSI06 | [GenAI para assessor financeiro na AWS](cases/06-genai-financial-advisor.md) |
+| FSI07 | [Detecção de fraude em tempo real na AWS](cases/07-real-time-fraud-detection.md) |
+| FSI08 | [Data Lake financeiro na AWS](cases/08-financial-data-lake.md) |
+| FSI09 | [Internet Banking Multi-Region na AWS](cases/09-multi-region-internet-banking.md) |
+| FSI10 | [Plataforma de autorização de cartões na AWS](cases/10-card-authorization-platform.md) |
 
 ## Leadership Principles
 
-Os 16 Leadership Principles da Amazon, o método STAR e a preparação de respostas a partir de experiências reais. Comece pelo [README](leadership-principles/README.md) e pelo [guia STAR](leadership-principles/00-star-e-evidencias.md).
+Os 16 Leadership Principles da Amazon, o método STAR e a preparação de respostas a partir de experiências reais. Comece pelo [README](leadership-principles/README.md) e pelo [guia STAR](leadership-principles/00-star-and-evidence.md).
 
 ## Interview
 
@@ -75,6 +75,6 @@ Os 16 Leadership Principles da Amazon, o método STAR e a preparação de respos
 ## Progress
 
 - [Matriz de competências](progress/competencies.md): acompanhar o nível em cada competência e as lacunas.
-- [Matriz LP × histórias](progress/matrix-lp-stories.md): associar cada Leadership Principle a experiências reais.
+- [Matriz LP × histórias](progress/leadership-principles-story-matrix.md): associar cada Leadership Principle a experiências reais.
 
 Os dois arquivos são templates; detalhes pessoais ficam em uma cópia privada.

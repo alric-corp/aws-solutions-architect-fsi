@@ -4,11 +4,11 @@
 > **Idioma:** português do Brasil. Os nomes dos serviços AWS e os identificadores de código foram preservados.  
 > **Formato:** guia de estudo, decisões arquiteturais e simulação de entrevista.  
 > **Referências consultadas em:** 28/09/2026.  
-> **Caminho sugerido no repositório:** `cases/04-kyc-abertura-de-conta.md`.
+> **Caminho sugerido no repositório:** `cases/04-kyc-account-opening.md`.
 
 ## Como usar este material
 
-Este case continua a série de [pagamentos e Pix](01-payment-processing-pix.md), [Open Finance](02-open-finance-apis.md) e [Banking Event-Driven](03-banking-event-driven.md). Agora, o problema é **transformar uma solicitação e seus documentos em uma decisão rastreável de abertura de conta**, sem vazar dados, aprovar com verificações incompletas ou criar duas contas após uma falha.
+Este case continua a série de [pagamentos e Pix](01-payment-processing-pix.md), [Open Finance](02-open-finance-apis.md) e [Banking Event-Driven](03-event-driven-banking.md). Agora, o problema é **transformar uma solicitação e seus documentos em uma decisão rastreável de abertura de conta**, sem vazar dados, aprovar com verificações incompletas ou criar duas contas após uma falha.
 
 A jornada será a abertura digital de **conta de depósitos à vista, individual, para pessoa física adulta**, em um banco brasileiro com core e políticas de risco existentes. Essa delimitação evita misturar conta de pagamento, crédito, menores de idade e cadastro de empresas na primeira versão.
 

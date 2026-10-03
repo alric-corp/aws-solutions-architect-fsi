@@ -4,7 +4,7 @@
 
 Este repositório mantém três camadas explícitas: **anotações privadas de estudo**, que não fazem parte do repositório; **fontes públicas**, listadas abaixo; e **conteúdo autoral**, que são as sínteses, os exercícios e os critérios dos módulos. Os exercícios, critérios de autoavaliação e tempos sugeridos não são uma rubrica oficial da Amazon.
 
-Não redistribuímos transcrições nem material de terceiros. As anotações originais permanecem em armazenamento privado; aqui ficam apenas seus identificadores e temas, para rastrear a proveniência das sínteses. As correções relevantes estão em [Revisões das anotações](revisoes-das-anotacoes.md).
+Não redistribuímos transcrições nem material de terceiros. As anotações originais permanecem em armazenamento privado; aqui ficam apenas seus identificadores e temas, para rastrear a proveniência das sínteses. As correções relevantes estão em [Revisões das anotações](study-notes-revisions.md).
 
 ## Anotações privadas (fora do repositório)
 

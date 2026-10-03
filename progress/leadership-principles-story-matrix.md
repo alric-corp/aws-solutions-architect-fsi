@@ -31,4 +31,4 @@ Uma lacuna significa necessidade de reflexão ou desenvolvimento, não autoriza�
 
 A contribuição individual é a mesma em todas as versões? As métricas usam o mesmo período e definição? A história continua verdadeira depois de anonimizar? Há fatos que só podem ser descritos qualitativamente? Que pergunta de aprofundamento ainda não conseguimos responder?
 
-Use [STAR e evidências](../leadership-principles/00-star-e-evidencias.md) e [o template de história](../templates/historia-star.md).
+Use [STAR e evidências](../leadership-principles/00-star-and-evidence.md) e [o template de história](../templates/star-story.md).

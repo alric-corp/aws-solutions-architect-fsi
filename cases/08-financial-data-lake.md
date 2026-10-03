@@ -4,11 +4,11 @@
 > **Idioma:** português do Brasil. Os nomes dos serviços AWS e os identificadores de código foram preservados.  
 > **Formato:** guia de estudo, decisões arquiteturais e simulação de entrevista.  
 > **Referências consultadas em:** 28/09/2026.  
-> **Caminho sugerido no repositório:** `cases/08-data-lake-financeiro.md`.
+> **Caminho sugerido no repositório:** `cases/08-financial-data-lake.md`.
 
 ## Como usar este material
 
-Este case continua os estudos de [pagamentos e Pix](01-payment-processing-pix.md), [Open Finance](02-open-finance-apis.md), [Banking Event-Driven](03-banking-event-driven.md), [KYC](04-kyc-abertura-de-conta.md), [modernização do core](05-modernizacao-core-banking.md), [GenAI para assessor financeiro](06-genai-assessor-financeiro.md) e [detecção de fraude](07-fraud-detection-tempo-real.md). Agora, a pergunta é: **como transformar dados de vários sistemas em análises financeiras confiáveis, sem transformar a centralização em acesso irrestrito às informações dos clientes?**
+Este case continua os estudos de [pagamentos e Pix](01-payment-processing-pix.md), [Open Finance](02-open-finance-apis.md), [Banking Event-Driven](03-event-driven-banking.md), [KYC](04-kyc-account-opening.md), [modernização do core](05-core-banking-modernization.md), [GenAI para assessor financeiro](06-genai-financial-advisor.md) e [detecção de fraude](07-real-time-fraud-detection.md). Agora, a pergunta é: **como transformar dados de vários sistemas em análises financeiras confiáveis, sem transformar a centralização em acesso irrestrito às informações dos clientes?**
 
 Construiremos uma plataforma analítica para **conciliação de lançamentos, acompanhamento financeiro e análises de risco**, com produtos de dados e públicos distintos. O core permanece responsável por saldos e lançamentos. O lake conserva evidências, transforma, publica e permite analisar; não passa a autorizar pagamentos porque contém uma cópia dos dados.
 

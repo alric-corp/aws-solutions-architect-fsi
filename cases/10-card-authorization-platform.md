@@ -4,11 +4,11 @@
 > **Idioma:** português do Brasil. Nomes dos serviços AWS, protocolos e identificadores de código foram preservados.  
 > **Formato:** guia de estudo, decisões arquiteturais e simulação de entrevista.  
 > **Referências consultadas em:** 28/09/2026.  
-> **Caminho sugerido no repositório:** `cases/10-plataforma-autorizacao-cartoes.md`.
+> **Caminho sugerido no repositório:** `cases/10-card-authorization-platform.md`.
 
 ## Como usar este material
 
-Este case fecha a série iniciada em [pagamentos e Pix](01-payment-processing-pix.md), [Open Finance](02-open-finance-apis.md), [Banking Event-Driven](03-banking-event-driven.md), [KYC](04-kyc-abertura-de-conta.md), [modernização do core](05-modernizacao-core-banking.md), [GenAI](06-genai-assessor-financeiro.md), [antifraude](07-fraud-detection-tempo-real.md), [data lake financeiro](08-data-lake-financeiro.md) e [Internet Banking Multi-Region](09-internet-banking-multi-region.md).
+Este case fecha a série iniciada em [pagamentos e Pix](01-payment-processing-pix.md), [Open Finance](02-open-finance-apis.md), [Banking Event-Driven](03-event-driven-banking.md), [KYC](04-kyc-account-opening.md), [modernização do core](05-core-banking-modernization.md), [GenAI](06-genai-financial-advisor.md), [antifraude](07-real-time-fraud-detection.md), [data lake financeiro](08-financial-data-lake.md) e [Internet Banking Multi-Region](09-multi-region-internet-banking.md).
 
 Agora, estamos do lado do **banco emissor do cartão**, não do gateway contratado pelo lojista. Precisamos decidir uma autorização, preservar a reserva de limite e acompanhar mensagens posteriores, mesmo quando uma conexão cai ou uma resposta chega tarde.
 

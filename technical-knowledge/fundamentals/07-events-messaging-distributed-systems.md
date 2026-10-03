@@ -1,6 +1,6 @@
 # 07 — Eventos, mensageria e sistemas distribuídos
 
-**ID:** F07. **Base:** [N04](../../referencias/README.md#n04), sobre comunicação e sistemas distribuídos. **Revisão técnica:** 03/10/2026; explicações, exemplos e critérios autorais apoiados nas fontes locais ao final.
+**ID:** F07. **Base:** [N04](../../references/README.md#n04), sobre comunicação e sistemas distribuídos. **Revisão técnica:** 03/10/2026; explicações, exemplos e critérios autorais apoiados nas fontes locais ao final.
 
 **Objetivo:** explicar quem guarda uma mensagem, quem decide repeti-la e por que isso não prova que uma transferência foi efetivada uma única vez.
 
@@ -10,9 +10,9 @@
 
 **Aprofundamento:** escopos de ordenação, offsets, retenção, capacidade e DLQ. Termine pelas perguntas e pelo exercício; não é necessário memorizar quotas.
 
-**Fronteira:** F07 trata dos mecanismos de comunicação. [SD03](../system-design/03-fluxos-distribuidos.md) desenvolve outbox, inbox, saga, CQRS e event sourcing. Para atomicidade local, retome [F06](06-bancos-consistencia.md#acid-cap).
+**Fronteira:** F07 trata dos mecanismos de comunicação. [SD03](../system-design/03-distributed-workflows.md) desenvolve outbox, inbox, saga, CQRS e event sourcing. Para atomicidade local, retome [F06](06-databases-transactions-consistency.md#acid-cap).
 
-**Como ler as afirmações:** comportamento de produto vem acompanhado de fonte; escolhas do [Case 03](../../cases/03-banking-event-driven.md#s04) são decisões daquele cenário; números e IDs abaixo são hipóteses didáticas. Não são medições nem experiências profissionais. Os exercícios são simulações de mesa, sem provisionamento AWS.
+**Como ler as afirmações:** comportamento de produto vem acompanhado de fonte; escolhas do [Case 03](../../cases/03-event-driven-banking.md#s04) são decisões daquele cenário; números e IDs abaixo são hipóteses didáticas. Não são medições nem experiências profissionais. Os exercícios são simulações de mesa, sem provisionamento AWS.
 
 ## Mensagem, comando e evento
 
@@ -44,7 +44,7 @@ Não basta escolher um verbo no passado. Defina dono, evidência necessária par
 }
 ```
 
-`eventId` identifica o fato e deve sobreviver à republicação. `aggregateId` identifica a transferência; `aggregateVersion`, sua evolução; `schemaVersion`, o formato do envelope. IDs do transporte e horários não substituem essas funções. `50000` representa R$ 500,00 fictícios. O [Case 03, contratos](../../cases/03-banking-event-driven.md#s08) detalha correlação e causalidade.
+`eventId` identifica o fato e deve sobreviver à republicação. `aggregateId` identifica a transferência; `aggregateVersion`, sua evolução; `schemaVersion`, o formato do envelope. IDs do transporte e horários não substituem essas funções. `50000` representa R$ 500,00 fictícios. O [Case 03, contratos](../../cases/03-event-driven-banking.md#s08) detalha correlação e causalidade.
 
 ## Síncrono não é errado; assíncrono não elimina falhas
 
@@ -52,7 +52,7 @@ Em uma interação síncrona, quem chama espera uma resposta daquela operação.
 
 No Case 03, `202 Accepted` vem **depois de persistir a intenção e a publicação pendente**; não é recibo de transferência concluída. Já uma consulta pode ser síncrona. Retirar e-mail do caminho crítico não equivale a dispensar a decisão obrigatória de risco.
 
-A fila absorve um desacoplamento de velocidade, mas introduz espera, expiração e recuperação. Se o prazo do cliente não comporta essa espera, reavalie a admissão ou o contrato. Timeout de uma chamada mutável pode significar **resposta perdida depois do efeito**, e não recusa: a recuperação da jornada está em [SD03, saga](../system-design/03-fluxos-distribuidos.md#saga).
+A fila absorve um desacoplamento de velocidade, mas introduz espera, expiração e recuperação. Se o prazo do cliente não comporta essa espera, reavalie a admissão ou o contrato. Timeout de uma chamada mutável pode significar **resposta perdida depois do efeito**, e não recusa: a recuperação da jornada está em [SD03, saga](../system-design/03-distributed-workflows.md#saga).
 
 <a id="assincrona"></a>
 ## Fila, pub/sub e streaming na AWS
@@ -69,7 +69,7 @@ No SQS, o ciclo normal é:
 4. O consumidor chama `DeleteMessage`, com o recibo mais recente. **Terminar a função de negócio, sozinho, não informa sucesso ao SQS.**
 5. Sem exclusão, o fim da visibilidade permite outra entrega; a retenção limita por quanto tempo o item permanece armazenado.
 
-`MessageId` não serve como recibo de exclusão. Uma nova entrega tem outro recibo. Em Standard, inclusive uma exclusão bem-sucedida não elimina toda possibilidade de duplicata. [Visibilidade — T21](../../referencias/README.md#t21), [API DeleteMessage][f07-delete]
+`MessageId` não serve como recibo de exclusão. Uma nova entrega tem outro recibo. Em Standard, inclusive uma exclusão bem-sucedida não elimina toda possibilidade de duplicata. [Visibilidade — T21](../../references/README.md#t21), [API DeleteMessage][f07-delete]
 
 **Integração gerenciada:** no event source mapping SQS → Lambda, o serviço faz o polling e exclui mensagens após o sucesso informado pela função. Por padrão, um erro no lote faz seus itens reaparecerem; respostas parciais configuradas permitem identificar os que falharam. A aplicação deve concluir o trabalho antes de informar sucesso, não apenas iniciar uma tarefa em segundo plano. [Lambda com SQS][f07-lambda], [falhas por item][f07-batch]
 
@@ -102,13 +102,13 @@ Um assinante lento não deve bloquear os demais por compartilhar a mesma fila. A
 | Processamento | O handler executou e registrou seu resultado? | Que uma API externa participou da mesma transação. |
 | Efeito de negócio | A autoridade aplicou uma única operação identificada? | Que houve uma única entrega ou uma única execução do código. |
 
-**At-most-once** admite perda ao evitar repetição; **at-least-once** admite repetição. São descrições de uma fronteira e de seu modelo de falhas, não promessas de sucesso eterno apesar de retenção vencida, exclusão incorreta ou destino inválido. SQS Standard documenta entrega pelo menos uma vez e ordem de melhor esforço. [T20](../../referencias/README.md#t20)
+**At-most-once** admite perda ao evitar repetição; **at-least-once** admite repetição. São descrições de uma fronteira e de seu modelo de falhas, não promessas de sucesso eterno apesar de retenção vencida, exclusão incorreta ou destino inválido. SQS Standard documenta entrega pelo menos uma vez e ordem de melhor esforço. [T20](../../references/README.md#t20)
 
 SQS FIFO deduplica envios dentro da janela documentada, de cinco minutos, e ordena por grupo. Isso não une o commit no core à exclusão da mensagem. Uma queda depois do efeito e antes da confirmação ainda exige recuperação idempotente. [Deduplicação FIFO][f07-fifo-dedup]
 
 No Kafka, idempotência do produtor e transações podem oferecer garantias dentro de um fluxo Kafka configurado para isso. Uma chamada a um core externo exige coordenação com esse destino; “exactly-once” não atravessa automaticamente essa fronteira. [Semântica Kafka][f07-kafka-design]
 
-Idempotência depende de **identidade estável + verificação e efeito protegidos no responsável pelo estado**. Um conjunto de IDs em memória desaparece no reinício. Os mecanismos de persistência e as fronteiras de transação ficam em [SD03, outbox e inbox](../system-design/03-fluxos-distribuidos.md#transactional-outbox).
+Idempotência depende de **identidade estável + verificação e efeito protegidos no responsável pelo estado**. Um conjunto de IDs em memória desaparece no reinício. Os mecanismos de persistência e as fronteiras de transação ficam em [SD03, outbox e inbox](../system-design/03-distributed-workflows.md#transactional-outbox).
 
 ## Exemplo acompanhado: queda depois da gravação
 
@@ -157,13 +157,13 @@ Retenção define por quanto tempo o dado está disponível; posição de consum
 
 EventBridge permite replay de eventos **previamente arquivados**; isso não o transforma em log com offset por assinante. O replay não assegura a ordem original. [Arquivo e replay][f07-eb-archive]
 
-**Decisão do Case 03:** replay reconstrói projeções ou análises em destino controlado; não reenvia comandos financeiros. Defina intervalo, schema, identidade de consumidor, deduplicação, origem completa e permissões. Retenção de transporte, sozinha, não constitui arquivo de auditoria nem [event sourcing](../system-design/03-fluxos-distribuidos.md#event-sourcing).
+**Decisão do Case 03:** replay reconstrói projeções ou análises em destino controlado; não reenvia comandos financeiros. Defina intervalo, schema, identidade de consumidor, deduplicação, origem completa e permissões. Retenção de transporte, sozinha, não constitui arquivo de auditoria nem [event sourcing](../system-design/03-distributed-workflows.md#event-sourcing).
 
 ## Aprofundamento: backlog, concorrência e DLQ
 
 Backlog é trabalho acumulado. **Hipótese aritmética:** chegam 120 eventos/s, saem 100/s; em 60 s acumulam-se aproximadamente 1.200 eventos, partindo de zero. Se a chegada cair para 80/s e a capacidade continuar em 100/s, há 20/s para drenar: cerca de 60 s adicionais. Não é benchmark; ignora variação, fan-out, retries e falhas.
 
-Aumentar workers ajuda apenas enquanto há capacidade no banco, core ou provedor. Mais chamadas concorrentes podem elevar latência, estourar visibilidade e aumentar retries, piorando a fila. Controle admissão, taxa e concorrência; separe responsabilidades e planeje recuperação dentro do prazo de negócio. Consulte [SD04](../system-design/04-resiliencia-e-isolamento.md#resiliencia).
+Aumentar workers ajuda apenas enquanto há capacidade no banco, core ou provedor. Mais chamadas concorrentes podem elevar latência, estourar visibilidade e aumentar retries, piorando a fila. Controle admissão, taxa e concorrência; separe responsabilidades e planeje recuperação dentro do prazo de negócio. Consulte [SD04](../system-design/04-resilience-isolation.md#resiliencia).
 
 | Sinal | Hipótese a investigar | Evidência útil |
 |---|---|---|
@@ -242,7 +242,7 @@ No consumidor direto, seu código ou biblioteca deve chamar `DeleteMessage` usan
 <details>
 <summary>Resposta comentada</summary>
 
-Outro worker pode receber a mensagem ainda em execução, ampliando a disputa. Investigue duração, capacidade do destino e falha de confirmação; ajuste ou estenda a visibilidade quando apropriado. Limite a concorrência se o destino saturou. A proteção do efeito deve funcionar mesmo se a extensão falhar. [T21](../../referencias/README.md#t21)
+Outro worker pode receber a mensagem ainda em execução, ampliando a disputa. Investigue duração, capacidade do destino e falha de confirmação; ajuste ou estenda a visibilidade quando apropriado. Limite a concorrência se o destino saturou. A proteção do efeito deve funcionar mesmo se a extensão falhar. [T21](../../references/README.md#t21)
 
 </details>
 
@@ -320,7 +320,7 @@ Fontes consultadas em **03/10/2026**. Kafka **4.1** é a versão documental fixa
 
 | Leitura | O que a fonte sustenta |
 |---|---|
-| [T20](../../referencias/README.md#t20), [T21](../../referencias/README.md#t21), [DeleteMessage][f07-delete] | Entrega Standard, visibilidade, recibo e exclusão; corrigem a sugestão anterior de exclusão automática ao terminar a aplicação. |
+| [T20](../../references/README.md#t20), [T21](../../references/README.md#t21), [DeleteMessage][f07-delete] | Entrega Standard, visibilidade, recibo e exclusão; corrigem a sugestão anterior de exclusão automática ao terminar a aplicação. |
 | [FIFO][f07-fifo], [deduplicação][f07-fifo-dedup], [Lambda][f07-lambda], [falhas parciais][f07-batch] | Escopo por grupo, deduplicação de envio e responsabilidade da integração gerenciada. |
 | [SNS/SQS][f07-sns], [retries SNS][f07-sns-retry], [EventBridge][f07-eb-faq], [retries][f07-eb-retry], [arquivo][f07-eb-archive] | Assinaturas, roteamento e recuperação de entrega/replay. |
 | [Design Kafka][f07-kafka-design], [KafkaConsumer][f07-kafka-consumer], [produtor][f07-kafka-producer], [tópicos][f07-kafka-topic] | Posições, garantias e configurações que limitam a generalização sobre ordem e paralelismo. |

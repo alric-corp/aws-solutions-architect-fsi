@@ -4,11 +4,11 @@
 > **Idioma:** português do Brasil. Os nomes dos serviços AWS e os identificadores de código foram preservados.  
 > **Formato:** guia de estudo, decisões arquiteturais e simulação de entrevista.  
 > **Referências consultadas em:** 28/09/2026.  
-> **Caminho sugerido no repositório:** `cases/07-fraud-detection-tempo-real.md`.
+> **Caminho sugerido no repositório:** `cases/07-real-time-fraud-detection.md`.
 
 ## Como usar este material
 
-Este case continua os estudos de [pagamentos e Pix](01-payment-processing-pix.md), [Open Finance](02-open-finance-apis.md), [Banking Event-Driven](03-banking-event-driven.md), [KYC](04-kyc-abertura-de-conta.md), [modernização do core](05-modernizacao-core-banking.md) e [GenAI para assessor financeiro](06-genai-assessor-financeiro.md). Agora, a pergunta é: **como avaliar o risco de uma transação antes de ela ser efetivada, usando sinais recentes, sem transformar uma falha técnica ou uma previsão imperfeita em uma decisão financeira indevida?**
+Este case continua os estudos de [pagamentos e Pix](01-payment-processing-pix.md), [Open Finance](02-open-finance-apis.md), [Banking Event-Driven](03-event-driven-banking.md), [KYC](04-kyc-account-opening.md), [modernização do core](05-core-banking-modernization.md) e [GenAI para assessor financeiro](06-genai-financial-advisor.md). Agora, a pergunta é: **como avaliar o risco de uma transação antes de ela ser efetivada, usando sinais recentes, sem transformar uma falha técnica ou uma previsão imperfeita em uma decisão financeira indevida?**
 
 Construiremos uma capacidade antifraude chamada pelo orquestrador de pagamentos do banco. O exemplo principal é uma transferência iniciada pelo aplicativo. O antifraude avalia; a política institucional determina a ação; o orquestrador e o core continuam responsáveis pela autorização e pela execução financeira.
 

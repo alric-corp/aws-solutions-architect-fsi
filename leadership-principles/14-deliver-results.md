@@ -2,7 +2,7 @@
 
 ## Entregar resultados
 
-**Base:** síntese das anotações N01/N02. **Nome:** conferido na lista oficial S02. **Aplicação e perguntas abaixo:** exercícios autorais, não rubrica de entrevista. [Proveniência](../referencias/README.md)
+**Base:** síntese das anotações N01/N02. **Nome:** conferido na lista oficial S02. **Aplicação e perguntas abaixo:** exercícios autorais, não rubrica de entrevista. [Proveniência](../references/README.md)
 
 ### Ideia central
 
@@ -60,8 +60,8 @@ Alegar resultado sem período; confundir implantação com adoção; esconder es
 
 Defina uma entrega inicial de onboarding com critérios verificáveis sem confundir upload concluído, KYC aprovado e conta aberta.
 
-Use o [Case 04](../cases/04-kyc-abertura-de-conta.md) para discutir a decisão. **Esse exercício não substitui uma história comportamental real.** Responder “eu faria” é apropriado aqui, mas não prova que você já fez aquilo no trabalho.
+Use o [Case 04](../cases/04-kyc-account-opening.md) para discutir a decisão. **Esse exercício não substitui uma história comportamental real.** Responder “eu faria” é apropriado aqui, mas não prova que você já fez aquilo no trabalho.
 
 ### Próximo registro
 
-Em uma cópia privada do [template STAR](../templates/historia-star.md), identifique um episódio e escreva apenas os pontos que consegue sustentar. Deixe explícita qualquer lacuna; não peça que uma ferramenta a complete como fato.
+Em uma cópia privada do [template STAR](../templates/star-story.md), identifique um episódio e escreva apenas os pontos que consegue sustentar. Deixe explícita qualquer lacuna; não peça que uma ferramenta a complete como fato.

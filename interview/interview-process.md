@@ -53,13 +53,13 @@ Os fundamentos de TI (redes, computação, bancos de dados, armazenamento e segu
 
 | Domínio | Arquivo |
 |---|---|
-| Nuvem | [F00 — Computação em nuvem](../technical-knowledge/fundamentals/00-computacao-em-nuvem.md) |
-| Rede | [F01 — Redes, DNS e conectividade](../technical-knowledge/fundamentals/01-redes-dns-conectividade.md) |
-| Segurança | [F03 — Segurança e identidade](../technical-knowledge/fundamentals/03-seguranca-identidade.md) |
-| Computação | [F04 — Computação e containers](../technical-knowledge/fundamentals/04-computacao-containers.md) |
-| Armazenamento | [F05 — Armazenamento](../technical-knowledge/fundamentals/05-armazenamento.md) |
-| Bancos de dados | [F06 — Bancos e consistência](../technical-knowledge/fundamentals/06-bancos-consistencia.md) |
-| Migração | [F12 — Resiliência e migração](../technical-knowledge/fundamentals/12-resiliencia-migracao.md) |
+| Nuvem | [F00 — Computação em nuvem](../technical-knowledge/fundamentals/00-cloud-computing.md) |
+| Rede | [F01 — Redes, DNS e conectividade](../technical-knowledge/fundamentals/01-networking-dns-connectivity.md) |
+| Segurança | [F03 — Segurança e identidade](../technical-knowledge/fundamentals/03-security-identity.md) |
+| Computação | [F04 — Computação e containers](../technical-knowledge/fundamentals/04-compute-containers.md) |
+| Armazenamento | [F05 — Armazenamento](../technical-knowledge/fundamentals/05-storage.md) |
+| Bancos de dados | [F06 — Bancos e consistência](../technical-knowledge/fundamentals/06-databases-transactions-consistency.md) |
+| Migração | [F12 — Resiliência e migração](../technical-knowledge/fundamentals/12-resilience-migration.md) |
 | Design arquitetural | [Perguntas de design](simulations/03-system-design/design-questions.md) |
 | Simulação técnica completa | [Roteiro técnico](simulations/02-technical/mock-script.md) |
 
@@ -71,9 +71,9 @@ As perguntas pedem situações vividas: o que aconteceu, o que você fez e qual 
 
 Como se preparar:
 
-- faça o inventário de experiências antes de associá-las aos princípios ([STAR e evidências](../leadership-principles/00-star-e-evidencias.md));
+- faça o inventário de experiências antes de associá-las aos princípios ([STAR e evidências](../leadership-principles/00-star-and-evidence.md));
 - traga números quando existirem e saiba como foram medidos;
 - inclua histórias de erro, com o que mudou depois;
-- treine com o [roteiro comportamental](simulations/01-behavior/mock-script.md).
+- treine com o [roteiro comportamental](simulations/01-behavioral/mock-script.md).
 
 Para a reta final, use o [checklist](checklist.md).

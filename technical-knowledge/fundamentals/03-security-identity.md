@@ -10,7 +10,7 @@ Distinguir autenticação de autorização evita tratar “tem login” como per
 
 ## Controles com papéis diferentes
 
-IAM estabelece permissões AWS. Para pessoas e workloads, avalie federação, credenciais temporárias e menor privilégio. Separe a identidade de implantação da identidade de execução. [Fonte T12](../../referencias/README.md#t12)
+IAM estabelece permissões AWS. Para pessoas e workloads, avalie federação, credenciais temporárias e menor privilégio. Separe a identidade de implantação da identidade de execução. [Fonte T12](../../references/README.md#t12)
 
 TLS protege o canal sob suas condições de validação; não decide se o usuário pode consultar uma conta. Certificados não dispensam validar nomes, cadeia, validade e os requisitos específicos da integração. Criptografia em repouso também não impede uma aplicação autorizada de ler e divulgar dados indevidamente.
 
@@ -18,7 +18,7 @@ WAF não substitui autorização de negócio. Security Groups não substituem id
 
 ## Como raciocinar sobre PII
 
-Siga o dado: entrada, fila, banco, cache, modelo, log, resultado exportado e backup. A proteção não termina quando o banco está cifrado. No lake, por exemplo, acesso direto indevido ao S3 pode contornar o caminho governado pela engine integrada. [Fonte T18](../../referencias/README.md#t18)
+Siga o dado: entrada, fila, banco, cache, modelo, log, resultado exportado e backup. A proteção não termina quando o banco está cifrado. No lake, por exemplo, acesso direto indevido ao S3 pode contornar o caminho governado pela engine integrada. [Fonte T18](../../references/README.md#t18)
 
 Não use dados reais de clientes para demonstrar um controle. O teste pode criar dois sujeitos fictícios e verificar que um deles não vê o recurso do outro.
 
@@ -28,7 +28,7 @@ Não use dados reais de clientes para demonstrar um controle. O teste pode criar
 
 Comece pelo impacto e contenção apropriada. Investigue a decisão de acesso ao objeto e quais cópias foram produzidas. Não prometa resolver só com um certificado novo ou uma regra genérica de WAF.
 
-Use o [Case 02](../../cases/02-open-finance-apis.md) para examinar identidade do parceiro, token, consentimento e recurso. Use o [Case 06](../../cases/06-genai-assessor-financeiro.md) para perguntar o que muda quando a informação entra em contexto de geração.
+Use o [Case 02](../../cases/02-open-finance-apis.md) para examinar identidade do parceiro, token, consentimento e recurso. Use o [Case 06](../../cases/06-genai-financial-advisor.md) para perguntar o que muda quando a informação entra em contexto de geração.
 
 ## Aprofundamentos
 
@@ -41,7 +41,7 @@ Use o [Case 02](../../cases/02-open-finance-apis.md) para examinar identidade do
 3. A API pública de um banco recebe um pico de tráfego malicioso. Que camadas de proteção você teria?
 4. O CISO de um banco desconfia da nuvem. Como você conduziria essa conversa?
 
-Para a pergunta 4, o modelo de responsabilidade compartilhada está em [F00](00-computacao-em-nuvem.md).
+Para a pergunta 4, o modelo de responsabilidade compartilhada está em [F00](00-cloud-computing.md).
 
 ## Exercício
 

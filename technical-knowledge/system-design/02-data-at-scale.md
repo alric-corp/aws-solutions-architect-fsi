@@ -20,7 +20,7 @@ A conversa deve ligar escolhas ao workload: proporção de leitura/escrita, tama
 
 Complementos: TTL para limitar a defasagem, invalidação explícita quando o dado muda e política de despejo (LRU, LFU) quando a memória enche. Na AWS: ElastiCache (Valkey, Redis OSS ou Memcached) e DynamoDB Accelerator (DAX) na aplicação; CloudFront na borda.
 
-**Cuidado:** quando uma chave popular expira, muitas requisições podem ir ao banco ao mesmo tempo (cache stampede). Use expiração com variação aleatória, uma única recarga por chave ou atualização antecipada. E decida o que pode ser servido defasado: catálogo de produtos pode; saldo usado para autorizar um débito, não ([Case 10](../../cases/10-plataforma-autorizacao-cartoes.md)).
+**Cuidado:** quando uma chave popular expira, muitas requisições podem ir ao banco ao mesmo tempo (cache stampede). Use expiração com variação aleatória, uma única recarga por chave ou atualização antecipada. E decida o que pode ser servido defasado: catálogo de produtos pode; saldo usado para autorizar um débito, não ([Case 10](../../cases/10-card-authorization-platform.md)).
 
 <a id="replicacao"></a>
 ## Replicação
@@ -35,7 +35,7 @@ Manter cópias dos dados em vários nós serve para disponibilidade, leitura em 
 
 Na AWS: o RDS Multi-AZ mantém um standby síncrono em outra AZ; as réplicas de leitura do RDS são assíncronas; o Aurora grava seis cópias em três AZs, e as réplicas compartilham esse armazenamento; o Aurora Global Database replica para outras regiões de forma assíncrona, normalmente com menos de um segundo de atraso; as global tables do DynamoDB, no modo padrão, aceitam escrita em várias regiões e resolvem conflitos pela última escrita.
 
-**Cuidado:** réplica não é backup: exclusão e corrupção também são replicadas. Com escrita em várias regiões e “última escrita vence”, duas operações sobre o mesmo saldo podem se sobrescrever; para dinheiro, mantenha um escritor por escopo ([Case 09](../../cases/09-internet-banking-multi-region.md)).
+**Cuidado:** réplica não é backup: exclusão e corrupção também são replicadas. Com escrita em várias regiões e “última escrita vence”, duas operações sobre o mesmo saldo podem se sobrescrever; para dinheiro, mantenha um escritor por escopo ([Case 09](../../cases/09-multi-region-internet-banking.md)).
 
 <a id="particionamento"></a>
 ## Particionamento e sharding

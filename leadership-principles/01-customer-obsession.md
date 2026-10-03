@@ -2,7 +2,7 @@
 
 ## Obsessão pelo cliente
 
-**Base:** síntese das anotações N01/N02. **Nome:** conferido na lista oficial S02. **Aplicação e perguntas abaixo:** exercícios autorais, não rubrica de entrevista. [Proveniência](../referencias/README.md)
+**Base:** síntese das anotações N01/N02. **Nome:** conferido na lista oficial S02. **Aplicação e perguntas abaixo:** exercícios autorais, não rubrica de entrevista. [Proveniência](../references/README.md)
 
 ### Ideia central
 
@@ -63,7 +63,7 @@ Concordar com tudo; confundir cliente com patrocinador; alegar satisfação sem 
 
 A abertura está rápida para casos simples, mas clientes com documentos rejeitados não recebem orientação. Proponha como investigar e melhorar essa jornada sem reduzir a qualidade da verificação.
 
-Use o [Case 04](../cases/04-kyc-abertura-de-conta.md) para discutir a decisão. **Esse exercício não substitui uma história comportamental real.** Responder “eu faria” é apropriado aqui, mas não prova que você já fez aquilo no trabalho.
+Use o [Case 04](../cases/04-kyc-account-opening.md) para discutir a decisão. **Esse exercício não substitui uma história comportamental real.** Responder “eu faria” é apropriado aqui, mas não prova que você já fez aquilo no trabalho.
 
 ### Exemplo STAR
 
@@ -81,4 +81,4 @@ Exemplo para ilustrar a estrutura, **não uma história sua**. Os números fazem
 
 ### Próximo registro
 
-Em uma cópia privada do [template STAR](../templates/historia-star.md), identifique um episódio e escreva apenas os pontos que consegue sustentar. Deixe explícita qualquer lacuna; não peça que uma ferramenta a complete como fato.
+Em uma cópia privada do [template STAR](../templates/star-story.md), identifique um episódio e escreva apenas os pontos que consegue sustentar. Deixe explícita qualquer lacuna; não peça que uma ferramenta a complete como fato.

@@ -6,7 +6,7 @@
 
 Defina o que deve continuar funcionando, em qual nível e para quais falhas. Múltiplas instâncias não provam distribuição entre domínios de falha. Recuperar o frontend não demonstra disponibilidade da identidade ou do core.
 
-RTO trata do tempo-alvo de recuperação; RPO, da perda admissível de dados expressa em intervalo de tempo para o conjunto definido. As estratégias de backup/restore, pilot light, warm standby e operação em múltiplos sites têm compromissos diferentes. [Fonte T23](../../referencias/README.md#t23)
+RTO trata do tempo-alvo de recuperação; RPO, da perda admissível de dados expressa em intervalo de tempo para o conjunto definido. As estratégias de backup/restore, pilot light, warm standby e operação em múltiplos sites têm compromissos diferentes. [Fonte T23](../../references/README.md#t23)
 
 <a id="spof-dr"></a>
 ## SPOF e estratégias de DR
@@ -20,7 +20,7 @@ Um ponto único de falha (SPOF) é qualquer componente cuja falha derruba a jorn
 | Warm standby | Cópia completa em escala reduzida, já rodando | Minutos | Médio-alto |
 | Multi-site ativo-ativo | Regiões atendendo ao mesmo tempo | Quase zero | Alto |
 
-As faixas são ordens de grandeza; o valor real sai do teste. O [Case 09](../../cases/09-internet-banking-multi-region.md) detalha a recuperação regional de um internet banking.
+As faixas são ordens de grandeza; o valor real sai do teste. O [Case 09](../../cases/09-multi-region-internet-banking.md) detalha a recuperação regional de um internet banking.
 
 **Cuidado:** DR não testado é hipótese. Faça game days e injete falhas em ambiente controlado (AWS Fault Injection Service), e cubra também a corrupção lógica, que a replicação copia.
 
@@ -34,9 +34,9 @@ A escolha precisa ser discutida com negócio: quais funcionalidades são essenci
 
 Pergunte o que muda: hospedagem, linguagem, fronteira de negócio ou autoridade dos dados? Uma fachada nova não elimina uma dependência antiga. Faça inventário, identifique uma primeira capacidade, compare alternativas e proponha critérios de transferência.
 
-Não substitua descoberta pela frase “refatorar tudo”. O [Case 05](../../cases/05-modernizacao-core-banking.md) aprofunda a convivência híbrida e a transferência de escrita. O [Case 09](../../cases/09-internet-banking-multi-region.md) aborda a recuperação regional.
+Não substitua descoberta pela frase “refatorar tudo”. O [Case 05](../../cases/05-core-banking-modernization.md) aprofunda a convivência híbrida e a transferência de escrita. O [Case 09](../../cases/09-multi-region-internet-banking.md) aborda a recuperação regional.
 
-O padrão Strangler Fig está resumido nos [padrões de sistemas distribuídos](../system-design/01-arquitetura-de-servicos.md#strangler).
+O padrão Strangler Fig está resumido nos [padrões de sistemas distribuídos](../system-design/01-service-architecture.md#strangler).
 
 ## Seis pilares como perguntas
 
@@ -49,7 +49,7 @@ O padrão Strangler Fig está resumido nos [padrões de sistemas distribuídos](
 | Otimização de custos | Qual é o custo total e unitário para atender o requisito? |
 | Sustentabilidade | Onde há desperdício e como reduzir recursos mantendo o resultado? |
 
-O framework orienta revisão de decisões e riscos; não é uma certificação automática da arquitetura. [Fonte T14](../../referencias/README.md#t14) As perguntas da tabela são formulações de treino, não reprodução de uma auditoria oficial.
+O framework orienta revisão de decisões e riscos; não é uma certificação automática da arquitetura. [Fonte T14](../../references/README.md#t14) As perguntas da tabela são formulações de treino, não reprodução de uma auditoria oficial.
 
 ## Testes que mudam a confiança
 

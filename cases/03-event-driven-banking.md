@@ -4,7 +4,7 @@
 > **Idioma:** português do Brasil. Nomes dos serviços AWS e identificadores de código foram preservados.  
 > **Formato:** guia de estudo, decisões arquiteturais e simulação de entrevista.  
 > **Referências consultadas em:** 28/09/2026.  
-> **Caminho sugerido no repositório:** `cases/03-banking-event-driven.md`.
+> **Caminho sugerido no repositório:** `cases/03-event-driven-banking.md`.
 
 ## Como usar este material
 

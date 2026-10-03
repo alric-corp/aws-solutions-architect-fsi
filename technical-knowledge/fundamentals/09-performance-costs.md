@@ -26,7 +26,7 @@ Toda estimativa real deve registrar data, região, carga, preço e premissas. N�
 
 Não proponha GPU porque a aplicação está lenta. Verifique se o algoritmo e a implementação se beneficiam da capacidade, a utilização, o custo por resultado e as alternativas. Uma consulta aguardando disco não é corrigida automaticamente por mais poder de cálculo.
 
-Para análise de recursos, use hipóteses de utilização, saturação e erros. [Fonte T27](../../referencias/README.md#t27)
+Para análise de recursos, use hipóteses de utilização, saturação e erros. [Fonte T27](../../references/README.md#t27)
 
 <a id="concorrencia"></a>
 ## Concorrência e paralelismo
@@ -47,6 +47,6 @@ Recursos compartilhados criam contenção: locks, pools de conexão e linhas que
 
 ## Exercício
 
-Escolha uma etapa do [Case 09](../../cases/09-internet-banking-multi-region.md). Faça uma estimativa com unidades, reserve capacidade de recuperação e identifique a hipótese que mais afeta o resultado. Desenhe o teste que a confirmaria. Não declare o objetivo cumprido antes da execução.
+Escolha uma etapa do [Case 09](../../cases/09-multi-region-internet-banking.md). Faça uma estimativa com unidades, reserve capacidade de recuperação e identifique a hipótese que mais afeta o resultado. Desenhe o teste que a confirmaria. Não declare o objetivo cumprido antes da execução.
 
-Conecte custos e performance aos riscos de operação usando o [Well-Architected](../../referencias/README.md#t14), sem transformar um pilar em justificativa para ignorar os demais.
+Conecte custos e performance aos riscos de operação usando o [Well-Architected](../../references/README.md#t14), sem transformar um pilar em justificativa para ignorar os demais.

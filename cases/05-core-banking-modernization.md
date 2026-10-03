@@ -4,11 +4,11 @@
 > **Idioma:** português do Brasil. Nomes dos serviços AWS, produtos e identificadores de código foram preservados.  
 > **Formato:** guia de estudo, decisões arquiteturais e simulação de entrevista.  
 > **Referências consultadas em:** 28/09/2026.  
-> **Caminho sugerido no repositório:** `cases/05-modernizacao-core-banking.md`.
+> **Caminho sugerido no repositório:** `cases/05-core-banking-modernization.md`.
 
 ## Como usar este material
 
-Este case continua os estudos de [pagamentos e Pix](01-payment-processing-pix.md), [Open Finance](02-open-finance-apis.md), [Banking Event-Driven](03-banking-event-driven.md) e [KYC e abertura de conta](04-kyc-abertura-de-conta.md). Agora, o desafio é **mudar uma parte do core enquanto o banco continua funcionando**.
+Este case continua os estudos de [pagamentos e Pix](01-payment-processing-pix.md), [Open Finance](02-open-finance-apis.md), [Banking Event-Driven](03-event-driven-banking.md) e [KYC e abertura de conta](04-kyc-account-opening.md). Agora, o desafio é **mudar uma parte do core enquanto o banco continua funcionando**.
 
 A jornada escolhida é a modernização de **pacotes de serviços de conta e apuração de tarifas**, em um banco com mainframe existente. Começaremos por uma fachada e consultas, avançaremos para cálculos em paralelo sem efeitos reais e só depois transferiremos a responsabilidade de escrita de uma capacidade delimitada. Os lançamentos contábeis continuam no core durante essa primeira extração.
 

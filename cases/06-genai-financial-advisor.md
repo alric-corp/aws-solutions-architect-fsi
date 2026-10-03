@@ -4,11 +4,11 @@
 > **Idioma:** português do Brasil. Nomes dos serviços AWS e identificadores de código foram preservados.  
 > **Formato:** guia de estudo, decisões arquiteturais e simulação de entrevista.  
 > **Referências consultadas em:** 28/09/2026.  
-> **Caminho sugerido no repositório:** `cases/06-genai-assessor-financeiro.md`.
+> **Caminho sugerido no repositório:** `cases/06-genai-financial-advisor.md`.
 
 ## Como usar este material
 
-Este case continua a série de [pagamentos e Pix](01-payment-processing-pix.md), [Open Finance](02-open-finance-apis.md), [Banking Event-Driven](03-banking-event-driven.md), [KYC](04-kyc-abertura-de-conta.md) e [modernização do core](05-modernizacao-core-banking.md). Agora, o desafio é **ajudar uma pessoa a encontrar e explicar informações financeiras sem transformar um modelo de linguagem em autoridade sobre dados, permissões ou decisões de investimento**.
+Este case continua a série de [pagamentos e Pix](01-payment-processing-pix.md), [Open Finance](02-open-finance-apis.md), [Banking Event-Driven](03-event-driven-banking.md), [KYC](04-kyc-account-opening.md) e [modernização do core](05-core-banking-modernization.md). Agora, o desafio é **ajudar uma pessoa a encontrar e explicar informações financeiras sem transformar um modelo de linguagem em autoridade sobre dados, permissões ou decisões de investimento**.
 
 Construiremos um **assistente interno para assessores do banco**. Primeiro, ele responde sobre produtos e procedimentos a partir de documentos aprovados. Depois, acrescentamos uma preparação de reunião que consulta dados atuais de um cliente, somente quando o assessor tem autorização. O sistema não compra, vende, transfere recursos nem envia recomendações ao cliente por conta própria.
 

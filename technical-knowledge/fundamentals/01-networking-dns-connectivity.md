@@ -1,12 +1,12 @@
 # 01 — Redes, DNS e conectividade híbrida
 
-**Base:** N01/N05 listam CIDR, OSI, latência, VPN, Direct Connect e diagnóstico de transferência. **Complemento:** organizar a investigação por camadas e separar conectividade, segurança e desempenho. [Referências](../../referencias/README.md)
+**Base:** N01/N05 listam CIDR, OSI, latência, VPN, Direct Connect e diagnóstico de transferência. **Complemento:** organizar a investigação por camadas e separar conectividade, segurança e desempenho. [Referências](../../references/README.md)
 
 ## Modelo mental
 
 IP e prefixo descrevem endereçamento; rotas escolhem caminhos; protocolos de transporte conectam endpoints; DNS resolve nomes; TLS protege uma comunicação; HTTP define a troca da aplicação. Não são etapas intercambiáveis nem todos os protocolos seguem exatamente o mesmo transporte.
 
-No desenho AWS, uma sub-rede pertence a uma AZ. VPC, tabelas de rotas, gateways e controles de tráfego definem a comunicação; colocar dois ícones próximos não cria conectividade. [Fonte T08](../../referencias/README.md#t08)
+No desenho AWS, uma sub-rede pertence a uma AZ. VPC, tabelas de rotas, gateways e controles de tráfego definem a comunicação; colocar dois ícones próximos não cria conectividade. [Fonte T08](../../references/README.md#t08)
 
 CIDR usa tamanho do prefixo, não categorias modernas obrigatórias de rede pequena, média e grande. `10.0.16.0/24` contém 256 endereços no bloco; quantidade utilizável depende do ambiente. Treine o cálculo, depois explique por que escolher a faixa exige crescimento, sobreposição e integrações.
 
@@ -35,7 +35,7 @@ Um link de alta capacidade não demonstra que a aplicação o utiliza. Compare l
 
 Compare implantação, previsibilidade, redundância, segurança e custo. MPLS é parte do repertório de conectividade do cliente; não é um botão da VPC nem garantia automática de criptografia. Pergunte qual serviço o provedor realmente entrega e como o conecta ao ambiente AWS.
 
-Direct Connect não cifra dados por padrão. A decisão de proteção em trânsito considera TLS, IPsec e, onde aplicável, MACsec. Conectividade privada e cifragem são propriedades diferentes. [Fonte T09](../../referencias/README.md#t09)
+Direct Connect não cifra dados por padrão. A decisão de proteção em trânsito considera TLS, IPsec e, onde aplicável, MACsec. Conectividade privada e cifragem são propriedades diferentes. [Fonte T09](../../references/README.md#t09)
 
 ## Aprofundamentos para o ensaio
 
@@ -50,8 +50,8 @@ Direct Connect não cifra dados por padrão. A decisão de proteção em trânsi
 4. VPN pela internet ou Direct Connect: quando cada um faz sentido, e o que muda em criptografia?
 5. Usuários de outros países reclamam de lentidão. Como você investiga e o que propõe?
 
-Cache e CDN estão em [F02](02-http-rest-openapi.md); convivência híbrida, no [Case 05](../../cases/05-modernizacao-core-banking.md); arquitetura multi-região, no [Case 09](../../cases/09-internet-banking-multi-region.md).
+Cache e CDN estão em [F02](02-http-rest-openapi.md); convivência híbrida, no [Case 05](../../cases/05-core-banking-modernization.md); arquitetura multi-região, no [Case 09](../../cases/09-multi-region-internet-banking.md).
 
 ## Exercício
 
-No [Case 05](../../cases/05-modernizacao-core-banking.md), desenhe apenas o percurso entre uma task e o legado. Identifique rotas, resolução de nomes, controles, dependências de retorno e pontos de medição. Depois retire um caminho de rede e explique o comportamento esperado, sem prometer failover antes de testá-lo.
+No [Case 05](../../cases/05-core-banking-modernization.md), desenhe apenas o percurso entre uma task e o legado. Identifique rotas, resolução de nomes, controles, dependências de retorno e pontos de medição. Depois retire um caminho de rede e explique o comportamento esperado, sem prometer failover antes de testá-lo.

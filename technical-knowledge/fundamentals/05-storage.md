@@ -4,9 +4,9 @@
 
 ## Modelos que deve distinguir
 
-DAS é armazenamento ligado diretamente ao host. SAN oferece acesso em blocos por uma rede de armazenamento, com tecnologias como Fibre Channel ou iSCSI. NAS expõe arquivos pela rede, com protocolos como NFS ou SMB. Não classifique apenas por ser “um disco remoto”. [Fonte T25](../../referencias/README.md#t25)
+DAS é armazenamento ligado diretamente ao host. SAN oferece acesso em blocos por uma rede de armazenamento, com tecnologias como Fibre Channel ou iSCSI. NAS expõe arquivos pela rede, com protocolos como NFS ou SMB. Não classifique apenas por ser “um disco remoto”. [Fonte T25](../../references/README.md#t25)
 
-Objetos, blocos e arquivos também têm contratos diferentes na nuvem. S3 é armazenamento de objetos; EBS oferece volumes em blocos; EFS e opções FSx atendem necessidades de sistemas de arquivos com características próprias. Avalie a opção concreta, em vez de generalizar todos os serviços da categoria. [Fonte T11](../../referencias/README.md#t11)
+Objetos, blocos e arquivos também têm contratos diferentes na nuvem. S3 é armazenamento de objetos; EBS oferece volumes em blocos; EFS e opções FSx atendem necessidades de sistemas de arquivos com características próprias. Avalie a opção concreta, em vez de generalizar todos os serviços da categoria. [Fonte T11](../../references/README.md#t11)
 
 ## Pergunta inicial
 
@@ -59,12 +59,12 @@ Na AWS, o gp3 permite configurar IOPS e throughput separadamente; o io2 atende l
 2. Como você protegeria e organizaria os dados brutos e tratados de um data lake bancário?
 3. Documentos precisam ser guardados por anos, mas raramente são lidos. Como reduzir o custo sem perder a capacidade de recuperação?
 
-Para o data lake, veja também [F10](10-dados-analytics-ia.md) e o [Case 08](../../cases/08-data-lake-financeiro.md).
+Para o data lake, veja também [F10](10-data-analytics-ai.md) e o [Case 08](../../cases/08-financial-data-lake.md).
 
 ## Exercício
 
-No [Case 04](../../cases/04-kyc-abertura-de-conta.md), acompanhe um documento: upload, versão aprovada, processamento e retenção. Explique por que nome de arquivo não é prova suficiente de que se processou a mesma versão.
+No [Case 04](../../cases/04-kyc-account-opening.md), acompanhe um documento: upload, versão aprovada, processamento e retenção. Explique por que nome de arquivo não é prova suficiente de que se processou a mesma versão.
 
-No [Case 08](../../cases/08-data-lake-financeiro.md), compare documentos de origem, arquivos analíticos e resultados de consulta. O dado pode ter sido protegido na entrada e exposto na saída.
+No [Case 08](../../cases/08-financial-data-lake.md), compare documentos de origem, arquivos analíticos e resultados de consulta. O dado pode ter sido protegido na entrada e exposto na saída.
 
 **Entrega:** uma recomendação com interface, padrão de acesso, proteção e recuperação definidos. Evite responder apenas “S3 porque é barato”.

@@ -2,7 +2,7 @@
 
 ## Inventar e simplificar
 
-**Base:** síntese das anotações N01/N02. **Nome:** conferido na lista oficial S02. **Aplicação e perguntas abaixo:** exercícios autorais, não rubrica de entrevista. [Proveniência](../referencias/README.md)
+**Base:** síntese das anotações N01/N02. **Nome:** conferido na lista oficial S02. **Aplicação e perguntas abaixo:** exercícios autorais, não rubrica de entrevista. [Proveniência](../references/README.md)
 
 ### Ideia central
 
@@ -62,8 +62,8 @@ Reescrever por preferência pessoal; eliminar controles necessários; adotar um 
 
 O banco utiliza MSK, EventBridge e SQS para uma única notificação. Proponha uma versão inicial menor e os requisitos que justificariam acrescentar componentes.
 
-Use o [Case 03](../cases/03-banking-event-driven.md) para discutir a decisão. **Esse exercício não substitui uma história comportamental real.** Responder “eu faria” é apropriado aqui, mas não prova que você já fez aquilo no trabalho.
+Use o [Case 03](../cases/03-event-driven-banking.md) para discutir a decisão. **Esse exercício não substitui uma história comportamental real.** Responder “eu faria” é apropriado aqui, mas não prova que você já fez aquilo no trabalho.
 
 ### Próximo registro
 
-Em uma cópia privada do [template STAR](../templates/historia-star.md), identifique um episódio e escreva apenas os pontos que consegue sustentar. Deixe explícita qualquer lacuna; não peça que uma ferramenta a complete como fato.
+Em uma cópia privada do [template STAR](../templates/star-story.md), identifique um episódio e escreva apenas os pontos que consegue sustentar. Deixe explícita qualquer lacuna; não peça que uma ferramenta a complete como fato.

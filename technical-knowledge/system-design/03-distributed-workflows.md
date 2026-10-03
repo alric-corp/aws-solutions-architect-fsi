@@ -1,6 +1,6 @@
 # SD03 — Fluxos Distribuídos
 
-**Origem:** temas antes reunidos em F07, relacionados a [N04](../../referencias/README.md#n04). **Revisão técnica:** 03/10/2026; desenvolvimento autoral com fontes primárias. As seções complementares não são transcrição de anotações ou de cursos.
+**Origem:** temas antes reunidos em F07, relacionados a [N04](../../references/README.md#n04). **Revisão técnica:** 03/10/2026; desenvolvimento autoral com fontes primárias. As seções complementares não são transcrição de anotações ou de cursos.
 
 **Objetivo:** defender como uma jornada progride e se recupera quando banco, transporte e sistemas externos não compartilham uma transação.
 
@@ -8,9 +8,9 @@
 
 **Essencial:** contrato → outbox e inbox → orquestração/coreografia → saga acompanhada. **Aprofundamento:** CQRS, event sourcing e autoridade de escrita. Termine pelo treino e pela simulação de mesa.
 
-[F07](../fundamentals/07-eventos-sistemas-distribuidos.md) explica recebimento, confirmação, ordenação e replay. Aqui esses mecanismos são usados para discutir **onde uma invariante é protegida, qual estado fica durável e como recuperar uma falha**. [F06](../fundamentals/06-bancos-consistencia.md#acid-cap) cobre atomicidade e isolamento local.
+[F07](../fundamentals/07-events-messaging-distributed-systems.md) explica recebimento, confirmação, ordenação e replay. Aqui esses mecanismos são usados para discutir **onde uma invariante é protegida, qual estado fica durável e como recuperar uma falha**. [F06](../fundamentals/06-databases-transactions-consistency.md#acid-cap) cobre atomicidade e isolamento local.
 
-**Contrato herdado do [Case 03](../../cases/03-banking-event-driven.md#s01):** transferência interna entre contas do mesmo banco; o core faz débito e crédito em uma operação atômica, decide saldo e oferece referência idempotente e consulta de resultado. São premissas do case a verificar numa arquitetura real, não garantias entregues por SQS ou Step Functions.
+**Contrato herdado do [Case 03](../../cases/03-event-driven-banking.md#s01):** transferência interna entre contas do mesmo banco; o core faz débito e crédito em uma operação atômica, decide saldo e oferece referência idempotente e consulta de resultado. São premissas do case a verificar numa arquitetura real, não garantias entregues por SQS ou Step Functions.
 
 Usaremos os mesmos identificadores sintéticos de F07:
 
@@ -31,7 +31,7 @@ As versões são ilustrativas; o resumo não enumera todos os estados intermedi�
 
 **Problema sem o padrão:** gravar `tx-001` e depois publicar `TransferenciaSolicitada` deixa uma janela de falha. Se o processo cair entre as operações, a intenção existe e ninguém inicia a jornada. Publicar primeiro permite anunciar algo que o banco depois rejeita.
 
-**Fluxo normal:** uma transação local grava o estado e a linha da outbox com `ev-tx-001-v1`. Depois do commit, um relay publica o evento, verifica a aceitação pelo destino e marca a publicação. Somente dados confirmados entram no relay. A atomicidade cobre **estado + intenção de envio**, não o broker. [T16](../../referencias/README.md#t16), [padrão de Chris Richardson][sd03-outbox]
+**Fluxo normal:** uma transação local grava o estado e a linha da outbox com `ev-tx-001-v1`. Depois do commit, um relay publica o evento, verifica a aceitação pelo destino e marca a publicação. Somente dados confirmados entram no relay. A atomicidade cobre **estado + intenção de envio**, não o broker. [T16](../../references/README.md#t16), [padrão de Chris Richardson][sd03-outbox]
 
 ```mermaid
 sequenceDiagram
@@ -61,7 +61,7 @@ sequenceDiagram
 
 **Garantia e limite:** o banco precisa realmente confirmar ambos na mesma transação. A entrega posterior depende de relay, destino, retenção e recuperação operacional. A outbox não elimina duplicatas, não resolve uma efetivação desconhecida no core e não fornece ordem por agregado apenas por ter uma coluna de versão.
 
-**Aprofundamento:** workers podem adquirir lotes com lease e marcar apenas os itens que ainda possuem. Se ordem estrita for necessária, coordenem a publicação por agregado; vários publicadores podem inverter versões. Um relay antigo ainda pode publicar tarde. No EventBridge, `PutEvents` requer inspeção por entrada e validação do destino; HTTP 200 isolado não basta. [Case 03, relay](../../cases/03-banking-event-driven.md#s08), [PutEvents][sd03-putevents]
+**Aprofundamento:** workers podem adquirir lotes com lease e marcar apenas os itens que ainda possuem. Se ordem estrita for necessária, coordenem a publicação por agregado; vários publicadores podem inverter versões. Um relay antigo ainda pode publicar tarde. No EventBridge, `PutEvents` requer inspeção por entrada e validação do destino; HTTP 200 isolado não basta. [Case 03, relay](../../cases/03-event-driven-banking.md#s08), [PutEvents][sd03-putevents]
 
 **Quando não vale / alternativa:** se a ação inteira cabe no mesmo banco e não exige publicação, use a transação local. Quando há publicação obrigatória, CDC a partir de alterações confirmadas é alternativa ao polling; pode inclusive transportar a própria outbox. Avalie retenção do log, contrato de evento e recuperação do conector. “Gravar e tentar enviar uma vez” não é substituto equivalente.
 
@@ -89,7 +89,7 @@ só então confirmar a entrega no transporte
 
 **Falha e recuperação:** queda antes do commit permite tentar de novo; depois do commit e antes do ack, a inbox impede reaplicação. A confirmação no transporte continua separada. Eventos diferentes sobre a mesma transferência ainda exigem controle de estado/versão; deduplicar IDs não garante ordenação.
 
-**Efeito externo:** gravar “processado” antes de enviar SMS pode perder o envio; gravar depois pode duplicá-lo. Uma intenção durável de envio, chave idempotente aceita pelo provedor e consulta/reconciliação ajudam. Sem esse contrato externo, declare a possibilidade de repetição; não prometa que a inbox inclui banco e provedor na mesma transação. No core, a referência é `core-tx-001`. [APIs idempotentes][sd03-idempotency], [Case 03, quatro fronteiras](../../cases/03-banking-event-driven.md#s08)
+**Efeito externo:** gravar “processado” antes de enviar SMS pode perder o envio; gravar depois pode duplicá-lo. Uma intenção durável de envio, chave idempotente aceita pelo provedor e consulta/reconciliação ajudam. Sem esse contrato externo, declare a possibilidade de repetição; não prometa que a inbox inclui banco e provedor na mesma transação. No core, a referência é `core-tx-001`. [APIs idempotentes][sd03-idempotency], [Case 03, quatro fronteiras](../../cases/03-event-driven-banking.md#s08)
 
 **Quando não vale / alternativa:** se uma escrita condicional já garante a invariante, uma tabela separada de inbox pode ser redundante. Um `upsert` só é suficiente se repetir ou receber uma versão velha não regredir o estado. Para projeção de último estado, uma versão pode proteger a substituição; para somas/deltas, pular eventos intermediários pode corromper o resultado. Retenção da deduplicação precisa cobrir a repetição/replay autorizado; para reconstruir uma projeção nova, use identidade própria de consumidor.
 
@@ -103,7 +103,7 @@ só então confirmar a entrega no transporte
 | Orquestração | Coordenador durável registra progresso e aciona participantes por comandos. | Após reinício, recupera o passo e consulta/reexecuta com a mesma identidade. Concentra a lógica do fluxo e exige disponibilidade, versionamento e observação do coordenador. |
 | Coreografia | Participantes reagem a fatos e publicam novos fatos; a sequência emerge desses contratos. | Cada participante persiste progresso e decide retries/timeouts. Falta de um evento ou ciclo entre participantes pode parar a jornada; correlação e detecção de pendências precisam ser desenhadas. |
 
-Na proposta do Case 03, **Step Functions Standard orquestra limite, risco e core**; o evento confirmado dispara notificações e projeções independentes. Esse uso misto reduz a quantidade de consequências secundárias no workflow crítico. Orquestração pode usar mensagens assíncronas; coreografia não é sinônimo de ausência de estado. [Saga orquestrada — T17](../../referencias/README.md#t17), [coreografia AWS][sd03-choreography]
+Na proposta do Case 03, **Step Functions Standard orquestra limite, risco e core**; o evento confirmado dispara notificações e projeções independentes. Esse uso misto reduz a quantidade de consequências secundárias no workflow crítico. Orquestração pode usar mensagens assíncronas; coreografia não é sinônimo de ausência de estado. [Saga orquestrada — T17](../../references/README.md#t17), [coreografia AWS][sd03-choreography]
 
 **Garantia dependente da aplicação:** nenhum estilo prova que um efeito externo terminou. É preciso guardar correlação, propriedade da execução, resultado e referência da operação. Um timeout do coordenador não cancela necessariamente a chamada que já saiu. A semântica de execução de Step Functions não faz commit atômico no core e no banco local. [Tipos de workflow][sd03-workflows]
 
@@ -112,9 +112,9 @@ Na proposta do Case 03, **Step Functions Standard orquestra limite, risco e core
 <a id="saga"></a>
 ### Saga na prática
 
-Saga coordena transações locais e sua recuperação. Alguns passos admitem compensação; outros exigem continuar até completar, consultar ou escalar. **Não há rollback nem isolamento ACID global automático.** Uma reserva, por exemplo, protege uma invariante que poderia ser violada por jornadas concorrentes. [T17](../../referencias/README.md#t17), [compensações][sd03-compensation]
+Saga coordena transações locais e sua recuperação. Alguns passos admitem compensação; outros exigem continuar até completar, consultar ou escalar. **Não há rollback nem isolamento ACID global automático.** Uma reserva, por exemplo, protege uma invariante que poderia ser violada por jornadas concorrentes. [T17](../../references/README.md#t17), [compensações][sd03-compensation]
 
-**Correção do exemplo anterior:** não dividimos débito e crédito entre serviços. Ambos permanecem dentro da operação atômica do core, conforme o [Case 03, fronteira financeira](../../cases/03-banking-event-driven.md#s01). A saga coordena as etapas ao redor.
+**Correção do exemplo anterior:** não dividimos débito e crédito entre serviços. Ambos permanecem dentro da operação atômica do core, conforme o [Case 03, fronteira financeira](../../cases/03-event-driven-banking.md#s01). A saga coordena as etapas ao redor.
 
 #### Exemplo acompanhado: o core efetivou e a resposta se perdeu
 
@@ -161,7 +161,7 @@ Diagrama reduzido do **estado principal**, não de todos os atributos da saga. `
 
 **Compensar é produzir uma nova operação de negócio**, referenciada e observável. Não apaga a reserva anterior nem necessariamente restaura o mundo ao estado inicial: outras operações podem ter ocorrido. A própria compensação pode falhar. Uma reversão financeira, quando permitida pelo produto, tem autorização e rastreabilidade próprias; não é tratamento genérico de erro de workflow. [Compensating Transaction][sd03-compensation]
 
-**Reserva expirada não prova cancelamento.** Durante a incerteza, a política precisa preservar a capacidade pertinente, renovar/proteger a reserva ou escalar sua regularização. Uma expiração automática que libere limite enquanto o core ainda pode concluir rompe a invariante. [Case 03, reservas e recuperação](../../cases/03-banking-event-driven.md#s09)
+**Reserva expirada não prova cancelamento.** Durante a incerteza, a política precisa preservar a capacidade pertinente, renovar/proteger a reserva ou escalar sua regularização. Uma expiração automática que libere limite enquanto o core ainda pode concluir rompe a invariante. [Case 03, reservas e recuperação](../../cases/03-event-driven-banking.md#s09)
 
 **Quando não vale / alternativa:** se as invariantes podem ficar numa transação local, mantê-las juntas é mais simples. Uma saga se justifica por responsabilidades e transações separadas, não por dividir toda operação em microserviços. Se o core não oferece referência e consulta suficientes, uma saga não inventa essas garantias: reveja a integração e preveja reconciliação/controle operacional antes de autorizar repetição automática.
 
@@ -207,7 +207,7 @@ Diagrama reduzido do **estado principal**, não de todos os atributos da saga. `
 
 **Limites:** o histórico só contém os fatos que o sistema registrou corretamente. Durabilidade, acesso, retenção, evolução e vínculos com evidências externas continuam necessários. Um log Kafka para distribuição ou um histórico de alterações de banco não é automaticamente um event store de domínio. A semelhança com lançamentos contábeis não autoriza afirmar que qualquer ledger implementa este padrão nem que event sourcing cria um ledger correto.
 
-**Conexão com o case:** a arquitetura-base do [Case 03](../../cases/03-banking-event-driven.md#s10) usa estado atual + outbox, sem exigir event sourcing. A variante acima mudaria como o serviço de jornada guarda seu estado; não transferiria a autoridade financeira do core.
+**Conexão com o case:** a arquitetura-base do [Case 03](../../cases/03-event-driven-banking.md#s10) usa estado atual + outbox, sem exigir event sourcing. A variante acima mudaria como o serviço de jornada guarda seu estado; não transferiria a autoridade financeira do core.
 
 **Quando não vale / alternativa:** se basta estado atual com rastreabilidade, uma base transacional e registros de auditoria apropriados podem atender com menor custo. Event sourcing se justifica quando reconstrução temporal e evolução por fatos compensam o custo de compatibilidade, ferramentas e recuperação. Retenção/compactação de transporte precisa ser compatível com a fonte completa pretendida; releitura de um subconjunto não recompõe toda a história.
 
@@ -222,7 +222,7 @@ Diagrama reduzido do **estado principal**, não de todos os atributos da saga. `
 
 **Fencing** protege o recurso contra essa autoridade antiga. Um token cresce a cada aquisição, e o destino rejeita gerações obsoletas. O teste e a mutação devem ser atômicos no recurso protegido; “consultar token, aguardar rede, escrever” abre outra corrida. O exemplo de fencing de Kleppmann mostra por que a validação precisa estar no armazenamento, e não apenas no cliente. [Fencing tokens][sd03-fencing]
 
-**Protocolo proposto, alinhado ao [Case 05](../../cases/05-modernizacao-core-banking.md#s09):**
+**Protocolo proposto, alinhado ao [Case 05](../../cases/05-core-banking-modernization.md#s09):**
 
 1. Estabelecer a nova geração no ponto de escrita como parte da transferência de autoridade.
 2. Exigir essa geração em toda mutação do escopo, inclusive jobs e caminhos administrativos.
@@ -259,7 +259,7 @@ As dez perguntas avaliam raciocínio, não uma rubrica oficial. Responda nomeand
 <details>
 <summary>Resposta comentada</summary>
 
-Isso troca a janela de perda pela janela de fato inexistente: um consumidor pode agir sobre mudança não confirmada. Outbox une estado e intenção de publicação numa transação local; o envio vem depois. Se o relay cair após publicar, o mesmo evento pode reaparecer, exigindo consumidor idempotente. [T16](../../referencias/README.md#t16)
+Isso troca a janela de perda pela janela de fato inexistente: um consumidor pode agir sobre mudança não confirmada. Outbox une estado e intenção de publicação numa transação local; o envio vem depois. Se o relay cair após publicar, o mesmo evento pode reaparecer, exigindo consumidor idempotente. [T16](../../references/README.md#t16)
 
 </details>
 
@@ -292,7 +292,7 @@ Ela protege a transação local, não o provedor. Persistir uma intenção evita
 <details>
 <summary>Resposta comentada</summary>
 
-Não. Mantenha resultado indeterminado, a mesma referência e a reserva protegida. Ausência transitória não impede efetivação tardia. Para liberar, é preciso conhecer o estado pertinente e impedir que o envio anterior ou um concorrente ainda efetive. Se não houver evidência suficiente, reconcilie/escale; tempo decorrido não é prova financeira. Essa é a regra do [Case 03](../../cases/03-banking-event-driven.md#s09).
+Não. Mantenha resultado indeterminado, a mesma referência e a reserva protegida. Ausência transitória não impede efetivação tardia. Para liberar, é preciso conhecer o estado pertinente e impedir que o envio anterior ou um concorrente ainda efetive. Se não houver evidência suficiente, reconcilie/escale; tempo decorrido não é prova financeira. Essa é a regra do [Case 03](../../cases/03-event-driven-banking.md#s09).
 
 </details>
 
@@ -391,16 +391,16 @@ Consultadas em **03/10/2026**. Foram usadas pelo conteúdo que sustenta o mecani
 
 | Fonte primária | Afirmação sustentada e limite de uso |
 |---|---|
-| [T16](../../referencias/README.md#t16), [Transactional Outbox — Chris Richardson][sd03-outbox] | Atomicidade entre estado e intenção de publicação; relay pode duplicar. Não implica transação global. |
+| [T16](../../references/README.md#t16), [Transactional Outbox — Chris Richardson][sd03-outbox] | Atomicidade entre estado e intenção de publicação; relay pode duplicar. Não implica transação global. |
 | [Idempotent Consumer — Chris Richardson][sd03-inbox] | Registro de processamento e efeito no escopo transacional do consumidor. |
 | [AWS — APIs idempotentes][sd03-idempotency], [PutEvents][sd03-putevents] | Identidade de intenção/retry e confirmação por entrada de publicação. |
-| [T17](../../referencias/README.md#t17), [coreografia AWS][sd03-choreography], [Step Functions][sd03-workflows] | Coordenação, ausência de isolamento global e limites do workflow. |
+| [T17](../../references/README.md#t17), [coreografia AWS][sd03-choreography], [Step Functions][sd03-workflows] | Coordenação, ausência de isolamento global e limites do workflow. |
 | [Microsoft — Compensating Transaction][sd03-compensation] | Recuperação dependente do negócio, concorrência e possibilidade de falha da compensação. |
 | [Fowler — CQRS][sd03-cqrs], [Microsoft — CQRS][sd03-cqrs-ms] | Separação lógica de modelos, inclusive no mesmo armazenamento; assincronia é uma escolha adicional. |
 | [Fowler — Event Sourcing][sd03-es], [Microsoft — Event Sourcing][sd03-es-ms] | Estado derivado de fatos, replay, efeitos externos, concorrência e snapshots. |
 | [etcd][sd03-etcd], [Kleppmann — fencing][sd03-fencing], [DynamoDB — condições][sd03-conditional] e [TTL][sd03-ttl] | Propriedade/lease, rejeição de escritores antigos e limites das primitivas. |
 
-O exemplo de saga e as regras de reserva vêm do contrato explícito do Case 03: [fronteira financeira](../../cases/03-banking-event-driven.md#s01), [contratos](../../cases/03-banking-event-driven.md#s08) e [recuperação](../../cases/03-banking-event-driven.md#s09). Não são uma certificação de comportamento de qualquer core. O [Case 05](../../cases/05-modernizacao-core-banking.md#s09) sustenta a conexão didática com autoridade e fencing.
+O exemplo de saga e as regras de reserva vêm do contrato explícito do Case 03: [fronteira financeira](../../cases/03-event-driven-banking.md#s01), [contratos](../../cases/03-event-driven-banking.md#s08) e [recuperação](../../cases/03-event-driven-banking.md#s09). Não são uma certificação de comportamento de qualquer core. O [Case 05](../../cases/05-core-banking-modernization.md#s09) sustenta a conexão didática com autoridade e fencing.
 
 Esta revisão corrige quatro atalhos do resumo anterior: débito/crédito separados na saga; compensação supostamente universal; atraso obrigatório em CQRS; eleição confundida com exclusão efetiva do escritor antigo. Também delimita a analogia entre event sourcing e contabilidade. Não adotamos generalizações SQL/NoSQL de textos introdutórios: atomicidade depende do contrato concreto, como explica F06.
 

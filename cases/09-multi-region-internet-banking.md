@@ -4,11 +4,11 @@
 > **Idioma:** português do Brasil. Nomes dos serviços AWS e identificadores de código foram preservados.  
 > **Formato:** guia de estudo, decisões arquiteturais e simulação de entrevista.  
 > **Referências consultadas em:** 28/09/2026.  
-> **Caminho sugerido no repositório:** `cases/09-internet-banking-multi-region.md`.
+> **Caminho sugerido no repositório:** `cases/09-multi-region-internet-banking.md`.
 
 ## Como usar este material
 
-Este case continua a série de [pagamentos e Pix](01-payment-processing-pix.md), [Open Finance](02-open-finance-apis.md), [Banking Event-Driven](03-banking-event-driven.md), [KYC](04-kyc-abertura-de-conta.md), [modernização do core](05-modernizacao-core-banking.md), [GenAI](06-genai-assessor-financeiro.md), [detecção de fraude](07-fraud-detection-tempo-real.md) e [data lake financeiro](08-data-lake-financeiro.md).
+Este case continua a série de [pagamentos e Pix](01-payment-processing-pix.md), [Open Finance](02-open-finance-apis.md), [Banking Event-Driven](03-event-driven-banking.md), [KYC](04-kyc-account-opening.md), [modernização do core](05-core-banking-modernization.md), [GenAI](06-genai-financial-advisor.md), [detecção de fraude](07-real-time-fraud-detection.md) e [data lake financeiro](08-financial-data-lake.md).
 
 Agora, o desafio é **recuperar o canal digital depois de uma falha regional sem perder o significado de uma confirmação, duplicar uma transferência ou permitir que duas regiões tomem decisões conflitantes**.
 
