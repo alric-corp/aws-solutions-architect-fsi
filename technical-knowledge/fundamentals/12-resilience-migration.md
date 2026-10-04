@@ -30,6 +30,34 @@ No exercício de transferência, uma resposta de aceitação não significa lan�
 
 A escolha precisa ser discutida com negócio: quais funcionalidades são essenciais? Qual modo degradado é aceitável? Qual risco não pode ser assumido durante a recuperação?
 
+Neste exemplo de recuperação, o modo degradado permite somente consultas autorizadas com dados aceitáveis para o uso.
+
+```mermaid
+stateDiagram-v2
+    state "Operação normal" as Normal
+    state "Incidente" as Incidente
+    state "Mutações suspensas" as Suspensas
+    state "Modo degradado permitido" as Degradado
+    state "Retomada controlada" as Retomada
+    state "Operação verificada" as Verificada
+    [*] --> Normal
+    Normal --> Incidente: Falha afeta a jornada
+    Incidente --> Suspensas: Conter mutações
+    Suspensas --> Degradado: Consultas atendem ao contrato
+    Suspensas --> Retomada: Todas as condições da nota comprovadas
+    Degradado --> Retomada: Todas as condições da nota comprovadas
+    note right of Retomada
+        Escritor válido e autoridade antiga impedida
+        Integridade e estado dos dados verificados
+        Dependências e capacidade prontas
+    end note
+    Retomada --> Verificada: Canários e indicadores da jornada aprovados
+    Retomada --> Suspensas: Verificação falhou
+    Verificada --> [*]
+```
+
+**Pergunta para treinar:** o endpoint voltou a responder, mas ainda não sabemos se o escritor antigo foi isolado; podemos liberar escrita?
+
 ## Migração e convivência
 
 Pergunte o que muda: hospedagem, linguagem, fronteira de negócio ou autoridade dos dados? Uma fachada nova não elimina uma dependência antiga. Faça inventário, identifique uma primeira capacidade, compare alternativas e proponha critérios de transferência.

@@ -83,6 +83,27 @@ se valor_lido >= 80000:
     responder_aprovado()
 ```
 
+```mermaid
+sequenceDiagram
+    participant A as Operação A (op-a)
+    participant B as Operação B (op-b)
+    participant D as Estado compartilhado
+    Note over D: lim-001 disponível: R$ 1.000<br/>Nenhuma reserva inicial
+    A->>D: Ler disponível
+    D-->>A: R$ 1.000
+    Note over A: Decide reservar R$ 800
+    B->>D: Ler disponível
+    D-->>B: R$ 1.000
+    Note over B: Também decide reservar R$ 800
+    A->>D: Gravar disponível = R$ 200, sem condição
+    A->>D: Registrar reserva op-a de R$ 800
+    B->>D: Gravar disponível = R$ 200, sem condição
+    B->>D: Registrar reserva op-b de R$ 800
+    Note over D: Disponível gravado: R$ 200<br/>Reservas: R$ 1.600 acima do limite de R$ 1.000
+```
+
+**Pergunta para treinar:** as duas leituras estavam corretas; onde está a falha? **Follow-up:** strongly consistent read resolveria isso?
+
 | Passo | A: `op-a` | B: `op-b` | Efeito |
 |---|---|---|---|
 | 1 | Lê R$ 1.000 | — | A decide que pode reservar |

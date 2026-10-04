@@ -26,6 +26,20 @@ Não use dados reais de clientes para demonstrar um controle. O teste pode criar
 
 “Uma pessoa autenticada trocou `accountId` na URL e recebeu informações de outra conta.”
 
+```mermaid
+flowchart TD
+    R["Requisição com accountId"] --> I{"Identidade autenticada?"}
+    I -->|"Não"| N["Negar sem expor dados"]
+    I -->|"Sim"| A{"Pode realizar esta ação<br/>nesta conta e contexto?"}
+    A -->|"Não"| N
+    A -->|"Sim"| B["Backend usa sua identidade técnica"]
+    B --> T{"Acesso técnico ao<br/>armazenamento permitido?"}
+    T -->|"Não"| N
+    T -->|"Sim"| D["Ler o dado autorizado"]
+```
+
+**Pergunta para treinar:** o token é válido e a role do backend pode consultar o banco; onde a troca indevida de `accountId` deve ser impedida?
+
 Comece pelo impacto e contenção apropriada. Investigue a decisão de acesso ao objeto e quais cópias foram produzidas. Não prometa resolver só com um certificado novo ou uma regra genérica de WAF.
 
 Use o [Case 02](../../cases/02-open-finance-apis.md) para examinar identidade do parceiro, token, consentimento e recurso. Use o [Case 06](../../cases/06-genai-financial-advisor.md) para perguntar o que muda quando a informação entra em contexto de geração.

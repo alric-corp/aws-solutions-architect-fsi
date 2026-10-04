@@ -16,6 +16,33 @@ CIDR usa tamanho do prefixo, não categorias modernas obrigatórias de rede pequ
 
 Uma linha de raciocínio: verificar caches e resolução DNS; estabelecer a conexão pertinente; validar a identidade do servidor e a proteção do canal; enviar a requisição; passar pelos componentes de atendimento; consultar dependências; devolver e apresentar a resposta. Detalhes variam com protocolo, cache e conexões já abertas. Não descreva sempre uma nova resolução e um novo handshake completo.
 
+Exemplo conceitual de HTTPS sobre TCP, com handshakes resumidos e sem early data (0-RTT); endpoint e aplicação representam responsabilidades que podem estar no mesmo processo.
+
+```mermaid
+sequenceDiagram
+    participant B as Browser
+    participant D as DNS Resolver
+    participant E as HTTPS Endpoint
+    participant A as Application
+    opt Resolução necessária e nome ausente do cache
+        B->>D: Resolver nome
+        D-->>B: Endereço do destino
+    end
+    opt Sem conexão reutilizável
+        B->>E: Estabelecer conexão TCP (resumo)
+        B->>E: Iniciar negociação TLS
+        E-->>B: Certificado e mensagens TLS (resumo)
+        Note over B,E: Só prosseguir com TLS validado e concluído
+    end
+    B->>E: Requisição HTTP no canal TLS
+    E->>A: Encaminhar requisição
+    A->>A: Processar
+    A-->>E: Resultado
+    E-->>B: Resposta HTTP no canal TLS
+```
+
+**Pergunta para treinar:** DNS funcionou, mas o certificado TLS foi rejeitado; a aplicação recebeu a requisição deste exemplo?
+
 <a id="protocolos"></a>
 ## Protocolos na prática
 

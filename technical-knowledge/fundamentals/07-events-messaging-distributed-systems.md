@@ -82,13 +82,19 @@ Pub/sub distribui uma publicação às assinaturas interessadas; **fan-out** é 
 
 ```mermaid
 flowchart LR
-    P["Produtor: TransferenciaEfetivada"] --> R["Roteador por interesse"]
-    R --> QH["Fila de histórico"]
-    R --> QN["Fila de notificações"]
-    QH --> H1["Worker H1"]
-    QH --> H2["Worker H2"]
-    QN --> N["Worker N1"]
+    P["Produtor: TransferenciaEfetivada"] --> R["Roteador: fan-out por interesse"]
+    R -->|"Entrega independente"| QH
+    R -->|"Entrega independente"| QN
+    subgraph HIST["Histórico: H1 e H2 competem, sem cópia por worker"]
+        QH["Fila de histórico<br/>Reentregas possíveis"] -.->|"Entrega disputada"| H1["Worker H1"]
+        QH -.->|"Entrega disputada"| H2["Worker H2"]
+    end
+    subgraph NOTIF["Notificações: responsabilidade independente"]
+        QN["Fila de notificações<br/>Reentregas possíveis"] --> N["Worker N1"]
+    end
 ```
+
+**Pergunta para treinar:** H1 recebeu um evento; H2 necessariamente recebe uma cópia? E N1?
 
 H1 e H2 competem pelo trabalho de histórico; N1 tem uma cópia independente. Duplicatas continuam possíveis. Neste desenho, o roteador pode ilustrar SNS ou regras de EventBridge; os contratos dos serviços não são intercambiáveis.
 
@@ -113,6 +119,29 @@ Idempotência depende de **identidade estável + verificação e efeito protegid
 ## Exemplo acompanhado: queda depois da gravação
 
 **Hipótese do exercício:** o core já confirmou `tx-001`. O evento `ev-tx-001-v6` atualiza apenas o histórico de atendimento. O consumidor mantém um registro durável de eventos aplicados junto da projeção; seu funcionamento será desenvolvido em SD03.
+
+```mermaid
+sequenceDiagram
+    participant Q as SQS
+    participant H1 as H1
+    participant H2 as H2
+    participant D as Armazenamento do histórico
+    H1->>Q: ReceiveMessage
+    Q-->>H1: ev-tx-001-v6 com recibo rh-1
+    H1->>D: Persistir histórico + ID do evento na mesma transação
+    D-->>H1: Commit confirmado
+    Note over H1: Cai antes de DeleteMessage
+    Note over Q: Visibility timeout expira<br/>Mensagem volta a ficar disponível
+    H2->>Q: ReceiveMessage
+    Q-->>H2: Mesmo evento com novo recibo rh-2
+    H2->>D: Consultar registro do evento aplicado
+    D-->>H2: Efeito já confirmado
+    Note over H2: Não reaplicar o efeito no histórico
+    H2->>Q: DeleteMessage(rh-2)
+    Q-->>H2: Exclusão confirmada
+```
+
+**Pergunta para treinar:** se H1 cair antes do commit, o que muda na ação de H2?
 
 | Passo | Ação | Evidência disponível |
 |---|---|---|
