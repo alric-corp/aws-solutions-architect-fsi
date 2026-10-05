@@ -4,11 +4,32 @@
 
 **Objetivo:** explicar o que uma operação de dados garante, onde essa garantia termina e como proteger uma invariante quando operações concorrem.
 
+**Ao terminar, você deve conseguir:**
+
+- descobrir requisitos de acesso antes de escolher um banco e enunciar a **invariante** a proteger;
+- diferenciar atomicidade, consistência, isolamento e durabilidade, e explicar **lost update** e **write skew**;
+- separar consistência de leitura de controle de concorrência, e explicar locks e optimistic concurrency;
+- separar **idempotência** (mesma operação repetida) de **concorrência** (operações diferentes);
+- explicar índices e seus custos, CAP sem “escolha dois” e o DynamoDB sem generalizar NoSQL;
+- escolher um mecanismo e **justificar o trade-off** em voz alta.
+
+## Modelo mental
+
+Cinco perguntas organizam o resto do módulo. Elas não são teoria nova: apenas dão nome ao que as seções já fazem. Volte a elas a cada exemplo.
+
+| # | Pergunta | No cenário `lim-001` | Onde reaparece |
+|---|---|---|---|
+| 1 | **Qual é a autoridade?** Quem decide e registra o estado que vale | A linha/item de `lim-001` no core, não um extrato ou cache | [Autoridade × projeção](#autoridade-projecao), GSI, réplicas |
+| 2 | **Qual é a invariante?** O que nunca pode ser violado | Reservado + consumido ≤ R$ 1.000 | Constraints, write skew, exercício |
+| 3 | **Qual é a unidade atômica?** O que precisa confirmar junto | Identidade de `op-a` + reserva + contador | [Fronteira da transação](#fronteira-transacao), ACID |
+| 4 | **Que outra operação pode concorrer?** | `op-b` (diferente) ou repetição de `op-a` (mesma) | Lock, CAS, isolamento, [idempotência × concorrência](#idempotencia-concorrencia) |
+| 5 | **Que evidência prova o resultado?** | R$ 800 reservados, R$ 200 disponíveis, uma reserva por `operation_id` | Troubleshooting, “O que observar”, exercício |
+
 ## Roteiro de leitura
 
-**Essencial:** padrões de acesso → modelos e constraints → exemplo de concorrência → ACID → isolamento e leituras. Faça o exemplo com papel antes de escolher uma engine.
+**Essencial:** modelo mental → padrões de acesso → modelos e constraints → exemplo de concorrência (inseguro, lock, versão, idempotência, timeout, fronteira) → ACID → isolamento e leituras → autoridade × projeção. Faça o exemplo com papel antes de escolher uma engine.
 
-**Aprofundamentos:** indexação, write skew, CAP/BASE/PACELC e escopos do DynamoDB. Termine pelas perguntas e pelo exercício; não é necessário memorizar configurações de produção.
+**Aprofundamentos:** indexação, write skew, CAP/BASE/PACELC e escopos do DynamoDB, com o mesmo cenário mapeado em Aurora/PostgreSQL, DynamoDB e multi-Region. Depois, troubleshooting, armadilhas, perguntas e exercício; não é necessário memorizar configurações de produção.
 
 **Fronteira:** F06 explica índices, transações, locks, versões e consistência de uma operação. [SD02](../system-design/02-data-at-scale.md) combina esses mecanismos com capacidade, pooling, cache, réplicas e sharding. Outbox, idempotência de consumidores e coordenação entre autoridades estão em [SD03](../system-design/03-distributed-workflows.md).
 
@@ -163,6 +184,71 @@ Retry é aceitável para conflito transitório quando a tentativa anterior foi a
 
 Se B fosse uma repetição de **`op-a`**, o problema seria também idempotência: devolver o mesmo resultado sem consumir outros R$ 800. Com limite maior, duas repetições poderiam satisfazer o predicado e consumir duas vezes; só verificar disponibilidade não basta. Inversamente, deduplicar `op-a` não impede `op-b` de disputar o mesmo orçamento.
 
+<a id="idempotencia-concorrencia"></a>
+#### 5. Idempotência × concorrência
+
+São dois problemas que se confundem porque ambos aparecem como “duas requisições ao mesmo tempo”.
+
+| | Idempotência | Concorrência |
+|---|---|---|
+| Pergunta | Esta é a **mesma** operação de novo? | Operações **diferentes** disputam o mesmo estado? |
+| Exemplo | `op-a` + `op-a` | `op-a` + `op-b` |
+| Garantia buscada | A mesma identidade não cria novo efeito; devolve o resultado registrado | Cada decisão vê o estado correto e a invariante se mantém |
+| Mecanismo típico | Identidade estável + unicidade/registro de resultado na autoridade | Lock, atualização condicional/versão, isolamento adequado |
+| Não resolve | Duas operações legítimas disputando R$ 1.000 | Uma repetição que consome o orçamento duas vezes |
+
+**Pergunta de treino:** `UNIQUE(operation_id)` resolve as duas reservas de R$ 800? **Não.** `op-a` e `op-b` têm identidades diferentes, então a constraint não conflita e as duas passam por ela. O que protege o limite é o lock ou a condição sobre `lim-001`. A constraint só responde à pergunta “já vi esta operação?”. Os dois mecanismos se somam; nenhum substitui o outro.
+
+<a id="timeout-nao-e-rollback"></a>
+#### 6. Timeout não é rollback
+
+```text
+cliente envia op-a
+        ↓
+core confirma o commit (reserva de R$ 800 existe)
+        ↓
+a resposta se perde
+        ↓
+cliente vê timeout
+```
+
+**Pergunta:** o cliente pode criar uma nova operação para “garantir”? **Não automaticamente.** Um novo `operation_id` seria outra operação e poderia reservar outros R$ 800. Primeiro investigue o resultado pela **identidade original**, ou repita a mesma operação sob um contrato idempotente.
+
+| Situação | O que se sabe | Reação adequada |
+|---|---|---|
+| Timeout / resultado desconhecido | O commit pode ou não ter ocorrido | Consultar ou repetir pela mesma identidade; não criar outra operação |
+| Abort conhecido (rollback, deadlock, falha de serialização) | A tentativa **não** confirmou | Retry da transação completa, com limite e prazo |
+| Rejeição de negócio (`limite insuficiente`) | A decisão foi tomada e é definitiva para aquela entrada | Não repetir; devolver o motivo. Registrar a decisão se o contrato exigir |
+
+Os mecanismos de timeout, retry e contrato HTTP estão em [F02](02-http-rest-openapi.md) e [F07](07-events-messaging-distributed-systems.md); aqui interessa apenas o ponto de dados: **só a autoridade sabe o resultado**.
+
+<a id="fronteira-transacao"></a>
+#### 7. Fronteira da transação
+
+```text
+DENTRO da mesma transação (pode confirmar junto)      FORA (não entra automaticamente)
+─────────────────────────────────────────────────     ─────────────────────────────────
+identidade da operação (op-a)                         chamada HTTP a serviço externo
++ reserva / atualização do contador de lim-001        publicação em SQS ou outro broker
++ resultado local registrado                          outro microserviço, com seu próprio banco
+                                                      terceiro (parceiro, câmara, adquirente)
+```
+
+`COMMIT` torna atômico o que a engine controla. Se a aplicação chama um serviço depois do commit e cai antes de chamar, ou chama antes e a transação aborta, o efeito externo e o interno divergem. O caminho seguro é registrar a **intenção** dentro da transação e executar o efeito externo depois, com identidade estável: [outbox e inbox em SD03](../system-design/03-distributed-workflows.md#transactional-outbox) e [saga](../system-design/03-distributed-workflows.md#saga). Aqui basta saber que a garantia ACID termina na fronteira do banco que executou o commit.
+
+### Problema → mecanismo
+
+Use como mapa de perguntas, não como receita universal: cada mecanismo resolve um pedaço e deixa outro de fora.
+
+| Problema | Mecanismo possível | O que ele NÃO resolve sozinho |
+|---|---|---|
+| Mesma operação repetida | Idempotência / identidade única | Concorrência entre operações diferentes |
+| Duas operações disputam um valor | Lock / escrita condicional (CAS) | Efeitos externos; regras que dependem de outros itens |
+| Várias mudanças devem confirmar juntas | Transaction | Coordenação entre serviços ou bancos distintos |
+| Leitura pode estar desatualizada | Contrato de leitura mais forte | Exclusão mútua depois da leitura |
+| Regra depende de um conjunto de linhas | Linha de coordenação ou isolamento serializável | Efeitos externos; custo de aborto e retry |
+| Query lenta | Índice | Workload mal modelado; custo extra de escrita |
+
 **Conexão FSI:** o [Case 10, modelo de dados](../../cases/10-card-authorization-platform.md#s08) mantém a decisão financeira e a reserva no core. O exemplo explica um mecanismo dentro da autoridade pertinente, sem transferi-la para cache ou banco auxiliar. No [Case 03](../../cases/03-event-driven-banking.md#s01), limite operacional é distinto de saldo, e débito/crédito continuam uma operação atômica do core. Não estamos implementando um ledger.
 
 <a id="acid-cap"></a>
@@ -210,6 +296,13 @@ A tabela descreve **PostgreSQL 18**, não todos os bancos com os mesmos nomes. C
 
 Escolha a proteção da invariante, não o nome mais forte por reflexo. Para o orçamento de uma linha, a atualização condicional pode ser suficiente. Para regras envolvendo vários conjuntos, a complexidade de coordenar locks pode justificar serialização. Meça abortos, espera e latência; retries sem limite podem piorar a sobrecarga. Verifique também o nível efetivamente usado pela conexão, e não apenas o padrão que alguém supôs.
 
+**Pergunta de treino:** se eu aumentar o isolamento para `SERIALIZABLE`, resolvi tudo? **Não.**
+
+- Oferece equivalência a alguma ordem serial **para o conjunto de transações que participam desse isolamento**, o que cobre anomalias como o write skew de linhas distintas. Elevar só um caminho para `SERIALIZABLE` não torna segura sua interação com outro caminho que altere a mesma invariante com proteção mais fraca: todos os caminhos que a modificam precisam usar `SERIALIZABLE` ou um mecanismo equivalente que preserve o protocolo.
+- Faz isso **abortando** tentativas incompatíveis (SQLSTATE `40001`). A aplicação precisa tratar o erro e repetir a transação completa, inclusive a lógica que tomou a decisão; a documentação do PostgreSQL diz que quem usa esse nível deve estar preparado para retry. [Serializable e retry][r-isolation]
+- Não cobre efeitos fora da transação: HTTP, mensagem ou outro serviço continuam fora da garantia. Também não é “exactly-once”: uma repetição da mesma operação continua pedindo idempotência.
+- Sob contenção, mais abortos significam mais trabalho descartado; meça antes de adotar como padrão.
+
 ### Consistência de leitura não é isolamento entre decisões
 
 | Garantia/conceito | O que o cliente pode esperar | Limite |
@@ -222,7 +315,18 @@ Escolha a proteção da invariante, não o nome mais forte por reflexo. Para o o
 
 As garantias de sessão não equivalem a transações: [Terry et al.][r-session] tratam read-your-writes e monotonic reads. A engine/API define o escopo da leitura forte; para DynamoDB, veja [consistência de leitura][r-ddb-read].
 
-Uma leitura forte de uma **projeção** só vê o que já chegou a ela. Não descobre uma transferência ainda não ingerida. A diferença entre autoridade e modelo de consulta está em [SD03, CQRS](../system-design/03-distributed-workflows.md#cqrs); o [Case 09](../../cases/09-multi-region-internet-banking.md#s08) mostra como comunicar um extrato em atualização sem negar um resultado financeiro confirmado.
+<a id="autoridade-projecao"></a>
+### Autoridade × projeção
+
+```text
+ESTADO AUTORITATIVO                      MODELO DE LEITURA / PROJEÇÃO
+(onde a operação foi decidida)    ───►   (extrato, busca, dashboard, GSI, cache)
+transferência confirmada no core         ainda não ingerida → extrato atrasado
+```
+
+Uma leitura forte de uma **projeção** só vê o que já chegou a ela. “Forte” descreve a atualidade **em relação àquela cópia**, não em relação ao core. Por isso a ausência na projeção **não prova** que a operação não existe: pode ser atraso de propagação, filtro, falha de ingestão ou índice eventual. Perguntas de investigação: qual é a autoridade desta informação? A pergunta que o cliente fez precisa da decisão (consulte a autoridade pela identidade) ou da exibição (a projeção atrasada é aceitável, se a tela diz que está em atualização)?
+
+A diferença entre autoridade e modelo de consulta está em [SD03, CQRS](../system-design/03-distributed-workflows.md#cqrs); o [Case 09](../../cases/09-multi-region-internet-banking.md#s08) mostra como comunicar um extrato em atualização sem negar um resultado financeiro confirmado.
 
 <a id="indexacao"></a>
 ## Indexação
@@ -231,9 +335,22 @@ Uma leitura forte de uma **projeção** só vê o que já chegou a ela. Não des
 
 **Aprofundamento com PostgreSQL 18:** uma B-tree organiza chaves em ordem e permite localizar uma faixa, depois percorrê-la. Atende igualdade, intervalos e algumas ordenações. Um índice hash atende igualdade; não oferece o mesmo percurso ordenado por faixa. Tipo, operadores e consulta precisam ser compatíveis. [Tipos de índice][r-index-types]
 
+### Cenário: o extrato
+
+```sql
+-- Ilustrativo; não executado.
+SELECT entry_id, occurred_at, amount_centavos
+FROM ledger_entry
+WHERE account_id = ?
+  AND occurred_at BETWEEN ? AND ?
+ORDER BY occurred_at, entry_id;
+```
+
+**Pergunta:** qual padrão de acesso estamos tentando otimizar? Antes de criar qualquer índice, responda: quantas linhas essa consulta devolve (uma página de 50 ou o ano inteiro)? Com que frequência roda? Há contas muito maiores que as outras? A tabela recebe escritas contínuas? Só depois olhe o desenho.
+
 ### Composição, seletividade e ordem
 
-Imagine o extrato por `account_id`, intervalo de `occurred_at` e desempate por `entry_id`. Um índice B-tree nessa ordem agrupa entradas de uma conta e favorece buscar seu período em ordem. A ordem deve seguir filtros, faixas, joins e ordenação do workload; “coloque sempre a coluna mais seletiva primeiro” também é uma simplificação.
+Para o extrato acima, um índice B-tree em `(account_id, occurred_at, entry_id)` agrupa as entradas de uma conta, permite localizar o início do período e percorrer a faixa já na ordem pedida, sem ordenação separada. A ordem das colunas vem do workload: igualdade primeiro (`account_id`), faixa e ordenação depois. Se o planner ainda escolher outro caminho, o motivo está nas estatísticas e na distribuição, não numa regra fixa; a hipótese se confirma com `EXPLAIN`, como em “Ler o plano”, abaixo. O custo de escrita desse índice entra na decisão (veja “Cobertura e custo de manutenção”). A ordem deve seguir filtros, faixas, joins e ordenação do workload; “coloque sempre a coluna mais seletiva primeiro” também é uma simplificação.
 
 **Cardinalidade** é a quantidade de valores distintos; **seletividade do predicado** é quanto ele restringe o conjunto. Uma coluna com muitos valores pode ter uma conta excepcionalmente frequente. Estatísticas desatualizadas ou distribuição desigual podem levar o planner a estimar mal o trabalho.
 
@@ -258,6 +375,22 @@ Uma **partition** de rede impede grupos de nós de trocar as mensagens necessár
 **Experimento mental:** a região X confirmou `version = 8`, mas a comunicação com Y foi interrompida. Y só conhece 7. Responder imediatamente com 7 viola a leitura linearizável; esperar até conseguir a informação pode sacrificar disponibilidade durante a partição. Um protocolo pode continuar atendendo um lado com quórum e bloquear o outro, sem garantir atendimento em **todos** os nós não falhos.
 
 O dilema aparece durante a partição. Fora dela ainda existem custos de coordenação, mas “escolha dois de três” não é uma classificação universal de SQL/NoSQL. **ACID Consistency preserva invariantes de estado; CAP Consistency ordena a observação das operações distribuídas.** Consulte também a revisão de Brewer em [T05](../../references/README.md#t05).
+
+### Não diga isso na entrevista
+
+- “CAP é escolha dois de três.”
+- “SQL é CP e NoSQL é AP.”
+- “A Consistency do ACID é a Consistency do CAP.”
+- “Eventually consistent significa dado incorreto.”
+- “BASE é o oposto de ACID.”
+
+### Formulação melhor
+
+- **CAP:** sob partições, um serviço de leitura/escrita replicado não pode garantir simultaneamente linearizabilidade e atendimento de todos os pedidos aos nós não falhos. Isso não proíbe que algumas operações sejam atendidas corretamente durante a partição; o dilema aparece sob partição, e o que se sacrifica depende do protocolo.
+- **SQL × NoSQL:** o contrato vem do produto, do modo e da configuração, não do rótulo.
+- **Dois “C”:** ACID Consistency preserva invariantes de estado; CAP Consistency ordena a observação entre cópias.
+- **Eventual:** o dado pode estar defasado, não errado; sem novas escritas, as cópias convergem, e quanto tempo isso leva é uma pergunta de contrato.
+- **BASE:** vocabulário para operação parcial e convergência, usado em partes do sistema; não nega transações locais.
 
 <a id="base-pacelc"></a>
 ## BASE e PACELC
@@ -297,22 +430,156 @@ MRSC opera em conjuntos regionais autorizados nos EUA, Europa e Ásia-Pacífico,
 
 **Consequência para os cases:** substituir MREC por MRSC exige rever regiões, APIs e modelo de dados. Não é uma opção transparente para o fluxo transacional do [Case 01, disponibilidade](../../cases/01-payment-processing-pix.md#s15). Nenhum dos modos desloca a autoridade financeira do core nos Cases 03 e 10.
 
+#### O que preciso lembrar para entrevista
+
+- Leitura de tabela e de LSI pode ser **fortemente consistente** (`ConsistentRead`); a de GSI é **sempre eventual**.
+- **Strong read não é lock:** nada impede que outro escritor altere o item logo depois.
+- **Conditional write** protege o item e o predicado que a condição expressa; não protege outros itens nem regras que ela não menciona.
+- **Transação tem escopo:** até 100 ações sobre itens distintos da mesma conta e região; não opera por índices; não inclui API externa. [APIs transacionais][r-ddb-tx]
+- **Global tables têm contratos específicos** por modo: MREC ≠ MRSC.
+- **Consistência multi-Region ≠ transação financeira global:** a garantia é sobre a replicação do item, não sobre a jornada.
+
+## O mesmo cenário em serviços AWS
+
+“Como esse conceito aparece em serviços AWS?” Três mapeamentos curtos de `lim-001`; não são tutoriais nem listas de configuração.
+
+### A. Aurora PostgreSQL
+
+| Conceito | Como aparece no cenário | Cuidado |
+|---|---|---|
+| Lock pessimista | Dentro da transação, `SELECT ... FOR UPDATE` em `lim-001`; B espera e relê a versão confirmada por A | Segure a transação pouco tempo; nada de chamada externa com o lock aberto |
+| Unidade atômica | `INSERT` da identidade + `UPDATE` do contador + resultado no mesmo `COMMIT` | Efeitos fora do banco continuam fora |
+| Versão otimista | `UPDATE ... WHERE version = 7 AND disponível >= 80000`, inspecionando linhas afetadas | Zero linhas pode ser conflito, ausência ou falta de limite |
+| Isolamento | Escolha pela anomalia que a regra teme; erro `40001` pede retry da transação inteira | Aurora é compatível com PostgreSQL, mas a tabela de níveis deste módulo vem da documentação do PostgreSQL 18; confirme versão e comportamento no serviço antes de afirmar equivalência |
+
+### B. DynamoDB
+
+| Conceito | Como aparece no cenário | Cuidado |
+|---|---|---|
+| Escrita condicional | `UpdateItem` em `lim-001` com `ConditionExpression` como `available_centavos >= :valor` | A condição compara atributos e valores; a aritmética fica na `UpdateExpression`. Mantenha o atributo derivado apenas por esse caminho |
+| Unidade atômica | `TransactWriteItems` com um `Put` da operação (`attribute_not_exists` na chave) e um `Update` condicional em `lim-001` | Não se pode alvejar o mesmo item duas vezes na transação. Se a transação for cancelada, interprete os motivos como descrito abaixo |
+| Identidade já existe | A condição do `Put` da operação falha; leia o item com `ConsistentRead` e **compare a intenção** antes de decidir | Mesmo `operation_id` com intenção compatível: recupere o resultado anterior. Valor ou intenção diferente: conflito de identidade, não repetição válida |
+| Retry da própria chamada | `ClientRequestToken` na `TransactWriteItems` | Veja “Três coisas que não se misturam” |
+| Leitura forte | `GetItem` com `ConsistentRead` mostra R$ 1.000 para A e B se ambos leem antes da primeira escrita | Não é exclusão mútua |
+| GSI | Localiza candidatos, por exemplo reservas pendentes | Eventual e sem transação por índice; ausência no GSI não prova inexistência. Valide na tabela |
+| Item compartilhado | Todo pedido do limite passa por um único item `lim-001` | Concentração de tráfego pode causar contenção e throttling: [SD02](../system-design/02-data-at-scale.md#particionamento) |
+
+**Três coisas que não se misturam**
+
+1. **`ClientRequestToken`:** dá idempotência à **chamada de API** `TransactWriteItems`. Por contrato documentado, o token vale por 10 minutos após o término da primeira solicitação que o usou; uma chamada idêntica nessa janela não é tratada como nova execução normal das escritas, e mudar parâmetros dentro dela gera `IdempotentParameterMismatch`. Não é idempotência financeira permanente: após a janela, o token vira uma solicitação nova, e a identidade de negócio precisa de retenção durável própria.
+2. **`Put` condicional da identidade:** detectar que `op-a` já existe não prova repetição válida; é preciso comparar a intenção (ver tabela).
+3. **`CancellationReasons`:** `ConditionalCheckFailed` sozinho não diz o motivo de negócio. Considere o código, a **posição** da ação na lista de itens (os motivos seguem essa ordem) e o predicado que falhou: falha no `Put` da identidade → investigar operação existente e intenção; falha no `Update` do limite → investigar o predicado financeiro. Classificar o motivo de negócio é responsabilidade da aplicação, e a forma como os detalhes são expostos varia por SDK.
+
+Fontes: [transações e idempotência][r-ddb-tx], [condições][r-conditions], [leituras][r-ddb-read]. As operações descritas não foram executadas.
+
+### C. Multi-Region (global tables)
+
+| Modo | O que acontece com A e B se chegam a regiões diferentes | Lição |
+|---|---|---|
+| MREC | **Cenário derivado dos contratos documentados, não uma execução oficial:** a replicação é assíncrona e as condições têm escopo regional. Se ambas as avaliações locais ocorrerem antes de cada região receber a alteração da outra, as duas reservas podem ser aceitas; o conflito por item usa *last writer wins*, e um efeito pode ser sobrescrito. Não há ordem de propagação nem região vencedora definidas | Condição local e leitura forte regional não coordenam regiões; a transação também só é atômica na origem |
+| MRSC | Escrita confirmada após replicação síncrona; condição e leitura forte pedida usam a versão mais recente; escritas concorrentes podem gerar `ReplicatedWriteConflictException` | Protege a **versão do item**, não a jornada; sem transações, o par identidade + contador precisa de outro desenho |
+
+Replicação é um contrato sobre cópias de itens. Ela não vira transação global nem substitui a autoridade do core. Detalhes e restrições na tabela de [global tables](#global-tables-mrec-e-mrsc).
+
+## Troubleshooting por hipótese
+
+Formato: **hipótese → evidência → decisão**. Não há métricas medidas aqui; os sinais são o que você procuraria. Medição e alarmes: [F08](08-observability-troubleshooting.md).
+
+### Cenário 1: CPU do banco alta no pico
+
+Primeiro separe dois quadros: **CPU alta** indica trabalho consumindo CPU; **sessões ativas esperando** (lock, I/O) elevam latência e *database load* sem serem, por si, a origem do consumo de CPU. Uma sessão ativa ou está na CPU ou espera um recurso, então os sintomas podem coexistir, e correlação não prova causalidade. [Database load][r-dbload]
+
+Perguntas, em ordem: houve mudança de workload? Quais queries aumentaram execução ou trabalho? O plano mudou? A concorrência aumentou? Retries amplificaram a carga? Existem waits relevantes, e eles explicam latência, CPU ou ambos? Sinais possíveis: métricas de CPU, database load, sessões ativas, wait events, estatísticas por query, planos e correlação temporal.
+
+| Hipótese | Evidência a buscar | Decisão |
+|---|---|---|
+| Query nova ou mudou de plano | Estatísticas por query (por exemplo `pg_stat_statements`, se habilitada) e `EXPLAIN` da consulta dominante | Índice ou reescrita, comparando custo de escrita |
+| Falta ou excesso de índice | Varreduras grandes para poucas linhas; escrita lenta com muitos índices | Ajustar conforme o padrão de acesso |
+| Conexões demais | Muitas sessões ativas competindo por CPU | Limitar concorrência: pooling em [SD02](../system-design/02-data-at-scale.md#consultas-e-conexões-antes-de-adicionar-nós) |
+| Waits por lock (podem explicar latência, não necessariamente CPU) | Wait events de lock dominando o database load; sessões esperando em vez de executando | Encurtar transações; revisar ordem de aquisição |
+| Mudança de workload | Novo release, campanha, relatório no horário de pico | Separar o trabalho ou limitar o novo tráfego |
+| Waits de I/O (idem) | Leitura de disco acima do normal, waits de leitura nos wait events | Reduzir dados lidos antes de aumentar capacidade; verifique se explicam a latência, a CPU ou ambos |
+
+### Cenário 2: muitos serialization failures
+
+| Hipótese | Evidência a buscar | Decisão |
+|---|---|---|
+| Transações demais disputando as mesmas linhas | Quais transações aparecem juntas nos erros `40001` | Reduzir o conjunto de dados lido/escrito por transação |
+| Transações longas | Duração de cada uma; trabalho feito entre ler e escrever | Encurtar; tirar chamada externa de dentro |
+| Hot key | Poucas chaves concentram os conflitos | Reavaliar o desenho da linha de coordenação |
+| Retry amplification | Taxa de tentativas maior que a de pedidos novos | Limitar tentativas e prazo, com espaçamento; não reiniciar só o último comando |
+
+Decisão importante: se o nível `SERIALIZABLE` foi escolhido “por segurança”, avalie se uma atualização condicional ou uma linha de coordenação protegem a invariante com menos aborto.
+
+### Cenário 3: DynamoDB com throttle em poucas partition keys
+
+| Hipótese | Evidência a buscar | Decisão |
+|---|---|---|
+| Chave quente (skew) | Métricas de throttle concentradas; ferramenta de chaves mais acessadas (por exemplo, CloudWatch Contributor Insights) | Identificar o padrão de acesso que concentra |
+| Item compartilhado como `lim-001` | Muitas escritas no mesmo item | Rever o desenho antes de aumentar capacidade |
+| Crescimento de acesso por GSI | Throttle no índice, não na tabela | Avaliar a chave do índice |
+
+Escalar o armazenamento, dividir chaves e capacidade são tema de [SD02](../system-design/02-data-at-scale.md#particionamento); aqui o objetivo é reconhecer o skew.
+
+### Cenário 4: cliente recebeu timeout, a projeção não mostra a operação
+
+| Hipótese | Evidência a buscar | Decisão |
+|---|---|---|
+| O commit ocorreu e a projeção atrasou | Consulta pela **mesma identidade** na autoridade | Informar “em atualização”; não criar outra operação |
+| O commit não ocorreu | A autoridade não tem a identidade e há registro de abort | Repetir a mesma operação sob o contrato idempotente |
+| A operação foi recusada por regra de negócio | Resultado registrado com o motivo | Devolver o motivo; não tentar de novo |
+| Falha de ingestão na projeção | Lag crescente ou mensagens paradas | Tratar a projeção; o resultado financeiro permanece |
+
+Perguntas-guia: qual é a autoridade? qual é a identidade? o commit é conhecido? há atraso de projeção?
+
+## Armadilhas comuns
+
+| Armadilha | Formulação melhor |
+|---|---|
+| “Strong read é lock.” | Leitura forte devolve o estado confirmado mais recente; não impede outra escrita depois |
+| “Transação significa uma por vez.” | ACID Isolation controla o que cada transação observa, sem execução física serial |
+| “Idempotência controla concorrência.” | Idempotência trata a mesma operação repetida; concorrência entre operações diferentes pede lock, condição ou isolamento |
+| “NoSQL é eventual consistency.” | Depende do produto e da operação; DynamoDB oferece leitura forte e transações |
+| “ACID é coisa de SQL.” | ACID é um contrato; DynamoDB tem transações ACID com escopo definido |
+| “Unique constraint resolve limite agregado.” | Unicidade impede identidades iguais; a soma exige lock, condição ou serialização |
+| “Retry é sempre seguro.” | Só quando a tentativa abortou ou a identidade permite recuperar o resultado |
+| “Timeout é rollback.” | Timeout é resultado desconhecido; o commit pode ter ocorrido |
+| “Réplica de leitura é backup.” | Réplica copia também erros e exclusões; recuperação é outro contrato (SD02) |
+| “O item não está no GSI, logo não existe.” | GSI é eventual; confirme na tabela |
+| “Serializable dispensa retry.” | Serializable pode abortar; a aplicação precisa repetir a transação completa |
+
 ## Perguntas de aprofundamento
 
 Ao mudar um requisito, volte a quatro pontos: unidade atômica, estado usado na decisão, reação ao conflito e evidência do resultado. Para investigar chaves quentes, atraso de réplica e failover, avance para [SD02](../system-design/02-data-at-scale.md#replicacao). Para migração, consulte [F12](12-resilience-migration.md).
 
 ## Perguntas de entrevista
 
-As respostas abaixo são critérios de raciocínio, não discursos para memorizar. Em cada tentativa, explicite descoberta, hipótese, decisão, trade-off e validação.
+As respostas abaixo são critérios de raciocínio, não discursos para memorizar. Em cada tentativa, explicite descoberta, hipótese, decisão, trade-off e validação. Em “O que observar”, procure seis sinais de uma boa resposta de SA:
+
+- **Discovery:** o que falta saber?
+- **Invariant:** o que não pode quebrar?
+- **Mechanism:** qual garantia resolve isso?
+- **Trade-off:** qual custo?
+- **Failure:** onde pode falhar?
+- **Evidence:** como valido?
 
 ### 1. Que informação falta antes de escolher relacional ou DynamoDB?
 
 **Follow-up:** agora precisamos buscar operações por conta, estado e período, além do ID.
 
 <details>
-<summary>Resposta comentada</summary>
+<summary><strong>Ver resposta comentada</strong></summary>
 
-Liste consultas, distribuição, picos, invariantes e recuperação. A nova consulta pode exigir índice, projeção ou outra modelagem; compare custo de mantê-la e atraso permitido. “NoSQL escala” não responde se a operação crítica cabe na fronteira atômica. Uma boa resposta produz uma matriz de acessos e justifica pelo menos duas alternativas.
+### Resposta esperada
+
+Liste consultas e frequência, volume, distribuição, picos, invariantes, consistência necessária e recuperação. A nova consulta (conta + estado + período) pode exigir índice, projeção ou outra modelagem; compare o custo de mantê-la e o atraso aceitável. “NoSQL escala” não responde se a operação crítica cabe na fronteira atômica.
+
+### O que observar
+
+- **Discovery:** produz uma matriz de acessos, não um nome de produto.
+- **Invariant:** identifica o que a operação crítica não pode violar antes de escolher.
+- **Trade-off:** compara pelo menos duas alternativas, com custo de leitura, escrita e manutenção.
+- **Evidence:** diz como validaria o acesso (plano, teste de carga com o padrão real).
 
 </details>
 
@@ -321,9 +588,18 @@ Liste consultas, distribuição, picos, invariantes e recuperação. A nova cons
 **Follow-up:** as duas chamadas terminaram a leitura antes de qualquer atualização.
 
 <details>
-<summary>Resposta comentada</summary>
+<summary><strong>Ver resposta comentada</strong></summary>
 
-Não. Ambas podem ter lido corretamente. Identifique a janela entre verificar e mudar; proponha lock com decisão na transação ou predicado atômico. A evidência é uma intercalação em que só uma reserva confirma e o disponível termina em R$ 200. Não atribua exclusão mútua à leitura forte.
+### Resposta esperada
+
+Não. Ambas podem ter lido corretamente. A falha está na janela entre verificar e mudar. Proponha lock com a decisão dentro da transação, ou um predicado atômico na escrita. Leitura forte não dá exclusão mútua.
+
+### O que observar
+
+- **Mechanism:** separa “o que a leitura devolve” de “quem pode escrever depois”.
+- **Invariant:** nomeia a violação (R$ 1.600 admitidos para R$ 1.000).
+- **Failure:** descreve a intercalação em que só uma reserva deveria confirmar e o disponível termina em R$ 200.
+- **Evidence:** propõe um teste concorrente com resultado esperado.
 
 </details>
 
@@ -332,9 +608,18 @@ Não. Ambas podem ter lido corretamente. Identifique a janela entre verificar e 
 **Follow-up:** `op-a` reaparece com outro valor após um timeout.
 
 <details>
-<summary>Resposta comentada</summary>
+<summary><strong>Ver resposta comentada</strong></summary>
 
-A unicidade evita duas identidades iguais, mas A e B legítimas ainda concorrem. Associe identidade à intenção e ao resultado. Uma repetição compatível recupera a decisão; payload diferente exige tratamento de conflito. Contador e registro devem confirmar juntos. Teste separadamente operações distintas e retries da mesma operação.
+### Resposta esperada
+
+Não. `UNIQUE(operation_id)` evita duas identidades iguais, mas `op-a` e `op-b` legítimas continuam concorrendo pelo mesmo orçamento. Associe identidade à intenção e ao resultado: uma repetição compatível recupera a decisão; payload diferente com a mesma identidade é conflito a tratar. Contador e registro confirmam juntos.
+
+### O que observar
+
+- **Discovery:** pergunta se a repetição é a mesma operação ou outra.
+- **Mechanism:** atribui a repetição à idempotência e a disputa ao lock/condição, sem misturar.
+- **Failure:** trata o payload divergente sob a mesma identidade.
+- **Evidence:** testa separadamente `op-a`+`op-b` e `op-a`+`op-a`.
 
 </details>
 
@@ -343,9 +628,18 @@ A unicidade evita duas identidades iguais, mas A e B legítimas ainda concorrem.
 **Follow-up:** uma única conta passa a receber a maior parte das tentativas.
 
 <details>
-<summary>Resposta comentada</summary>
+<summary><strong>Ver resposta comentada</strong></summary>
 
-Compare duração da decisão, contenção e possibilidade de refazer a tentativa. Locks podem formar fila; CAS pode produzir repetidas tentativas inúteis. Releia após conflito e recalcule a regra. Sob chave quente, meça espera, abortos e trabalho por sucesso, impondo prazo e admissão; trocar o mecanismo não aumenta o orçamento financeiro.
+### Resposta esperada
+
+Compare duração da decisão, contenção e possibilidade de refazer a tentativa. Lock forma fila; CAS pode produzir tentativas inúteis repetidas. Após conflito, releia e recalcule a regra. Sob chave quente, meça espera, abortos e trabalho por sucesso, com prazo e admissão; trocar o mecanismo não aumenta o orçamento financeiro.
+
+### O que observar
+
+- **Trade-off:** fila e deadlock de um lado, retries descartados do outro.
+- **Failure:** não repete às cegas; limita tentativas e prazo.
+- **Mechanism:** reconhece que a chave quente é um problema de desenho, não do mecanismo.
+- **Evidence:** cita espera, abortos e latência como métricas.
 
 </details>
 
@@ -354,9 +648,18 @@ Compare duração da decisão, contenção e possibilidade de refazer a tentativ
 **Follow-up:** A e B inserem linhas distintas após ler a mesma soma.
 
 <details>
-<summary>Resposta comentada</summary>
+<summary><strong>Ver resposta comentada</strong></summary>
 
-Mostre o write skew. Não há atualização da mesma linha para detectar automaticamente o conflito. Compare uma linha comum de coordenação com isolamento serializável apropriado. Diga quais caminhos devem participar do protocolo e como tratar abortos. A validação deve olhar a soma final, não apenas a ausência de erros SQL.
+### Resposta esperada
+
+Não: é o write skew. Não há atualização da mesma linha para detectar o conflito. Compare uma linha comum de coordenação com isolamento serializável. Diga quais caminhos participam do protocolo e como tratar abortos. Aumentar o isolamento não resolve tudo: pode abortar, exige retry e não cobre efeitos externos.
+
+### O que observar
+
+- **Failure:** mostra a intercalação com linhas distintas.
+- **Mechanism:** compara pelo menos duas proteções.
+- **Trade-off:** custo de coordenação versus custo de abortos.
+- **Evidence:** valida a soma final, não só a ausência de erros SQL.
 
 </details>
 
@@ -365,9 +668,18 @@ Mostre o write skew. Não há atualização da mesma linha para detectar automat
 **Follow-up:** uma réplica devolve um estado antigo que ainda respeita todas as constraints.
 
 <details>
-<summary>Resposta comentada</summary>
+<summary><strong>Ver resposta comentada</strong></summary>
 
-O estado pode ser válido e, mesmo assim, violar a atualidade/ordenação exigida pela leitura. Separe integridade da transição e observação entre cópias. Durante isolamento de rede, declare qual operação espera ou fica indisponível. Não trate a palavra “consistente” como garantia financeira completa.
+### Resposta esperada
+
+Não. O estado pode ser válido e, mesmo assim, não atender à atualidade ou ordenação exigida pela leitura. ACID Consistency preserva invariantes da transição; CAP Consistency ordena a observação entre cópias. Durante uma partição, declare qual operação espera ou fica indisponível.
+
+### O que observar
+
+- **Invariant:** separa integridade do estado de atualidade da leitura.
+- **Failure:** descreve o que acontece durante a partição, por operação.
+- **Trade-off:** reconhece o custo de latência/disponibilidade, sem “escolha dois”.
+- **Discovery:** pergunta qual leitura exige atualidade.
 
 </details>
 
@@ -376,9 +688,18 @@ O estado pode ser válido e, mesmo assim, violar a atualidade/ordenação exigid
 **Follow-up:** há poucas contas, mas grande variação no tamanho de cada uma.
 
 <details>
-<summary>Resposta comentada</summary>
+<summary><strong>Ver resposta comentada</strong></summary>
 
-Não responda com proibição universal. Engine, versão, distribuição e plano determinam uso e eficiência. Compare páginas percorridas, linhas devolvidas e custo de um índice alternativo na escrita. Cobrir a consulta também não prova ausência de acessos ao heap. Peça evidência de plano; não invente `EXPLAIN` nem ganho percentual.
+### Resposta esperada
+
+Não responda com proibição universal. Engine, versão, distribuição e plano determinam uso e eficiência. Compare páginas percorridas, linhas devolvidas e o custo de um índice alternativo na escrita. Cobrir a consulta não prova ausência de acessos ao heap. Peça evidência de plano; não invente `EXPLAIN` nem ganho percentual.
+
+### O que observar
+
+- **Discovery:** pergunta qual padrão de acesso e qual distribuição.
+- **Trade-off:** ganho de leitura versus custo de escrita e espaço.
+- **Evidence:** usa `EXPLAIN` como hipótese testável, com estatísticas atualizadas.
+- **Failure:** não promete que o planner usará (ou ignorará) o índice.
 
 </details>
 
@@ -387,9 +708,18 @@ Não responda com proibição universal. Engine, versão, distribuição e plano
 **Follow-up:** o histórico de consulta ainda não mostra a operação.
 
 <details>
-<summary>Resposta comentada</summary>
+<summary><strong>Ver resposta comentada</strong></summary>
 
-Ausência na projeção não prova ausência na autoridade. Consulte pelo mesmo identificador ou repita segundo um contrato idempotente. Não gere outro ID para “garantir”. Separe resultado desconhecido, aborto conhecido e recusa de negócio; cada um pede recuperação diferente. Preserve a confirmação financeira mesmo quando a visualização atrasa.
+### Resposta esperada
+
+Ausência na projeção não prova ausência na autoridade. Consulte pelo mesmo identificador ou repita sob um contrato idempotente; não gere outro ID “para garantir”. Separe resultado desconhecido, abort conhecido e recusa de negócio; cada um pede uma recuperação diferente. Preserve a confirmação financeira mesmo quando a visualização atrasa.
+
+### O que observar
+
+- **Discovery:** pergunta qual é a autoridade e qual a identidade.
+- **Failure:** distingue as três situações, sem assumir rollback.
+- **Mechanism:** recuperação pela identidade original.
+- **Evidence:** como confirmar o resultado (consulta à autoridade, não à projeção).
 
 </details>
 
@@ -398,9 +728,18 @@ Ausência na projeção não prova ausência na autoridade. Consulte pelo mesmo 
 **Follow-up:** a base recebeu a operação, mas o índice não a retornou.
 
 <details>
-<summary>Resposta comentada</summary>
+<summary><strong>Ver resposta comentada</strong></summary>
 
-Use o índice para descoberta, não sua ausência como prova de inexistência. Arbitre a criação com a chave e condição apropriadas na base; leia o resultado da autoridade quando necessário. Considere também a unicidade de negócio: IDs diferentes podem representar a mesma intenção externa. O Case 01 separa esses escopos.
+### Resposta esperada
+
+Use o índice para descoberta, não sua ausência como prova de inexistência: GSI é eventual. Arbitre a criação com chave e condição apropriadas na tabela e leia a autoridade quando necessário. Considere também a unicidade de negócio: IDs diferentes podem representar a mesma intenção externa; o Case 01 separa esses escopos.
+
+### O que observar
+
+- **Mechanism:** a condição na tabela decide; o índice só localiza.
+- **Failure:** explica o atraso de propagação como causa da ausência.
+- **Invariant:** distingue identidade técnica de intenção de negócio.
+- **Evidence:** lê o item na tabela com leitura forte.
 
 </details>
 
@@ -409,9 +748,58 @@ Use o índice para descoberta, não sua ausência como prova de inexistência. A
 **Follow-up:** a proposta depende de São Paulo, TTL e uma transação com vários itens.
 
 <details>
-<summary>Resposta comentada</summary>
+<summary><strong>Ver resposta comentada</strong></summary>
 
-Compare os requisitos com a tabela de contratos, que impede uma substituição direta. Mesmo uma garantia forte por item não implementa as regras do core nem a coordenação da jornada. Identifique a incompatibilidade, ofereça outra arquitetura ou renegocie requisitos, sem chamar uma garantia de replicação de “efeito financeiro exatamente uma vez”.
+### Resposta esperada
+
+Compare os requisitos com a tabela de contratos: os limites de regiões, TTL e transações impedem uma substituição direta. Mesmo uma garantia forte por item não implementa as regras do core nem a coordenação da jornada. Identifique a incompatibilidade, ofereça outra arquitetura ou renegocie requisitos, sem chamar replicação de “efeito financeiro exatamente uma vez”. MREC, por sua vez, pode aceitar condições locais conflitantes.
+
+### O que observar
+
+- **Discovery:** confere o contrato do modo antes de propor.
+- **Mechanism:** diferencia MREC de MRSC pelo que cada um garante.
+- **Trade-off:** latência, regiões permitidas e restrições de API.
+- **Failure:** replicação não vira transação global.
+
+</details>
+
+### 11. Basta colocar a reserva e a notificação dentro de `BEGIN`/`COMMIT`?
+
+**Follow-up:** o destinatário executou o efeito, mas a resposta para o emissor se perdeu. O que você faz?
+
+<details>
+<summary><strong>Ver resposta comentada</strong></summary>
+
+### Resposta esperada
+
+Não. A transação garante o que a engine controla: identidade, reserva e resultado local. HTTP, mensagem e outro serviço ficam fora. Manter o lock aberto durante a chamada não incorpora o destinatário à transação; só prolonga a fila. Chamar depois do commit pode cair antes de chamar. Registre a intenção na mesma transação e execute o efeito depois, com identidade estável (outbox, em SD03). Se o destinatário executou e a resposta se perdeu, o emissor tem resultado desconhecido: consulte o estado do envio e reenvie com a **mesma identidade**, aceitando possível redelivery. Efeito único no receptor só existe se o destinatário tiver contrato ou mecanismo idempotente.
+
+### O que observar
+
+- **Mechanism:** define a unidade atômica e diz que a garantia local termina antes do efeito externo.
+- **Failure:** trata o resultado desconhecido do efeito externo, não só a queda entre commit e chamada.
+- **Trade-off:** duração do lock/transação local e atraso até o envio da intenção persistida.
+- **Evidence:** identidade usada na entrega, estado do envio e mecanismo de recuperação; não afirma “uma vez” só porque a intenção foi persistida.
+
+</details>
+
+### 12. A CPU do banco triplicou no pico depois de um release. Como investigar?
+
+**Follow-up:** os erros de serialização também aumentaram.
+
+<details>
+<summary><strong>Ver resposta comentada</strong></summary>
+
+### Resposta esperada
+
+Distinga “o sistema está ocupado **executando**” (CPU consumida por mais trabalho, plano novo, mais concorrência) de “o sistema está **acumulando sessões esperando**” (locks, I/O); os dois podem coexistir e um não prova o outro. Abra hipóteses antes de agir: mudança de workload, queries com mais execuções ou trabalho, plano novo, índice ausente ou excessivo, concorrência, retries. Associe o aumento de serialization failures a transações mais longas, hot key ou retries amplificando a carga. Cada hipótese tem evidência própria; escolha a decisão menos custosa e valide com a mesma métrica.
+
+### O que observar
+
+- **Discovery:** o que mudou no release e a partir de quando.
+- **Evidence:** separa CPU consumida de sessões em espera (wait events, database load, estatísticas por query, planos) e não atribui CPU alta a um wait sem evidência.
+- **Failure:** retry amplification; não repete até “passar”.
+- **Trade-off:** índice ajuda leitura e custa escrita; capacidade não corrige contenção.
 
 </details>
 
@@ -422,19 +810,43 @@ Compare os requisitos com a tabela de contratos, que impede uma substituição d
 1. Reproduza a implementação insegura e a violação de R$ 1.600 admitidos.
 2. Escolha lock/transação ou atualização condicional; indique exatamente onde a disputa é resolvida.
 3. Insira uma queda antes do commit e outra após commit/antes da resposta. Repita `op-a` sem trocar sua identidade.
-4. Troque o limite para R$ 2.000: A e B distintas podem confirmar; repetir A continua sem novo consumo.
-5. Mude a regra para somar reservas em várias linhas. Explique por que sua proteção ainda funciona ou qual parte precisa mudar.
-6. Relacione a identidade estável ao [Case 01](../../cases/01-payment-processing-pix.md#s08) e mantenha a autoridade da reserva conforme o [Case 10](../../cases/10-card-authorization-platform.md#s08).
+4. **Mude o requisito:** o banco decide permitir até **R$ 2.000**. Na ordem `op-a` (confirma), **`op-a` de novo com o mesmo `operation_id`** e depois `op-b`: A e B distintas podem confirmar, mas a repetição **não pode** consumir outros R$ 800. Mostre o estado final (R$ 1.600 reservados, R$ 400 disponíveis, uma reserva por identidade) e o que aconteceria com `op-b` se a repetição de A tivesse sido tratada como nova.
+5. **Pergunta:** qual mecanismo resolveu a concorrência e qual resolveu a repetição? Escreva os dois em linhas separadas, com o ponto exato do protocolo em que cada um atua.
+6. Mude a regra para somar reservas em várias linhas. Explique por que sua proteção ainda funciona ou qual parte precisa mudar.
+7. Relacione a identidade estável ao [Case 01](../../cases/01-payment-processing-pix.md#s08) e mantenha a autoridade da reserva conforme o [Case 10](../../cases/10-card-authorization-platform.md#s08).
 
-**Critérios observáveis:** a folha identifica autoridade, invariante e unidade atômica; distingue conflito de versão de insuficiência; mostra R$ 800 reservados e R$ 200 disponíveis no cenário protegido com orçamento de R$ 1.000; não duplica a mesma operação; não assume rollback por timeout; e propõe uma validação concorrente com resultado esperado, sem apresentá-la como teste já executado.
+**Critérios observáveis:** a folha identifica autoridade, invariante e unidade atômica; distingue conflito de versão de insuficiência; mostra R$ 800 reservados e R$ 200 disponíveis no cenário protegido com orçamento de R$ 1.000; **separa idempotência de concorrência no passo 5**; não duplica a mesma operação; não assume rollback por timeout; e propõe uma validação concorrente com resultado esperado, sem apresentá-la como teste já executado.
+
+## Checklist de domínio
+
+Consigo explicar **sem consulta**:
+
+- [ ] o padrão de acesso que uma consulta precisa atender;
+- [ ] a invariante de uma operação financeira;
+- [ ] a unidade atômica e o que fica fora dela;
+- [ ] as quatro propriedades do ACID, sem confundi-las com “uma por vez”;
+- [ ] o que o isolamento controla e o que `SERIALIZABLE` não resolve;
+- [ ] lost update;
+- [ ] write skew;
+- [ ] lock pessimista;
+- [ ] optimistic concurrency/CAS;
+- [ ] strong consistency, e por que não é lock;
+- [ ] idempotência × concorrência;
+- [ ] índice, ordem das colunas e custo de escrita;
+- [ ] autoridade × projeção;
+- [ ] CAP, sem “escolha dois”;
+- [ ] conditional write no DynamoDB;
+- [ ] consistência de leitura do GSI;
+- [ ] MREC × MRSC.
 
 ## Fontes e escopo da revisão
 
-Fontes primárias consultadas em 03/10/2026. Links próximos às afirmações delimitam o suporte; os exemplos financeiros, escolhas e critérios são autorais. As páginas de PostgreSQL abaixo são da versão 18. O catálogo compartilhado permanece em [references](../../references/README.md).
+Fontes primárias consultadas em 03/10/2026; os complementos sobre idempotência de `TransactWriteItems`, escopo de transações do DynamoDB e retry em `SERIALIZABLE` foram conferidos em 04/10/2026 nas páginas de transações do DynamoDB e de isolamento do PostgreSQL 18. Links próximos às afirmações delimitam o suporte; os exemplos financeiros, escolhas e critérios são autorais. As páginas de PostgreSQL abaixo são da versão 18. O catálogo compartilhado permanece em [references](../../references/README.md).
 
 - PostgreSQL: [transações][r-transactions], [constraints][r-constraints], [MVCC][r-mvcc], [isolamento][r-isolation], [locks][r-locks], [retry][r-retry] e [WAL][r-wal]. Sustentam mecanismos e limites da engine, não equivalência automática com outras implementações.
 - PostgreSQL: [tipos de índice][r-index-types], [índices compostos][r-multicolumn], [index-only scans][r-index-only] e [EXPLAIN][r-explain]. Sustentam acesso, planejamento e a correção das antigas afirmações absolutas.
 - DynamoDB: [modelo][r-ddb-model], [condições][r-conditions], [transações][r-ddb-tx], [leituras][r-ddb-read], [GSI][r-gsi] e [global tables][r-global]. Sustentam os escopos das APIs e os modos MREC/MRSC.
+- AWS: [database load e wait events][r-dbload], usada apenas para distinguir CPU de sessões em espera no troubleshooting.
 - Berenson et al., *A Critique of ANSI SQL Isolation Levels* (1995): [publicação original][r-anomalies]. Terry et al., *Session Guarantees for Weakly Consistent Replicated Data* (1994): [texto original disponibilizado por Cornell][r-session].
 - Gilbert e Lynch, *Perspectives on the CAP Theorem* (2012): [publicação dos autores][r-cap]. Pritchett, *BASE: An ACID Alternative* (2008): [original disponibilizado por Stanford][r-base]. Abadi, *Consistency Tradeoffs in Modern Distributed Database System Design* (2012): [publicação do autor][r-pacelc]. As classificações históricas não substituem contratos atuais dos serviços.
 
@@ -455,6 +867,7 @@ Fontes primárias consultadas em 03/10/2026. Links próximos às afirmações de
 [r-ddb-read]: https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.ReadConsistency.html
 [r-gsi]: https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/GSI.html
 [r-global]: https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/V2globaltables_HowItWorks.html
+[r-dbload]: https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_PerfInsights.Overview.ActiveSessions.html
 [r-anomalies]: https://www.microsoft.com/en-us/research/wp-content/uploads/2016/02/tr-95-51.pdf
 [r-session]: https://www.cs.cornell.edu/courses/cs734/2000FA/cached%20papers/SessionGuaranteesPDIS_1.html
 [r-cap]: https://groups.csail.mit.edu/tds/papers/Gilbert/Brewer2.pdf
