@@ -6,9 +6,9 @@
 
 ## Roteiro de leitura
 
-**Essencial:** modelo mental → escolha pelo workload → identidade → rede → health → lifecycle. Com isso você já explica um serviço ECS de ponta a ponta.
+**Essencial:** [modelo mental](#modelo-mental) → [escolha pelo workload](#escolha) → [identidade](#identidade) → [rede](#rede) → [health](#health) → [lifecycle](#lifecycle). Com isso você já explica um serviço ECS de ponta a ponta.
 
-**Aprofundamento:** balanceamento, Multi-AZ, Auto Scaling, imagem, estado, Spot e troubleshooting. Termine pelas perguntas, sem abrir as respostas, e pelo exercício.
+**Aprofundamento:** [balanceamento](#balanceamento), [Multi-AZ](#multi-az), [Auto Scaling](#auto-scaling), [imagem](#imagem), [estado](#estado), [Spot](#spot) e [troubleshooting](#troubleshooting). Termine pelas [perguntas](#perguntas), sem abrir as respostas, e pelo [exercício](#exercicio).
 
 **Fronteiras:** redes em profundidade estão em [F01](01-networking-dns-connectivity.md); IAM, em [F03](03-security-identity.md); método de investigação, em [F08](08-observability-troubleshooting.md); pipeline e rastreabilidade, em [F11](11-git-cicd-iac.md). Decomposição, gateway, BFF e mesh pertencem a [SD01](../system-design/01-service-architecture.md); rolling, blue/green, canary e capacity planning, a [SD05](../system-design/05-scale-capacity-deployment.md). Aqui ficam os mecanismos da unidade de execução.
 
@@ -79,11 +79,11 @@ Cluster ──agrupa logicamente──▶ Services e Tasks
 
 | Opção | Sinais que favorecem | Custo ou risco a investigar |
 |---|---|---|
-| Lambda | Trabalho por evento ou requisição curta; carga intermitente; integração nativa com eventos | 15 min por invocação no modelo padrão; concorrência por Região como quota; conexões a bancos sob burst; inicialização a frio; contrato de payload [Lambda quotas][f04-lambda] |
-| ECS/Fargate | Serviço containerizado de longa duração ou job; sem necessidade de controlar host | Limites da plataforma (sem `privileged`, sem daemon por host); `stopTimeout` máximo de 120 s; capacidade e IP por task |
-| ECS/EC2 | Precisa de GPU, tipo de instância específico, agente no host, densidade ou parâmetros que Fargate não aceita | Time administra AMI, patching, escala e substituição das instâncias; tasks no mesmo host não têm isolamento entre si |
-| EC2 | Software não containerizado, licença por host, controle total do sistema | Toda a operação do servidor; escala e substituição por Auto Scaling group |
-| EKS | Organização que já usa ou precisa da API Kubernetes, do ecossistema ou de portabilidade entre ambientes | Operar Kubernetes (versões, add-ons, RBAC, rede) além da aplicação; AWS gerencia o control plane, não o seu desenho [EKS][f04-eks] |
+| <img src="assets/aws-lambda-32.svg" width="24" alt=""> **Lambda** | Trabalho por evento ou requisição curta; carga intermitente; integração nativa com eventos | 15 min por invocação no modelo padrão; concorrência por Região como quota; conexões a bancos sob burst; inicialização a frio; contrato de payload [Lambda quotas][f04-lambda] |
+| <img src="assets/aws-ecs-32.svg" width="24" alt=""> <img src="assets/aws-fargate-32.svg" width="24" alt=""> **ECS/Fargate** | Serviço containerizado de longa duração ou job; sem necessidade de controlar host | Limites da plataforma (sem `privileged`, sem daemon por host); `stopTimeout` máximo de 120 s; capacidade e IP por task |
+| <img src="assets/aws-ecs-32.svg" width="24" alt=""> <img src="assets/aws-ec2-32.svg" width="24" alt=""> **ECS/EC2** | Precisa de GPU, tipo de instância específico, agente no host, densidade ou parâmetros que Fargate não aceita | Time administra AMI, patching, escala e substituição das instâncias; tasks no mesmo host não têm isolamento entre si |
+| <img src="assets/aws-ec2-32.svg" width="24" alt=""> **EC2** | Software não containerizado, licença por host, controle total do sistema | Toda a operação do servidor; escala e substituição por Auto Scaling group |
+| <img src="assets/aws-eks-32.svg" width="24" alt=""> **EKS** | Organização que já usa ou precisa da API Kubernetes, do ecossistema ou de portabilidade entre ambientes | Operar Kubernetes (versões, add-ons, RBAC, rede) além da aplicação; AWS gerencia o control plane, não o seu desenho [EKS][f04-eks] |
 
 A tabela é uma pauta. Lambda não é sempre mais barato, Fargate não é sempre mais simples em todos os sentidos e EKS não é mais robusto por definição. Kubernetes também não é requisito para usar containers.
 
@@ -178,7 +178,7 @@ Um **proxy reverso** recebe as requisições em nome dos servidores: esconde a t
 
 **Escolha ALB ou NLB pelo contrato, não pelo apelido.** Pergunte: qual protocolo chega (HTTP/HTTPS/gRPC ou TCP/UDP/TLS)? A conexão é curta ou dura horas? Preciso de roteamento L7, autenticação no listener ou regras por caminho? Preciso de IP estático por AZ ou preservar o IP do cliente? “ALB = HTTP” e “NLB = mais rápido” escondem essas perguntas. A documentação do ECS recomenda ALB, salvo quando o service precisa de algo que só NLB ou Gateway Load Balancer oferecem. [Service load balancing][f04-svc-lb]
 
-| | ALB | NLB |
+| | <img src="assets/aws-alb-48.svg" width="24" alt=""> ALB | <img src="assets/aws-nlb-48.svg" width="24" alt=""> NLB |
 |---|---|---|
 | Camada | 7 | 4 |
 | Unidade de decisão | Requisição | Conexão TCP ou fluxo UDP |
@@ -786,7 +786,7 @@ Consultadas em **04/10/2026**. Documentação AWS em `latest` muda; revalide val
 | Tag immutability e resolução de tag em digest | [ECR][f04-ecr-immutability], [image resolution][f04-image-resolution] |
 | Fargate Spot e EC2 Spot | [Fargate Spot][f04-fargate-spot], [EC2 Spot][f04-ec2-spot] |
 | Limites de Lambda e papel do EKS | [Lambda quotas][f04-lambda], [EKS][f04-eks] |
-| Ícones do diagrama | [AWS Architecture Icons][f04-icons] |
+| Ícones do diagrama e das tabelas | [AWS Architecture Icons][f04-icons] |
 
 Os exemplos, cenários, critérios e números hipotéticos são sínteses autorais. Não representam medições nem uma implantação real.
 
