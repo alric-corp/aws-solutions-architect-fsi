@@ -443,6 +443,20 @@ MRSC opera em conjuntos regionais autorizados nos EUA, Europa e Ásia-Pacífico,
 
 “Como esse conceito aparece em serviços AWS?” Três mapeamentos curtos de `lim-001`; não são tutoriais nem listas de configuração.
 
+### Mapeamento em AWS
+
+Visão geral antes dos detalhes: cada linha liga um conceito do módulo ao serviço que o expõe, com o papel e o limite que não se deve esquecer.
+
+| Conceito | Serviço | Papel no cenário | Limite / observação |
+|---|---|---|---|
+| Lock, transação, isolamento, versão otimista | <img src="assets/aws-aurora-32.svg" width="24" alt=""> **Aurora PostgreSQL** | Banco relacional em que a decisão sobre `lim-001` acontece dentro de uma transação | Compatível com PostgreSQL, mas a tabela de níveis do módulo é do PostgreSQL 18; confirme a versão. Efeitos externos continuam fora |
+| Escrita condicional, transação de itens, leitura forte | <img src="assets/aws-dynamodb-32.svg" width="24" alt=""> **DynamoDB** (tabela) | Itens `lim-001` e da operação, decididos por condições | Transação: até 100 ações, mesma conta e região. Leitura forte não é lock. Um item compartilhado pode concentrar tráfego |
+| Localizar candidatos por outro atributo | <img src="assets/aws-dynamodb-32.svg" width="24" alt=""> **DynamoDB** (GSI) | Outro caminho de acesso, mantido a partir da tabela | Eventual; sem leitura forte nem transação por índice. Ausência no GSI não prova inexistência |
+| Replicação entre regiões | <img src="assets/aws-dynamodb-32.svg" width="24" alt=""> **DynamoDB** (global tables) | Cópias do item em mais de uma região | MREC é assíncrono, com last-writer-wins; MRSC tem restrições de regiões e APIs. Nenhum modo vira transação global |
+| Evidência de chave quente e throttle | <img src="assets/aws-cloudwatch-32.svg" width="24" alt=""> **CloudWatch** (métricas, Contributor Insights) | Mostra o sintoma e as chaves mais acessadas | Observa o problema; não corrige o desenho do acesso |
+
+Ícones: [AWS Architecture Icons][r-icons], release de 31/07/2026, sem alteração.
+
 ### A. Aurora PostgreSQL
 
 | Conceito | Como aparece no cenário | Cuidado |
@@ -867,6 +881,7 @@ Fontes primárias consultadas em 03/10/2026; os complementos sobre idempotência
 [r-ddb-read]: https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.ReadConsistency.html
 [r-gsi]: https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/GSI.html
 [r-global]: https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/V2globaltables_HowItWorks.html
+[r-icons]: https://aws.amazon.com/architecture/icons/
 [r-dbload]: https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_PerfInsights.Overview.ActiveSessions.html
 [r-anomalies]: https://www.microsoft.com/en-us/research/wp-content/uploads/2016/02/tr-95-51.pdf
 [r-session]: https://www.cs.cornell.edu/courses/cs734/2000FA/cached%20papers/SessionGuaranteesPDIS_1.html
