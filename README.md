@@ -24,14 +24,14 @@ Progress / Feedback
 | Área | Objetivo |
 |---|---|
 | [role/](role/) | Entender o cargo, a vaga e as expectativas |
-| [technical-knowledge/fundamentals/](technical-knowledge/fundamentals/README.md) | Entender as peças e seus mecanismos |
-| [technical-knowledge/system-design/](technical-knowledge/system-design/README.md) | Combinar as peças e discutir trade-offs |
+| [technical-knowledge/01-fundamentals/](technical-knowledge/01-fundamentals/README.md) | Entender as peças e seus mecanismos |
+| [technical-knowledge/02-system-design/](technical-knowledge/02-system-design/README.md) | Combinar as peças e discutir trade-offs |
 | [cases/](cases/) | Aplicar o conhecimento em cenários FSI |
 | [leadership-principles/](leadership-principles/README.md) | Preparar experiências e respostas comportamentais |
 | [interview/](interview/) | Planejamento, perguntas e simulações |
 | [progress/](progress/) | Acompanhar lacunas e evolução |
 
-READMEs das áreas: [Technical Knowledge](technical-knowledge/README.md) · [Fundamentals](technical-knowledge/fundamentals/README.md) · [System Design](technical-knowledge/system-design/README.md) · [Leadership Principles](leadership-principles/README.md)
+READMEs das áreas: [Technical Knowledge](technical-knowledge/README.md) · [Fundamentals](technical-knowledge/01-fundamentals/README.md) · [System Design](technical-knowledge/02-system-design/README.md) · [Leadership Principles](leadership-principles/README.md)
 
 ## Technical Knowledge
 

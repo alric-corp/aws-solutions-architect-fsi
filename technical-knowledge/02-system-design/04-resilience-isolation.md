@@ -7,7 +7,7 @@
 
 - **Timeout:** toda chamada remota precisa de um, menor que o prazo de quem chamou. Sem timeout, uma dependência lenta prende threads e conexões até derrubar quem chama.
 - **Retry com backoff exponencial e jitter:** repita só o que é seguro repetir, com poucas tentativas, espera crescente e aleatoriedade, e em uma só camada. Os SDKs da AWS já fazem retries com backoff.
-- **Idempotência:** permite repetir sem duplicar o efeito, com chave de idempotência e registro do resultado ([F02](../fundamentals/02-http-rest-openapi.md), [F07](../fundamentals/07-events-messaging-distributed-systems.md)).
+- **Idempotência:** permite repetir sem duplicar o efeito, com chave de idempotência e registro do resultado ([F02](../01-fundamentals/02-http-rest-openapi.md), [F07](../01-fundamentals/07-events-messaging-distributed-systems.md)).
 - **Circuit breaker:** para de chamar uma dependência que falha repetidamente ([Circuit Breaker](#circuit-breaker)).
 - **Fallback:** resposta alternativa quando a dependência falha, como dado em cache ou funcionalidade reduzida.
 - **Limitação de taxa e descarte de carga (load shedding):** recusar cedo o excesso, priorizando o tráfego mais importante, protege o que ainda dá para atender.
@@ -46,7 +46,7 @@ Em vez de uma instalação única e grande, o sistema roda em várias células: 
 
 A AWS usa células em muitos serviços e descreve o padrão no whitepaper do Well-Architected “Reducing the Scope of Impact with Cell-Based Architecture”.
 
-**Cuidado:** a camada de roteamento vira peça crítica e precisa ser simples e muito confiável. Operações entre células (relatórios, transferências entre clientes de células diferentes) e mover clientes de célula exigem desenho próprio. Monitore por célula ([F08](../fundamentals/08-observability-troubleshooting.md#slo)).
+**Cuidado:** a camada de roteamento vira peça crítica e precisa ser simples e muito confiável. Operações entre células (relatórios, transferências entre clientes de células diferentes) e mover clientes de célula exigem desenho próprio. Monitore por célula ([F08](../01-fundamentals/08-observability-troubleshooting.md#slo)).
 
 **Monitorar por célula:** numa [arquitetura de células](#celulas), publique as métricas por célula. Uma média global esconde uma célula degradada; comparar as células entre si, e a que acabou de receber um deploy com as demais, mostra o problema cedo e limita o raio de impacto.
 

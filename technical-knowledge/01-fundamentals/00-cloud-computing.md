@@ -183,7 +183,7 @@ Launch Template v1 → t3.micro
 Launch Template v2 → t3.small
 ```
 
-Criar a v2 e apontar o grupo para ela **não muda as instâncias que já estão rodando**: só as novas nascem com a configuração atualizada. Para levar a frota existente à v2, é preciso uma operação de atualização, como o **Instance Refresh**, que substitui as instâncias gradualmente. Estratégias de troca e deploy estão em [F04](04-compute-containers.md) e [SD05](../system-design/05-scale-capacity-deployment.md#deployment). [update-auto-scaling-group][f00-update-asg], [Instance Refresh][f00-instance-refresh]
+Criar a v2 e apontar o grupo para ela **não muda as instâncias que já estão rodando**: só as novas nascem com a configuração atualizada. Para levar a frota existente à v2, é preciso uma operação de atualização, como o **Instance Refresh**, que substitui as instâncias gradualmente. Estratégias de troca e deploy estão em [F04](04-compute-containers.md) e [SD05](../02-system-design/05-scale-capacity-deployment.md#deployment). [update-auto-scaling-group][f00-update-asg], [Instance Refresh][f00-instance-refresh]
 
 <a id="politicas"></a>
 ### Target tracking × limiar simples
@@ -269,7 +269,7 @@ Uma Availability Zone é um ou mais datacenters discretos, com energia, rede e c
 
 Cloud-native não é sinônimo de microservices, containers ou serverless. O termo costuma descrever sistemas que **aproveitam as características e práticas da nuvem**: infraestrutura automatizada e reproduzível, elasticidade, observabilidade, recuperação desenhada para falhas, serviços gerenciados e desacoplamento quando ele faz sentido.
 
-Um **lift-and-shift** de uma VM para EC2 está na nuvem, mas não é automaticamente cloud-native. Pode ser um primeiro passo legítimo — sair de um datacenter com prazo, por exemplo —, desde que ninguém confunda a mudança de endereço com a mudança de modelo. Decomposição e padrões de serviço estão em [SD01](../system-design/01-service-architecture.md).
+Um **lift-and-shift** de uma VM para EC2 está na nuvem, mas não é automaticamente cloud-native. Pode ser um primeiro passo legítimo — sair de um datacenter com prazo, por exemplo —, desde que ninguém confunda a mudança de endereço com a mudança de modelo. Decomposição e padrões de serviço estão em [SD01](../02-system-design/01-service-architecture.md).
 
 <a id="fsi"></a>
 ## Nuvem em FSI

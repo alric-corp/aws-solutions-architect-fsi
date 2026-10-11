@@ -10,7 +10,7 @@
 
 **Aprofundamentos:** janelas de falha de cache, contratos AWS, backup, particionamento e sharding. Termine pelas perguntas e pelo exercício.
 
-**Fronteira:** [F06](../fundamentals/06-databases-transactions-consistency.md) explica a garantia de uma operação: índice, transação, lock, MVCC e consistência. Aqui combinamos esses mecanismos para atender um workload maior. [F07](../fundamentals/07-events-messaging-distributed-systems.md) explica transporte; [SD03](03-distributed-workflows.md#cqrs), projeções e coordenação entre serviços.
+**Fronteira:** [F06](../01-fundamentals/06-databases-transactions-consistency.md) explica a garantia de uma operação: índice, transação, lock, MVCC e consistência. Aqui combinamos esses mecanismos para atender um workload maior. [F07](../01-fundamentals/07-events-messaging-distributed-systems.md) explica transporte; [SD03](03-distributed-workflows.md#cqrs), projeções e coordenação entre serviços.
 
 **Como ler:** os contratos de produtos têm fontes junto às afirmações. As propostas são decisões a avaliar; números, IDs e falhas dos exemplos são hipóteses sintéticas. SQL, cenários e exercícios não foram executados contra bancos. Não há benchmark nem resultado real de `EXPLAIN`; nenhum recurso AWS é necessário para a simulação de mesa.
 
@@ -40,7 +40,7 @@ Antes de recomendar uma tecnologia, registre padrões de acesso, volume e cresci
 
 #### Query/index optimization
 
-Retome [F06, indexação](../fundamentals/06-databases-transactions-consistency.md#indexacao) para entender a estrutura. Aqui interessa reduzir trabalho por requisição: ler apenas colunas e intervalos necessários, evitar ordenações dispensáveis e conferir estatísticas e seletividade.
+Retome [F06, indexação](../01-fundamentals/06-databases-transactions-consistency.md#indexacao) para entender a estrutura. Aqui interessa reduzir trabalho por requisição: ler apenas colunas e intervalos necessários, evitar ordenações dispensáveis e conferir estatísticas e seletividade.
 
 **Exemplo SQL PostgreSQL ilustrativo, não executado:** paginação por cursor de uma conta; parâmetros e nomes são sintéticos. Pressupõe `occurred_at` e `entry_id` não nulos, com ordenação estável.
 
@@ -168,7 +168,7 @@ Escopo conferido em 03/10/2026. Engine, versão e região precisam ser verificad
 | RDS Read Replica | Replicação assíncrona nativa da engine para outra instância | Pode descarregar leituras; avaliar lag e promoção. Não equivale ao standby automático do Multi-AZ. [AWS][r-read-replica] |
 | Aurora cluster | Writer e readers compartilham volume distribuído; armazenamento replica em seis nós de três AZs | Cópias de storage não são seis servidores de consulta; readers podem apresentar atraso. [Arquitetura][r-aurora], [storage][r-aurora-storage], [HA][r-aurora-ha] |
 | Aurora Global Database | Replicação entre regiões assíncrona | Switchover planejado saudável sincroniza antes da troca, com RPO zero; failover não planejado pode perder dados. [AWS][r-aurora-global] |
-| DynamoDB global tables | Réplicas regionais; contratos MREC e MRSC distintos | Comparar consistência, APIs e regiões permitidas em [F06](../fundamentals/06-databases-transactions-consistency.md#global-tables-mrec-e-mrsc), não tratar os modos como intercambiáveis |
+| DynamoDB global tables | Réplicas regionais; contratos MREC e MRSC distintos | Comparar consistência, APIs e regiões permitidas em [F06](../01-fundamentals/06-databases-transactions-consistency.md#global-tables-mrec-e-mrsc), não tratar os modos como intercambiáveis |
 
 Read Replica tem diferenças por engine, inclusive réplicas usadas em modos de standby que não atendem consultas. Identifique a opção concreta. HA dentro de uma região não equivale a DR regional. Para Aurora Global Database, métricas e controles de RPO dependem de engine/versão; não transforme atraso típico em SLA ou “replicação síncrona global”. [Recuperação Aurora Global Database][r-aurora-global]
 

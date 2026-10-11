@@ -4,12 +4,12 @@ Use nos dias anteriores a cada etapa. Os links levam ao material de revisão.
 
 ## Técnico
 
-- [ ] Explicar sem consulta o caminho de uma requisição: DNS, TCP/TLS, HTTP e balanceamento → [F01](../technical-knowledge/fundamentals/01-networking-dns-connectivity.md), [F02](../technical-knowledge/fundamentals/02-http-rest-openapi.md)
-- [ ] Comparar duas opções de banco para um caso FSI, cobrindo consistência e escala → [F06](../technical-knowledge/fundamentals/06-databases-transactions-consistency.md), [SD02](../technical-knowledge/system-design/02-data-at-scale.md)
-- [ ] Desenhar uma arquitetura que sobreviva à perda de uma AZ, com RTO e RPO explícitos → [F12](../technical-knowledge/fundamentals/12-resilience-migration.md)
-- [ ] Defender controles de identidade e proteção de dados para um cliente regulado → [F03](../technical-knowledge/fundamentals/03-security-identity.md)
+- [ ] Explicar sem consulta o caminho de uma requisição: DNS, TCP/TLS, HTTP e balanceamento → [F01](../technical-knowledge/01-fundamentals/01-networking-dns-connectivity.md), [F02](../technical-knowledge/01-fundamentals/02-http-rest-openapi.md)
+- [ ] Comparar duas opções de banco para um caso FSI, cobrindo consistência e escala → [F06](../technical-knowledge/01-fundamentals/06-databases-transactions-consistency.md), [SD02](../technical-knowledge/02-system-design/02-data-at-scale.md)
+- [ ] Desenhar uma arquitetura que sobreviva à perda de uma AZ, com RTO e RPO explícitos → [F12](../technical-knowledge/01-fundamentals/12-resilience-migration.md)
+- [ ] Defender controles de identidade e proteção de dados para um cliente regulado → [F03](../technical-knowledge/01-fundamentals/03-security-identity.md)
 - [ ] Refazer de memória o desenho de um case FSI → [cases](../cases/)
-- [ ] Revisar uma decisão própria pelos pilares do Well-Architected → [F12](../technical-knowledge/fundamentals/12-resilience-migration.md)
+- [ ] Revisar uma decisão própria pelos pilares do Well-Architected → [F12](../technical-knowledge/01-fundamentals/12-resilience-migration.md)
 
 ## Comportamental
 

@@ -8,7 +8,7 @@
 
 **Essencial:** contrato → outbox e inbox → orquestração/coreografia → saga acompanhada. **Aprofundamento:** CQRS, event sourcing e autoridade de escrita. Termine pelo treino e pela simulação de mesa.
 
-[F07](../fundamentals/07-events-messaging-distributed-systems.md) explica recebimento, confirmação, ordenação e replay. Aqui esses mecanismos são usados para discutir **onde uma invariante é protegida, qual estado fica durável e como recuperar uma falha**. [F06](../fundamentals/06-databases-transactions-consistency.md#acid-cap) cobre atomicidade e isolamento local.
+[F07](../01-fundamentals/07-events-messaging-distributed-systems.md) explica recebimento, confirmação, ordenação e replay. Aqui esses mecanismos são usados para discutir **onde uma invariante é protegida, qual estado fica durável e como recuperar uma falha**. [F06](../01-fundamentals/06-databases-transactions-consistency.md#acid-cap) cobre atomicidade e isolamento local.
 
 **Contrato herdado do [Case 03](../../cases/03-event-driven-banking.md#s01):** transferência interna entre contas do mesmo banco; o core faz débito e crédito em uma operação atômica, decide saldo e oferece referência idempotente e consulta de resultado. São premissas do case a verificar numa arquitetura real, não garantias entregues por SQS ou Step Functions.
 

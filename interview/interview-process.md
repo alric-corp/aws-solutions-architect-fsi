@@ -6,8 +6,8 @@ Mapa das etapas e de onde cada uma é treinada neste repositório. O formato mud
 
 | Etapa | Foco provável | Onde se preparar |
 |---|---|---|
-| Triagem inicial | Trajetória, motivação, base técnica e uma ou duas perguntas comportamentais | [Perguntas comuns](common-questions.md) · [Fundamentals](../technical-knowledge/fundamentals/README.md) |
-| Entrevistas técnicas | Profundidade nos fundamentos e capacidade de desenhar e defender uma arquitetura | [Fundamentals](../technical-knowledge/fundamentals/README.md) · [System Design](../technical-knowledge/system-design/README.md) · [cases](../cases/) |
+| Triagem inicial | Trajetória, motivação, base técnica e uma ou duas perguntas comportamentais | [Perguntas comuns](common-questions.md) · [Fundamentals](../technical-knowledge/01-fundamentals/README.md) |
+| Entrevistas técnicas | Profundidade nos fundamentos e capacidade de desenhar e defender uma arquitetura | [Fundamentals](../technical-knowledge/01-fundamentals/README.md) · [System Design](../technical-knowledge/02-system-design/README.md) · [cases](../cases/) |
 | Entrevistas comportamentais | Evidência dos Leadership Principles em experiências reais | [Leadership Principles](../leadership-principles/README.md) |
 
 Na prática as etapas se misturam: conversas técnicas costumam incluir perguntas comportamentais, e o contrário também acontece.
@@ -53,13 +53,13 @@ Os fundamentos de TI (redes, computação, bancos de dados, armazenamento e segu
 
 | Domínio | Arquivo |
 |---|---|
-| Nuvem | [F00 — Computação em nuvem](../technical-knowledge/fundamentals/00-cloud-computing.md) |
-| Rede | [F01 — Redes, DNS e conectividade](../technical-knowledge/fundamentals/01-networking-dns-connectivity.md) |
-| Segurança | [F03 — Segurança e identidade](../technical-knowledge/fundamentals/03-security-identity.md) |
-| Computação | [F04 — Computação e containers](../technical-knowledge/fundamentals/04-compute-containers.md) |
-| Armazenamento | [F05 — Armazenamento](../technical-knowledge/fundamentals/05-storage.md) |
-| Bancos de dados | [F06 — Bancos e consistência](../technical-knowledge/fundamentals/06-databases-transactions-consistency.md) |
-| Migração | [F12 — Resiliência e migração](../technical-knowledge/fundamentals/12-resilience-migration.md) |
+| Nuvem | [F00 — Computação em nuvem](../technical-knowledge/01-fundamentals/00-cloud-computing.md) |
+| Rede | [F01 — Redes, DNS e conectividade](../technical-knowledge/01-fundamentals/01-networking-dns-connectivity.md) |
+| Segurança | [F03 — Segurança e identidade](../technical-knowledge/01-fundamentals/03-security-identity.md) |
+| Computação | [F04 — Computação e containers](../technical-knowledge/01-fundamentals/04-compute-containers.md) |
+| Armazenamento | [F05 — Armazenamento](../technical-knowledge/01-fundamentals/05-storage.md) |
+| Bancos de dados | [F06 — Bancos e consistência](../technical-knowledge/01-fundamentals/06-databases-transactions-consistency.md) |
+| Migração | [F12 — Resiliência e migração](../technical-knowledge/01-fundamentals/12-resilience-migration.md) |
 | Design arquitetural | [Perguntas de design](simulations/03-system-design/design-questions.md) |
 | Simulação técnica completa | [Roteiro técnico](simulations/02-technical/mock-script.md) |
 

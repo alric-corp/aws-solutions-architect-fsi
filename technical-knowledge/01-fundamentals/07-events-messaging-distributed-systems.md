@@ -10,7 +10,7 @@
 
 **Aprofundamento:** escopos de ordenação, offsets, retenção, capacidade e DLQ. Termine pelas perguntas e pelo exercício; não é necessário memorizar quotas.
 
-**Fronteira:** F07 trata dos mecanismos de comunicação. [SD03](../system-design/03-distributed-workflows.md) desenvolve outbox, inbox, saga, CQRS e event sourcing. Para atomicidade local, retome [F06](06-databases-transactions-consistency.md#acid-cap).
+**Fronteira:** F07 trata dos mecanismos de comunicação. [SD03](../02-system-design/03-distributed-workflows.md) desenvolve outbox, inbox, saga, CQRS e event sourcing. Para atomicidade local, retome [F06](06-databases-transactions-consistency.md#acid-cap).
 
 **Como ler as afirmações:** comportamento de produto vem acompanhado de fonte; escolhas do [Case 03](../../cases/03-event-driven-banking.md#s04) são decisões daquele cenário; números e IDs abaixo são hipóteses didáticas. Não são medições nem experiências profissionais. Os exercícios são simulações de mesa, sem provisionamento AWS.
 
@@ -52,7 +52,7 @@ Em uma interação síncrona, quem chama espera uma resposta daquela operação.
 
 No Case 03, `202 Accepted` vem **depois de persistir a intenção e a publicação pendente**; não é recibo de transferência concluída. Já uma consulta pode ser síncrona. Retirar e-mail do caminho crítico não equivale a dispensar a decisão obrigatória de risco.
 
-A fila absorve um desacoplamento de velocidade, mas introduz espera, expiração e recuperação. Se o prazo do cliente não comporta essa espera, reavalie a admissão ou o contrato. Timeout de uma chamada mutável pode significar **resposta perdida depois do efeito**, e não recusa: a recuperação da jornada está em [SD03, saga](../system-design/03-distributed-workflows.md#saga).
+A fila absorve um desacoplamento de velocidade, mas introduz espera, expiração e recuperação. Se o prazo do cliente não comporta essa espera, reavalie a admissão ou o contrato. Timeout de uma chamada mutável pode significar **resposta perdida depois do efeito**, e não recusa: a recuperação da jornada está em [SD03, saga](../02-system-design/03-distributed-workflows.md#saga).
 
 <a id="assincrona"></a>
 ## Fila, pub/sub e streaming na AWS
@@ -114,7 +114,7 @@ SQS FIFO deduplica envios dentro da janela documentada, de cinco minutos, e orde
 
 No Kafka, idempotência do produtor e transações podem oferecer garantias dentro de um fluxo Kafka configurado para isso. Uma chamada a um core externo exige coordenação com esse destino; “exactly-once” não atravessa automaticamente essa fronteira. [Semântica Kafka][f07-kafka-design]
 
-Idempotência depende de **identidade estável + verificação e efeito protegidos no responsável pelo estado**. Um conjunto de IDs em memória desaparece no reinício. Os mecanismos de persistência e as fronteiras de transação ficam em [SD03, outbox e inbox](../system-design/03-distributed-workflows.md#transactional-outbox).
+Idempotência depende de **identidade estável + verificação e efeito protegidos no responsável pelo estado**. Um conjunto de IDs em memória desaparece no reinício. Os mecanismos de persistência e as fronteiras de transação ficam em [SD03, outbox e inbox](../02-system-design/03-distributed-workflows.md#transactional-outbox).
 
 ## Exemplo acompanhado: queda depois da gravação
 
@@ -186,13 +186,13 @@ Retenção define por quanto tempo o dado está disponível; posição de consum
 
 EventBridge permite replay de eventos **previamente arquivados**; isso não o transforma em log com offset por assinante. O replay não assegura a ordem original. [Arquivo e replay][f07-eb-archive]
 
-**Decisão do Case 03:** replay reconstrói projeções ou análises em destino controlado; não reenvia comandos financeiros. Defina intervalo, schema, identidade de consumidor, deduplicação, origem completa e permissões. Retenção de transporte, sozinha, não constitui arquivo de auditoria nem [event sourcing](../system-design/03-distributed-workflows.md#event-sourcing).
+**Decisão do Case 03:** replay reconstrói projeções ou análises em destino controlado; não reenvia comandos financeiros. Defina intervalo, schema, identidade de consumidor, deduplicação, origem completa e permissões. Retenção de transporte, sozinha, não constitui arquivo de auditoria nem [event sourcing](../02-system-design/03-distributed-workflows.md#event-sourcing).
 
 ## Aprofundamento: backlog, concorrência e DLQ
 
 Backlog é trabalho acumulado. **Hipótese aritmética:** chegam 120 eventos/s, saem 100/s; em 60 s acumulam-se aproximadamente 1.200 eventos, partindo de zero. Se a chegada cair para 80/s e a capacidade continuar em 100/s, há 20/s para drenar: cerca de 60 s adicionais. Não é benchmark; ignora variação, fan-out, retries e falhas.
 
-Aumentar workers ajuda apenas enquanto há capacidade no banco, core ou provedor. Mais chamadas concorrentes podem elevar latência, estourar visibilidade e aumentar retries, piorando a fila. Controle admissão, taxa e concorrência; separe responsabilidades e planeje recuperação dentro do prazo de negócio. Consulte [SD04](../system-design/04-resilience-isolation.md#resiliencia).
+Aumentar workers ajuda apenas enquanto há capacidade no banco, core ou provedor. Mais chamadas concorrentes podem elevar latência, estourar visibilidade e aumentar retries, piorando a fila. Controle admissão, taxa e concorrência; separe responsabilidades e planeje recuperação dentro do prazo de negócio. Consulte [SD04](../02-system-design/04-resilience-isolation.md#resiliencia).
 
 | Sinal | Hipótese a investigar | Evidência útil |
 |---|---|---|

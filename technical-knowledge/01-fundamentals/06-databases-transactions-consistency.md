@@ -31,7 +31,7 @@ Cinco perguntas organizam o resto do módulo. Elas não são teoria nova: apenas
 
 **Aprofundamentos:** indexação, write skew, CAP/BASE/PACELC e escopos do DynamoDB, com o mesmo cenário mapeado em Aurora/PostgreSQL, DynamoDB e multi-Region. Depois, troubleshooting, armadilhas, perguntas e exercício; não é necessário memorizar configurações de produção.
 
-**Fronteira:** F06 explica índices, transações, locks, versões e consistência de uma operação. [SD02](../system-design/02-data-at-scale.md) combina esses mecanismos com capacidade, pooling, cache, réplicas e sharding. Outbox, idempotência de consumidores e coordenação entre autoridades estão em [SD03](../system-design/03-distributed-workflows.md).
+**Fronteira:** F06 explica índices, transações, locks, versões e consistência de uma operação. [SD02](../02-system-design/02-data-at-scale.md) combina esses mecanismos com capacidade, pooling, cache, réplicas e sharding. Outbox, idempotência de consumidores e coordenação entre autoridades estão em [SD03](../02-system-design/03-distributed-workflows.md).
 
 **Natureza dos exemplos:** valores, IDs e intercalações são hipóteses didáticas, sem dados reais. O SQL e o pseudocódigo não foram executados; não há benchmark nem saída de `EXPLAIN` medida. Quando o comportamento depende da engine, usamos explicitamente PostgreSQL 18; isso não afirma que todo serviço gerenciado execute essa versão.
 
@@ -234,7 +234,7 @@ identidade da operação (op-a)                         chamada HTTP a serviço 
                                                       terceiro (parceiro, câmara, adquirente)
 ```
 
-`COMMIT` torna atômico o que a engine controla. Se a aplicação chama um serviço depois do commit e cai antes de chamar, ou chama antes e a transação aborta, o efeito externo e o interno divergem. O caminho seguro é registrar a **intenção** dentro da transação e executar o efeito externo depois, com identidade estável: [outbox e inbox em SD03](../system-design/03-distributed-workflows.md#transactional-outbox) e [saga](../system-design/03-distributed-workflows.md#saga). Aqui basta saber que a garantia ACID termina na fronteira do banco que executou o commit.
+`COMMIT` torna atômico o que a engine controla. Se a aplicação chama um serviço depois do commit e cai antes de chamar, ou chama antes e a transação aborta, o efeito externo e o interno divergem. O caminho seguro é registrar a **intenção** dentro da transação e executar o efeito externo depois, com identidade estável: [outbox e inbox em SD03](../02-system-design/03-distributed-workflows.md#transactional-outbox) e [saga](../02-system-design/03-distributed-workflows.md#saga). Aqui basta saber que a garantia ACID termina na fronteira do banco que executou o commit.
 
 ### Problema → mecanismo
 
@@ -326,7 +326,7 @@ transferência confirmada no core         ainda não ingerida → extrato atrasa
 
 Uma leitura forte de uma **projeção** só vê o que já chegou a ela. “Forte” descreve a atualidade **em relação àquela cópia**, não em relação ao core. Por isso a ausência na projeção **não prova** que a operação não existe: pode ser atraso de propagação, filtro, falha de ingestão ou índice eventual. Perguntas de investigação: qual é a autoridade desta informação? A pergunta que o cliente fez precisa da decisão (consulte a autoridade pela identidade) ou da exibição (a projeção atrasada é aceitável, se a tela diz que está em atualização)?
 
-A diferença entre autoridade e modelo de consulta está em [SD03, CQRS](../system-design/03-distributed-workflows.md#cqrs); o [Case 09](../../cases/09-multi-region-internet-banking.md#s08) mostra como comunicar um extrato em atualização sem negar um resultado financeiro confirmado.
+A diferença entre autoridade e modelo de consulta está em [SD03, CQRS](../02-system-design/03-distributed-workflows.md#cqrs); o [Case 09](../../cases/09-multi-region-internet-banking.md#s08) mostra como comunicar um extrato em atualização sem negar um resultado financeiro confirmado.
 
 <a id="indexacao"></a>
 ## Indexação
@@ -366,7 +366,7 @@ Adicionar colunas e índices amplia armazenamento, WAL e trabalho de manutençã
 
 No PostgreSQL, `EXPLAIN` mostra o plano estimado; `EXPLAIN ANALYZE` executa a consulta e mede seu comportamento. Custos estimados não são milissegundos. Compare estimativa/linhas efetivas, filtros, ordenação, loops e buffers; um sequential scan pode ser apropriado. Nenhum plano foi executado para este módulo. [Using EXPLAIN][r-explain]
 
-A aplicação desses sinais ao extrato, à paginação e à capacidade fica em [SD02](../system-design/02-data-at-scale.md#consultas-e-conexões-antes-de-adicionar-nós).
+A aplicação desses sinais ao extrato, à paginação e à capacidade fica em [SD02](../02-system-design/02-data-at-scale.md#consultas-e-conexões-antes-de-adicionar-nós).
 
 ## CAP sem o atalho perigoso
 
@@ -476,7 +476,7 @@ Visão geral antes dos detalhes: cada linha liga um conceito do módulo ao servi
 | Retry da própria chamada | `ClientRequestToken` na `TransactWriteItems` | Veja “Três coisas que não se misturam” |
 | Leitura forte | `GetItem` com `ConsistentRead` mostra R$ 1.000 para A e B se ambos leem antes da primeira escrita | Não é exclusão mútua |
 | GSI | Localiza candidatos, por exemplo reservas pendentes | Eventual e sem transação por índice; ausência no GSI não prova inexistência. Valide na tabela |
-| Item compartilhado | Todo pedido do limite passa por um único item `lim-001` | Concentração de tráfego pode causar contenção e throttling: [SD02](../system-design/02-data-at-scale.md#particionamento) |
+| Item compartilhado | Todo pedido do limite passa por um único item `lim-001` | Concentração de tráfego pode causar contenção e throttling: [SD02](../02-system-design/02-data-at-scale.md#particionamento) |
 
 **Três coisas que não se misturam**
 
@@ -509,7 +509,7 @@ Perguntas, em ordem: houve mudança de workload? Quais queries aumentaram execu�
 |---|---|---|
 | Query nova ou mudou de plano | Estatísticas por query (por exemplo `pg_stat_statements`, se habilitada) e `EXPLAIN` da consulta dominante | Índice ou reescrita, comparando custo de escrita |
 | Falta ou excesso de índice | Varreduras grandes para poucas linhas; escrita lenta com muitos índices | Ajustar conforme o padrão de acesso |
-| Conexões demais | Muitas sessões ativas competindo por CPU | Limitar concorrência: pooling em [SD02](../system-design/02-data-at-scale.md#consultas-e-conexões-antes-de-adicionar-nós) |
+| Conexões demais | Muitas sessões ativas competindo por CPU | Limitar concorrência: pooling em [SD02](../02-system-design/02-data-at-scale.md#consultas-e-conexões-antes-de-adicionar-nós) |
 | Waits por lock (podem explicar latência, não necessariamente CPU) | Wait events de lock dominando o database load; sessões esperando em vez de executando | Encurtar transações; revisar ordem de aquisição |
 | Mudança de workload | Novo release, campanha, relatório no horário de pico | Separar o trabalho ou limitar o novo tráfego |
 | Waits de I/O (idem) | Leitura de disco acima do normal, waits de leitura nos wait events | Reduzir dados lidos antes de aumentar capacidade; verifique se explicam a latência, a CPU ou ambos |
@@ -533,7 +533,7 @@ Decisão importante: se o nível `SERIALIZABLE` foi escolhido “por segurança�
 | Item compartilhado como `lim-001` | Muitas escritas no mesmo item | Rever o desenho antes de aumentar capacidade |
 | Crescimento de acesso por GSI | Throttle no índice, não na tabela | Avaliar a chave do índice |
 
-Escalar o armazenamento, dividir chaves e capacidade são tema de [SD02](../system-design/02-data-at-scale.md#particionamento); aqui o objetivo é reconhecer o skew.
+Escalar o armazenamento, dividir chaves e capacidade são tema de [SD02](../02-system-design/02-data-at-scale.md#particionamento); aqui o objetivo é reconhecer o skew.
 
 ### Cenário 4: cliente recebeu timeout, a projeção não mostra a operação
 
@@ -564,7 +564,7 @@ Perguntas-guia: qual é a autoridade? qual é a identidade? o commit é conhecid
 
 ## Perguntas de aprofundamento
 
-Ao mudar um requisito, volte a quatro pontos: unidade atômica, estado usado na decisão, reação ao conflito e evidência do resultado. Para investigar chaves quentes, atraso de réplica e failover, avance para [SD02](../system-design/02-data-at-scale.md#replicacao). Para migração, consulte [F12](12-resilience-migration.md).
+Ao mudar um requisito, volte a quatro pontos: unidade atômica, estado usado na decisão, reação ao conflito e evidência do resultado. Para investigar chaves quentes, atraso de réplica e failover, avance para [SD02](../02-system-design/02-data-at-scale.md#replicacao). Para migração, consulte [F12](12-resilience-migration.md).
 
 ## Perguntas de entrevista
 

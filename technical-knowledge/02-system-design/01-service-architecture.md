@@ -46,7 +46,7 @@ Um backend dedicado a cada experiência de cliente (web, app, parceiro), que agr
 
 Como o assistente que cuida da agenda e da comunicação de um CEO: um proxy ao lado da aplicação faz a comunicação com outros serviços e assume retries, timeouts, logs, métricas e TLS. Em Kubernetes, service meshes como o Istio usam o Envoy nesse papel. Na AWS, o ECS Service Connect adiciona um proxy gerenciado a cada task; o App Mesh, citado em materiais antigos, foi descontinuado em 30/09/2026. Aplicado a todos os serviços, o padrão vira um [service mesh](#service-mesh).
 
-**Cuidado:** o proxy é mais um salto na rede e mais um componente para operar. Retries no proxy e na aplicação ao mesmo tempo multiplicam as chamadas a uma dependência já sobrecarregada ([F09](../fundamentals/09-performance-costs.md)).
+**Cuidado:** o proxy é mais um salto na rede e mais um componente para operar. Retries no proxy e na aplicação ao mesmo tempo multiplicam as chamadas a uma dependência já sobrecarregada ([F09](../01-fundamentals/09-performance-costs.md)).
 
 <a id="service-mesh"></a>
 ## Service mesh

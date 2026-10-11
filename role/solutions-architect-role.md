@@ -82,6 +82,6 @@ Pela [descrição da vaga](job-description.md), o tempo se divide entre:
 
 **Da descrição da vaga:** 4+ anos em áreas de tecnologia, como desenvolvimento, nuvem, infraestrutura, segurança, redes ou dados, e em design, implementação ou consultoria de aplicações e infraestrutura, além de comunicação efetiva em inglês. Desejáveis: vendas, pré-vendas ou consultoria, migração de sistemas legados e experiência com AWS.
 
-**Técnicas:** fundamentos de redes, computação, armazenamento, bancos de dados e segurança, estudados em [fundamentals](../technical-knowledge/fundamentals/README.md), e padrões de arquitetura em [system design](../technical-knowledge/system-design/README.md).
+**Técnicas:** fundamentos de redes, computação, armazenamento, bancos de dados e segurança, estudados em [fundamentals](../technical-knowledge/01-fundamentals/README.md), e padrões de arquitetura em [system design](../technical-knowledge/02-system-design/README.md).
 
 **Comportamentais:** comunicação clara, condução da descoberta com o cliente e resolução estruturada de problemas.

@@ -18,7 +18,7 @@ As notas já cobrem redes, armazenamento, dados, segurança, APIs e sistemas dis
 | [Git, CI/CD e infraestrutura como código](11-git-cicd-iac.md) | Histórico, workflow, artefatos, identidade e rollback | 01, 05, 09 |
 | [Resiliência, migração e Well-Architected](12-resilience-migration.md) | HA, SPOF, DR, RTO/RPO, dependências, failover e migração | 05, 09, 10 |
 
-Para os padrões que combinam esses fundamentos, veja [System Design](../system-design/README.md).
+Para os padrões que combinam esses fundamentos, veja [System Design](../02-system-design/README.md).
 
 ## Profundidade esperada no treino
 

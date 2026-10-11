@@ -10,7 +10,7 @@
 
 **Aprofundamento:** [balanceamento](#balanceamento), [Multi-AZ](#multi-az), [Auto Scaling](#auto-scaling), [imagem](#imagem), [estado](#estado), [Spot](#spot) e [troubleshooting](#troubleshooting). Termine pelas [perguntas](#perguntas), sem abrir as respostas, e pelo [exercício](#exercicio).
 
-**Fronteiras:** redes em profundidade estão em [F01](01-networking-dns-connectivity.md); IAM, em [F03](03-security-identity.md); método de investigação, em [F08](08-observability-troubleshooting.md); pipeline e rastreabilidade, em [F11](11-git-cicd-iac.md). Decomposição, gateway, BFF e mesh pertencem a [SD01](../system-design/01-service-architecture.md); rolling, blue/green, canary e capacity planning, a [SD05](../system-design/05-scale-capacity-deployment.md). Aqui ficam os mecanismos da unidade de execução.
+**Fronteiras:** redes em profundidade estão em [F01](01-networking-dns-connectivity.md); IAM, em [F03](03-security-identity.md); método de investigação, em [F08](08-observability-troubleshooting.md); pipeline e rastreabilidade, em [F11](11-git-cicd-iac.md). Decomposição, gateway, BFF e mesh pertencem a [SD01](../02-system-design/01-service-architecture.md); rolling, blue/green, canary e capacity planning, a [SD05](../02-system-design/05-scale-capacity-deployment.md). Aqui ficam os mecanismos da unidade de execução.
 
 **Como ler as afirmações:** comportamento de produto vem com fonte; decisões dos exemplos são escolhas daquele cenário; números são hipóteses didáticas, não medições. Nenhum recurso AWS foi provisionado para este módulo.
 
@@ -234,7 +234,7 @@ No ECS, a saúde da task considera os containers `essential` com health check; o
 - O **Availability Zone rebalancing** é uma configuração explícita do service. Não dependa de memorizar o default: verifique e configure o valor desejado. Segundo a API `CreateService` e o guia do recurso, uma criação sem valor usa `ENABLED`; um update sem valor preserva o atual, e um service que nunca teve valor é tratado como `DISABLED`. A página de service definition parameters ainda indica `DISABLED` para services novos; a divergência está registrada nas fontes. [CreateService][f04-createservice], [AZ rebalancing][f04-rebalancing]
 - Mesmo ligado, o rebalanceamento corrige a **distribuição** depois de um desequilíbrio; não garante que a jornada sobreviva à perda de uma AZ.
 - Dependências também têm AZ: banco primário, NAT gateway, endpoints, cache. Uma task na AZ B que depende de um NAT na AZ A perde a saída junto com a AZ A.
-- Capacidade importa: duas tasks que juntas suportam o pico não suportam o pico com uma só. O cálculo de capacidade após perder uma AZ está em [SD05](../system-design/05-scale-capacity-deployment.md#capacity).
+- Capacidade importa: duas tasks que juntas suportam o pico não suportam o pico com uma só. O cálculo de capacidade após perder uma AZ está em [SD05](../02-system-design/05-scale-capacity-deployment.md#capacity).
 
 Estar distribuído em múltiplas AZs é propriedade de **placement**: comprova-se com tasks e capacidade em mais de uma AZ. Sobreviver à perda de uma AZ é propriedade de **resiliência da jornada**: comprova-se com a arquitetura completa, as dependências, a capacidade restante e um teste de falha controlado.
 
@@ -263,7 +263,7 @@ Comportamentos documentados que surpreendem:
 - **A. Downstream saturado.** Com pool de 10 conexões por task, 5 tasks abrem até 50 conexões; 20 tasks, até 200. Se o banco aceita 150: `tasks ↑ → conexões ↑ → banco satura → latência ↑ → timeouts → retries ↑`. Variações: throttling de um terceiro, contenção de lock, retries multiplicados entre camadas.
 - **B. Gargalo local nas tasks.** Tasks novas ainda frias (cache, JIT, conexões), CPU ou memória por task insuficiente, pool ou threads internos esgotados.
 
-A evidência separa as duas: latência por dependência nos traces e métricas do banco apontam para A; latência concentrada em tasks recentes, throttling de CPU ou espera interna apontam para B. Só então mude pool, tamanho da task ou máximo ([F09](09-performance-costs.md), [SD05](../system-design/05-scale-capacity-deployment.md#scale-cube)).
+A evidência separa as duas: latência por dependência nos traces e métricas do banco apontam para A; latência concentrada em tasks recentes, throttling de CPU ou espera interna apontam para B. Só então mude pool, tamanho da task ou máximo ([F09](09-performance-costs.md), [SD05](../02-system-design/05-scale-capacity-deployment.md#scale-cube)).
 
 <a id="lifecycle"></a>
 ## Lifecycle e graceful shutdown
@@ -332,7 +332,7 @@ Especificar o digest na task definition elimina essa dependência. [Image resolu
 
 - Rastreabilidade completa — commit → build → digest → revisão da task definition → deployment — pertence ao pipeline ([F11](11-git-cicd-iac.md)).
 
-**Rollback de imagem ≠ rollback de estado.** Voltar à imagem anterior não desfaz linhas gravadas no banco, migrações de schema, mensagens publicadas ou consumidas nem efeitos externos, como uma transferência enviada ao core. A versão antiga precisa conviver com o que a nova escreveu ([F11, rollback](11-git-cicd-iac.md#rollback); estratégias em [SD05](../system-design/05-scale-capacity-deployment.md#deployment)).
+**Rollback de imagem ≠ rollback de estado.** Voltar à imagem anterior não desfaz linhas gravadas no banco, migrações de schema, mensagens publicadas ou consumidas nem efeitos externos, como uma transferência enviada ao core. A versão antiga precisa conviver com o que a nova escreveu ([F11, rollback](11-git-cicd-iac.md#rollback); estratégias em [SD05](../02-system-design/05-scale-capacity-deployment.md#deployment)).
 
 <a id="estado"></a>
 ## Estado e sessão

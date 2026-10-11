@@ -1,6 +1,6 @@
 # System Design
 
-Padrões e trade-offs para combinar os [fundamentos](../fundamentals/README.md) em sistemas distribuídos e em escala.
+Padrões e trade-offs para combinar os [fundamentos](../01-fundamentals/README.md) em sistemas distribuídos e em escala.
 
 | ID | Módulo | Objetivo |
 |---|---|---|
@@ -21,7 +21,7 @@ Sete padrões frequentes em perguntas de design, mais um de migração. Em entre
 | CQRS | [SD03](03-distributed-workflows.md#cqrs) |
 | Event Sourcing | [SD03](03-distributed-workflows.md#event-sourcing) |
 | Leader Election | [SD03](03-distributed-workflows.md#leader-election) |
-| Pub/Sub | [F07](../fundamentals/07-events-messaging-distributed-systems.md#pubsub) |
+| Pub/Sub | [F07](../01-fundamentals/07-events-messaging-distributed-systems.md#pubsub) |
 | Sharding | [SD02](02-data-at-scale.md#sharding) |
 | Strangler Fig | [SD01](01-service-architecture.md#strangler) |
 
@@ -32,20 +32,20 @@ Os temas de system design e onde cada um é estudado nos módulos.
 
 | # | Tema | Onde estudar |
 |---|---|---|
-| 1 | Protocolos de rede: TCP/IP, HTTP e DNS | [Protocolos na prática](../fundamentals/01-networking-dns-connectivity.md#protocolos) · [HTTP e REST](../fundamentals/02-http-rest-openapi.md) |
-| 2 | Storage, RAID e I/O | [Níveis de RAID](../fundamentals/05-storage.md#raid) · [Padrões de I/O](../fundamentals/05-storage.md#io) |
-| 3 | CAP, ACID, BASE e PACELC | [ACID e CAP](../fundamentals/06-databases-transactions-consistency.md#acid-cap) · [BASE e PACELC](../fundamentals/06-databases-transactions-consistency.md#base-pacelc) |
-| 4 | Modelos de dados e indexação | [Modelos de dados](../fundamentals/06-databases-transactions-consistency.md#modelos) · [Indexação](../fundamentals/06-databases-transactions-consistency.md#indexacao) |
+| 1 | Protocolos de rede: TCP/IP, HTTP e DNS | [Protocolos na prática](../01-fundamentals/01-networking-dns-connectivity.md#protocolos) · [HTTP e REST](../01-fundamentals/02-http-rest-openapi.md) |
+| 2 | Storage, RAID e I/O | [Níveis de RAID](../01-fundamentals/05-storage.md#raid) · [Padrões de I/O](../01-fundamentals/05-storage.md#io) |
+| 3 | CAP, ACID, BASE e PACELC | [ACID e CAP](../01-fundamentals/06-databases-transactions-consistency.md#acid-cap) · [BASE e PACELC](../01-fundamentals/06-databases-transactions-consistency.md#base-pacelc) |
+| 4 | Modelos de dados e indexação | [Modelos de dados](../01-fundamentals/06-databases-transactions-consistency.md#modelos) · [Indexação](../01-fundamentals/06-databases-transactions-consistency.md#indexacao) |
 | 5 | Estratégias de cache | [Estratégias de cache](02-data-at-scale.md#cache) |
 | 6 | Monólitos, microsserviços e domínios | [Monólito, microsserviços e domínios](01-service-architecture.md#microsservicos) |
-| 7 | Load balancers e proxies reversos | [Proxies reversos e balanceamento](../fundamentals/04-compute-containers.md#balanceamento) |
+| 7 | Load balancers e proxies reversos | [Proxies reversos e balanceamento](../01-fundamentals/04-compute-containers.md#balanceamento) |
 | 8 | API gateways | [API gateway](01-service-architecture.md#api-gateway) |
 | 9 | Backend for Frontend (BFF) | [BFF](01-service-architecture.md#bff) |
 | 10 | Service mesh | [Service mesh](01-service-architecture.md#service-mesh) · [Ambassador](01-service-architecture.md#ambassador) |
-| 11 | Concorrência e paralelismo | [Concorrência e paralelismo](../fundamentals/09-performance-costs.md#concorrencia) |
-| 12 | Comunicação síncrona: HTTP, REST, RPC e gRPC | [REST, RPC e gRPC](../fundamentals/02-http-rest-openapi.md#sincrona) |
-| 13 | Comunicação assíncrona: filas, eventos e streaming | [Fila, pub/sub e streaming](../fundamentals/07-events-messaging-distributed-systems.md#assincrona) |
-| 14 | Performance, capacidade e escalabilidade | [Antes de otimizar](../fundamentals/09-performance-costs.md#performance) · [Escalabilidade](05-scale-capacity-deployment.md#scale-cube) |
+| 11 | Concorrência e paralelismo | [Concorrência e paralelismo](../01-fundamentals/09-performance-costs.md#concorrencia) |
+| 12 | Comunicação síncrona: HTTP, REST, RPC e gRPC | [REST, RPC e gRPC](../01-fundamentals/02-http-rest-openapi.md#sincrona) |
+| 13 | Comunicação assíncrona: filas, eventos e streaming | [Fila, pub/sub e streaming](../01-fundamentals/07-events-messaging-distributed-systems.md#assincrona) |
+| 14 | Performance, capacidade e escalabilidade | [Antes de otimizar](../01-fundamentals/09-performance-costs.md#performance) · [Escalabilidade](05-scale-capacity-deployment.md#scale-cube) |
 | 15 | Scale cube | [Scale cube](05-scale-capacity-deployment.md#scale-cube) |
 | 16 | Sharding e particionamento | [Particionamento](02-data-at-scale.md#particionamento) · [Sharding](02-data-at-scale.md#sharding) |
 | 17 | Replicação de dados | [Replicação](02-data-at-scale.md#replicacao) |
@@ -58,8 +58,8 @@ Os temas de system design e onde cada um é estudado nos módulos.
 | 24 | Testes de carga e estresse | [Testes de carga e estresse](05-scale-capacity-deployment.md#testes-carga) |
 | 25 | Bulkhead | [Bulkhead](04-resilience-isolation.md#bulkhead) |
 | 26 | Cell-based architecture | [Arquitetura baseada em células](04-resilience-isolation.md#celulas) |
-| 27 | SPOF e disaster recovery | [SPOF e estratégias de DR](../fundamentals/12-resilience-migration.md#spof-dr) |
-| 28 | Observabilidade e monitoramento por célula | [Sinais de ouro, SLI e SLO](../fundamentals/08-observability-troubleshooting.md#slo) |
+| 27 | SPOF e disaster recovery | [SPOF e estratégias de DR](../01-fundamentals/12-resilience-migration.md#spof-dr) |
+| 28 | Observabilidade e monitoramento por célula | [Sinais de ouro, SLI e SLO](../01-fundamentals/08-observability-troubleshooting.md#slo) |
 | 29 | Orquestração e coreografia | [Orquestração e coreografia](03-distributed-workflows.md#orquestracao) |
 
 Para praticar, use as [perguntas de design](../../interview/simulations/03-system-design/design-questions.md).

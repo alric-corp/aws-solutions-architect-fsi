@@ -60,7 +60,7 @@ A ordem, os temas e as datas de referência vêm da aba Cronograma. Leituras, re
 
 ### Dia 01 — System Design + Networking I
 
-**Data na origem:** 28/09. **Leitura de apoio:** [F01](../technical-knowledge/fundamentals/01-networking-dns-connectivity.md) · [F02](../technical-knowledge/fundamentals/02-http-rest-openapi.md).  
+**Data na origem:** 28/09. **Leitura de apoio:** [F01](../technical-knowledge/01-fundamentals/01-networking-dns-connectivity.md) · [F02](../technical-knowledge/01-fundamentals/02-http-rest-openapi.md).  
 **Recorte aplicado:** [FSI-01 — Pagamentos e Pix](../cases/01-payment-processing-pix.md).
 
 **40 min — proposta de foco:** Requisitos e caminho de uma requisição. Usar apenas os trechos de redes e HTTP necessários ao desenho.
@@ -74,7 +74,7 @@ A ordem, os temas e as datas de referência vêm da aba Cronograma. Leituras, re
 
 ### Dia 02 — Networking II
 
-**Data na origem:** 29/09. **Leitura de apoio:** [F01](../technical-knowledge/fundamentals/01-networking-dns-connectivity.md).  
+**Data na origem:** 29/09. **Leitura de apoio:** [F01](../technical-knowledge/01-fundamentals/01-networking-dns-connectivity.md).  
 **Recorte aplicado:** [FSI-04 — KYC e abertura de conta](../cases/04-kyc-account-opening.md).
 
 **40 min — proposta de foco:** Rede do dia anterior: sub-redes, rotas, SG/NACL, endpoints e DNS.
@@ -88,7 +88,7 @@ A ordem, os temas e as datas de referência vêm da aba Cronograma. Leituras, re
 
 ### Dia 03 — Load Balancing + Escalabilidade
 
-**Data na origem:** 30/09. **Leitura de apoio:** [F04](../technical-knowledge/fundamentals/04-compute-containers.md) · [F09](../technical-knowledge/fundamentals/09-performance-costs.md).  
+**Data na origem:** 30/09. **Leitura de apoio:** [F04](../technical-knowledge/01-fundamentals/04-compute-containers.md) · [F09](../technical-knowledge/01-fundamentals/09-performance-costs.md).  
 **Recorte aplicado:** [FSI-10 — Autorização de cartões](../cases/10-card-authorization-platform.md).
 
 **40 min — proposta de foco:** Load balancing, health checks e escala. Ler o recorte relevante, não os dois módulos completos.
@@ -102,7 +102,7 @@ A ordem, os temas e as datas de referência vêm da aba Cronograma. Leituras, re
 
 ### Dia 04 — Segurança AWS
 
-**Data na origem:** 01/10. **Leitura de apoio:** [F03](../technical-knowledge/fundamentals/03-security-identity.md).  
+**Data na origem:** 01/10. **Leitura de apoio:** [F03](../technical-knowledge/01-fundamentals/03-security-identity.md).  
 **Recorte aplicado:** [FSI-02 — Open Finance APIs](../cases/02-open-finance-apis.md).
 
 **40 min — proposta de foco:** Identidade, autorização, proteção de dados e auditoria; priorizar as ameaças do recorte escolhido.
@@ -116,7 +116,7 @@ A ordem, os temas e as datas de referência vêm da aba Cronograma. Leituras, re
 
 ### Dia 05 — CloudFront + Route 53 + Arquitetura Global
 
-**Data na origem:** 02/10. **Leitura de apoio:** [F01](../technical-knowledge/fundamentals/01-networking-dns-connectivity.md) · [F02](../technical-knowledge/fundamentals/02-http-rest-openapi.md) · [F12](../technical-knowledge/fundamentals/12-resilience-migration.md).  
+**Data na origem:** 02/10. **Leitura de apoio:** [F01](../technical-knowledge/01-fundamentals/01-networking-dns-connectivity.md) · [F02](../technical-knowledge/01-fundamentals/02-http-rest-openapi.md) · [F12](../technical-knowledge/01-fundamentals/12-resilience-migration.md).  
 **Recorte aplicado:** [FSI-09 — Internet Banking Multi-Region](../cases/09-multi-region-internet-banking.md).
 
 **40 min — proposta de foco:** CloudFront, DNS e requisitos globais. Recortes dirigidos; não ler três módulos inteiros.
@@ -130,7 +130,7 @@ A ordem, os temas e as datas de referência vêm da aba Cronograma. Leituras, re
 
 ### Dia 06 — Compute + Containers
 
-**Data na origem:** 03/10. **Leitura de apoio:** [F04](../technical-knowledge/fundamentals/04-compute-containers.md) · [F10](../technical-knowledge/fundamentals/10-data-analytics-ai.md).  
+**Data na origem:** 03/10. **Leitura de apoio:** [F04](../technical-knowledge/01-fundamentals/04-compute-containers.md) · [F10](../technical-knowledge/01-fundamentals/10-data-analytics-ai.md).  
 **Recorte aplicado:** [FSI-06 — GenAI para assessor financeiro](../cases/06-genai-financial-advisor.md).
 
 **40 min — proposta de foco:** EC2, containers e serverless. Reservar um recorte introdutório do módulo de IA para distinguir aplicação, recuperação e modelo.
@@ -144,7 +144,7 @@ A ordem, os temas e as datas de referência vêm da aba Cronograma. Leituras, re
 
 ### Dia 07 — Microservices + DDD + Consistência
 
-**Data na origem:** 04/10. **Leitura de apoio:** [F07](../technical-knowledge/fundamentals/07-events-messaging-distributed-systems.md) · [F06](../technical-knowledge/fundamentals/06-databases-transactions-consistency.md).  
+**Data na origem:** 04/10. **Leitura de apoio:** [F07](../technical-knowledge/01-fundamentals/07-events-messaging-distributed-systems.md) · [F06](../technical-knowledge/01-fundamentals/06-databases-transactions-consistency.md).  
 **Recorte aplicado:** [FSI-03 — Banking Event-Driven](../cases/03-event-driven-banking.md).
 
 **40 min — proposta de foco:** Domínios, limites de serviços, bases compartilhadas e coordenação distribuída.
@@ -158,7 +158,7 @@ A ordem, os temas e as datas de referência vêm da aba Cronograma. Leituras, re
 
 ### Dia 08 — Banco I — Fundamentos
 
-**Data na origem:** 05/10. **Leitura de apoio:** [F06](../technical-knowledge/fundamentals/06-databases-transactions-consistency.md) · [F09](../technical-knowledge/fundamentals/09-performance-costs.md).  
+**Data na origem:** 05/10. **Leitura de apoio:** [F06](../technical-knowledge/01-fundamentals/06-databases-transactions-consistency.md) · [F09](../technical-knowledge/01-fundamentals/09-performance-costs.md).  
 **Recorte aplicado:** [FSI-01 — Pagamentos e Pix](../cases/01-payment-processing-pix.md).
 
 **40 min — proposta de foco:** Transações, locks, isolamento e gargalos. Manter o cenário MySQL do cronograma para formular hipóteses.
@@ -172,7 +172,7 @@ A ordem, os temas e as datas de referência vêm da aba Cronograma. Leituras, re
 
 ### Dia 09 — Banco II — SQL vs NoSQL
 
-**Data na origem:** 06/10. **Leitura de apoio:** [F06](../technical-knowledge/fundamentals/06-databases-transactions-consistency.md) · [F05](../technical-knowledge/fundamentals/05-storage.md).  
+**Data na origem:** 06/10. **Leitura de apoio:** [F06](../technical-knowledge/01-fundamentals/06-databases-transactions-consistency.md) · [F05](../technical-knowledge/01-fundamentals/05-storage.md).  
 **Recorte aplicado:** [FSI-08 — Data Lake financeiro](../cases/08-financial-data-lake.md).
 
 **40 min — proposta de foco:** SQL/NoSQL e padrões de acesso. Reservar até 10 dos 40 minutos para revisar armazenamento por objeto, bloco e arquivo, substituindo parte da revisão já dominada.
@@ -186,7 +186,7 @@ A ordem, os temas e as datas de referência vêm da aba Cronograma. Leituras, re
 
 ### Dia 10 — Distributed Systems
 
-**Data na origem:** 07/10. **Leitura de apoio:** [F07](../technical-knowledge/fundamentals/07-events-messaging-distributed-systems.md) · [F10](../technical-knowledge/fundamentals/10-data-analytics-ai.md).  
+**Data na origem:** 07/10. **Leitura de apoio:** [F07](../technical-knowledge/01-fundamentals/07-events-messaging-distributed-systems.md) · [F10](../technical-knowledge/01-fundamentals/10-data-analytics-ai.md).  
 **Recorte aplicado:** [FSI-07 — Fraude em tempo real](../cases/07-real-time-fraud-detection.md).
 
 **40 min — proposta de foco:** Retries, idempotência, filas e eventos; introduzir apenas a distinção entre atualização de contexto e decisão síncrona.
@@ -200,7 +200,7 @@ A ordem, os temas e as datas de referência vêm da aba Cronograma. Leituras, re
 
 ### Dia 11 — Migração + Modernização
 
-**Data na origem:** 08/10. **Leitura de apoio:** [F12](../technical-knowledge/fundamentals/12-resilience-migration.md).  
+**Data na origem:** 08/10. **Leitura de apoio:** [F12](../technical-knowledge/01-fundamentals/12-resilience-migration.md).  
 **Recorte aplicado:** [FSI-05 — Modernização do core](../cases/05-core-banking-modernization.md).
 
 **40 min — proposta de foco:** Estratégias de migração, risco, prazo, dependências e critérios de cutover.
@@ -214,7 +214,7 @@ A ordem, os temas e as datas de referência vêm da aba Cronograma. Leituras, re
 
 ### Dia 12 — Hybrid Networking + Direct Connect Redundante
 
-**Data na origem:** 09/10. **Leitura de apoio:** [F01](../technical-knowledge/fundamentals/01-networking-dns-connectivity.md) · [F12](../technical-knowledge/fundamentals/12-resilience-migration.md).  
+**Data na origem:** 09/10. **Leitura de apoio:** [F01](../technical-knowledge/01-fundamentals/01-networking-dns-connectivity.md) · [F12](../technical-knowledge/01-fundamentals/12-resilience-migration.md).  
 **Recorte aplicado:** [FSI-09 — Internet Banking Multi-Region](../cases/09-multi-region-internet-banking.md).
 
 **40 min — proposta de foco:** Conectividade híbrida, diversidade física, BGP e contingência; usar somente trechos do módulo de resiliência.
@@ -228,7 +228,7 @@ A ordem, os temas e as datas de referência vêm da aba Cronograma. Leituras, re
 
 ### Dia 13 — CI/CD + Deploy Strategies
 
-**Data na origem:** 10/10. **Leitura de apoio:** [F11](../technical-knowledge/fundamentals/11-git-cicd-iac.md).  
+**Data na origem:** 10/10. **Leitura de apoio:** [F11](../technical-knowledge/01-fundamentals/11-git-cicd-iac.md).  
 **Recorte aplicado:** [FSI-06 — GenAI para assessor financeiro](../cases/06-genai-financial-advisor.md).
 
 **40 min — proposta de foco:** Git, artefatos, CI/CD, canary, blue-green, rolling e critérios de rollback.
@@ -242,7 +242,7 @@ A ordem, os temas e as datas de referência vêm da aba Cronograma. Leituras, re
 
 ### Dia 14 — Troubleshooting
 
-**Data na origem:** 11/10. **Leitura de apoio:** [F08](../technical-knowledge/fundamentals/08-observability-troubleshooting.md) · [F09](../technical-knowledge/fundamentals/09-performance-costs.md).  
+**Data na origem:** 11/10. **Leitura de apoio:** [F08](../technical-knowledge/01-fundamentals/08-observability-troubleshooting.md) · [F09](../technical-knowledge/01-fundamentals/09-performance-costs.md).  
 **Recorte aplicado:** [FSI-07 — Fraude em tempo real](../cases/07-real-time-fraud-detection.md).
 
 **40 min — proposta de foco:** Diagnóstico por hipóteses e evidências; priorizar a maior lacuna da checklist.

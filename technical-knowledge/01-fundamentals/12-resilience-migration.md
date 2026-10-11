@@ -64,7 +64,7 @@ Pergunte o que muda: hospedagem, linguagem, fronteira de negócio ou autoridade 
 
 Não substitua descoberta pela frase “refatorar tudo”. O [Case 05](../../cases/05-core-banking-modernization.md) aprofunda a convivência híbrida e a transferência de escrita. O [Case 09](../../cases/09-multi-region-internet-banking.md) aborda a recuperação regional.
 
-O padrão Strangler Fig está resumido nos [padrões de sistemas distribuídos](../system-design/01-service-architecture.md#strangler).
+O padrão Strangler Fig está resumido nos [padrões de sistemas distribuídos](../02-system-design/01-service-architecture.md#strangler).
 
 ## Seis pilares como perguntas
 

@@ -58,4 +58,4 @@ Meça throughput, latência em percentis (p50, p95, p99), taxa de erro e satura�
 
 Na AWS: CodeDeploy (blue/green no ECS e no EC2; canary e linear no Lambda), rolling no ECS com o circuit breaker de implantação, pesos em target groups do ALB ou em registros do Route 53, canary em estágios do API Gateway e feature flags no AWS AppConfig. O rollback pode ser automático, disparado por alarmes do CloudWatch.
 
-**Cuidado:** em toda estratégia, duas versões convivem por algum tempo, inclusive sobre o mesmo banco; mudanças de schema precisam funcionar com as duas (veja [Rollback e compatibilidade](../fundamentals/11-git-cicd-iac.md#rollback)). No canary, meça também métricas de negócio, como taxa de aprovação ou conversão, não só erro HTTP.
+**Cuidado:** em toda estratégia, duas versões convivem por algum tempo, inclusive sobre o mesmo banco; mudanças de schema precisam funcionar com as duas (veja [Rollback e compatibilidade](../01-fundamentals/11-git-cicd-iac.md#rollback)). No canary, meça também métricas de negócio, como taxa de aprovação ou conversão, não só erro HTTP.
