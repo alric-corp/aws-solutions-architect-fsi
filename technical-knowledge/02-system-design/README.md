@@ -2,7 +2,13 @@
 
 Padrões e trade-offs para combinar os [fundamentos](../01-fundamentals/README.md) em sistemas distribuídos e em escala.
 
-> Nunca estudou arquitetura? Comece pela trilha [System Design a partir do zero](00-system-design-from-zero.md), que parte de uma loja fictícia ([Loja Horizonte](ecommerce/00-scenario.md)) e explica cada conceito do zero. O [guia editorial](../learning-guide.md) descreve como as aulas são escritas.
+## Começar do zero
+
+Se você nunca estudou arquitetura, comece pela trilha guiada [System Design a partir do zero](00-system-design-from-zero.md). Ela acompanha uma loja fictícia, a [Loja Horizonte](ecommerce/00-scenario.md), e explica cada conceito quando ele aparece. A primeira aula é [Você clicou em um produto. O que aconteceu?](ecommerce/01-from-click-to-catalog.md)
+
+## Consultar e aprofundar
+
+O restante desta página é material de consulta: os módulos SD01–SD05, os padrões de sistemas distribuídos e o mapa de assuntos. Use-o para aprofundar um tema, revisar antes da entrevista ou localizar um assunto específico. Não é uma sequência obrigatória para a primeira leitura.
 
 | ID | Módulo | Objetivo |
 |---|---|---|
@@ -12,7 +18,7 @@ Padrões e trade-offs para combinar os [fundamentos](../01-fundamentals/README.m
 | SD04 | [Resiliência e Isolamento](04-resilience-isolation.md) | Conter falhas e limitar o raio de impacto |
 | SD05 | [Escala, Capacidade e Deploy](05-scale-capacity-deployment.md) | Dimensionar, testar limites e liberar mudanças com segurança |
 
-## Padrões de sistemas distribuídos
+### Padrões de sistemas distribuídos
 
 Sete padrões frequentes em perguntas de design, mais um de migração. Em entrevista, não basta nomear o padrão: diga que problema ele resolve, que custo traz e quando não usar.
 
@@ -28,9 +34,9 @@ Sete padrões frequentes em perguntas de design, mais um de migração. Em entre
 | Strangler Fig | [SD01](01-service-architecture.md#strangler) |
 
 <a id="trilha"></a>
-## Trilha de system design
+### Mapa de assuntos de system design
 
-Os temas de system design e onde cada um é estudado nos módulos.
+Os temas de system design e onde cada um é estudado nos módulos. Esta tabela é um índice para consulta, não o percurso guiado para iniciantes.
 
 | # | Tema | Onde estudar |
 |---|---|---|

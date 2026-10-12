@@ -73,6 +73,6 @@ Não trate um requisito futuro como garantia já atendida pela arquitetura inici
 
 ## Origem pedagógica
 
-A **abordagem** de evoluir uma aplicação passo a passo, acrescentando um componente só quando uma necessidade aparece, foi inspirada em um vídeo didático que parte de uma aplicação de fotos. A **Loja Horizonte é uma adaptação autoral** criada para esta trilha, aprovada para uso aqui. Não é o exemplo original do vídeo, não reproduz traduções quase literais e não reivindica autoria, título ou URL de uma fonte que não foi fornecida.
+A **abordagem** de evoluir uma aplicação passo a passo, acrescentando um componente só quando uma necessidade aparece, foi inspirada em um vídeo didático que parte de uma aplicação de fotos. A **Loja Horizonte é um cenário fictício e autoral** criado para esta trilha: não é o exemplo original do vídeo nem reproduz traduções quase literais dele.
 
-Algumas afirmações comuns em materiais introdutórios **não** são adotadas aqui porque são imprecisas: escala horizontal "infinita"; "acrescentar um componente nunca exige mudar o código"; "health check elimina todos os erros"; "a escolha entre SQL e NoSQL depende só do formato dos dados". As aulas ensinam o conteúdo com precisão e atribuição, sem abrir uma seção extensa só para corrigir o vídeo.
+Algumas afirmações comuns em materiais introdutórios **não** são adotadas aqui porque são imprecisas: escala horizontal "infinita"; "acrescentar um componente nunca exige mudar o código"; "health check elimina todos os erros"; "a escolha entre SQL e NoSQL depende só do formato dos dados".

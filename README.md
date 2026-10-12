@@ -2,6 +2,12 @@
 
 Material de preparação para a entrevista de Solutions Architect na AWS com foco em Financial Services (FSI). Conecta fundamentos técnicos, system design, cases do setor financeiro, Leadership Principles e simulações de entrevista.
 
+## Por onde começar
+
+- **Aprender do zero.** Se você nunca estudou arquitetura, comece pela [Aula 1 — Você clicou em um produto. O que aconteceu?](technical-knowledge/02-system-design/ecommerce/01-from-click-to-catalog.md). É a primeira aula da [trilha guiada da Loja Horizonte](technical-knowledge/02-system-design/00-system-design-from-zero.md), que apresenta cliente, servidor, banco de dados e serviços AWS aos poucos, quando cada conceito se torna necessário.
+- **Consultar e revisar.** Para aprofundar ou rever um tema, use o [índice dos fundamentos (F00–F12)](technical-knowledge/01-fundamentals/README.md) e o [índice de System Design](technical-knowledge/02-system-design/README.md), com os módulos SD01–SD05, os padrões e o mapa de assuntos.
+- **Aplicar na preparação.** Para treinar para a entrevista, use os [cases FSI](#cases-fsi), os [Leadership Principles](leadership-principles/README.md) e as [simulações de entrevista](interview/simulations/).
+
 ## Study Path
 
 ```text
@@ -30,8 +36,6 @@ Progress / Feedback
 | [leadership-principles/](leadership-principles/README.md) | Preparar experiências e respostas comportamentais |
 | [interview/](interview/) | Planejamento, perguntas e simulações |
 | [progress/](progress/) | Acompanhar lacunas e evolução |
-
-READMEs das áreas: [Technical Knowledge](technical-knowledge/README.md) · [Fundamentals](technical-knowledge/01-fundamentals/README.md) · [System Design](technical-knowledge/02-system-design/README.md) · [Leadership Principles](leadership-principles/README.md)
 
 ## Technical Knowledge
 

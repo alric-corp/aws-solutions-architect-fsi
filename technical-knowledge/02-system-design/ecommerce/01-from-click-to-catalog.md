@@ -1,137 +1,123 @@
 # Aula 1 — Você clicou em um produto. O que aconteceu?
 
-> Trilha: [System Design a partir do zero](../00-system-design-from-zero.md) · Cenário: [Loja Horizonte](00-scenario.md) · Como as aulas são escritas: [guia editorial](../../learning-guide.md)
+[Trilha System Design a partir do zero](../00-system-design-from-zero.md) · [Cenário da Loja Horizonte](00-scenario.md)
 
-**Ana abre a Loja Horizonte e toca no fone de ouvido. A página mostra o nome, o preço e uma fotografia. Como essas informações chegaram à tela?**
+Ana abre a Loja Horizonte e toca no fone de ouvido. A página mostra o nome, o preço e uma fotografia. **De onde vieram essas informações?**
 
-Esta aula responde a essa pergunta do zero. Ao final, você deve conseguir **explicar de onde vêm o nome, o preço e a fotografia de um produto e acompanhar o caminho dessas informações até a tela**.
-
-## Objetivos observáveis
-
-Depois desta aula, sem decorar, você consegue:
-
-- dizer quem faz o pedido e quem responde;
-- apontar onde ficam o nome, o preço e a fotografia;
-- explicar por que a fotografia provoca um segundo pedido;
-- ler o diagrama de comportamento e a arquitetura;
-- dizer, diante de "o preço aparece mas a foto não", qual é o próximo passo;
-- reconhecer o que esta arquitetura **ainda não** garante.
+Nesta aula, você acompanhará o caminho entre o navegador, a aplicação e os lugares onde os dados ficam guardados. Ao final, conseguirá explicar por que a página e a fotografia chegam em respostas diferentes e por onde começar a investigar quando uma delas falha.
 
 ## Roteiro
 
-[A cena](#cena) → [o que precisamos entregar](#requisitos) → [os papéis](#papeis) → [o caminho normal](#caminho) → [o desenho do comportamento](#mermaid) → [alternativas e trade-offs](#tradeoffs) → [como isso poderia funcionar na AWS](#aws) → [a arquitetura](#arquitetura) → [quando a foto não aparece](#falha) → [perguntas](#perguntas) → [exercício](#exercicio) → [resumo](#resumo).
+**Entenda o caminho:** [cenário](#cena) → [requisitos](#requisitos) → [participantes](#papeis) → [funcionamento](#caminho) → [desenho do pedido](#mermaid).
+
+**Aplique e pratique:** [trade-offs](#tradeoffs) → [AWS](#aws) → [arquitetura](#arquitetura) → [falhas](#falha) → [perguntas](#perguntas) → [exercício](#exercicio) → [resumo](#resumo).
 
 <a id="cena"></a>
-## O que aconteceu na loja?
+## 1. O que aconteceu na loja?
 
-Ana está no aplicativo da loja — na prática, uma página aberta no **navegador**, o programa que ela usa para ver sites (Chrome, Safari, Firefox são navegadores). Ela toca no fone de ouvido. Em um instante, a página do produto aparece com três informações: o **nome** ("Fone de ouvido"), o **preço** (R$ 199,90) e uma **fotografia**.
+Ana está usando o **navegador**, o programa que abre sites, como Chrome, Safari ou Firefox. Ao selecionar o produto `prod-001`, ela vê:
 
-Essas informações não estavam prontas no celular de Ana. O navegador precisou **pedi-las** a outro programa e **montar** a tela com o que recebeu. Vamos destrinchar esse pedido.
+- **Nome:** Fone de ouvido.
+- **Preço:** R$ 199,90.
+- **Fotografia:** a imagem correspondente ao produto.
+
+Neste exemplo, o navegador ainda não tem essas informações. Ele precisa pedi-las à aplicação da loja e usar as respostas para apresentar a página.
+
+> A Loja Horizonte, seus personagens e seus dados são fictícios. A arquitetura serve para estudo: não foi implantada nem teve seu desempenho medido.
 
 <a id="requisitos"></a>
-## O que precisamos entregar nesta etapa?
+## 2. O que a loja precisa oferecer?
 
-Antes de pensar em qualquer tecnologia, vale escrever o que a loja precisa oferecer **nesta** etapa. Dois tipos de necessidade (ambos explicados no [guia editorial](../../learning-guide.md)):
+Antes de escolher tecnologias, precisamos entender **o que deve funcionar e em quais condições**. Essas necessidades são os **requisitos** do sistema.
 
-**Requisitos funcionais** — capacidades que a pessoa usa:
+### Requisitos funcionais: o que a pessoa consegue fazer
 
-- consultar o nome e o preço de um produto pelo seu identificador;
-- exibir a fotografia correspondente ao produto;
-- quando a fotografia não puder ser obtida, mostrar uma **indicação de imagem indisponível** sem apagar o nome e o preço que já apareceram.
+A loja precisa permitir a consulta do nome, do preço e da fotografia de um produto pelo seu identificador. Se a fotografia não puder ser carregada, a página deve mostrar um aviso de imagem indisponível sem apagar o nome e o preço.
 
-**Requisitos não funcionais** — qualidades exigidas dessas capacidades (aqui, poucas e pertinentes):
+### Requisitos não funcionais: como isso precisa funcionar
 
-- **proteção contra alterações não autorizadas**: ninguém que apenas visita a loja pode mudar o preço ou a foto;
-- **tempo de resposta sob uma carga definida**: a aplicação deve montar a resposta da página do produto dentro de um limite, para uma quantidade combinada de acessos;
-- **comportamento previsível quando a foto falha**: a página continua útil (nome e preço) mesmo sem a imagem.
+Para esta etapa, vamos considerar três qualidades:
 
-Um requisito não funcional **não** é secundário: é ele que, mais adiante, vai pesar em várias decisões. E "usar um banco de dados gerenciado" ou "usar a AWS" **não** são requisitos funcionais — Ana não pediu isso. São decisões/restrições tecnológicas, que aparecem só depois.
+- **Proteção:** visitantes podem consultar o catálogo, mas não alterar preços ou fotografias.
+- **Tempo de resposta:** a aplicação precisa responder dentro de um prazo definido, mesmo recebendo uma quantidade conhecida de pedidos. Na [seção 7](#meta), esse prazo vira uma meta que pode ser medida.
+- **Comportamento na falha:** um problema na fotografia não deve inutilizar a página inteira.
 
-**Requisitos verificáveis.** "Rápido" e "seguro" não são verificáveis como estão. Para medir o tempo de resposta, precisaríamos combinar: a **operação** (montar a página de um produto), a **medida** (tempo até a resposta sair da aplicação), o **limite** (um valor-alvo), a **carga** (quantos pedidos ao mesmo tempo), a **janela** (por quanto tempo medimos), o **ponto de medição** (na aplicação, não no celular de Ana) e o **tratamento dos erros** (pedidos que falharam contam?).
+As categorias se complementam. Mostrar um aviso é um comportamento; manter a página útil durante uma falha é uma qualidade desse comportamento.
 
-> Para esta aula, adotamos uma meta **hipotética**: *a aplicação monta a resposta da página do produto em até 300 ms no percentil 95, para até 50 pedidos por segundo, medidos na aplicação, durante uma janela de 5 minutos, descontando respostas de erro.* Isso é uma **hipótese do cenário** para dar concretude — não é um padrão da indústria, um benchmark nem um resultado medido. E atenção: esse tempo é o da **aplicação**, não o tempo total até a página terminar de carregar no navegador de Ana (que inclui rede, imagem e desenho da tela).
+“Usar AWS” e “usar um banco gerenciado” são escolhas tecnológicas do exemplo. Não são funcionalidades que Ana pediu.
 
 <a id="papeis"></a>
-## Entenda a ideia: os papéis
+## 3. Quem participa da consulta?
 
-Vamos nomear quem participa. São **papéis de software**, não necessariamente máquinas.
+**Cliente** é o programa que faz o pedido. Aqui, é o navegador de Ana.
 
-- **Cliente** — o programa que **faz o pedido**. Aqui, o navegador de Ana é o cliente.
-- **Servidor** — o programa que **recebe o pedido e responde**. "Servidor" é um papel: um software que atende solicitações. Ele executa em alguma infraestrutura (um computador na nuvem, por exemplo), mas não precisa ser imaginado como uma única máquina física — pode haver vários computadores por trás.
-- **Aplicação da loja** — o software servidor que entende os pedidos da loja: recebe "quero ver o produto prod-001", busca as informações e devolve a resposta.
-- **Requisição** (ou pedido) — a mensagem que o cliente envia pedindo algo.
-- **Resposta** — a mensagem que o servidor devolve.
-- **Banco de dados** — um programa especializado em **guardar e consultar registros** de forma organizada. Um **registro** é um conjunto de informações sobre uma coisa — por exemplo, o registro do `prod-001` guarda seu nome e seu preço.
-- **Arquivo de imagem** — a fotografia é um **arquivo**: uma sequência de bytes que representa a imagem. É diferente de um registro de texto como nome e preço.
+**Servidor** é o programa que recebe o pedido e responde. Esse nome descreve um papel. O programa precisa executar em um computador, mas “servidor” não significa obrigatoriamente uma única máquina física.
 
-As três responsabilidades que aparecem nesta aula:
+**Aplicação da loja** é o programa servidor que entende os pedidos do catálogo, busca as informações e prepara as respostas.
 
-1. **executar o programa** da loja (a aplicação que atende os pedidos);
-2. **guardar os registros do catálogo** (nome e preço de cada produto);
-3. **guardar os arquivos das fotografias** (as imagens dos produtos).
+Uma **requisição** é a mensagem enviada pelo cliente. Uma **resposta** é a mensagem devolvida pelo servidor. Neste exemplo, essa conversa utiliza **HTTP**, o protocolo — isto é, o conjunto de regras combinadas — que organiza essas mensagens na web.
 
-> **Separar registros e fotografias é uma decisão deste exemplo**, não uma lei. Bancos de dados **conseguem** guardar arquivos; é comum, porém, manter textos curtos (nome, preço) no banco e os arquivos grandes (imagens) em um armazenamento próprio para arquivos. Veremos o porquê nos [trade-offs](#tradeoffs).
+A aplicação consulta dois tipos de informação:
+
+| Informação | Onde fica neste exemplo | O que significa |
+|---|---|---|
+| Nome e preço | Banco de dados | Um programa que guarda e consulta informações organizadas. O cadastro de um produto é um **registro**. |
+| Fotografia | Armazenamento de arquivos | A imagem é um arquivo formado por **bytes**, unidades de dados que o navegador interpreta para exibi-la. |
+
+São três responsabilidades: **executar a aplicação, guardar os registros e guardar os arquivos**. Separá-las ajuda a entender quem faz cada parte do trabalho.
+
+Bancos de dados também podem guardar arquivos. Aqui escolhemos manter as fotografias separadas; veremos os motivos e os limites dessa escolha nos trade-offs.
 
 <a id="caminho"></a>
-## Acompanhe o funcionamento
+## 4. Acompanhe os dois pedidos
 
-Usaremos sempre o mesmo produto, `prod-001`. O caminho tem **duas partes**, porque o nome/preço e a fotografia são obtidos separadamente.
+### Pedido A — obter a página do produto
 
-### Parte A — a página do produto
-
-O navegador de Ana envia uma requisição à aplicação:
+O navegador solicita a página de `prod-001`:
 
 ```text
 GET /products/prod-001
 ```
 
-`GET` quer dizer "me entregue"; `/products/prod-001` diz **o quê**: o produto de identificador `prod-001`. (Trate esse endereço como um exemplo ilustrativo; nenhuma API foi publicada ou executada nesta aula.)
+Nesse exemplo, `GET` indica uma solicitação de leitura. O caminho `/products/prod-001` identifica a página do produto que Ana quer consultar.
 
-A aplicação, ao receber o pedido:
+A aplicação:
 
-1. consulta no banco de dados o registro de `prod-001`;
-2. obtém o nome ("Fone de ouvido") e o preço (R$ 199,90);
-3. monta uma página em **HTML** — a linguagem que descreve a página que o navegador vai desenhar (texto, onde fica cada coisa, e **referências** a imagens);
-4. devolve essa página ao navegador na resposta.
+1. Consulta o registro de `prod-001` no banco.
+2. Obtém o nome “Fone de ouvido” e o preço R$ 199,90.
+3. Monta uma página em **HTML**, a linguagem que descreve o conteúdo da página e suas referências a outros recursos, como imagens.
+4. Devolve o HTML ao navegador.
 
-Não vamos escrever HTML nem ensinar a programar a página; basta saber que a página é uma **descrição** que o navegador interpreta para desenhar a tela.
+O navegador interpreta essa resposta para apresentar a página. Você não precisa saber programar HTML para acompanhar o restante do exemplo.
 
-### Parte B — a fotografia
+### Pedido B — obter a fotografia
 
-A página devolvida contém uma **referência** à imagem, algo como:
+O HTML contém uma referência à fotografia:
 
-```text
+```html
 <img src="/products/prod-001/image">
 ```
 
-Isso **não** é a foto; é um endereço que diz ao navegador: "para mostrar a imagem, peça-a aqui". Então o navegador faz um **segundo pedido**, agora para a imagem:
+Isso é **um endereço para buscar a imagem**, não o arquivo da fotografia. Ao encontrar essa referência, o navegador faz outro pedido:
 
 ```text
 GET /products/prod-001/image
 ```
 
-A mesma aplicação recebe esse pedido e:
+A aplicação:
 
-1. identifica qual arquivo corresponde ao produto;
-2. lê esse arquivo do armazenamento de arquivos;
-3. devolve os **bytes** da imagem ao navegador.
+1. Identifica o arquivo correspondente ao produto.
+2. Lê o arquivo no armazenamento.
+3. Devolve os bytes da fotografia ao navegador.
 
-O navegador então coloca a imagem na página já exibida.
+O navegador usa essa segunda resposta para mostrar a imagem na página. Por isso, o nome e o preço podem aparecer enquanto a fotografia ainda está carregando.
 
-Três pontos importantes:
-
-- os dados do produto (nome, preço) e o arquivo de imagem chegam em **respostas distintas**, a dois pedidos distintos;
-- **referenciar** uma imagem na página não significa que os bytes dela vieram da consulta ao banco — eles vêm do pedido da imagem;
-- neste piloto, o navegador **não** fala diretamente com o banco de dados nem com o armazenamento de arquivos: tudo passa pela aplicação.
-
-> Este caminho — a aplicação também entrega as imagens — é uma **escolha didática inicial**. Ele tem um custo: a aplicação gasta trabalho enviando bytes de imagem, além de montar páginas. Outras formas de entregar imagens serão comparadas em aulas posteriores.
+**São duas solicitações, cada uma com sua própria resposta:** uma traz o HTML; a outra, a fotografia. Nesta versão da loja, ambas passam pela aplicação. O navegador não consulta diretamente o banco nem o armazenamento dos arquivos.
 
 <a id="mermaid"></a>
-## O desenho do comportamento
+## 5. O caminho da página em um desenho
 
-**Pergunta que o desenho responde:** na consulta dos dados do produto (parte A), em que ordem as mensagens acontecem e quem fala com quem?
-
-**Como ler:** o tempo corre de cima para baixo. Cada seta é uma mensagem. As linhas verticais são os participantes. A busca da fotografia (parte B) é mostrada à parte, no texto acima e na [arquitetura](#arquitetura), para não sobrecarregar este desenho.
+O desenho abaixo foi feito com **Mermaid**, uma ferramenta que gera diagramas a partir de texto. Ele mostra apenas o **pedido A**, que busca nome e preço. Leia de cima para baixo: as linhas verticais representam os participantes e as setas mostram as mensagens.
 
 ```mermaid
 sequenceDiagram
@@ -145,293 +131,300 @@ sequenceDiagram
     Note over Nav: Mostra nome e preço na tela
 ```
 
-**Passo a passo:** (1) o navegador pede a página de `prod-001`; (2) a aplicação consulta o cadastro no banco; (3) o banco devolve o nome e o preço; (4) a aplicação monta a página e responde; o navegador mostra nome e preço. A fotografia virá no segundo pedido.
-
-**Conclusão curta:** o nome e o preço vêm de uma **consulta ao banco**, interpretada pela aplicação e devolvida como página. Nada aqui ainda fala sobre a imagem.
+Observe quem prepara a resposta: **o banco fornece os dados; a aplicação monta a página; o navegador a apresenta**. A fotografia será obtida em outro pedido, como vimos na parte B.
 
 <a id="tradeoffs"></a>
-## Alternativas e trade-offs
+## 6. Por que escolher esse desenho?
 
-Antes de nomear serviços, vale olhar duas decisões deste desenho. Para cada uma: o problema, as alternativas, o que ganhamos, o que custa, por que escolhemos agora, e o que faria reconsiderar.
+Um **trade-off** é a avaliação do que uma escolha favorece e de quais custos ou limites ela traz. Neste exemplo, tomamos três decisões.
 
-**1. Guardar as fotografias separadas dos registros.**
-Problema: onde ficam as imagens? Alternativas: (a) dentro do banco, junto do registro; (b) em um armazenamento de arquivos à parte. Escolha agora: (b). Favorece: manter o banco enxuto para consultas de texto e tratar arquivos grandes onde isso é barato e simples. Custo/limite: passam a existir **dois lugares** para cuidar, e a aplicação precisa saber ler os dois. Reconsiderar se: as imagens fossem minúsculas e raras, ou se um requisito exigisse transação única cobrindo texto e arquivo. (Não é verdade que banco "não pode" guardar arquivo; é uma escolha de adequação.)
+### Registros e fotografias separados
 
-**2. A aplicação entrega as imagens.**
-Problema: quem envia os bytes da foto ao navegador? Alternativas: (a) a própria aplicação lê e envia; (b) servir a imagem por um caminho dedicado a conteúdo estático/entrega na borda. Escolha agora: (a), por simplicidade didática. Favorece: um só componente para entender neste momento. Custo/limite: a aplicação gasta tempo e capacidade enviando imagens, competindo com o trabalho de montar páginas. Reconsiderar se: o volume de imagens crescer ou o tempo de resposta sofrer — aí comparamos entrega dedicada e cache/CDN (aula futura).
+**Escolha:** guardar nome e preço no banco e as fotografias em outro armazenamento. A alternativa seria guardar também os arquivos no banco.
 
-**3. Uma única cópia da aplicação no desenho inicial.**
-Problema: quantas instâncias da aplicação desenhar agora? Alternativas: (a) uma; (b) várias atrás de um balanceador. Escolha agora: (a), porque o foco é o **caminho da consulta**, não a continuidade. Favorece: um desenho simples de explicar. Custo/limite: se essa única instância parar, a loja para — este desenho **não** demonstra continuidade. Reconsiderar se: surgir um requisito de sobreviver à falha de uma instância (aula futura sobre escala e disponibilidade).
+**Ganho e limite:** cada lugar recebe uma responsabilidade, mas a aplicação precisa relacionar corretamente produto e arquivo e lidar com os dois acessos. A separação não garante, sozinha, menor custo ou melhor desempenho.
 
-Repare que "mais barato", "mais rápido" e "mais simples" não andam sempre juntos: separar imagens pode simplificar o banco e, ao mesmo tempo, criar trabalho operacional de cuidar de dois lugares. Um trade-off descreve o que trocamos — nunca é desculpa para violar um requisito obrigatório (por exemplo, a proteção contra alterações não autorizadas vale em qualquer alternativa).
+**Quando reconsiderar:** se fosse necessária uma **transação** única — uma operação em que registro e arquivo são gravados juntos, ou nenhum dos dois é gravado.
+
+### A aplicação também entrega a fotografia
+
+**Escolha:** o navegador pede tanto a página quanto a imagem à aplicação. Outra opção seria entregar as imagens por um caminho dedicado.
+
+**Ganho e limite:** temos um único ponto de entrada para acompanhar nesta aula. Em contrapartida, a aplicação também trabalha lendo e enviando os arquivos.
+
+**Quando reconsiderar:** se esse trabalho prejudicar as consultas ou se o volume de imagens aumentar. Nesse caso, vale comparar outras formas de entrega.
+
+### Uma instância da aplicação
+
+**Escolha:** começar o desenho com uma única instância, isto é, um computador virtual executando o programa. A alternativa seria executar a aplicação em mais de uma instância.
+
+**Ganho e limite:** fica mais fácil acompanhar a consulta, mas a loja depende dessa instância. Se ela parar, a aplicação deixa de atender.
+
+**Quando reconsiderar:** se surgir o requisito de continuar atendendo mesmo quando uma instância falhar. Ele exigiria outro desenho.
+
+A simplicidade desta primeira aula **não torna a arquitetura pronta para produção**. Uma decisão deve respeitar os requisitos obrigatórios, mesmo quando a alternativa mais simples parece atraente.
 
 <a id="aws"></a>
-## Como isso poderia funcionar na AWS
+## 7. Uma implementação possível na AWS
 
-Agora, e só agora, mapeamos cada **papel** a um serviço. Antes das siglas, o nome por extenso:
+Agora que os papéis estão claros, podemos associá-los a serviços da AWS.
 
-- **Amazon EC2** (*Elastic Compute Cloud*) — fornece computadores virtuais na nuvem onde você executa seus programas.
-- **Amazon RDS** (*Relational Database Service*) **for PostgreSQL** — um serviço gerenciado que opera um banco de dados relacional (aqui, o PostgreSQL) para você.
-- **Amazon S3** (*Simple Storage Service*) — um serviço para guardar e recuperar **arquivos** (chamados de objetos), organizados em "baldes" chamados *buckets*.
+**Amazon EC2 — Elastic Compute Cloud:** fornece computadores virtuais na nuvem para executar programas. A aplicação da loja será instalada em uma dessas instâncias.
 
-| Conceito (papel) | Serviço | Papel no exemplo | O que **não** resolve sozinho |
-|---|---|---|---|
-| Executar o programa | <img src="../../01-fundamentals/assets/aws-ec2-32.svg" width="24" alt=""> Amazon EC2 | Hospeda e executa a aplicação da loja | Não vem com a aplicação pronta; alguém instala e opera o programa |
-| Guardar os registros | <img src="assets/aws-rds-32.svg" width="24" alt=""> Amazon RDS for PostgreSQL | Mantém os registros do catálogo (nome, preço) e responde às consultas | Não implementa as regras de negócio da loja; isso é a aplicação |
-| Guardar os arquivos | <img src="assets/aws-s3-32.svg" width="24" alt=""> Amazon S3 | Armazena os arquivos das fotografias em um bucket privado | Não envia a imagem por iniciativa própria; a aplicação pede e repassa |
+**Amazon RDS — Relational Database Service:** é um serviço gerenciado de banco de dados. Escolhemos o **PostgreSQL**, um programa de banco de dados muito usado, para guardar e consultar os registros do catálogo. Gerenciado significa que parte da administração do banco é realizada pelo serviço; isso não cria automaticamente as regras da loja.
 
-Alguns cuidados, para não aprender errado:
+**Amazon S3 — Simple Storage Service:** guarda e recupera dados como **objetos**, organizados em **buckets**. Neste exemplo, cada fotografia é um arquivo armazenado como objeto em um bucket.
 
-- a **EC2** oferece o computador; a aplicação não nasce pronta nela — é instalada e operada;
-- o **RDS** cuida da operação do banco (instalação, cópias de segurança, correções), mas **as regras comerciais da loja ficam na aplicação**, não no banco. ([RDS é um serviço gerenciado que automatiza tarefas de administração do banco.](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Welcome.html))
-- o **S3** entrega um objeto **quando é solicitado e autorizado**; ele não "manda a imagem sozinho";
-- usar serviços gerenciados **não** torna a jornada automaticamente disponível — continuidade é outra decisão;
-- **esta combinação não é obrigatória** para todo e-commerce; é uma implementação didática.
+| Serviço | Papel no exemplo | Limite importante |
+|---|---|---|
+| <img src="../../01-fundamentals/assets/aws-ec2-32.svg" width="24" alt=""> Amazon EC2 | Executa a aplicação da loja. | Criar a instância não instala nem configura a loja automaticamente. |
+| <img src="assets/aws-rds-32.svg" width="24" alt=""> Amazon RDS for PostgreSQL | Guarda os registros do catálogo e responde às consultas. | O serviço não define automaticamente como a loja deve funcionar. |
+| <img src="assets/aws-s3-32.svg" width="24" alt=""> Amazon S3 | Guarda os arquivos das fotografias. | A aplicação ainda precisa solicitar o arquivo e estar autorizada a recebê-lo. |
 
-Nesta variante, algumas escolhas de segurança valem desde já:
+### Catálogo público não significa banco ou bucket públicos
 
-- o **catálogo é visível ao público** (qualquer pessoa pode ver nome, preço e foto de um produto);
-- o **banco não é exposto diretamente ao navegador** — quem fala com o banco é a aplicação;
-- o **bucket S3 é privado**: por padrão, buckets novos bloqueiam acesso público e os objetos não são públicos ([S3 bloqueia acesso público por padrão](https://docs.aws.amazon.com/AmazonS3/latest/userguide/configuring-block-public-access-bucket.html));
-- a aplicação é autorizada a ler **apenas os objetos necessários**;
-- **credenciais da AWS não são entregues ao navegador**;
-- o acesso da aplicação ao S3 usa uma **role** apropriada (uma identidade com permissões que a aplicação assume), **não** chaves fixas escritas no código.
+Ana pode consultar os produtos, mas não recebe acesso direto ao banco nem credenciais da AWS. O **bucket permanece privado**: a aplicação obtém os objetos e entrega as imagens ao navegador.
 
-Permissões, em uma frase: cada acesso ao banco e ao S3 passa por uma identidade com permissão mínima; o navegador nunca recebe essas permissões. O detalhamento de identidade e acesso é assunto de outro módulo ([F03](../../01-fundamentals/03-security-identity.md)); aqui basta o princípio.
+Para ler no S3, a aplicação usa uma **role**, uma identidade com as permissões necessárias, em vez de chaves fixas escritas no código. O acesso ao banco também precisa de configuração própria; a role usada para o S3 não autoriza automaticamente as consultas ao PostgreSQL.
 
-> **A arquitetura é didática, não está pronta para produção nem foi implantada.** Rede, TLS, capacidade, cópias de segurança, observabilidade e disponibilidade exigem decisões próprias, que **não** estão resolvidas aqui.
+A ideia é conceder somente o acesso necessário a cada participante. Os detalhes de identidade e autorização são aprofundados em [Segurança e identidade](../../01-fundamentals/03-security-identity.md).
 
-### Requisito → decisão → como verificar
+<a id="meta"></a>
+### Como transformar “rápido” em uma meta
 
-| Requisito | Implicação no desenho | Como verificar | Estado |
-|---|---|---|---|
-| Consultar nome e preço | Registros no RDS; a aplicação consulta por `prod-001` | Pedir `prod-001` e conferir nome/preço na resposta | decisão proposta; ainda não testado |
-| Exibir a fotografia | Arquivo no S3; a aplicação lê e repassa | Pedir a imagem e conferir os bytes recebidos | decisão proposta; ainda não testado |
-| Indicação de imagem indisponível | A página mostra um aviso se a imagem falhar, sem apagar nome/preço | Simular falha da imagem e observar a página | planejado no comportamento; ainda não testado |
-| Proteção contra alteração não autorizada | Banco não exposto; bucket privado; sem credenciais no navegador; role de leitura | Revisar quem pode escrever; tentar acesso indevido deve ser negado | coerência analisada; não testado |
-| Tempo de resposta sob carga | Uma instância EC2 atende; meta hipotética definida | Teste de carga medindo o p95 na aplicação | não testado |
-| Continuidade se a instância falhar | Uma única instância no desenho | — | **não atendido pelo desenho atual**; planejado para etapa futura |
+Vamos adotar uma **meta hipotética**, ainda não testada:
 
-Repare: um serviço aparecer no desenho **não** significa "requisito atendido". Desempenho, continuidade e segurança operacional só podem ser chamados de atendidos depois de evidência.
+> Durante cinco minutos, com até 50 solicitações por segundo, pelo menos 95% das respostas bem-sucedidas da página do produto devem ser concluídas pela aplicação em até **300 milissegundos — 0,3 segundo**.
+
+Essa é uma forma de expressar um alvo de **percentil 95, ou p95**: no conjunto avaliado, pelo menos 95 de cada 100 respostas bem-sucedidas precisam ficar dentro desse tempo. Algumas podem demorar mais.
+
+A medição começa quando a aplicação recebe a solicitação e termina quando conclui sua resposta. Ela **não inclui** o caminho pela rede, a busca da fotografia nem o tempo que o navegador leva para apresentar tudo na tela. As respostas com erro devem ser contadas separadamente; excluí-las desse cálculo não as transforma em sucesso.
+
+Também há uma diferença entre **50 solicitações por segundo**, que é uma taxa de chegada, e o número de solicitações que ficam em andamento ao mesmo tempo.
+
+### Como cada requisito influencia a arquitetura
+
+| Requisito | Decisão relacionada | Como verificar |
+|---|---|---|
+| Consultar nome e preço | A aplicação consulta o cadastro no RDS. | Solicitar `prod-001` e conferir os dados recebidos. |
+| Exibir a fotografia | A aplicação obtém o arquivo no S3. | Solicitar a imagem e conferir se corresponde ao produto. |
+| Manter a página útil sem a imagem | Página e fotografia têm pedidos separados; a página precisa estar preparada para a falha. | Provocar falha da imagem e observar se nome, preço e aviso permanecem visíveis. |
+| Impedir alterações por visitantes | Acesso de consulta não concede permissão de escrita nos dados. | Revisar as permissões e testar tentativas de alteração não autorizadas. |
+| Atender à meta de tempo | O caminho de consulta precisa ser medido sob a carga definida na meta. | Executar o teste e avaliar tempos e erros separadamente. |
+| Continuar atendendo se a instância falhar | **Não atendido pelo desenho atual.** | Exigiria uma evolução da arquitetura e um teste de falha. |
+
+Essas verificações **ainda não foram executadas**. Colocar um serviço no desenho não comprova desempenho, segurança operacional ou recuperação.
 
 <a id="arquitetura"></a>
-## A arquitetura (implementação possível)
+## 8. A arquitetura da consulta
 
-O desenho abaixo mostra **uma implementação possível** do caminho, incluindo a busca da fotografia (que ficou de fora do Mermaid). Ele responde: **quais componentes participam e como se ligam?**
+O desenho reúne as duas partes: a página e a fotografia. Ele mostra **onde a aplicação executa e quais informações busca em cada dependência**.
 
-![Arquitetura lógica da consulta ao catálogo da Loja Horizonte: o Navegador de Ana, fora da nuvem AWS, faz dois pedidos à Aplicação da loja, que executa em uma instância Amazon EC2; para montar a página, a aplicação consulta o Amazon RDS for PostgreSQL (nome e preço do catálogo); para a fotografia, a aplicação lê o arquivo de um bucket privado no Amazon S3; as respostas voltam ao navegador pela aplicação. RDS e S3 são consultados pela aplicação para finalidades diferentes, não em sequência um do outro.](assets/01-catalog-aws.svg)
+![Arquitetura lógica da Loja Horizonte: o navegador de Ana faz dois pedidos à aplicação executada na EC2. A aplicação consulta nome e preço no RDS for PostgreSQL e obtém a fotografia em um bucket S3 privado. Cada pedido recebe sua própria resposta pela aplicação.](assets/01-catalog-aws.svg)
 
-Arquivo editável (fonte do diagrama): [`assets/01-catalog-aws.drawio`](assets/01-catalog-aws.drawio). Para editar, abra esse arquivo no [diagrams.net](https://www.drawio.com/) (menu *File → Open*) ou no app de desktop; a exportação `.svg` foi gerada a partir dele e também pode ser reaberta no editor.
+[Abrir o diagrama editável no Draw.io](assets/01-catalog-aws.drawio).
 
-**Como ler:** o **navegador fica fora** da caixa tracejada da AWS. Dentro dela, a **aplicação executa na EC2**. A aplicação consulta o **RDS** (para nome e preço) e lê o arquivo no **S3** (para a fotografia): são dois caminhos com **finalidades diferentes**, não uma sequência em que um depende do outro. As respostas voltam ao navegador pela aplicação.
+O navegador está fora do agrupamento AWS. Dentro dele, a aplicação executa na EC2 e usa RDS e S3 para finalidades diferentes. **RDS não envia a fotografia ao S3, e S3 não consulta o RDS:** quem coordena os dois acessos é a aplicação.
 
-**O que o desenho apoia e o que omite:**
-
-- apoia os requisitos de **consultar o catálogo** e **exibir a fotografia** (mostra onde cada informação mora e quem a busca);
-- é uma **visão lógica**: a caixa "Nuvem AWS" não representa rede real. **Rede, sub-redes, zonas de disponibilidade (AZs), TLS, balanceamento, cópias de segurança e observabilidade foram omitidos de propósito** — a legenda do desenho registra isso. O S3 **não** fica dentro de uma sub-rede, e por isso não foi desenhado dentro de nenhuma;
-- **não** demonstra continuidade: há uma única instância; se ela parar, a loja para.
+> Esta é uma visão lógica. A configuração de rede, a proteção das conexões, as zonas de disponibilidade, os backups e o monitoramento não estão detalhados. A caixa “Nuvem AWS” não representa uma rede ou sub-rede.
 
 <a id="falha"></a>
-## O que acontece quando algo falha?
+## 9. O nome e o preço aparecem, mas a fotografia não
 
-**Falha: o nome e o preço aparecem, mas a fotografia não.**
+No caminho simplificado desta aula, temos evidência de que o **pedido A foi atendido**: a aplicação obteve os dados e devolveu a página. Agora precisamos investigar o **pedido B**, que deveria trazer a imagem.
 
-Primeiro, o que isso já nos diz: a **parte A funcionou** (a página veio, com nome e preço). Logo, a consulta ao banco e a montagem da página deram certo. O problema está na **parte B**: o pedido da imagem (`GET /products/prod-001/image`) não resultou na foto.
+Isso não comprova a saúde atual de todo o banco nem significa que o S3 inteiro está indisponível. O problema pode estar no endereço usado, no arquivo, na permissão ou no caminho de leitura.
 
-Esse sintoma **não** prova que o banco está fora do ar — ao contrário, o banco respondeu (vieram nome e preço). Também **não** prova que o S3 inteiro está indisponível: pode ser um problema só com aquele arquivo ou com a permissão de lê-lo.
+| Hipótese | O que procurar |
+|---|---|
+| Referência incorreta | O endereço da imagem na página corresponde ao produto? |
+| Arquivo ausente | O arquivo esperado existe no armazenamento? |
+| Acesso não permitido | A aplicação está autorizada a ler esse objeto? |
+| Falha na obtenção | O pedido da imagem recebeu resposta? Outras fotografias carregam? |
 
-Hipóteses simples a considerar (duas ou três bastam):
-
-- a **referência à imagem está errada** na página (aponta para um endereço que não corresponde ao arquivo);
-- o **arquivo esperado não existe** no bucket (nunca foi enviado, ou foi removido);
-- a **aplicação não tem acesso** àquele objeto (a permissão de leitura não cobre esse arquivo);
-- houve uma **falha no caminho de obtenção** da imagem (a leitura não se completou).
-
-O que observar, sem precisar de comandos ainda não ensinados: qual foi a resposta ao pedido da imagem (ela chegou a ser atendida?); se o endereço da imagem na página corresponde ao produto; se outros produtos mostram foto (ajuda a separar "problema geral" de "problema deste arquivo").
-
-Enquanto a causa é investigada, há uma escolha de apresentação simples e honesta: **mostrar uma indicação de "imagem indisponível"**, preservando o nome e o preço já exibidos. Nunca inventar uma foto ou um preço no lugar. Isso atende o requisito de comportamento previsível na falha.
-
-(Não precisamos, aqui, de mecanismos como repetição automática, circuit breaker ou CDN — eles chegam em aulas próprias.)
+Enquanto a causa é investigada, o comportamento esperado é **mostrar “imagem indisponível” sem apagar nome e preço**. A separação dos pedidos ajuda, mas a página precisa estar preparada para esse caso, e esse tratamento deve ser testado. Não devemos inventar uma fotografia ou um preço para esconder a falha.
 
 <a id="perguntas"></a>
-## Verifique seu entendimento
+## 10. Verifique seu entendimento
 
-Responda em voz alta antes de abrir a resposta.
+Responda em voz alta antes de abrir cada resposta.
 
-### 1. (compreensão) Quem pede e quem responde?
+### 1. Quem pede e quem responde?
 
 Quando Ana abre a página do produto, quem é o cliente e quem é o servidor?
 
-**Follow-up:** o "servidor" é obrigatoriamente uma única máquina física?
+**Pergunta extra:** o servidor precisa ser uma única máquina física?
 
 <details>
-<summary><strong>Ver resposta comentada</strong></summary>
+<summary><strong>Resposta comentada: cliente e servidor</strong></summary>
 
-**Resposta esperada:** o cliente é o navegador de Ana (faz o pedido); o servidor é a aplicação da loja (recebe e responde).
+**Resposta:** o navegador é o cliente: faz o pedido. A aplicação da loja é o servidor: recebe o pedido e responde.
 
-**Por que faz sentido:** cliente e servidor são papéis de software definidos por quem pede e quem atende.
+Cliente e servidor descrevem papéis. O software precisa executar em infraestrutura, mas esse papel não obriga o uso de uma única máquina física.
 
-**Resposta ao follow-up:** não. Servidor é um papel; o software executa em infraestrutura e pode haver vários computadores por trás.
-
-**O que observar:** não confunde o navegador com o servidor; entende "servidor" como papel, não como máquina única.
+**Confira sua resposta:** você identificou os programas e o papel de cada um, em vez de confundir a pessoa com o cliente de software?
 
 </details>
 
-### 2. (compreensão) Onde ficam nome, preço e fotografia?
+### 2. Onde ficam nome, preço e fotografia?
 
-Nesta aula, onde está guardado o nome e o preço, e onde está a fotografia?
+Onde essas informações estão guardadas neste exemplo?
 
-**Follow-up:** isso quer dizer que um banco de dados é incapaz de guardar arquivos?
+**Pergunta extra:** essa escolha significa que bancos de dados não conseguem guardar arquivos?
 
 <details>
-<summary><strong>Ver resposta comentada</strong></summary>
+<summary><strong>Resposta comentada: onde cada informação fica</strong></summary>
 
-**Resposta esperada:** nome e preço ficam como **registros** no banco de dados (RDS for PostgreSQL); a fotografia é um **arquivo** no armazenamento de arquivos (S3).
+**Resposta:** nome e preço ficam nos registros do RDS for PostgreSQL. A fotografia fica como objeto no S3.
 
-**Por que faz sentido:** separar texto curto (registro) de arquivo grande (imagem) é a decisão deste cenário.
+Bancos também podem guardar arquivos. Separar os dois armazenamentos foi uma decisão deste cenário, não uma limitação universal dos bancos.
 
-**Resposta ao follow-up:** não. Bancos conseguem guardar arquivos; aqui foi uma **escolha** de adequação, não uma impossibilidade.
-
-**O que observar:** não trata a separação como lei universal; usa os termos registro e arquivo corretamente.
+**Confira sua resposta:** você explicou a escolha da loja sem transformá-la em uma regra para todo sistema?
 
 </details>
 
-### 3. (aplicação) O que a EC2 faz no exemplo?
+### 3. O que a EC2 faz?
 
-Qual é o papel da EC2 aqui, e o que ela **não** faz sozinha?
+Qual é o papel da EC2 nesta arquitetura?
 
-**Follow-up:** criar a instância EC2 já coloca a loja no ar?
+**Pergunta extra:** criar uma instância já coloca a loja no ar?
 
 <details>
-<summary><strong>Ver resposta comentada</strong></summary>
+<summary><strong>Resposta comentada: o papel da EC2</strong></summary>
 
-**Resposta esperada:** a EC2 fornece o computador onde a **aplicação da loja executa**. Ela não traz a aplicação pronta nem implementa as regras da loja.
+**Resposta:** a EC2 fornece o computador virtual onde a aplicação executa.
 
-**Por que faz sentido:** EC2 é computação; o programa é instalado e operado por quem constrói a loja.
+A instância não traz a Loja Horizonte pronta. Ainda é necessário instalar e configurar a aplicação e seu acesso aos demais recursos.
 
-**Resposta ao follow-up:** não. A instância é só a capacidade de execução; ainda é preciso instalar, configurar e operar a aplicação (e tratar rede, segurança, etc.).
-
-**O que observar:** separa "ter o computador" de "ter a aplicação funcionando"; não atribui as regras de negócio ao serviço de compute.
+**Confira sua resposta:** você separou a infraestrutura que executa o programa do próprio programa?
 
 </details>
 
-### 4. (aplicação) Por que a imagem provoca outra solicitação?
+### 4. Por que a fotografia exige outro pedido?
 
-A página já chegou com nome e preço. Por que o navegador faz um segundo pedido para mostrar a fotografia?
+A página já chegou com nome e preço. Por que o navegador faz uma nova solicitação?
 
-**Follow-up:** os bytes da foto vieram da consulta ao banco?
+**Pergunta extra:** os bytes da fotografia vieram da consulta ao banco?
 
 <details>
-<summary><strong>Ver resposta comentada</strong></summary>
+<summary><strong>Resposta comentada: o segundo pedido</strong></summary>
 
-**Resposta esperada:** a página traz apenas uma **referência** à imagem (`<img src=".../image">`), não a imagem em si. Para obter os bytes, o navegador faz um novo pedido ao endereço da imagem.
+**Resposta:** o HTML traz uma referência à imagem, não o arquivo. O navegador solicita o endereço indicado para receber os bytes.
 
-**Por que faz sentido:** nome/preço e arquivo de imagem são respostas distintas a pedidos distintos.
+Nesta arquitetura, a aplicação lê a fotografia no S3 e responde a esse segundo pedido. Os bytes da imagem não vieram da consulta de nome e preço ao RDS.
 
-**Resposta ao follow-up:** não. Os bytes vieram do pedido da imagem (a aplicação leu o arquivo do S3), não da consulta ao banco.
-
-**O que observar:** não confunde referenciar a imagem com já ter os bytes; separa as duas respostas.
+**Confira sua resposta:** você distinguiu o endereço que aponta para a fotografia do conteúdo da própria fotografia?
 
 </details>
 
-### 5. (diagnóstico) O preço aparece e a foto não: qual o próximo passo?
+### 5. O preço aparece e a fotografia não. Por onde começar?
 
-A página mostra "Fone de ouvido" e R$ 199,90, mas a imagem não carrega. O que você conclui e qual é o próximo passo?
+Ana vê “Fone de ouvido” e R$ 199,90, mas a imagem não carrega. Qual é o próximo passo?
 
-**Follow-up:** isso prova que o banco de dados está fora do ar?
+**Pergunta extra:** isso prova que o banco está fora do ar ou que o S3 inteiro falhou?
 
 <details>
-<summary><strong>Ver resposta comentada</strong></summary>
+<summary><strong>Resposta comentada: por onde investigar</strong></summary>
 
-**Resposta esperada:** a parte A funcionou (nome e preço vieram), então o problema está na obtenção da **imagem**. Próximo passo: verificar o pedido da imagem — se a referência na página está correta, se o arquivo existe no bucket e se a aplicação tem permissão de lê-lo — e, enquanto isso, mostrar "imagem indisponível" sem apagar nome e preço.
+**Resposta:** investigar o pedido da imagem. Confira o endereço solicitado, a resposta recebida, a existência do arquivo e a permissão da aplicação para lê-lo.
 
-**Por que faz sentido:** o sintoma localiza a falha na parte B; nome e preço presentes mostram que o banco respondeu.
+No fluxo desta aula, a consulta que gerou a página já foi atendida. Isso ajuda a localizar a investigação, mas não prova a saúde atual de todos os componentes. A falha da fotografia também pode afetar apenas aquele objeto ou acesso.
 
-**Resposta ao follow-up:** não. O banco respondeu (vieram nome e preço). O sintoma também não prova que o S3 inteiro caiu — pode ser aquele objeto ou a permissão.
-
-**O que observar:** não salta para "banco fora" nem "S3 fora"; distingue falha geral de falha de um arquivo/permissão; preserva os dados já exibidos.
+**Confira sua resposta:** você procurou evidências antes de escolher uma causa e manteve nome e preço visíveis enquanto a imagem era investigada?
 
 </details>
 
-### 6. (mudança de requisito) Trocar a fotografia exige trocar a infraestrutura?
+### 6. Trocar a fotografia exige mudar a arquitetura?
 
-A loja quer substituir a foto do `prod-001` por uma nova. Isso exige mudar EC2, RDS e S3?
+A loja quer substituir a fotografia de `prod-001`. É preciso trocar EC2, RDS e S3?
 
-**Follow-up:** e se, em vez disso, a loja exigisse que a página do produto continue no ar mesmo se a instância da aplicação falhar?
+**Pergunta extra:** e se a exigência fosse continuar atendendo mesmo quando a instância da aplicação falhasse?
 
 <details>
-<summary><strong>Ver resposta comentada</strong></summary>
+<summary><strong>Resposta comentada: mudança de dado ou de arquitetura</strong></summary>
 
-**Resposta esperada:** não. Trocar a foto é substituir o **arquivo** correspondente no S3 (e garantir que a referência aponte para o arquivo certo). Os serviços e o desenho continuam os mesmos.
+**Resposta:** trocar a fotografia é uma alteração nos dados. Podemos substituir o arquivo correspondente ou atualizar sua referência, mantendo os mesmos serviços.
 
-**Por que faz sentido:** a fotografia é um arquivo no armazenamento; mudá-la é uma operação de dados, não de arquitetura.
+Já continuar atendendo sem a única instância disponível exigiria uma evolução da arquitetura. O desenho atual não atende a esse requisito.
 
-**Resposta ao follow-up:** aí sim o desenho precisaria evoluir: uma única instância não sobrevive à própria falha. Atender essa continuidade é tema de uma aula futura (escala e disponibilidade) — **não** acrescentamos esses componentes agora só para "cobrir" o requisito.
-
-**O que observar:** separa mudança de dado de mudança de arquitetura; reconhece honestamente o limite da instância única sem inventar a solução agora.
+**Confira sua resposta:** você distinguiu uma mudança de conteúdo de uma nova exigência sobre o funcionamento do sistema?
 
 </details>
 
 <a id="exercicio"></a>
-## Resolva uma pequena mudança
+## 11. Aplique o que aprendeu
 
-**Exercício.** Leia a situação e responda no papel, reutilizando apenas o que esta aula ensinou.
+O exercício tem duas partes. A primeira retoma a falha da fotografia; a segunda usa o mesmo raciocínio em uma situação nova. Responda às duas antes de abrir a solução.
 
-> A Loja Horizonte quer uma garantia: *"a página do produto deve continuar mostrando nome e preço mesmo quando a fotografia não puder ser carregada"*.
->
-> 1. Identifique de que **tipo** é esse requisito (funcional ou não funcional) e enuncie-o de forma verificável.
-> 2. Relacione-o a uma **decisão** do desenho (o que no caminho/arquitetura o apoia).
-> 3. Explique um **limite**: o que esse comportamento **não** garante.
-> 4. Diga **como você verificaria** que foi atendido.
+### Parte A — Consolidação
+
+Ana vê “Fone de ouvido” e R$ 199,90, mas a fotografia não aparece. A Loja Horizonte pede:
+
+> “Mesmo quando a fotografia não puder ser carregada, a página deve continuar mostrando nome e preço e apresentar um aviso de imagem indisponível.”
+
+1. Qual requisito está em jogo e o que precisa ser observado para considerá-lo atendido?
+2. Qual decisão da arquitetura ajuda a cumpri-lo?
+3. O que essa decisão não garante?
+4. Como você verificaria o resultado?
+
+### Parte B — Uma pequena variação: o manual do produto
+
+Imagine que a loja passe a oferecer o manual do fone de ouvido em **PDF**, isto é, um documento guardado em um arquivo. Ana poderia abri-lo a partir da página do produto.
+
+Essa variação existe apenas neste exercício. O cenário da Loja Horizonte e a arquitetura da aula continuam os mesmos.
+
+1. Onde poderia ficar a referência que indica qual manual pertence ao produto?
+2. Onde poderia ficar o arquivo do manual?
+3. Quando Ana pede o manual, quem faz a solicitação e quem responde?
+4. A página aparece, mas o manual não abre. O que você investigaria?
+
+Use apenas o que esta aula apresentou: não é preciso escolher um serviço novo nem escrever código.
 
 <details>
-<summary><strong>Ver solução comentada</strong></summary>
+<summary><strong>Solução comentada das partes A e B</strong></summary>
 
-**Resposta esperada:**
-1. É um requisito de **qualidade (não funcional)** sobre o comportamento na falha. Enunciado verificável: *quando o pedido da imagem de um produto falhar, a página desse produto continua exibindo nome e preço e mostra uma indicação de "imagem indisponível", em vez de ficar sem conteúdo.*
-2. **Decisão que apoia:** nome/preço e fotografia vêm de pedidos separados; como a parte A (página com nome e preço) não depende da parte B (imagem), a página pode ser mostrada mesmo sem a foto, exibindo o aviso.
-3. **Limite:** isso não garante que a foto vai aparecer, nem corrige a causa (referência errada, objeto ausente, permissão). Também não diz nada sobre o banco estar lento ou a instância cair.
-4. **Como verificar:** simular a falha da imagem (por exemplo, apontar para um arquivo inexistente) e observar se a página mantém nome e preço e mostra o aviso, sem inventar foto nem preço.
+**Parte A — a fotografia não carrega**
 
-**Por que faz sentido:** o requisito é sobre comportamento sob falha; a separação dos dois pedidos é exatamente o que permite degradar a página sem perdê-la.
+**1. Requisito:** quando o pedido da imagem falhar, nome e preço continuam visíveis e a página mostra o aviso. Você pode descrevê-lo como um comportamento — mostrar o aviso — ou como uma qualidade — manter a página útil durante a falha. As duas leituras servem, desde que deixem claro o que deve ser observado.
 
-**O que observar:** classifica o requisito, liga-o à separação de pedidos, reconhece o limite (não conserta a causa) e propõe uma verificação observável — sem pedir retry, cache ou CDN.
+**2. Decisão que ajuda:** página e fotografia são obtidas em pedidos separados. A página pode apresentar nome e preço sem esperar o sucesso da imagem, desde que esteja preparada para a falha.
+
+**3. Limite:** isso não recupera o arquivo nem corrige sua referência ou permissão. Também não garante atendimento se a única instância da aplicação parar.
+
+**4. Verificação:** provocar a falha da imagem, por exemplo usando no teste uma referência a um arquivo ausente, e observar a página. Nome, preço e aviso devem permanecer disponíveis, sem informação inventada.
+
+**Parte B — o manual do produto**
+
+Uma resposta possível reaproveita o caminho da fotografia:
+
+**1. Referência:** no registro de `prod-001`, no banco de dados, junto do nome e do preço. A aplicação usa essa referência para colocar na página um link para o manual. A referência indica onde está o arquivo; ela não é o próprio documento.
+
+**2. Arquivo:** no armazenamento de arquivos. Na implementação desta aula, seria um objeto em um bucket privado do S3, como as fotografias.
+
+**3. Quem pede e quem responde:** o navegador de Ana solicita o manual, por exemplo com `GET /products/prod-001/manual`. A aplicação obtém o arquivo no armazenamento e devolve seus bytes. O caminho é o mesmo da fotografia: navegador → aplicação → obtenção do arquivo → resposta.
+
+**4. Investigação:** a página apareceu, então o pedido da página foi atendido; o problema está no pedido do manual. Confira se o link aponta para o manual certo, se o arquivo existe no armazenamento, se a aplicação tem permissão para lê-lo e se o pedido recebeu resposta.
+
+Há uma diferença em relação à fotografia: o navegador pede a imagem sozinho ao montar a página, enquanto o manual só é solicitado quando Ana abre o link.
+
+Outras respostas também podem estar corretas. A aplicação poderia, por exemplo, deduzir o arquivo a partir do identificador do produto, ou o PDF poderia ficar no próprio banco. O importante é justificar a escolha, como fizemos nos trade-offs da fotografia.
+
+**Confira sua solução:** nas duas partes, você ligou a necessidade a uma decisão, reconheceu um limite e indicou o que observar? Na parte B, separou a referência ao manual do próprio arquivo?
 
 </details>
 
 <a id="resumo"></a>
-## O que aprendemos e o que vem depois
+## 12. O que você deve levar desta aula
 
-**Resumo.** Quando Ana abre um produto, o navegador (cliente) pede a página à aplicação (servidor); a aplicação consulta o **catálogo** no banco para nome e preço, monta a página e responde. A página referencia a imagem, o que leva o navegador a um **segundo pedido**; a aplicação lê o **arquivo** no S3 e devolve os bytes. Na AWS, isso mapeia para EC2 (executa a aplicação), RDS for PostgreSQL (registros) e S3 (arquivos), com o banco não exposto e o bucket privado. É uma visão **didática**, com rede, continuidade e desempenho ainda **não** resolvidos.
+**O navegador pede; a aplicação coordena; os armazenamentos fornecem informações diferentes.** Na nossa implementação, a EC2 executa a aplicação, o RDS guarda os registros do catálogo e o S3 guarda as fotografias.
 
-**Checklist observável.** Você consegue, sem consultar:
+Use este checklist para revisar:
 
-- [ ] dizer quem é cliente e quem é servidor nesta cena;
-- [ ] apontar onde ficam nome, preço e fotografia;
-- [ ] explicar por que a imagem exige um segundo pedido;
-- [ ] mapear EC2, RDS e S3 aos três papéis e dizer o que cada um não resolve sozinho;
-- [ ] diante de "preço aparece, foto não", indicar o próximo passo sem culpar o banco;
-- [ ] nomear uma propriedade que esta arquitetura ainda **não** garante.
+- [ ] Consigo acompanhar os pedidos da página e da fotografia sem juntá-los em uma única resposta.
+- [ ] Sei explicar por que EC2, RDS e S3 aparecem no desenho.
+- [ ] Consigo relacionar uma necessidade da loja a uma decisão e ao seu limite.
+- [ ] Investigo uma falha usando evidências, sem culpar um serviço por reflexo.
+- [ ] Consigo aplicar o mesmo caminho a outro arquivo do produto, como um manual.
+- [ ] Sei o que precisaria ser testado antes de afirmar que a arquitetura atende aos requisitos.
 
-**Próxima etapa (planejada).** A seguir, a loja ganha um **carrinho e um pedido** — e com eles novas perguntas: o que acontece quando duas pessoas querem a última unidade? Essa aula ainda não existe; será escrita na sequência da trilha.
-
----
-
-## Fontes
-
-Consultadas em **11/10/2026**. Documentação da AWS em `latest` muda; revalide antes de um laboratório. Afirmações marcadas como escolha do cenário ou hipótese didática não são comportamento de produto.
-
-- Amazon EC2 — computação na nuvem: [documentação](https://docs.aws.amazon.com/ec2/).
-- Amazon RDS — serviço gerenciado de banco relacional (automatiza administração; não implementa regras da aplicação): [What is Amazon RDS?](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Welcome.html).
-- Amazon S3 — armazenamento de objetos; buckets e objetos **privados por padrão**, acesso público bloqueado: [Block Public Access](https://docs.aws.amazon.com/AmazonS3/latest/userguide/configuring-block-public-access-bucket.html).
-- Identidade e permissões da aplicação (role, menor privilégio): aprofundamento em [F03](../../01-fundamentals/03-security-identity.md).
-- AWS Architecture Icons (ícones de EC2, RDS e S3): [página oficial](https://aws.amazon.com/architecture/icons/).
-- Mermaid (diagrama de sequência): [documentação oficial](https://mermaid.js.org/syntax/sequenceDiagram.html).
-- diagrams.net / Draw.io (fonte editável da arquitetura): [site oficial](https://www.drawio.com/).
-- Apresentação com `<details>` no GitHub: [documentação](https://docs.github.com/en/get-started/writing-on-github).
-
-**Procedência dos ícones:** EC2 reutilizado por referência ao asset existente de F04 (`../../01-fundamentals/assets/aws-ec2-32.svg`), sem cópia local. RDS e S3 copiados sem alteração gráfica do pacote oficial AWS Architecture Icons (release `Icon-package_07312026`): variante *Architecture-Service-Icons / Arch_32* de **Amazon RDS** (categoria Databases) e **Amazon Simple Storage Service** (categoria Storage). Não há variante de arquitetura específica "RDS for PostgreSQL"; usamos o ícone genérico de RDS com o nome por extenso no texto, e **não** o ícone de Aurora. O nome local `aws-rds-32.svg` / `aws-s3-32.svg` segue a convenção do repositório.
-
-**Formato dos ícones no diagrama (exceção deste piloto):** os SVGs oficiais acima são a origem preservada. Dentro do `01-catalog-aws.drawio`, porém, os três ícones estão embutidos como **PNGs de 256×256 px derivados desses SVGs**, não como SVG. Essa conversão foi adotada por compatibilidade: no editor testado, ícones embutidos como SVG não eram renderizados. Os PNGs **não** são byte-idênticos aos SVGs oficiais (são uma rasterização deles). Componentes, rótulos e conectores do diagrama continuam independentes e editáveis. A exportação `01-catalog-aws.svg` contém essas imagens **rasterizadas**; portanto a arquitetura exportada **não** é integralmente vetorial. Esta é uma decisão pontual deste piloto, não uma regra para os próximos diagramas.
-
-**Inspiração × autoria:** a abordagem de evoluir a aplicação passo a passo foi inspirada em um vídeo didático sobre uma aplicação de fotos; a **Loja Horizonte** e todos os exemplos são autorais desta trilha. Veja a nota em [00-scenario.md](00-scenario.md).
+**Próxima etapa (planejada):** carrinho e pedido — o que a loja precisa guardar para continuar a compra de Ana? Essa aula ainda não está disponível. As etapas seguintes estão listadas na [trilha System Design a partir do zero](../00-system-design-from-zero.md).
