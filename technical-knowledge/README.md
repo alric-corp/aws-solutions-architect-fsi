@@ -19,4 +19,6 @@ Mock Interviews
 | Cases FSI (FSI01–FSI10) | Aplicar os dois níveis a problemas do setor financeiro | [cases](../cases/) |
 | Mock interviews | Defender decisões e reagir a follow-ups | [interview/simulations](../interview/simulations/) |
 
+Começando do zero em arquitetura? A trilha [System Design a partir do zero](02-system-design/00-system-design-from-zero.md) ensina decisões de arquitetura com uma loja fictícia como fio condutor, antes dos módulos SD01–SD05.
+
 Os IDs servem de referência rápida: F06 é um fundamento, SD03 um padrão de system design, FSI03 um case financeiro e STAR03 uma experiência comportamental.

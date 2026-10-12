@@ -2,6 +2,8 @@
 
 Padrões e trade-offs para combinar os [fundamentos](../01-fundamentals/README.md) em sistemas distribuídos e em escala.
 
+> Nunca estudou arquitetura? Comece pela trilha [System Design a partir do zero](00-system-design-from-zero.md), que parte de uma loja fictícia ([Loja Horizonte](ecommerce/00-scenario.md)) e explica cada conceito do zero. O [guia editorial](../learning-guide.md) descreve como as aulas são escritas.
+
 | ID | Módulo | Objetivo |
 |---|---|---|
 | SD01 | [Arquitetura de Serviços](01-service-architecture.md) | Dividir o sistema em serviços e organizar a entrada e a comunicação entre eles |
