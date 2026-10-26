@@ -5,6 +5,8 @@
 ## Identificação e origem
 
 - ID do episódio:
+- IDs das perguntas praticadas (por exemplo, LP04-Q05):
+- Data e idioma do último ensaio:
 - Título sem nomes confidenciais:
 - Período aproximado:
 - Natureza: experiência profissional / voluntariado / estudo / laboratório.
@@ -48,6 +50,8 @@ Contexto; responsabilidade; duas ou três ações decisivas; resultado; aprendiz
 ## Aprofundamentos
 
 Prepare respostas sobre autoria, alternativas, conflitos, método da métrica, consequências, falhas e continuidade. Deixe lacunas explícitas.
+
+Escolha perguntas no [guia de prática dos LPs](../leadership-principles/practice-guide.md). Registre qual aprofundamento ficou sem resposta e qual fato precisa confirmar antes do próximo ensaio.
 
 ## Revisão
 

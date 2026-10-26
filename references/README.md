@@ -1,6 +1,6 @@
 # Referências e proveniência
 
-> Revisão editorial: 28/09/2026; fontes S07 e T31–T36 acrescentadas e verificadas em 01/10/2026. Links de documentação podem mudar; confirme novamente antes da entrevista ou de um laboratório.
+> Revisão editorial: 28/09/2026; fontes S07 e T31–T36 acrescentadas e verificadas em 01/10/2026. Fontes S02 e S04 conferidas novamente em 26/10/2026 para a revisão da trilha de Leadership Principles. Links de documentação podem mudar; confirme novamente antes da entrevista ou de um laboratório.
 
 Este repositório mantém três camadas explícitas: **anotações privadas de estudo**, que não fazem parte do repositório; **fontes públicas**, listadas abaixo; e **conteúdo autoral**, que são as sínteses, os exercícios e os critérios dos módulos. Os exercícios, critérios de autoavaliação e tempos sugeridos não são uma rubrica oficial da Amazon.
 
@@ -45,7 +45,7 @@ As indicações abaixo delimitam o que cada fonte sustenta; um link não valida 
 <a id="s02"></a>
 ### S02 — Amazon Leadership Principles
 
-[Consultar a fonte](https://www.amazon.jobs/content/en/our-workplace/leadership-principles). Nomes e conjunto dos 16 princípios. As fichas são sínteses autorais das anotações, não reprodução integral desta página.
+[Consultar a fonte](https://www.amazon.jobs/content/en/our-workplace/leadership-principles). Nomes, conjunto dos 16 princípios e texto-base, conferidos em 26/10/2026. As fichas apresentam traduções didáticas dos princípios e interpretação autoral. Perguntas, critérios de revisão e aplicações FSI são exercícios próprios.
 
 <a id="s03"></a>
 ### S03 — Amazon — How We Hire

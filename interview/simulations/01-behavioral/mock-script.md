@@ -2,6 +2,8 @@
 
 Roteiro para quem conduz uma simulação de cerca de 45 minutos. Peça situações reais, estruturadas com [STAR](../../../leadership-principles/00-star-and-evidence.md), e use os aprofundamentos para testar o papel individual. Dedique a maior parte do tempo de preparação à prática com simulações.
 
+Escolha três ou quatro perguntas comportamentais abaixo por sessão para permitir aprofundamento. Para alternar os 16 princípios, use as [quatro rodadas do guia de prática](../../../leadership-principles/practice-guide.md#quatro-rodadas-para-cobrir-os-16-princípios), com perguntas identificadas e versões em inglês. A duração e as combinações são sugestões de treino.
+
 1. Apresente-se em um minuto e diga por que esta vaga agora. — [perguntas comuns](../../common-questions.md)
 2. O que atrai você na AWS e no setor financeiro? — [perguntas comuns](../../common-questions.md)
 3. **Customer Obsession:** conte uma situação em que o pedido do cliente não resolvia o problema real dele. — [LP 01](../../../leadership-principles/01-customer-obsession.md)

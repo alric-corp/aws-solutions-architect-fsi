@@ -1,5 +1,7 @@
 # STAR, evidências e contribuição individual
 
+[Índice dos princípios](README.md) · [Guia de prática e perguntas](practice-guide.md)
+
 As notas N01 e N02 enfatizam exemplos específicos, ação individual, resultado e honestidade. N03 acrescenta ensaio em voz alta e uso de pontos-chave. Esta ficha transforma essas orientações em um processo, sem transformar números de histórias ou minutos em regras oficiais.
 
 ## STAR como estrutura, não como teatro
@@ -16,7 +18,7 @@ A ação precisa revelar julgamento, não apenas “participei de reuniões”. 
 
 ## STAR em detalhe
 
-Uma proporção útil: Situação e Tarefa juntas em cerca de um quinto do tempo, Ação em três quintos e Resultado no restante. A entrevista avalia principalmente o que você decidiu e fez.
+Para ensaiar, uma divisão possível é usar cerca de um quinto do tempo em Situação e Tarefa, três quintos em Ação e o restante em Resultado. É uma sugestão de organização da fala, não uma regra de entrevista. Ajuste a profundidade à pergunta e aos aprofundamentos, deixando claras suas decisões e ações.
 
 | Etapa | O que precisa aparecer | Erro comum |
 |---|---|---|
@@ -73,6 +75,8 @@ Em um projeto em andamento, delimite um episódio já ocorrido e um resultado qu
 Crie um resumo de pontos-chave que caiba em poucos minutos, deixando a investigação para os aprofundamentos. O entrevistador pode interromper, pedir números ou mudar o foco. Isso não significa que você precisa acelerar e recitar o texto até o fim.
 
 Treine perguntas como: por que essa opção? O que você fez pessoalmente? Como mediu? Quem discordou? Qual erro foi seu? O que teria acontecido sem sua ação? O que mudou depois?
+
+O [guia de prática](practice-guide.md) reúne caminhos para escolher entre 192 perguntas em português e inglês, além de rodadas que cobrem os 16 princípios. Cada pergunta tem um ID, como `LP04-Q05`; registre esse ID junto do episódio para variar os ensaios e saber qual aprofundamento precisa revisar.
 
 ## Critério de revisão
 

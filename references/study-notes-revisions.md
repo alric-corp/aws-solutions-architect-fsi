@@ -43,6 +43,20 @@ Este registro não declara que todo o material foi auditado exaustivamente. Ele 
 
 ## Revisões desta preparação
 
+### Estrutura e perguntas de Leadership Principles — 26/10/2026
+
+**Antes:** cada ficha separava seis perguntas entre “treino” e “entrevista”, com temas sobrepostos, e apresentava a síntese do vídeo antes da preparação prática.
+
+**Agora:** as 16 fichas seguem a mesma sequência, com 12 perguntas identificadas em português e inglês e seis aprofundamentos por princípio. O guia de prática permite selecionar por princípio, tema e rodada. As sínteses do vídeo foram preservadas como leitura complementar, com links para os minutos e indicação de que seus exemplos pertencem a 2024.
+
+**Precisões de interpretação:** Are Right, A Lot enfatiza testar crenças e buscar perspectivas diversas; Hire and Develop the Best usa critérios e desenvolvimento observável; Have Backbone; Disagree and Commit exige questionar com respeito e apoiar a decisão tomada; Broad Responsibility inclui efeitos indiretos e públicos além do cliente imediato. As perguntas foram formuladas como pedidos de episódios concretos, inclusive falhas e aprendizados.
+
+Na síntese de Are Right, A Lot, “substituto para julgamento” foi corrigido para “associa o princípio à qualidade do julgamento”. O termo inglês *proxy for judgment*, na [transcrição oficial](https://cdn.cms.amazon.jobs/4d/61/87e560ee49e2a823d213d2fccdc9/are-right-a-lot-transcript.pdf), expressa essa associação.
+
+**Fontes:** definições conferidas em [S02](README.md#s02); preparação geral em [S04](README.md#s04). Os novos exercícios são autorais e não definem uma rubrica de contratação.
+
+**Impacto:** [trilha de LPs](../leadership-principles/README.md), [guia de prática](../leadership-principles/practice-guide.md), [template STAR](../templates/star-story.md) e [simulação comportamental](../interview/simulations/01-behavioral/mock-script.md).
+
 ### AWS App Mesh
 
 **Antes:** materiais de referência apresentavam o App Mesh como a opção AWS de service mesh.
