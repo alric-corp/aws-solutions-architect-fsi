@@ -2,7 +2,7 @@
 
 Os 16 Leadership Principles (LPs) são princípios de liderança usados pela Amazon para orientar decisões e sua cultura. Na preparação para entrevistas, eles ajudam você a reconhecer comportamentos na própria trajetória e explicá-los com exemplos concretos. [Lista oficial da Amazon](https://www.amazon.jobs/content/en/our-workplace/leadership-principles).
 
-Esta trilha reúne **16 fichas, 192 perguntas comportamentais em português e inglês e 96 aprofundamentos**. Cada par PT/EN conta como uma pergunta. Os nomes e o texto-base foram conferidos na fonte oficial em 26/10/2026; as traduções são didáticas e as perguntas são autorais.
+As 16 fichas reúnem **192 perguntas comportamentais em português e inglês e 96 aprofundamentos**. Cada par PT/EN conta como uma pergunta. Os nomes e o texto-base foram conferidos na fonte oficial em 26/10/2026; as traduções são didáticas e as perguntas são autorais.
 
 ## Por onde começar
 
@@ -11,6 +11,7 @@ Esta trilha reúne **16 fichas, 192 perguntas comportamentais em português e in
 | Entender um princípio e encontrar experiências relacionadas | [Índice dos 16 princípios](#os-16-princípios) |
 | Estruturar uma história verdadeira e explicar sua contribuição | [STAR e evidências](00-star-and-evidence.md) |
 | Escolher perguntas por princípio, tema ou rodada | [Guia de prática](practice-guide.md) |
+| Treinar inglês por uma hora com uma professora sem contexto técnico | [Sessão de inglês: perguntas mistas e respostas fictícias expansíveis](english-practice-60-min.md) |
 | Registrar sua experiência | [Template STAR](../templates/star-story.md), em cópia privada |
 | Verificar cobertura e lacunas | [Matriz LP × histórias](../progress/leadership-principles-story-matrix.md) |
 | Conduzir uma entrevista de treino | [Simulação comportamental](../interview/simulations/01-behavioral/mock-script.md) |

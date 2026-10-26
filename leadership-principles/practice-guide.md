@@ -6,6 +6,8 @@ O banco contém **192 perguntas principais: 12 por princípio, cada uma em portu
 
 Cada ID identifica uma pergunta: `LP04-Q05` é a quinta pergunta de Are Right, A Lot. As versões PT/EN compartilham o mesmo ID. Registre os IDs ensaiados junto da história em sua cópia privada do [template STAR](../templates/star-story.md).
 
+Para uma aula com professora de inglês sem contexto técnico, use a [sessão de 60 minutos](english-practice-60-min.md). O roteiro é autônomo, mistura os 16 princípios em oito perguntas principais e inclui oito reservas, aprofundamentos e respostas fictícias em blocos expansíveis.
+
 ## Como praticar uma pergunta
 
 1. Escolha um episódio real que responda à pergunta, antes de tentar encaixar um rótulo de LP.
