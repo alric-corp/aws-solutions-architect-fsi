@@ -6,7 +6,7 @@ Material de preparação para a entrevista de Solutions Architect na AWS com foc
 
 - **Aprender do zero.** Se você nunca estudou arquitetura, comece pela [Aula 1 — Você clicou em um produto. O que aconteceu?](technical-knowledge/02-system-design/ecommerce/01-from-click-to-catalog.md). É a primeira aula da [trilha guiada da Loja Horizonte](technical-knowledge/02-system-design/00-system-design-from-zero.md), que apresenta cliente, servidor, banco de dados e serviços AWS aos poucos, quando cada conceito se torna necessário.
 - **Consultar e revisar.** Para aprofundar ou rever um tema, use o [índice dos fundamentos (F00–F12)](technical-knowledge/01-fundamentals/README.md) e o [índice de System Design](technical-knowledge/02-system-design/README.md), com os módulos SD01–SD05, os padrões e o mapa de assuntos.
-- **Aplicar na preparação.** Para treinar para a entrevista, use os [cases FSI](#cases-fsi), os [Leadership Principles](leadership-principles/README.md) e as [simulações de entrevista](interview/simulations/).
+- **Aplicar na preparação.** Para treinar para a entrevista, use os [cases FSI](#cases-fsi), os [Leadership Principles](leadership-principles/README.md) e as [simulações de entrevista](interview/simulations/README.md). A [trilha prática de troubleshooting](interview/simulations/04-troubleshooting/README.md) tem seis casos fictícios para investigação oral com evidências progressivas, sem provisionar AWS.
 
 ## Study Path
 
@@ -74,7 +74,7 @@ Os 16 Leadership Principles da Amazon, o método STAR e a preparação de respos
 | [common-questions.md](interview/common-questions.md) | “Fale sobre você” e “Por que a Amazon?” |
 | [tips-and-strategies.md](interview/tips-and-strategies.md) | Dicas e estratégias |
 | [checklist.md](interview/checklist.md) | Checklist de preparação |
-| [simulations/](interview/simulations/) | Roteiros de simulação comportamental e técnica e perguntas de design |
+| [simulations/](interview/simulations/README.md) | Roteiros comportamental e técnico, perguntas de design e trilha prática de troubleshooting |
 
 ## Progress
 
@@ -82,3 +82,5 @@ Os 16 Leadership Principles da Amazon, o método STAR e a preparação de respos
 - [Matriz LP × histórias](progress/leadership-principles-story-matrix.md): associar cada Leadership Principle a experiências reais.
 
 Os dois arquivos são templates; detalhes pessoais ficam em uma cópia privada.
+
+Para as sessões de troubleshooting, use o [modelo de registro em branco](interview/simulations/04-troubleshooting/modelo-registro-sessao.md), com dimensões avaliadas separadamente e reteste. Preenchimentos também ficam em área privada fora do Git.

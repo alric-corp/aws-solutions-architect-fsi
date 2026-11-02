@@ -54,6 +54,12 @@ Esse comando não foi executado contra um serviço seu e não é um teste de cap
 
 “CPU baixa exclui gargalo?” “p95 bom garante que todos os clientes estão bem?” “Erro de negócio é indisponibilidade?” “Reiniciar removeu a causa ou somente o sintoma?”
 
+## Prática oral com evidências progressivas
+
+A [trilha de troubleshooting](../../interview/simulations/04-troubleshooting/README.md) aplica este método em seis incidentes fictícios. Comece pelo [checkout lento](../../interview/simulations/04-troubleshooting/01-checkout-lento/candidato.md). A candidata recebe somente a abertura; o instrutor entrega pequenos recortes à medida que forem solicitados. Não é necessário executar os exemplos contra AWS.
+
+Antes de pedir uma métrica, explique qual hipótese ela distingue, o que espera encontrar e qual decisão mudaria. Uma medida de tempo de acesso a uma dependência precisa de fronteiras explícitas: obter recurso local, executar trabalho remoto e aguardar resposta podem representar esperas diferentes. Valide a jornada completa após a contenção, inclusive operações que ficaram pendentes. Veja os [critérios didáticos por dimensão](../../interview/simulations/04-troubleshooting/rubrica.md).
+
 ## Exercício
 
 No [Case 07](../../cases/07-real-time-fraud-detection.md), o modelo responde rápido, mas bloqueios indevidos aumentaram. Separe disponibilidade, atualidade, qualidade estatística e política de decisão. Apresente ao cliente o que já sabe e o que ainda não foi confirmado.

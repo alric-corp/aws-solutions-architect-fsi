@@ -11,3 +11,5 @@ Roteiro para quem conduz uma simulação de cerca de 45 minutos: comece amplo e 
 6. Uma campanha vai multiplicar por dez o tráfego do aplicativo durante uma hora. Como você se prepara? — [SD05](../../../technical-knowledge/02-system-design/05-scale-capacity-deployment.md), [F02](../../../technical-knowledge/01-fundamentals/02-http-rest-openapi.md)
 
 **Encerramento:** deixe tempo para as perguntas da pessoa entrevistada ([sugestões](../../tips-and-strategies.md)).
+
+Para praticar investigação com evidências progressivas, use a [trilha de troubleshooting](../04-troubleshooting/README.md). Os seis casos têm arquivos separados para candidata e instrutor, variantes e critérios de validação; são exercícios orais sem provisionamento de AWS.

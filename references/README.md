@@ -6,6 +6,10 @@ Este repositório mantém três camadas explícitas: **anotações privadas de e
 
 Não redistribuímos transcrições nem material de terceiros. As anotações originais permanecem em armazenamento privado; aqui ficam apenas seus identificadores e temas, para rastrear a proveniência das sínteses. As correções relevantes estão em [Revisões das anotações](study-notes-revisions.md).
 
+## Complementação de troubleshooting
+
+As [fontes da trilha prática de troubleshooting](troubleshooting-fontes.md) foram consultadas em **01/11/2026** e têm escopo registrado separadamente. Os seis incidentes e suas evidências são autorais, fictícios e sintéticos. A consulta documental não equivale a executar os cenários em AWS.
+
 ## Anotações privadas (fora do repositório)
 
 <a id="n01"></a>

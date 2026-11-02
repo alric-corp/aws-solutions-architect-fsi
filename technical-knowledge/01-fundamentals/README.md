@@ -34,6 +34,10 @@ A ligação entre os níveis importa mais do que decorar um mapa “palavra da p
 
 Os módulos 00, 01, 03, 04, 05, 06 e 12 têm uma seção com perguntas de entrevista sobre o tema. As de design arquitetural estão nas [perguntas de design](../../interview/simulations/03-system-design/design-questions.md). O mapa completo fica em [O que esperar da entrevista](../../interview/interview-process.md).
 
+## Prática de investigação
+
+Para aplicar os fundamentos em investigação oral, use a [trilha prática de troubleshooting](../../interview/simulations/04-troubleshooting/README.md): seis incidentes fictícios, aberturas separadas e evidências progressivas para o instrutor. Os debriefs indicam quais fundamentos revisar; não é necessário provisionar AWS.
+
 ## Como acrescentar módulos
 
 Use [o template técnico](../../templates/technical-module.md). Mantenha origem e revisão explícitas. Uma simplificação didática deve vir com seus limites. Não preencha uma lacuna de fonte como se tivesse sido dita no curso.
