@@ -10,6 +10,7 @@ import { projectMainMarkdown, visibleHeadingTitle } from '../site/case-reference
 import { metadataFor, studentSearchMarkdown } from '../site/content-policy.mjs';
 import { layout, tocFor, articleBody, homeBody, collectionBody, hubs, standaloneCollectionBody } from '../site/templates.mjs';
 import { siteName, firstLesson, sections, publicRoots, allowedAssetExtensions, sectionFor } from '../site/content.mjs';
+import { focusTitle, focusHeading, focusHub } from '../site/focus-policy.mjs';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 const output = path.join(root, 'dist');
@@ -32,7 +33,7 @@ for (const source of sources) {
   const originalMarkdown = markdown;
   const metadata = metadataFor(source);
   if (!metadata.standalone) markdown = projectMainMarkdown(markdown, source);
-  const title = source.endsWith('/english-practice-60-min.md') ? 'English speaking practice — 60-minute session' : visibleHeadingTitle(plain(markdown.match(/^#\s+(.+)$/m)?.[1] || source), source);
+  const title = focusTitle(source.endsWith('/english-practice-60-min.md') ? 'English speaking practice — 60-minute session' : visibleHeadingTitle(plain(markdown.match(/^#\s+(.+)$/m)?.[1] || source), source), source);
   const searchableMarkdown = metadata.search ? studentSearchMarkdown(markdown, source).replace(/^(#{1,6}\s+)(.+)$/gm, (_,prefix,title)=>prefix+visibleHeadingTitle(title,source)) : '';
   const contentVersion = createHash('sha256').update(originalMarkdown).digest('hex').slice(0,16);
   const description = plain((metadata.standalone ? markdown : searchableMarkdown || title).split('\n\n').find(block => !/^(#|\||```|<|\[|\*\*ID)/.test(block) && block.length > 70) || title).slice(0, 220);
@@ -112,6 +113,9 @@ await fs.mkdir(output, { recursive: true });
 const searchIndex = [];
 for (const doc of documents.values()) {
   let html = md.render(doc.markdown, { doc });
+  // Fichas dos princípios em foco: marca no título e aviso logo abaixo dele.
+  const focus = focusHeading(doc.source, documents.get(focusHub)?.url || '/leadership-principles/index.html');
+  if (focus) html = html.replace('</h1>', () => focus);
   // Keep all legacy heading/explicit IDs. Neutralize this named English lesson
   // only in the presentation and index, leaving the source Markdown untouched.
   if (doc.source.endsWith('/english-practice-60-min.md')) {
