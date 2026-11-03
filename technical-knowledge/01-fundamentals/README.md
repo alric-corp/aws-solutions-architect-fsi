@@ -2,6 +2,10 @@
 
 As notas já cobrem redes, armazenamento, dados, segurança, APIs e sistemas distribuídos. Esta trilha organiza a revisão e acrescenta exercícios. **São guias de estudo concisos**, não uma afirmação de que todos os tópicos serão cobrados, nem a substituição da documentação dos serviços.
 
+## Transações e ACID do zero
+
+Começando em SQL e transações? A trilha [Transações e ACID do zero](acid/README.md) acompanha uma compra na Loja Horizonte em dez aulas, com perguntas, SQL copiável e laboratório local. Comece pela introdução, avance pelas quatro propriedades e pratique concorrência, deadlocks e idempotência. Depois, o [F06 — Bancos, transações, consistência e escala](06-databases-transactions-consistency.md) amplia a discussão para modelos, índices e sistemas distribuídos.
+
 | Módulo | Conteúdo | Aplicação nos cases |
 |---|---|---|
 | [Computação em nuvem e por que AWS](00-cloud-computing.md) | Definição de nuvem (NIST), modelos de serviço, responsabilidade compartilhada e benefícios | — |

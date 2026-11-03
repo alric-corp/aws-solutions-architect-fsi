@@ -1,0 +1,13 @@
+SELECT version(), current_database(), pg_backend_pid();
+SHOW transaction_isolation;
+SHOW fsync;
+SHOW synchronous_commit;
+SHOW full_page_writes;
+SELECT id,nome,saldo_centavos FROM acid_lab.contas ORDER BY id;
+SELECT sum(saldo_centavos) AS total_centavos FROM acid_lab.contas;
+SELECT * FROM acid_lab.produtos ORDER BY id;
+SELECT * FROM acid_lab.operacoes ORDER BY chave;
+SELECT * FROM acid_lab.pedidos ORDER BY id;
+SELECT * FROM acid_lab.turno ORDER BY nome;
+SELECT *, quantidade*preco_centavos AS subtotal_centavos FROM acid_lab.vendas_relatorio ORDER BY produto_id;
+SELECT sum(quantidade*preco_centavos) AS total_centavos FROM acid_lab.vendas_relatorio;
