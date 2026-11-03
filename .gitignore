@@ -1,2 +1,5 @@
 .DS_Store
 scratchpad/
+node_modules/
+dist/
+.site/

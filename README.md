@@ -2,6 +2,8 @@
 
 Material de preparação para a entrevista de Solutions Architect na AWS com foco em Financial Services (FSI). Conecta fundamentos técnicos, system design, cases do setor financeiro, Leadership Principles e simulações de entrevista.
 
+**[Abrir o portal de estudo](https://d3vd6n3vhor88e.cloudfront.net)** — navegação por trilhas, busca em todo o material e acompanhamento de leituras no navegador.
+
 ## Por onde começar
 
 - **Aprender do zero.** Se você nunca estudou arquitetura, comece pela [Aula 1 — Você clicou em um produto. O que aconteceu?](technical-knowledge/02-system-design/ecommerce/01-from-click-to-catalog.md). É a primeira aula da [trilha guiada da Loja Horizonte](technical-knowledge/02-system-design/00-system-design-from-zero.md), que apresenta cliente, servidor, banco de dados e serviços AWS aos poucos, quando cada conceito se torna necessário.

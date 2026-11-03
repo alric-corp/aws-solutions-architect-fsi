@@ -503,7 +503,7 @@ sequenceDiagram
     O->>T: Autorizar R-A com nova geração
     O->>A: Validar canários e rejeição de comandos antigos
     O->>O: Alterar roteamento e observar
-    Note over A,B: R-B permanece reserva; não há mescla cega das duas histórias
+    Note over A,B: R-B permanece reserva#59; não há mescla cega das duas histórias
 ```
 
 ---

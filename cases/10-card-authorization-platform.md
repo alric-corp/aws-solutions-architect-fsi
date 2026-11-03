@@ -776,7 +776,7 @@ sequenceDiagram
     C->>C: Commit da reserva e do resultado
     C--xA: Resposta perdida
     A--xR: Prazo ou conexao encerra
-    Note over A,C: O resultado observado e incerto; a reserva pode existir
+    Note over A,C: O resultado observado e incerto#59; a reserva pode existir
     R->>B: Repeticao ou mensagem posterior correlacionada
     B->>C: Consultar A1 na autoridade
     C-->>B: Reserva existente e decisao original
