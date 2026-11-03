@@ -4,10 +4,15 @@ Os 16 Leadership Principles (LPs) são princípios de liderança usados pela Ama
 
 As 16 fichas reúnem **192 perguntas comportamentais em português e inglês e 96 aprofundamentos**. Cada par PT/EN conta como uma pergunta. Os nomes e o texto-base foram conferidos na fonte oficial em 26/10/2026; as traduções são didáticas e as perguntas são autorais.
 
+## ★ Foco do loop
+
+Nove princípios foram destacados na conversa de preparação para o loop e aparecem marcados com ★ em todo o site: Customer Obsession, Ownership, Learn and Be Curious, Think Big, Bias for Action, Earn Trust, Dive Deep, Have Backbone; Disagree and Commit e Deliver Results. A página [Foco do loop](loop-focus.md) mostra a ênfase indicada para cada um, as histórias reais disponíveis, as lacunas e rodadas de treino no formato das entrevistas.
+
 ## Por onde começar
 
 | Você quer… | Abra |
 |---|---|
+| Treinar os princípios do loop com as histórias reais ★ | [Foco do loop](loop-focus.md) |
 | Entender um princípio e encontrar experiências relacionadas | [Índice dos 16 princípios](#os-16-princípios) |
 | Estruturar uma história verdadeira e explicar sua contribuição | [STAR e evidências](00-star-and-evidence.md) |
 | Escolher perguntas por princípio, tema ou rodada | [Guia de prática](practice-guide.md) |
@@ -27,20 +32,20 @@ As descrições abaixo são sínteses para estudo. Cada ficha mantém o texto do
 
 | # | Leadership Principle | O que significa na prática | Treino |
 |---|---|---|---|
-| 01 | [Customer Obsession](01-customer-obsession.md) | Partir da necessidade do cliente e verificar a experiência que a solução entrega. | [Perguntas](01-customer-obsession.md#perguntas-para-prática) |
-| 02 | [Ownership](02-ownership.md) | Assumir o resultado de ponta a ponta e cuidar do valor de longo prazo. | [Perguntas](02-ownership.md#perguntas-para-prática) |
+| 01 | [Customer Obsession](01-customer-obsession.md) ★ | Partir da necessidade do cliente e verificar a experiência que a solução entrega. | [Perguntas](01-customer-obsession.md#perguntas-para-prática) |
+| 02 | [Ownership](02-ownership.md) ★ | Assumir o resultado de ponta a ponta e cuidar do valor de longo prazo. | [Perguntas](02-ownership.md#perguntas-para-prática) |
 | 03 | [Invent and Simplify](03-invent-and-simplify.md) | Criar ou adaptar ideias que removam complexidade para usuários e operação. | [Perguntas](03-invent-and-simplify.md#perguntas-para-prática) |
 | 04 | [Are Right, A Lot](04-are-right-a-lot.md) | Exercer bom julgamento, buscar perspectivas diversas e testar as próprias crenças. | [Perguntas](04-are-right-a-lot.md#perguntas-para-prática) |
-| 05 | [Learn and Be Curious](05-learn-and-be-curious.md) | Reconhecer lacunas, aprender e aplicar o conhecimento. | [Perguntas](05-learn-and-be-curious.md#perguntas-para-prática) |
+| 05 | [Learn and Be Curious](05-learn-and-be-curious.md) ★ | Reconhecer lacunas, aprender e aplicar o conhecimento. | [Perguntas](05-learn-and-be-curious.md#perguntas-para-prática) |
 | 06 | [Hire and Develop the Best](06-hire-and-develop-the-best.md) | Elevar a qualidade de contratação e desenvolvimento; apoiar a autonomia das pessoas. | [Perguntas](06-hire-and-develop-the-best.md#perguntas-para-prática) |
 | 07 | [Insist on the Highest Standards](07-insist-on-the-highest-standards.md) | Definir qualidade, impedir a passagem de defeitos e evitar recorrência. | [Perguntas](07-insist-on-the-highest-standards.md#perguntas-para-prática) |
-| 08 | [Think Big](08-think-big.md) | Comunicar uma direção ambiciosa e conectá-la a uma primeira entrega. | [Perguntas](08-think-big.md#perguntas-para-prática) |
-| 09 | [Bias for Action](09-bias-for-action.md) | Agir com velocidade e risco calculado, entendendo a reversibilidade. | [Perguntas](09-bias-for-action.md#perguntas-para-prática) |
+| 08 | [Think Big](08-think-big.md) ★ | Comunicar uma direção ambiciosa e conectá-la a uma primeira entrega. | [Perguntas](08-think-big.md#perguntas-para-prática) |
+| 09 | [Bias for Action](09-bias-for-action.md) ★ | Agir com velocidade e risco calculado, entendendo a reversibilidade. | [Perguntas](09-bias-for-action.md#perguntas-para-prática) |
 | 10 | [Frugality](10-frugality.md) | Gerar valor com recursos bem utilizados e atenção ao custo total. | [Perguntas](10-frugality.md#perguntas-para-prática) |
-| 11 | [Earn Trust](11-earn-trust.md) | Ouvir, falar com franqueza, assumir erros e cumprir compromissos. | [Perguntas](11-earn-trust.md#perguntas-para-prática) |
-| 12 | [Dive Deep](12-dive-deep.md) | Investigar detalhes, testar hipóteses e reconciliar métricas com relatos. | [Perguntas](12-dive-deep.md#perguntas-para-prática) |
-| 13 | [Have Backbone; Disagree and Commit](13-have-backbone-disagree-and-commit.md) | Questionar com respeito e apoiar a execução depois da decisão. | [Perguntas](13-have-backbone-disagree-and-commit.md#perguntas-para-prática) |
-| 14 | [Deliver Results](14-deliver-results.md) | Entregar resultados relevantes com qualidade e no prazo, ajustando a execução. | [Perguntas](14-deliver-results.md#perguntas-para-prática) |
+| 11 | [Earn Trust](11-earn-trust.md) ★ | Ouvir, falar com franqueza, assumir erros e cumprir compromissos. | [Perguntas](11-earn-trust.md#perguntas-para-prática) |
+| 12 | [Dive Deep](12-dive-deep.md) ★ | Investigar detalhes, testar hipóteses e reconciliar métricas com relatos. | [Perguntas](12-dive-deep.md#perguntas-para-prática) |
+| 13 | [Have Backbone; Disagree and Commit](13-have-backbone-disagree-and-commit.md) ★ | Questionar com respeito e apoiar a execução depois da decisão. | [Perguntas](13-have-backbone-disagree-and-commit.md#perguntas-para-prática) |
+| 14 | [Deliver Results](14-deliver-results.md) ★ | Entregar resultados relevantes com qualidade e no prazo, ajustando a execução. | [Perguntas](14-deliver-results.md#perguntas-para-prática) |
 | 15 | [Strive to be Earth’s Best Employer](15-strive-to-be-earths-best-employer.md) | Melhorar segurança, justiça, participação e desenvolvimento no trabalho. | [Perguntas](15-strive-to-be-earths-best-employer.md#perguntas-para-prática) |
 | 16 | [Success and Scale Bring Broad Responsibility](16-success-and-scale-bring-broad-responsibility.md) | Considerar consequências indiretas, pessoas afetadas e efeitos da escala. | [Perguntas](16-success-and-scale-bring-broad-responsibility.md#perguntas-para-prática) |
 
