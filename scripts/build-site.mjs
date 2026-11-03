@@ -5,8 +5,10 @@ import { execFileSync } from 'node:child_process';
 import MarkdownIt from 'markdown-it';
 import GithubSlugger from 'github-slugger';
 import { createHash } from 'node:crypto';
+import { isStandalone, caseCollection } from '../site/collection-policy.mjs';
+import { projectMainMarkdown, visibleHeadingTitle } from '../site/case-reference-policy.mjs';
 import { metadataFor, studentSearchMarkdown } from '../site/content-policy.mjs';
-import { layout, tocFor, articleBody, homeBody, collectionBody, hubs } from '../site/templates.mjs';
+import { layout, tocFor, articleBody, homeBody, collectionBody, hubs, standaloneCollectionBody } from '../site/templates.mjs';
 import { siteName, firstLesson, sections, publicRoots, allowedAssetExtensions, sectionFor } from '../site/content.mjs';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
@@ -27,11 +29,13 @@ for (const source of sources) {
   // A few source notes use plain text on the first line instead of a heading.
   if (!/^#\s+/m.test(markdown)) markdown = `# ${markdown.trimStart()}`;
   if (/(?:AKIA|ASIA)[A-Z0-9]{16}|-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----/.test(markdown)) throw new Error(`Possível credencial em ${source}. Build interrompido.`);
+  const originalMarkdown = markdown;
   const metadata = metadataFor(source);
-  const title = source.endsWith('/english-practice-60-min.md') ? 'English speaking practice — 60-minute session' : plain(markdown.match(/^#\s+(.+)$/m)?.[1] || source);
-  const searchableMarkdown = metadata.search ? studentSearchMarkdown(markdown, source) : '';
-  const contentVersion = createHash('sha256').update(markdown).digest('hex').slice(0,16);
-  const description = plain((searchableMarkdown || title).split('\n\n').find(block => !/^(#|\||```|<|\[|\*\*ID)/.test(block) && block.length > 70) || title).slice(0, 220);
+  if (!metadata.standalone) markdown = projectMainMarkdown(markdown, source);
+  const title = source.endsWith('/english-practice-60-min.md') ? 'English speaking practice — 60-minute session' : visibleHeadingTitle(plain(markdown.match(/^#\s+(.+)$/m)?.[1] || source), source);
+  const searchableMarkdown = metadata.search ? studentSearchMarkdown(markdown, source).replace(/^(#{1,6}\s+)(.+)$/gm, (_,prefix,title)=>prefix+visibleHeadingTitle(title,source)) : '';
+  const contentVersion = createHash('sha256').update(originalMarkdown).digest('hex').slice(0,16);
+  const description = plain((metadata.standalone ? markdown : searchableMarkdown || title).split('\n\n').find(block => !/^(#|\||```|<|\[|\*\*ID)/.test(block) && block.length > 70) || title).slice(0, 220);
   documents.set(source, { ...metadata, source, markdown, searchableMarkdown, contentVersion, title, description, url: urlFor(source), section: sectionFor(source), minutes: Math.max(1, Math.ceil(plain(markdown).split(' ').length / 220)), headings: [] });
   let directory = path.posix.dirname(source);
   while (directory !== '.') {
@@ -61,7 +65,8 @@ md.core.ruler.push('site-links-and-headings', state => {
       const title = inline.children.filter(child => ['text', 'code_inline'].includes(child.type)).map(child => child.content).join('');
       const id = slugger.slug(title);
       token.attrSet('id', id);
-      if (token.tag === 'h2' || token.tag === 'h3') doc.headings.push({ title, id, level: token.tag });
+      if (!isStandalone(doc)) for (const child of inline.children) if (child.type === 'text') child.content = visibleHeadingTitle(child.content, doc.source);
+      if (token.tag === 'h2' || token.tag === 'h3') doc.headings.push({ title: isStandalone(doc) ? title : visibleHeadingTitle(title,doc.source), id, level: token.tag });
     }
     for (const child of token.children || []) {
       if (child.type === 'link_open') {
@@ -135,20 +140,20 @@ for (const directory of directories) {
   const section = sectionFor(`${directory}/`);
   const title = sections.find(item => item.index === `${directory}/`)?.label || directory.split('/').at(-1).replace(/^\d+-/, '').replaceAll('-', ' ');
   const children = [...documents.values()].filter(doc => doc.source.startsWith(`${directory}/`) && doc.audience === 'student');
-  const body = collectionBody(title, section.description || 'Explore o material e escolha seu próximo assunto.', children);
-  await write(`${directory}/index.html`, layout({ title, description: `Material de ${title}`, body, docs: documents }));
+  const body = directoryUrl(directory) === caseCollection.indexUrl ? standaloneCollectionBody(documents) : collectionBody(title, section.description || 'Explore o material e escolha seu próximo assunto.', children);
+  await write(`${directory}/index.html`, layout({ title, description: `Material de ${title}`, body, docs: documents, studyScope:directoryUrl(directory) === caseCollection.indexUrl ? caseCollection.id : 'main' }));
 }
-await write('index.html', layout({ title: 'Sua biblioteca de arquitetura', description: 'Trilhas de arquitetura AWS, cases financeiros e prática de entrevista.', body: homeBody(documents), isHome: true, docs: documents }));
+await write('index.html', layout({ title: 'Sua biblioteca de arquitetura', description: 'Trilhas de arquitetura AWS, fundamentos e prática de entrevista.', body: homeBody(documents), isHome: true, docs: documents }));
 await write('404.html', layout({ title: 'Página não encontrada', description: 'Volte à biblioteca para continuar seu estudo.', body: '<section class="not-found"><h1>Vamos voltar ao percurso.</h1><p>Esta página não está disponível. Explore a biblioteca ou use a busca.</p><a href="/index.html">Voltar ao início →</a></section>', docs: documents }));
 for(const hub of hubs(documents)) await write(hub.url.slice(1), layout({ title:hub.title,description:hub.title,body:hub.body,global:hub.url,docs:documents }));
 await write('search-index.json', JSON.stringify(searchIndex));
-await write('content-manifest.json', JSON.stringify([...documents.values()].map(({id,sourcePath,title,url:canonicalUrl,type,audience,publication,search,existingAnchors,topics,tracks,prerequisites,relatedPractice,contentVersion}) => ({id,sourcePath,title,canonicalUrl,type,audience,publication,search,existingAnchors,topics,tracks,prerequisites,relatedPractice,contentVersion})),null,2));
+await write('content-manifest.json', JSON.stringify([...documents.values()].map(({id,sourcePath,title,url:canonicalUrl,type,audience,publication,collection,standalone,progress,search,existingAnchors,topics,tracks,prerequisites,relatedPractice,contentVersion}) => ({id,sourcePath,title,canonicalUrl,type,audience,publication,collection,standalone,progress,search,existingAnchors,topics,tracks,prerequisites,relatedPractice,contentVersion})),null,2));
 
 for (const asset of tracked.filter(file => publicPath(file) && allowedAssetExtensions.has(path.extname(file)))) {
   if ((await fs.lstat(path.join(root, asset))).isSymbolicLink()) throw new Error(`Link simbólico não publicável: ${asset}`);
   await write(asset, await fs.readFile(path.join(root, asset)));
 }
-for (const name of ['site.css', 'site.js', 'theme-init.js', 'search.mjs', 'favicon.svg']) await write(`assets/${name}`, await fs.readFile(path.join(root, 'site', name)));
+for (const name of ['site.css', 'site.js', 'theme-init.js', 'search.mjs', 'collection-policy.mjs', 'favicon.svg']) await write(`assets/${name}`, await fs.readFile(path.join(root, 'site', name)));
 for (const [family, name] of [['source-sans-3', 'source-sans']]) {
   const filename = `${family}-latin-wght-normal.woff2`;
   await write(`assets/${name}.woff2`, await fs.readFile(path.join(root, 'node_modules', '@fontsource-variable', family, 'files', filename)));

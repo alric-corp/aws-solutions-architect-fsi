@@ -4,6 +4,8 @@
 
 **Objetivo:** explicar o que uma operação de dados garante, onde essa garantia termina e como proteger uma invariante quando operações concorrem.
 
+> Começando em SQL e transações? Faça [Transações e ACID do zero](acid/README.md) antes deste módulo mais amplo. A trilha introdutória tem dez aulas e laboratório local; o F06 aprofunda modelos, escala e decisões distribuídas.
+
 **Ao terminar, você deve conseguir:**
 
 - descobrir requisitos de acesso antes de escolher um banco e enunciar a **invariante** a proteger;

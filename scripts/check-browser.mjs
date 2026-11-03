@@ -4,6 +4,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { chromium } from 'playwright-core';
+import { checkAcidBrowser } from './check-acid-browser.mjs';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 const base = process.env.SITE_TEST_URL || 'http://127.0.0.1:4173';
@@ -19,7 +20,7 @@ if (!executablePath) {
 if (!executablePath) throw new Error('Defina CHROMIUM_PATH com o caminho de um Chromium instalado.');
 const browser = await chromium.launch({ executablePath, headless: true });
 const failures = [];
-const screenshotDir = path.join(root, '.site/p0/after');
+const screenshotDir = path.join(root, '.site/cases-isolation/after');
 await fs.mkdir(screenshotDir, { recursive: true });
 const manifest = JSON.parse(await fs.readFile(path.join(root, 'dist/content-manifest.json'), 'utf8'));
 const report = { base, browser: 'Chromium', documents: 0, diagrams: 0, diagramPages: 0, widths: [], queries: {}, checks: [] };
@@ -29,6 +30,8 @@ report.limits = ['Verificação local em Chromium; Safari não executado.', 'Con
 report.contrast = [];
 const routes = {
   home: '/index.html',
+  library: '/biblioteca/index.html',
+  collection: '/cases/index.html',
   lesson: '/technical-knowledge/02-system-design/ecommerce/01-from-click-to-catalog.html',
   foundation: '/technical-knowledge/01-fundamentals/06-databases-transactions-consistency.html',
   case: '/cases/01-payment-processing-pix.html',
@@ -45,6 +48,14 @@ async function diagramsReady(page) {
   await page.waitForFunction(() => [...document.querySelectorAll('.mermaid')].every(element => element.querySelector('svg') || element.classList.contains('diagram-failed')), undefined, { timeout: 90000 });
   const broken = await page.locator('.diagram-failed').allTextContents();
   assert.deepEqual(broken, [], `Diagrama inválido: ${page.url()}\n${failures.join('\n')}`);
+}
+// The theme control keeps one DOM identity and moves into the global panel
+// at compact widths. Open that panel rather than interacting with a hidden field.
+async function selectTheme(page, value) {
+  const compact = !await page.locator('#theme-preference').isVisible();
+  if (compact) await page.locator('#global-menu-toggle').click();
+  await page.locator('#theme-preference').selectOption(value);
+  if (compact) await page.locator('[data-global-menu-close]').click();
 }
 async function noOverflow(page) {
   assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), true, `Overflow horizontal: ${page.url()}`);
@@ -118,21 +129,24 @@ try {
   await save(page, 'home', true);
   assert.equal(await page.locator('#theme-preference').inputValue(), 'system');
   assert.equal(await page.locator('html').getAttribute('data-theme'), 'light');
-  await page.keyboard.press('/');
+  await page.keyboard.press('ControlOrMeta+k');
   for (const query of ['STAR', 'idempotência', 'idempotencia', 'retry', 'retentativa', 'retentativas', 'TLS', 'RTO', 'Multi-AZ', 'checkout lento']) {
-    report.queries[query] = await search(page, query);
+    // These words currently occur only in optional cases in the source corpus.
+    // Their empty global state is valid; the pure matcher fixture still checks
+    // the grammatical inflection independently of collection membership.
+    report.queries[query] = await search(page, query, !['retentativa', 'retentativas'].includes(query));
     const resultTexts = await page.locator('.search-result').allTextContents();
     assert.ok(!resultTexts.some(value => value.includes('Falso positivo: estar')), 'STAR não corresponde a estar');
     const resultUrls = await page.locator('.search-result').evaluateAll(links => links.map(link => link.getAttribute('href')));
     for (const url of resultUrls) {
       const item = manifest.find(item => item.canonicalUrl === url.split('#')[0]);
-      assert.ok(item?.search && item.audience === 'student', `Instrutor fora da busca: ${url}`);
+      assert.ok(item?.search && item.audience === 'student' && !item.standalone && item.collection !== 'fsi-cases', `Instrutor e cases fora da busca global: ${url}`);
     }
     if (query === 'STAR') await save(page, 'search-star');
   }
   await page.keyboard.press('Escape');
   assert.equal(await page.locator('.search-dialog').evaluate(element => element.open), false);
-  report.checks.push('Busca: termos, acentos, siglas, STAR/estar e audiência');
+  report.checks.push('Busca: termos, acentos, siglas, STAR/estar e exclusão de instrutor/cases');
 
   // The old real lesson checks remain: Markdown disclosure, self-hosted SVG,
   // persistent manual reading, code and Mermaid, independent of new home copy.
@@ -195,7 +209,7 @@ try {
   await save(page, 'reader-f06');
   await visit(page, routes.case);
   await save(page, 'case-payments');
-  await page.locator('#theme-preference').selectOption('dark');
+  await selectTheme(page, 'dark');
   await page.waitForFunction(() => document.documentElement.dataset.theme === 'dark');
   await diagramsReady(page);
   await contrast(page);
@@ -203,7 +217,7 @@ try {
   await page.reload();
   assert.equal(await page.locator('#theme-preference').inputValue(), 'dark');
   await diagramsReady(page);
-  await page.locator('#theme-preference').selectOption('system');
+  await selectTheme(page, 'system');
   await page.emulateMedia({ colorScheme: 'dark' });
   await page.waitForFunction(() => document.documentElement.dataset.theme === 'dark');
   await diagramsReady(page);
@@ -254,16 +268,13 @@ try {
   await page.locator(`a[href="${routes.foundation}#idempotencia-concorrencia"]`).first().click();
   await diagramsReady(page);
   await assertAnchor(page, 'idempotencia-concorrencia');
-  await page.locator(`a[href="${routes.case}#s08"]`).first().click();
-  await diagramsReady(page);
-  await assertAnchor(page, 's08');
   await page.locator(`a[href="${routes.candidate}"]`).first().click();
   assert.equal(await page.locator('a[href*="instrutor.html"]').count(), 0, 'Candidata sem atalho acidental ao gabarito');
   await save(page, 'candidate');
   await page.locator(`a[href="${routes.foundation}#idempotencia-concorrencia"]`).first().click();
   await diagramsReady(page);
   await assertAnchor(page, 'idempotencia-concorrencia');
-  report.checks.push('Piloto completo: início → tema → F06 → case → candidata → seção estudada');
+  report.checks.push('Percurso principal: início → tema → F06 → candidata → seção estudada, sem cases');
 
   for (const width of [320, 390, 820, 1440, 1920]) {
     const viewport = { width, height: 1000 };
@@ -271,11 +282,11 @@ try {
     await visit(page, routes.foundation);
     await tocAvailable(page);
     await noOverflow(page);
-    await page.locator('#theme-preference').selectOption('dark');
+    await selectTheme(page, 'dark');
     await diagramsReady(page);
     await noOverflow(page);
     await save(page, `reader-${width}-dark`);
-    await page.locator('#theme-preference').selectOption('light');
+    await selectTheme(page, 'light');
     await diagramsReady(page);
     await save(page, `reader-${width}`);
     await visit(page, routes.home);
@@ -308,17 +319,20 @@ try {
   report.checks.push('320/390/820/1440/1920, dois temas, teclado, zoom por texto e reflow');
 
   const legacy = await browser.newContext({ viewport: { width: 1440, height: 1080 } });
-  await legacy.addInitScript(({ lesson, instructor }) => {
+  await legacy.addInitScript(({ lesson, instructor, optionalCase }) => {
     if (localStorage.getItem('fixture-installed')) return;
-    localStorage.setItem('architecture-practice:read:v1', JSON.stringify([lesson, instructor]));
+    localStorage.setItem('architecture-practice:read:v1', JSON.stringify([lesson, instructor, optionalCase]));
     localStorage.setItem('architecture-practice:recent:v1', JSON.stringify({ url: instructor, title: 'Roteiro do instrutor' }));
     localStorage.setItem('fixture-installed', 'true');
-  }, { lesson: routes.lesson, instructor: routes.instructor });
+  }, { lesson: routes.lesson, instructor: routes.instructor, optionalCase: routes.case });
   const migratedPage = await legacy.newPage();
   monitor(migratedPage);
   await visit(migratedPage, routes.home);
   const migrated = await migratedPage.evaluate(() => JSON.parse(localStorage.getItem('architecture-practice:study:v2')));
   const lessonId = manifest.find(item => item.canonicalUrl === routes.lesson).id;
+  const optionalCase = manifest.find(item => item.canonicalUrl === routes.case);
+  assert.equal(migrated.reading[optionalCase.id].marked, true, 'Leitura legacy do case preservada');
+  assert.equal(migrated.reading[optionalCase.id].origin, 'legacy', 'Origem legacy do case preservada');
   assert.equal(migrated.reading[lessonId].marked, true);
   assert.equal(migrated.reading[lessonId].origin, 'legacy');
   assert.ok(!('date' in migrated.reading[lessonId]) && !('markedAt' in migrated.reading[lessonId]), 'Migração não inventa datas');
@@ -344,7 +358,111 @@ try {
   await visit(migratedPage, routes.foundation);
   await assertAnchor(migratedPage, 'idempotencia-concorrencia');
   assert.match(await migratedPage.locator('.resume-notice').innerText(), /atualizado/i, 'Versão alterada informada sem perder âncora válida');
-  report.checks.push('Migração de lidos legacy, origem preservada e sem data inventada');
+  report.checks.push('Lidos legacy de módulos, instrutor e cases preservados, sem data inventada e com contador principal isolado');
+
+  // Seed records from the previous published implementation. Opening a case
+  // may add only its independent continuity entry; it must not move, delete or
+  // rewrite the existing principal resume or case reading evidence.
+  const isolated = await browser.newContext({ viewport: { width: 1440, height: 1080 }, reducedMotion: 'reduce', colorScheme: 'light' });
+  const caseReading = { marked: true, origin: 'legacy', markedAt: '2026-10-30T12:00:00Z' };
+  const principalResume = { contentId: foundation.id, anchor: 'idempotencia-concorrencia', contentVersion: foundation.contentVersion };
+  await isolated.addInitScript(({ lessonId, caseId, caseReading, principalResume }) => {
+    if (localStorage.getItem('isolation-fixture-installed')) return;
+    localStorage.setItem('architecture-practice:study:v2', JSON.stringify({ schemaVersion: 2, reading: { [lessonId]: { marked: true, origin: 'manual' }, [caseId]: caseReading }, resume: { student: principalResume } }));
+    localStorage.setItem('isolation-fixture-installed', 'true');
+  }, { lessonId, caseId: optionalCase.id, caseReading, principalResume });
+  const isolatedPage = await isolated.newPage(); monitor(isolatedPage);
+  await visit(isolatedPage, routes.home);
+  assert.equal(await isolatedPage.locator('#read-count').innerText(), '1', 'Contagem principal exclui case já marcado');
+  const mainProgressMax = manifest.filter(item => item.progress === true && !item.standalone && item.audience === 'student').length;
+  assert.equal(Number(await isolatedPage.locator('.progress-track').getAttribute('aria-valuemax')), mainProgressMax, 'Denominador principal exclui a coleção independente');
+  assert.equal(await isolatedPage.locator('a[href^="/cases/"]').count(), 0, 'Home sem ponto de entrada nem retomada de case');
+  await visit(isolatedPage, '/meu-estudo/index.html');
+  assert.equal(await isolatedPage.locator('main a[href^="/cases/"]').count(), 0, 'Histórico principal sem cases');
+  let stored = await isolatedPage.evaluate(() => JSON.parse(localStorage.getItem('architecture-practice:study:v2')));
+  assert.deepEqual(stored.reading[optionalCase.id], caseReading, 'Registro anterior do case preservado sem migração silenciosa');
+  await visit(isolatedPage, routes.case + '#s08');
+  await assertAnchor(isolatedPage, 's08');
+  assert.equal(await isolatedPage.locator('.pilot-links').count(), 0, 'Case não recomenda continuação da jornada principal');
+  assert.equal(await isolatedPage.locator('#navigation a').evaluateAll(links => links.every(link => new URL(link.href).pathname.startsWith('/cases/') || new URL(link.href).pathname === '/biblioteca/index.html')), true, 'Navegação contextual independente dos cases');
+  stored = await isolatedPage.evaluate(() => JSON.parse(localStorage.getItem('architecture-practice:study:v2')));
+  assert.deepEqual(stored.resume.student, principalResume, 'Visitar case não substitui a retomada principal');
+  assert.equal(stored.resume['fsi-cases'].contentId, optionalCase.id, 'Retomada do case separada por coleção');
+  assert.deepEqual(stored.reading[optionalCase.id], caseReading, 'Visitar case mantém evidência de leitura anterior');
+  await save(isolatedPage, 'case-desktop');
+  const nextCaseLink = isolatedPage.locator('.article-pagination a[href^="/cases/"]').last();
+  const nextCaseUrl = await nextCaseLink.getAttribute('href');
+  await nextCaseLink.click();
+  await diagramsReady(isolatedPage);
+  assert.equal(new URL(isolatedPage.url()).pathname, nextCaseUrl, 'Navegação entre cases continua funcional');
+  await visit(isolatedPage, routes.collection);
+  assert.equal(await isolatedPage.locator('body').getAttribute('data-study-scope'), 'fsi-cases');
+  assert.equal(await isolatedPage.locator('#read-count').innerText(), '1', 'Contagem independente mostra apenas o case marcado');
+  assert.ok(await isolatedPage.locator('.study-history a[href^="/cases/"]').count() >= 1, 'Histórico de case disponível somente dentro da coleção');
+  assert.equal(await isolatedPage.locator('.study-history a:not([href^="/cases/"])').count(), 0, 'Histórico independente não mistura leituras principais');
+  await visit(isolatedPage, routes.home);
+  assert.equal(await isolatedPage.locator('#read-count').innerText(), '1');
+  assert.ok(!(await isolatedPage.locator('#resume-link').getAttribute('href')).startsWith('/cases/'));
+
+  // A principal resume that already points to a case is left intact in storage,
+  // but it is not offered as Continue in the main learner experience.
+  await isolatedPage.evaluate(({ caseId, version }) => {
+    const key = 'architecture-practice:study:v2', state = JSON.parse(localStorage.getItem(key));
+    state.resume.student = { contentId: caseId, anchor: 's08', contentVersion: version };
+    localStorage.setItem(key, JSON.stringify(state));
+  }, { caseId: optionalCase.id, version: optionalCase.contentVersion });
+  await visit(isolatedPage, routes.home);
+  assert.equal(await isolatedPage.locator('.resume-study').isVisible(), false, 'Retomada antiga de case não reaparece na home');
+  stored = await isolatedPage.evaluate(() => JSON.parse(localStorage.getItem('architecture-practice:study:v2')));
+  assert.equal(stored.resume.student.contentId, optionalCase.id, 'Retomada antiga não é removida nem migrada silenciosamente');
+  assert.deepEqual(stored.reading[optionalCase.id], caseReading, 'Registro do case permanece intacto após filtro de retomada');
+  report.checks.push('Cases: progresso/retomada próprios, preservação de registros anteriores e ausência na jornada principal');
+
+  await visit(isolatedPage, routes.library);
+  assert.equal(await isolatedPage.locator('a[href^="/cases/"]').count(), 1, 'Biblioteca mantém uma única entrada explícita para a coleção');
+  assert.equal(await isolatedPage.locator('a[href="/cases/index.html"]').count(), 1);
+  await save(isolatedPage, 'library-desktop', true);
+  await isolatedPage.setViewportSize({ width: 390, height: 844 });
+  await visit(isolatedPage, routes.library);
+  await noOverflow(isolatedPage);
+  await save(isolatedPage, 'library-mobile', true);
+  await isolatedPage.locator('a[href="/cases/index.html"]').click();
+  await isolatedPage.locator(`a[href="${routes.case}"]`).first().click();
+  await diagramsReady(isolatedPage);
+  await noOverflow(isolatedPage);
+  await tocAvailable(isolatedPage);
+  // Collapse the small-screen TOC again for a representative reader capture.
+  if (await isolatedPage.locator('#page-toc').evaluate(element => element.open)) await isolatedPage.locator('#page-toc summary').click();
+  await isolatedPage.locator('.menu-toggle').click();
+  assert.equal(await isolatedPage.locator('#navigation').evaluate(element => element.inert), false);
+  assert.ok(await isolatedPage.locator('#navigation a[href^="/cases/"]').count() > 1);
+  await isolatedPage.keyboard.press('Escape');
+  const mobileDiagram = isolatedPage.locator('.diagram .diagram-expand').first();
+  await mobileDiagram.click();
+  assert.equal(await isolatedPage.locator('#diagram-dialog').evaluate(element => element.open), true);
+  await isolatedPage.keyboard.press('Escape');
+  assert.equal(await mobileDiagram.evaluate(element => element === document.activeElement), true);
+  await isolatedPage.evaluate(() => scrollTo(0, 0));
+  await save(isolatedPage, 'case-mobile');
+  report.checks.push('Biblioteca: entrada única; case desktop/mobile com navegação, sumário e diagramas funcionais');
+
+  const legacyCaseContext = await browser.newContext({ viewport: { width: 1440, height: 1080 } });
+  await legacyCaseContext.addInitScript(({ url, title }) => {
+    if (localStorage.getItem('legacy-case-fixture')) return;
+    localStorage.setItem('architecture-practice:read:v1', JSON.stringify([url]));
+    localStorage.setItem('architecture-practice:recent:v1', JSON.stringify({ url, title }));
+    localStorage.setItem('legacy-case-fixture', 'true');
+  }, { url: routes.case, title: optionalCase.title });
+  const legacyCasePage = await legacyCaseContext.newPage(); monitor(legacyCasePage);
+  await visit(legacyCasePage, routes.home);
+  assert.equal(await legacyCasePage.locator('#read-count').innerText(), '0', 'Leitura legacy somente de case não aumenta progresso principal');
+  assert.equal(await legacyCasePage.locator('.resume-study').isVisible(), false, 'Recente v1 de case não contamina Continuar principal');
+  const legacyCaseState = await legacyCasePage.evaluate(() => JSON.parse(localStorage.getItem('architecture-practice:study:v2')));
+  assert.equal(legacyCaseState.reading[optionalCase.id].marked, true);
+  assert.equal(legacyCaseState.reading[optionalCase.id].origin, 'legacy');
+  assert.equal(legacyCaseState.resume['fsi-cases'].contentId, optionalCase.id, 'Recente v1 associado somente à coleção independente');
+  assert.equal(await legacyCasePage.evaluate(() => JSON.parse(localStorage.getItem('architecture-practice:recent:v1')).url), routes.case, 'Registro antigo de origem não foi apagado');
+  report.checks.push('Recente v1 de case preservado e excluído de progresso/retomada principal');
 
   const blocked = await browser.newContext({ viewport: { width: 390, height: 844 } });
   await blocked.addInitScript(() => {
@@ -368,11 +486,13 @@ try {
   assert.match(await staticPage.locator('body').innerText(), /JavaScript/i, 'Limite dos recursos sem JavaScript explícito');
   assert.equal((await page.request.get(base + '/pagina-inexistente-p0.html')).status(), 404);
   report.checks.push('Leitura, links e sumário sem JavaScript; rota inexistente retorna 404');
+  report.acid = await checkAcidBrowser({ browser, base, manifest, root });
+  report.checks.push(...report.acid.checks);
   assert.deepEqual(failures, [], 'Erros de console, CSP ou rede');
-  await fs.writeFile(path.join(root, '.site/p0/browser-results.json'), JSON.stringify(report, null, 2));
+  await fs.writeFile(path.join(root, '.site/cases-isolation/browser-results.json'), JSON.stringify(report, null, 2));
   console.log(`Chromium local: ${report.documents} documentos, ${report.diagrams} diagramas em ${report.diagramPages} páginas; larguras ${report.widths.join(', ')}px.`);
   console.log(`Busca: ${Object.keys(report.queries).join(', ')}. ${report.checks.length} grupos de verificações aprovados.`);
-  console.log(`Capturas em .site/p0/after/; resultados em .site/p0/browser-results.json. ${base}`);
+  console.log(`Capturas em .site/cases-isolation/after/; resultados em .site/cases-isolation/browser-results.json. ${base}`);
 } finally {
   await browser.close();
 }

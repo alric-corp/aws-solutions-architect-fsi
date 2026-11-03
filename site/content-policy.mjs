@@ -1,12 +1,42 @@
+import { collectionMetadataFor, isStandaloneReference } from './collection-policy.mjs';
 // Publication, audience and search are independent decisions. These rules apply
 // only to the repository's explicitly allowed, versioned study sources.
 export const normalize = value => value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
 export const pilot = {
   topic: '/temas/transacoes-idempotencia.html',
   foundation: '/technical-knowledge/01-fundamentals/06-databases-transactions-consistency.html#idempotencia-concorrencia',
-  case: '/cases/01-payment-processing-pix.html#s08',
   practice: '/interview/simulations/04-troubleshooting/02-pedido-durante-falha-do-banco/candidato.html'
 };
+// A path within Fundamentos, using the original documents exactly once.
+// Its order is explicit so lab READMEs never interrupt the ten lessons.
+export const acidCourse = {
+  id: 'acid-do-zero',
+  label: 'Transações e ACID do zero',
+  prefix: 'technical-knowledge/01-fundamentals/acid/',
+  lessons: [
+    ['README.md', 'Visão geral da trilha'],
+    ['00-transacoes-do-zero.md', '00 — Introdução às transações'],
+    ['01-atomicidade.md', '01 — Atomicidade'],
+    ['02-consistencia.md', '02 — Consistência'],
+    ['03-isolamento.md', '03 — Isolamento'],
+    ['04-anomalias-e-niveis.md', '04 — Anomalias e níveis'],
+    ['05-locks-concorrencia-deadlocks.md', '05 — Locks e concorrência'],
+    ['06-durabilidade.md', '06 — Durabilidade'],
+    ['07-timeout-idempotencia.md', '07 — Idempotência'],
+    ['08-acid-base-sql-nosql.md', '08 — ACID, BASE e SQL/NoSQL'],
+    ['09-revisao-e-desafio.md', '09 — Revisão e desafio']
+  ],
+  support: [
+    ['glossario.md', 'Glossário'],
+    ['referencias-e-revisao-tecnica.md', 'Referências e revisão técnica'],
+    ['laboratorio/README.md', 'Laboratório: escolha do roteiro'],
+    ['laboratorio/postgresql/README.md', 'PostgreSQL: ambiente e execução'],
+    ['laboratorio/postgresql/roteiro.md', 'PostgreSQL: roteiro em duas sessões'],
+    ['laboratorio/postgresql/sql-executavel.md', 'PostgreSQL: SQL completo'],
+    ['laboratorio/mysql-comparativo/README.md', 'MySQL: comparativo']
+  ]
+};
+export const isAcidSource = source => typeof source === 'string' && source.startsWith(acidCourse.prefix);
 const instructorPaths = new Set([
   'interview/simulations/04-troubleshooting/guia-do-instrutor.md',
   'interview/simulations/04-troubleshooting/diagnostico-inicial.md',
@@ -18,10 +48,10 @@ export function metadataFor(source) {
   const audience = source.endsWith('/instrutor.md') || instructorPaths.has(source) ? 'instructor' : 'student';
   return {
     id: source.replace(/\.md$/, ''), sourcePath: source,
-    type: source.endsWith('/candidato.md') ? 'practice' : audience === 'instructor' ? 'instructor-guide' : source.startsWith('cases/') ? 'case' : 'reading',
-    audience, publication: 'public', search: audience === 'student',
-    topics: /06-databases|01-payment-processing|02-pedido-durante/.test(source) ? ['transacoes-idempotencia'] : [],
-    tracks: [], prerequisites: [], relatedPractice: /06-databases|01-payment-processing/.test(source) ? [pilot.practice] : []
+    type: source.endsWith('/candidato.md') ? 'practice' : audience === 'instructor' ? 'instructor-guide' : isStandaloneReference(source) ? 'case' : 'reading',
+    audience, publication: 'public', ...collectionMetadataFor(source, audience),
+    topics: !isStandaloneReference(source) && /06-databases|02-pedido-durante/.test(source) ? ['transacoes-idempotencia'] : [],
+    tracks: isAcidSource(source) ? [acidCourse.id] : [], prerequisites: [], relatedPractice: !isStandaloneReference(source) && /06-databases/.test(source) ? [pilot.practice] : []
   };
 }
 const text = value => value.replace(/<[^>]*>/g, '').replace(/[*_`]/g, '').trim();
@@ -30,7 +60,7 @@ export function detailsPolicy(summary, surroundingHeading, source) {
   if (/^(?:(?:ver|abrir) )?(?:resposta|solucao|gabarito)\b|sample answer|optional for the teacher/.test(label)) return 'answer';
   // Numbered questions in the curated case interview sections wrap their
   // answers in details. Keep the summary (the question), omit only the body.
-  if (source.startsWith('cases/') && /perguntas.*respostas comentadas/.test(normalize(surroundingHeading)) && /^\d+\./.test(label)) return 'answer';
+  if (isStandaloneReference(source) && /perguntas.*respostas comentadas/.test(normalize(surroundingHeading)) && /^\d+\./.test(label)) return 'answer';
   return 'explanation';
 }
 export function studentSearchMarkdown(markdown, source) {
