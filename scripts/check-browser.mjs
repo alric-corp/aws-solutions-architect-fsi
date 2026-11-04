@@ -254,16 +254,17 @@ try {
   await page.reload();
   await diagramsReady(page);
   await assertAnchor(page, 'idempotencia-concorrencia');
-  await visit(page, routes.home);
+  await visit(page, '/meu-estudo/index.html');
   const resumeHref = await page.locator('#resume-link').getAttribute('href');
   assert.ok(resumeHref.includes(routes.foundation) && resumeHref.includes('#idempotencia-concorrencia'), `Retomada por seção: ${resumeHref}`);
   await visit(page, routes.instructor);
-  await visit(page, routes.home);
+  await visit(page, '/meu-estudo/index.html');
   const afterInstructor = await page.locator('#resume-link').getAttribute('href');
   assert.ok(!afterInstructor.includes('instrutor'), 'Histórico de instrutor separado');
   report.checks.push('Prioridade de hash explícito, refresh, contentId/âncora/versão e histórico de instrutor separado');
 
   // Pilot is traversed through real links, including a return to the exact section.
+  await visit(page, routes.home);
   await page.locator(`a[href="${routes.topic}"]`).first().click();
   await page.locator(`a[href="${routes.foundation}#idempotencia-concorrencia"]`).first().click();
   await diagramsReady(page);
@@ -327,7 +328,7 @@ try {
   }, { lesson: routes.lesson, instructor: routes.instructor, optionalCase: routes.case });
   const migratedPage = await legacy.newPage();
   monitor(migratedPage);
-  await visit(migratedPage, routes.home);
+  await visit(migratedPage, '/meu-estudo/index.html');
   const migrated = await migratedPage.evaluate(() => JSON.parse(localStorage.getItem('architecture-practice:study:v2')));
   const lessonId = manifest.find(item => item.canonicalUrl === routes.lesson).id;
   const optionalCase = manifest.find(item => item.canonicalUrl === routes.case);
@@ -373,11 +374,11 @@ try {
   }, { lessonId, caseId: optionalCase.id, caseReading, principalResume });
   const isolatedPage = await isolated.newPage(); monitor(isolatedPage);
   await visit(isolatedPage, routes.home);
+  assert.equal(await isolatedPage.locator('a[href^="/cases/"]').count(), 0, 'Home sem ponto de entrada nem retomada de case');
+  await visit(isolatedPage, '/meu-estudo/index.html');
   assert.equal(await isolatedPage.locator('#read-count').innerText(), '1', 'Contagem principal exclui case já marcado');
   const mainProgressMax = manifest.filter(item => item.progress === true && !item.standalone && item.audience === 'student').length;
   assert.equal(Number(await isolatedPage.locator('.progress-track').getAttribute('aria-valuemax')), mainProgressMax, 'Denominador principal exclui a coleção independente');
-  assert.equal(await isolatedPage.locator('a[href^="/cases/"]').count(), 0, 'Home sem ponto de entrada nem retomada de case');
-  await visit(isolatedPage, '/meu-estudo/index.html');
   assert.equal(await isolatedPage.locator('main a[href^="/cases/"]').count(), 0, 'Histórico principal sem cases');
   let stored = await isolatedPage.evaluate(() => JSON.parse(localStorage.getItem('architecture-practice:study:v2')));
   assert.deepEqual(stored.reading[optionalCase.id], caseReading, 'Registro anterior do case preservado sem migração silenciosa');
@@ -400,7 +401,7 @@ try {
   assert.equal(await isolatedPage.locator('#read-count').innerText(), '1', 'Contagem independente mostra apenas o case marcado');
   assert.ok(await isolatedPage.locator('.study-history a[href^="/cases/"]').count() >= 1, 'Histórico de case disponível somente dentro da coleção');
   assert.equal(await isolatedPage.locator('.study-history a:not([href^="/cases/"])').count(), 0, 'Histórico independente não mistura leituras principais');
-  await visit(isolatedPage, routes.home);
+  await visit(isolatedPage, '/meu-estudo/index.html');
   assert.equal(await isolatedPage.locator('#read-count').innerText(), '1');
   assert.ok(!(await isolatedPage.locator('#resume-link').getAttribute('href')).startsWith('/cases/'));
 
@@ -411,8 +412,8 @@ try {
     state.resume.student = { contentId: caseId, anchor: 's08', contentVersion: version };
     localStorage.setItem(key, JSON.stringify(state));
   }, { caseId: optionalCase.id, version: optionalCase.contentVersion });
-  await visit(isolatedPage, routes.home);
-  assert.equal(await isolatedPage.locator('.resume-study').isVisible(), false, 'Retomada antiga de case não reaparece na home');
+  await visit(isolatedPage, '/meu-estudo/index.html');
+  assert.equal(await isolatedPage.locator('.resume-study').isVisible(), false, 'Retomada antiga de case não reaparece em Meu estudo');
   stored = await isolatedPage.evaluate(() => JSON.parse(localStorage.getItem('architecture-practice:study:v2')));
   assert.equal(stored.resume.student.contentId, optionalCase.id, 'Retomada antiga não é removida nem migrada silenciosamente');
   assert.deepEqual(stored.reading[optionalCase.id], caseReading, 'Registro do case permanece intacto após filtro de retomada');
@@ -454,7 +455,7 @@ try {
     localStorage.setItem('legacy-case-fixture', 'true');
   }, { url: routes.case, title: optionalCase.title });
   const legacyCasePage = await legacyCaseContext.newPage(); monitor(legacyCasePage);
-  await visit(legacyCasePage, routes.home);
+  await visit(legacyCasePage, '/meu-estudo/index.html');
   assert.equal(await legacyCasePage.locator('#read-count').innerText(), '0', 'Leitura legacy somente de case não aumenta progresso principal');
   assert.equal(await legacyCasePage.locator('.resume-study').isVisible(), false, 'Recente v1 de case não contamina Continuar principal');
   const legacyCaseState = await legacyCasePage.evaluate(() => JSON.parse(localStorage.getItem('architecture-practice:study:v2')));

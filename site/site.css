@@ -237,6 +237,8 @@ body.header-unpinned .topbar { position: static; }
 .track-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
 .track-card { padding: 24px; border: 1px solid var(--border); background: var(--surface); border-radius: 6px; color: var(--ink); text-decoration: none; display: flex; flex-direction: column; }
 .track-card:hover { border-color: var(--border-strong); }
+/* Card do Foco do loop: mesma cor de destaque dos princípios marcados com ★. */
+.track-card-focus, .track-card-focus:hover { border-color: var(--action); }
 .track-card-top { display: flex; align-items: center; justify-content: space-between; gap: 14px; color: var(--muted); }
 .track-icon { color: var(--link); }
 .track-number { font-size: .875rem; }
@@ -330,6 +332,11 @@ body.header-unpinned .topbar { position: static; }
 .prose p > img { display: block; margin: 24px auto; background: var(--image-surface); }
 .prose table { width: 100%; min-width: 32rem; border-collapse: collapse; text-align: left; line-height: 1.55; font-size: .875em; background: var(--surface); }
 .prose th, .prose td { border: 1px solid var(--border); padding: 12px 14px; vertical-align: top; }
+/* O .prose usa overflow-wrap: anywhere para que nada estoure a coluna. Em tabela, isso deixa
+   cada coluna encolher até uma letra e quebra palavras no meio. Aqui a coluna respeita a palavra
+   mais longa; se a tabela não couber, a .table-scroll rola na horizontal. */
+.prose th, .prose td { overflow-wrap: break-word; }
+.prose th code, .prose td code { overflow-wrap: anywhere; }
 .prose th { color: var(--ink); background: var(--surface-subtle); font-weight: 700; }
 .prose td img { display: inline-block; vertical-align: middle; max-width: none; margin: 0 6px 0 0; }
 .table-scroll { max-width: 100%; overflow-x: auto; overscroll-behavior-inline: contain; margin: 1.35em 0; scrollbar-color: var(--border-strong) var(--surface-subtle); }
@@ -371,8 +378,10 @@ body.header-unpinned .topbar { position: static; }
 .article-pagination a:last-child { text-align: right; }
 .article-pagination small { display: block; margin-bottom: 8px; color: var(--muted); font-size: .8125rem; font-weight: 600; letter-spacing: .04em; }
 body.focus-mode .sidebar { display: none; }
-body.focus-mode .workspace { margin-left: 0; }
-body.focus-mode .reading-main { grid-template-columns: minmax(0, calc(68ch + 64px)); max-width: 950px; }
+body.focus-mode .workspace, body.focus-mode.reading-page:has(.sidebar) .workspace { margin-left: 0; }
+/* Modo foco: sem barra lateral nem sumário, a coluna inteira fica mais larga (até 72rem),
+   e texto e tabelas compartilham as mesmas bordas. */
+body.focus-mode .reading-main { grid-template-columns: minmax(0, 72rem); max-width: calc(72rem + 72px); }
 body.focus-mode .article-column { grid-row: 2; }
 body.focus-mode .toc { grid-row: 1; grid-column: 1; position: static; max-height: none; }
 body.focus-mode .desktop-nav-slot { min-width: 0; }
