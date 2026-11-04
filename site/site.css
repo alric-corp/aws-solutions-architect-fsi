@@ -278,6 +278,25 @@ body.header-unpinned .topbar { position: static; }
 .study-history { padding: 0; list-style: none; margin-top: 28px; }
 .study-history li { padding: 18px 0; border-bottom: 1px solid var(--border); }
 .study-history small { display: block; color: var(--muted); }
+/* Plano até a entrevista (Meu estudo). Dia atual com a cor de destaque; tarefa feita fica riscada. */
+.study-plan { margin: 36px 0 48px; padding: 28px; border: 1px solid var(--border); border-left: 4px solid var(--action); border-radius: 6px; background: var(--surface); }
+.study-plan h2 { margin: 0 0 8px; }
+.plan-countdown { color: var(--ink); font-weight: 600; }
+.plan-summary { color: var(--muted); margin-bottom: 0; }
+/* Barra própria do plano, em laranja; a .progress-track (verde) continua sendo só a de leituras. */
+.plan-progress { height: 6px; overflow: hidden; background: var(--border); border-radius: 3px; margin: 18px 0; }
+.plan-progress span { display: block; height: 100%; background: var(--action); }
+.plan-days { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 21rem), 1fr)); gap: 16px; margin-top: 8px; }
+.plan-day { padding: 16px 18px; border: 1px solid var(--border); border-radius: 6px; }
+.plan-day.is-today { border-color: var(--action); }
+.plan-day.is-today h3::after { content: ' · hoje'; color: var(--link); }
+.plan-day h3 { font-size: 1rem; margin: 0 0 10px; }
+.plan-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
+.plan-list li { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.plan-list label { display: flex; align-items: flex-start; gap: 10px; cursor: pointer; line-height: 1.45; }
+.plan-list input { accent-color: var(--action); width: 18px; height: 18px; margin: 2px 0 0; flex: none; }
+.plan-list label:has(input:checked) span { color: var(--muted); text-decoration: line-through; }
+.plan-list a { white-space: nowrap; font-size: .875rem; }
 .storage-notice, .resume-notice { margin: 18px 0; padding: 13px 18px; border: 1px solid var(--border-strong); border-radius: 4px; background: var(--notice-surface); color: var(--ink); font-size: .9375rem; }
 .page-footer { max-width: 1320px; margin: 0 auto; border-top: 1px solid var(--border); padding: 26px 36px; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px 25px; color: var(--muted); font-size: .875rem; }
 .page-footer a { color: var(--muted); }

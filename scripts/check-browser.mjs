@@ -263,6 +263,13 @@ try {
   assert.ok(!afterInstructor.includes('instrutor'), 'Histórico de instrutor separado');
   report.checks.push('Prioridade de hash explícito, refresh, contentId/âncora/versão e histórico de instrutor separado');
 
+  await visit(page, '/meu-estudo/index.html');
+  const planBefore = await page.locator('input[data-plan-task]').nth(1).isChecked();
+  await page.locator('input[data-plan-task]').nth(1).setChecked(!planBefore);
+  await page.reload();
+  assert.equal(await page.locator('input[data-plan-task]').nth(1).isChecked(), !planBefore, 'Plano: marcação salva neste navegador');
+  report.checks.push('Plano até a entrevista: marcações salvas no navegador');
+
   // Pilot is traversed through real links, including a return to the exact section.
   await visit(page, routes.home);
   await page.locator(`a[href="${routes.topic}"]`).first().click();
