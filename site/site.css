@@ -237,6 +237,8 @@ body.header-unpinned .topbar { position: static; }
 .track-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
 .track-card { padding: 24px; border: 1px solid var(--border); background: var(--surface); border-radius: 6px; color: var(--ink); text-decoration: none; display: flex; flex-direction: column; }
 .track-card:hover { border-color: var(--border-strong); }
+/* Card do Foco do loop: mesma cor de destaque dos princípios marcados com ★. */
+.track-card-focus, .track-card-focus:hover { border-color: var(--action); }
 .track-card-top { display: flex; align-items: center; justify-content: space-between; gap: 14px; color: var(--muted); }
 .track-icon { color: var(--link); }
 .track-number { font-size: .875rem; }
