@@ -1,5 +1,7 @@
 # P0 local — entrega para revisão
 
+> Relatório histórico da entrega P0. Em 05/11/2026, a documentação foi reunida em `docs/site/` e o pacote `redesign-references/` foi removido por decisão do proprietário após a implementação. A capa original foi movida da raiz para `assets/amazon.jpg`, preservando seus bytes e a URL pública. As descrições e medições abaixo registram a entrega original; para a operação atual, consulte [README.md](README.md).
+
 Implementação feita a partir de `603dcf03bf9db74e89931a9b703c5c4234509b0a`, usando `redesign-references/Consolidacao_Redesign_AWS_FSI.md` como especificação principal e o prompt do pacote para delimitar o P0. Os arquivos de referência e a capa recebidos foram preservados. Trabalho local, sem commit, staging, push, PR, deploy, consulta de credenciais ou execução de comandos AWS.
 
 ## Abrir a prévia
@@ -43,9 +45,9 @@ Gabaritos publicáveis continuam acessíveis por escolha explícita em Praticar.
 | `site/favicon.svg` | Cores alinhadas à identidade do projeto. |
 | `scripts/check-site.mjs` | Rotas/âncoras, política, fixtures negativas, privacidade do artefato e contrato de infraestrutura. |
 | `scripts/check-browser.mjs` | Regressão de todo o acervo e tarefas do P0. |
-| `site/P0-LOCAL.md` | Este relatório local de implementação e revisão. |
+| `docs/site/P0-LOCAL.md` | Este relatório local de implementação e revisão. |
 
-Os Markdown de estudo não foram modificados. `amazon.jpg` é a entrada fornecida pelo proprietário. `redesign-references/` permanece como material de trabalho, fora do pacote público.
+Na entrega original, os Markdown de estudo não foram modificados. `amazon.jpg` é a entrada fornecida pelo proprietário. Naquele momento, `redesign-references/` era material de trabalho fora do pacote público; a pasta foi removida posteriormente, conforme a nota acima.
 
 ## Verificação executada
 

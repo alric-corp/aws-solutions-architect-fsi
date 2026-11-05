@@ -1,0 +1,101 @@
+<?xml version='1.0' encoding='utf-8'?>
+<mxfile host="app.diagrams.net" type="device">
+  <diagram id="cart-order" name="Carrinho e pedido — Loja Horizonte">
+    <mxGraphModel dx="1600" dy="860" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="860" math="0" shadow="0" background="#FFFFFF">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title" value="Loja Horizonte · do carrinho ao pedido" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=middle;fontFamily=Arial;fontColor=#232F3E;fontSize=28;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="26" width="1520" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="subtitle" value="Aula 2 · a mesma aplicação passa a registrar alterações" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=middle;fontFamily=Arial;fontColor=#232F3E;fontSize=18;fontColor=#546778;" vertex="1" parent="1">
+          <mxGeometry x="40" y="80" width="1520" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="aws" value="Nuvem AWS" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fontFamily=Arial;fontColor=#232F3E;shadow=0;fillColor=#F7F8FA;strokeColor=#B9C0C9;strokeWidth=1.2;dashed=1;dashPattern=6 4;verticalAlign=top;align=left;spacingLeft=24;spacingTop=16;fontSize=18;fontStyle=1;fontColor=#546778;container=1;collapsible=0;" vertex="1" parent="1">
+          <mxGeometry x="560" y="140" width="1000" height="570" as="geometry" />
+        </mxCell>
+        <mxCell id="browser" value="Navegador&lt;br&gt;de Ana" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fontFamily=Arial;fontColor=#232F3E;shadow=0;fillColor=#FFFFFF;strokeColor=#546778;strokeWidth=1.5;fontSize=22;fontStyle=1;align=center;" vertex="1" parent="1">
+          <mxGeometry x="40" y="330" width="190" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="browser_role" value="Consulta e envia&lt;br&gt;alterações" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=middle;fontFamily=Arial;fontColor=#232F3E;align=center;fontSize=17;fontColor=#546778;" vertex="1" parent="1">
+          <mxGeometry x="40" y="490" width="190" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="ec2box" value="" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fontFamily=Arial;fontColor=#232F3E;shadow=0;fillColor=#FFFFFF;strokeColor=#ED7100;strokeWidth=2;container=1;collapsible=0;" vertex="1" parent="aws">
+          <mxGeometry x="40" y="95" width="360" height="315" as="geometry" />
+        </mxCell>
+        <mxCell id="app_role" value="Aplicação da&lt;br&gt;Loja Horizonte" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=middle;fontFamily=Arial;fontColor=#232F3E;fontSize=22;fontStyle=1;" vertex="1" parent="ec2box">
+          <mxGeometry x="96" y="14" width="244" height="64" as="geometry" />
+        </mxCell>
+        <mxCell id="ec2_name" value="Amazon EC2" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=middle;fontFamily=Arial;fontColor=#232F3E;fontSize=18;fontColor=#546778;" vertex="1" parent="ec2box">
+          <mxGeometry x="96" y="79" width="244" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="app_tasks" value="Lê o catálogo&lt;br&gt;Guarda alterações do carrinho&lt;br&gt;Cria e consulta pedidos" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=middle;fontFamily=Arial;fontColor=#232F3E;fontSize=18;" vertex="1" parent="ec2box">
+          <mxGeometry x="24" y="134" width="312" height="114" as="geometry" />
+        </mxCell>
+        <mxCell id="app_same" value="Mesma aplicação da Aula 1" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=middle;fontFamily=Arial;fontColor=#232F3E;fontSize=16;fontColor=#546778;" vertex="1" parent="ec2box">
+          <mxGeometry x="24" y="270" width="312" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="rdsbox" value="" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fontFamily=Arial;fontColor=#232F3E;shadow=0;fillColor=#FFFFFF;strokeColor=#CBD2D9;strokeWidth=1.5;container=1;collapsible=0;" vertex="1" parent="aws">
+          <mxGeometry x="660" y="75" width="300" height="270" as="geometry" />
+        </mxCell>
+        <mxCell id="rds_role" value="Dados&lt;br&gt;persistentes" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=middle;fontFamily=Arial;fontColor=#232F3E;fontSize=22;fontStyle=1;" vertex="1" parent="rdsbox">
+          <mxGeometry x="92" y="12" width="188" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="rds_name" value="Amazon RDS&lt;br&gt;for PostgreSQL" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=middle;fontFamily=Arial;fontColor=#232F3E;fontSize=18;fontColor=#546778;" vertex="1" parent="rdsbox">
+          <mxGeometry x="92" y="78" width="188" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="rds_records" value="Um banco; registros de:&lt;br&gt;catálogo, carrinhos e pedidos" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=middle;fontFamily=Arial;fontColor=#232F3E;fontSize=18;" vertex="1" parent="rdsbox">
+          <mxGeometry x="20" y="162" width="260" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="s3box" value="" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fontFamily=Arial;fontColor=#232F3E;shadow=0;fillColor=#FFFFFF;strokeColor=#CBD2D9;strokeWidth=1.2;container=1;collapsible=0;" vertex="1" parent="aws">
+          <mxGeometry x="660" y="400" width="300" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="s3_role" value="Fotografias" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=middle;fontFamily=Arial;fontColor=#232F3E;fontSize=21;fontStyle=1;" vertex="1" parent="s3box">
+          <mxGeometry x="92" y="12" width="188" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="s3_name" value="Amazon S3" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=middle;fontFamily=Arial;fontColor=#232F3E;fontSize=18;fontColor=#546778;" vertex="1" parent="s3box">
+          <mxGeometry x="92" y="48" width="188" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="s3_private" value="Bucket privado · somente imagens" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=middle;fontFamily=Arial;fontColor=#232F3E;fontSize=16;fontColor=#546778;" vertex="1" parent="s3box">
+          <mxGeometry x="20" y="92" width="260" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="ec2_icon" value="" style="shape=image;imageAspect=1;aspect=fixed;html=1;image=data:image/svg+xml,%3C%3Fxml%20version%3D%221.0%22%20encoding%3D%22UTF-8%22%3F%3E%0A%3Csvg%20width%3D%2240px%22%20height%3D%2240px%22%20viewBox%3D%220%200%2040%2040%22%20version%3D%221.1%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20xmlns%3Axlink%3D%22http%3A%2F%2Fwww.w3.org%2F1999%2Fxlink%22%3E%0A%20%20%20%20%3Ctitle%3EIcon-Architecture%2F32%2FArch_Amazon-EC2_32%3C%2Ftitle%3E%0A%20%20%20%20%3Cg%20id%3D%22Icon-Architecture%2F32%2FArch_Amazon-EC2_32%22%20stroke%3D%22none%22%20stroke-width%3D%221%22%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%3E%0A%20%20%20%20%20%20%20%20%3Cg%20id%3D%22Icon-Architecture-BG%2F32%2FCompute%22%20fill%3D%22%23ED7100%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3Crect%20id%3D%22Rectangle%22%20x%3D%220%22%20y%3D%220%22%20width%3D%2240%22%20height%3D%2240%22%3E%3C%2Frect%3E%0A%20%20%20%20%20%20%20%20%3C%2Fg%3E%0A%20%20%20%20%20%20%20%20%3Cpath%20d%3D%22M26.052%2C27%20L26%2C13.948%20L13%2C14%20L13%2C27.052%20L26.052%2C27%20Z%20M27%2C14%20L29%2C14%20L29%2C15%20L27%2C15%20L27%2C17%20L29%2C17%20L29%2C18%20L27%2C18%20L27%2C20%20L29%2C20%20L29%2C21%20L27%2C21%20L27%2C23%20L29%2C23%20L29%2C24%20L27%2C24%20L27%2C26%20L29%2C26%20L29%2C27%20L27%2C27%20L27%2C27.052%20C27%2C27.575%2026.574%2C28%2026.052%2C28%20L26%2C28%20L26%2C30%20L25%2C30%20L25%2C28%20L23%2C28%20L23%2C30%20L22%2C30%20L22%2C28%20L20%2C28%20L20%2C30%20L19%2C30%20L19%2C28%20L17%2C28%20L17%2C30%20L16%2C30%20L16%2C28%20L14%2C28%20L14%2C30%20L13%2C30%20L13%2C28%20L12.948%2C28%20C12.426%2C28%2012%2C27.575%2012%2C27.052%20L12%2C27%20L10%2C27%20L10%2C26%20L12%2C26%20L12%2C24%20L10%2C24%20L10%2C23%20L12%2C23%20L12%2C21%20L10%2C21%20L10%2C20%20L12%2C20%20L12%2C18%20L10%2C18%20L10%2C17%20L12%2C17%20L12%2C15%20L10%2C15%20L10%2C14%20L12%2C14%20L12%2C13.948%20C12%2C13.425%2012.426%2C13%2012.948%2C13%20L13%2C13%20L13%2C11%20L14%2C11%20L14%2C13%20L16%2C13%20L16%2C11%20L17%2C11%20L17%2C13%20L19%2C13%20L19%2C11%20L20%2C11%20L20%2C13%20L22%2C13%20L22%2C11%20L23%2C11%20L23%2C13%20L25%2C13%20L25%2C11%20L26%2C11%20L26%2C13%20L26.052%2C13%20C26.574%2C13%2027%2C13.425%2027%2C13.948%20L27%2C14%20Z%20M21%2C33%20L7%2C33%20L7%2C19%20L9%2C19%20L9%2C18%20L7.062%2C18%20C6.477%2C18%206%2C18.477%206%2C19.062%20L6%2C32.938%20C6%2C33.523%206.477%2C34%207.062%2C34%20L20.939%2C34%20C21.524%2C34%2022%2C33.523%2022%2C32.938%20L22%2C31%20L21%2C31%20L21%2C33%20Z%20M34%2C7.062%20L34%2C20.938%20C34%2C21.523%2033.524%2C22%2032.939%2C22%20L30%2C22%20L30%2C21%20L33%2C21%20L33%2C7%20L19%2C7%20L19%2C10%20L18%2C10%20L18%2C7.062%20C18%2C6.477%2018.477%2C6%2019.062%2C6%20L32.939%2C6%20C33.524%2C6%2034%2C6.477%2034%2C7.062%20L34%2C7.062%20Z%22%20id%3D%22Amazon-EC2_Icon_32_Squid%22%20fill%3D%22%23FFFFFF%22%3E%3C%2Fpath%3E%0A%20%20%20%20%3C%2Fg%3E%0A%3C%2Fsvg%3E;" vertex="1" parent="ec2box">
+          <mxGeometry x="20" y="20" width="56" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="rds_icon" value="" style="shape=image;imageAspect=1;aspect=fixed;html=1;image=data:image/svg+xml,%3C%3Fxml%20version%3D%221.0%22%20encoding%3D%22UTF-8%22%3F%3E%0A%3Csvg%20width%3D%2240px%22%20height%3D%2240px%22%20viewBox%3D%220%200%2040%2040%22%20version%3D%221.1%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20xmlns%3Axlink%3D%22http%3A%2F%2Fwww.w3.org%2F1999%2Fxlink%22%3E%0A%20%20%20%20%3Ctitle%3EIcon-Architecture%2F32%2FArch_Amazon-RDS_32%3C%2Ftitle%3E%0A%20%20%20%20%3Cg%20id%3D%22Icon-Architecture%2F32%2FArch_Amazon-RDS_32%22%20stroke%3D%22none%22%20stroke-width%3D%221%22%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%3E%0A%20%20%20%20%20%20%20%20%3Cg%20id%3D%22Icon-Architecture-BG%2F32%2FDatabase%22%20fill%3D%22%23C925D1%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3Crect%20id%3D%22Rectangle%22%20x%3D%220%22%20y%3D%220%22%20width%3D%2240%22%20height%3D%2240%22%3E%3C%2Frect%3E%0A%20%20%20%20%20%20%20%20%3C%2Fg%3E%0A%20%20%20%20%20%20%20%20%3Cpath%20d%3D%22M11.854%2C28.854%20L7.708%2C33%20L10.5%2C33%20L10.5%2C34%20L6.5%2C34%20C6.224%2C34%206%2C33.777%206%2C33.5%20L6%2C29.5%20L7%2C29.5%20L7%2C32.293%20L11.147%2C28.147%20L11.854%2C28.854%20Z%20M33%2C29.5%20L34%2C29.5%20L34%2C33.5%20C34%2C33.777%2033.777%2C34%2033.5%2C34%20L29.5%2C34%20L29.5%2C33%20L32.293%2C33%20L28.147%2C28.854%20L28.854%2C28.147%20L33%2C32.293%20L33%2C29.5%20Z%20M34%2C6.5%20L34%2C10.5%20L33%2C10.5%20L33%2C7.708%20L28.854%2C11.854%20L28.147%2C11.147%20L32.293%2C7%20L29.5%2C7%20L29.5%2C6%20L33.5%2C6%20C33.777%2C6%2034%2C6.224%2034%2C6.5%20L34%2C6.5%20Z%20M7%2C10.5%20L6%2C10.5%20L6%2C6.5%20C6%2C6.224%206.224%2C6%206.5%2C6%20L10.5%2C6%20L10.5%2C7%20L7.527%2C7%20L11.846%2C11.14%20L11.155%2C11.861%20L7%2C7.88%20L7%2C10.5%20Z%20M32.726%2C19.4%20C32.726%2C17.842%2030.92%2C16.3%2027.896%2C15.277%20L28.216%2C14.33%20C31.718%2C15.515%2033.726%2C17.363%2033.726%2C19.4%20C33.726%2C21.437%2031.718%2C23.286%2028.216%2C24.471%20L27.896%2C23.523%20C30.92%2C22.5%2032.726%2C20.958%2032.726%2C19.4%20L32.726%2C19.4%20Z%20M7.737%2C19.4%20C7.737%2C20.892%209.427%2C22.393%2012.258%2C23.414%20L11.918%2C24.354%20C8.625%2C23.167%206.737%2C21.361%206.737%2C19.4%20C6.737%2C17.439%208.625%2C15.633%2011.918%2C14.445%20L12.258%2C15.386%20C9.427%2C16.407%207.737%2C17.908%207.737%2C19.4%20L7.737%2C19.4%20Z%20M20.023%2C15.719%20C16.887%2C15.719%2015.132%2C14.92%2015.106%2C14.594%20C15.132%2C14.268%2016.887%2C13.469%2020.023%2C13.469%20C23.156%2C13.469%2024.913%2C14.267%2024.94%2C14.594%20C24.913%2C14.92%2023.156%2C15.719%2020.023%2C15.719%20L20.023%2C15.719%20Z%20M20.023%2C19.274%20C16.841%2C19.274%2015.106%2C18.348%2015.106%2C17.872%20L15.106%2C15.842%20C16.241%2C16.437%2018.175%2C16.719%2020.023%2C16.719%20C21.871%2C16.719%2023.805%2C16.437%2024.94%2C15.842%20L24.94%2C17.872%20C24.94%2C18.348%2023.205%2C19.274%2020.023%2C19.274%20L20.023%2C19.274%20Z%20M20.023%2C23.011%20C16.841%2C23.011%2015.106%2C22.084%2015.106%2C21.608%20L15.106%2C19.265%20C16.225%2C19.93%2018.129%2C20.274%2020.023%2C20.274%20C21.917%2C20.274%2023.821%2C19.93%2024.94%2C19.265%20L24.94%2C21.608%20C24.94%2C22.084%2023.205%2C23.011%2020.023%2C23.011%20L20.023%2C23.011%20Z%20M20.023%2C26.29%20C16.841%2C26.29%2015.106%2C25.375%2015.106%2C24.905%20L15.106%2C23.001%20C16.225%2C23.667%2018.129%2C24.011%2020.023%2C24.011%20C21.917%2C24.011%2023.821%2C23.667%2024.94%2C23.001%20L24.94%2C24.905%20C24.94%2C25.375%2023.205%2C26.29%2020.023%2C26.29%20L20.023%2C26.29%20Z%20M20.023%2C12.469%20C17.173%2C12.469%2014.106%2C13.134%2014.106%2C14.594%20L14.106%2C24.905%20C14.106%2C26.471%2017.083%2C27.29%2020.023%2C27.29%20C22.963%2C27.29%2025.94%2C26.471%2025.94%2C24.905%20L25.94%2C14.594%20C25.94%2C13.134%2022.873%2C12.469%2020.023%2C12.469%20L20.023%2C12.469%20Z%22%20id%3D%22Amazon-RDS_Icon_32_Squid%22%20fill%3D%22%23FFFFFF%22%3E%3C%2Fpath%3E%0A%20%20%20%20%3C%2Fg%3E%0A%3C%2Fsvg%3E;" vertex="1" parent="rdsbox">
+          <mxGeometry x="20" y="20" width="56" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="s3_icon" value="" style="shape=image;imageAspect=1;aspect=fixed;html=1;image=data:image/svg+xml,%3C%3Fxml%20version%3D%221.0%22%20encoding%3D%22UTF-8%22%3F%3E%0A%3Csvg%20width%3D%2240px%22%20height%3D%2240px%22%20viewBox%3D%220%200%2040%2040%22%20version%3D%221.1%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20xmlns%3Axlink%3D%22http%3A%2F%2Fwww.w3.org%2F1999%2Fxlink%22%3E%0A%20%20%20%20%3Ctitle%3EIcon-Architecture%2F32%2FArch_Amazon-Simple-Storage-Service_32%3C%2Ftitle%3E%0A%20%20%20%20%3Cg%20id%3D%22Icon-Architecture%2F32%2FArch_Amazon-Simple-Storage-Service_32%22%20stroke%3D%22none%22%20stroke-width%3D%221%22%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%3E%0A%20%20%20%20%20%20%20%20%3Cg%20id%3D%22Icon-Architecture-BG%2F32%2FStorage%22%20fill%3D%22%237AA116%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3Crect%20id%3D%22Rectangle%22%20x%3D%220%22%20y%3D%220%22%20width%3D%2240%22%20height%3D%2240%22%3E%3C%2Frect%3E%0A%20%20%20%20%20%20%20%20%3C%2Fg%3E%0A%20%20%20%20%20%20%20%20%3Cg%20id%3D%22Icon-Service%2F32%2FAmazon-Simple-Storage-Service_32%22%20transform%3D%22translate%287.000200%2C%206.000100%29%22%20fill%3D%22%23FFFFFF%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3Cpath%20d%3D%22M23.532%2C15.391%20L23.729%2C13.932%20C25.821%2C15.131%2025.864%2C15.626%2025.8630149%2C15.64%20C25.859%2C15.643%2025.509%2C15.923%2023.532%2C15.391%20L23.532%2C15.391%20Z%20M22.564%2C15.103%20C19.722%2C14.206%2015.904%2C12.531%2013.723%2C11.504%20C13.723%2C11.497%2013.727%2C11.491%2013.727%2C11.484%20C13.727%2C10.821%2013.187%2C10.281%2012.524%2C10.281%20C11.861%2C10.281%2011.321%2C10.821%2011.321%2C11.484%20C11.321%2C12.148%2011.861%2C12.687%2012.524%2C12.687%20C12.814%2C12.687%2013.07%2C12.571%2013.278%2C12.4%20C14.547%2C12.994%2019.075%2C15.076%2022.428%2C16.113%20L21.249%2C24.85%20C21.249%2C25.716%2017.575%2C27%2012.5%2C27%20C7.425%2C27%203.751%2C25.716%203.746%2C24.784%20L1.283%2C6.563%20C3.458%2C8.155%208.074%2C9%2012.5%2C9%20C16.926%2C9%2021.543%2C8.155%2023.718%2C6.563%20L22.564%2C15.103%20Z%20M1.003%2C4.489%20C1.032%2C3.609%205.104%2C1%2012.5%2C1%20C19.895%2C1%2023.97%2C3.609%2024%2C4.489%20L24%2C4.603%20C23.81%2C6.231%2019.137%2C8%2012.5%2C8%20C5.863%2C8%201.209%2C6.231%201.018%2C4.604%20L1.003%2C4.489%20Z%20M25%2C4.5%20C25%2C2.665%2020.131%2C0%2012.5%2C0%20C4.869%2C0%200%2C2.665%200%2C4.5%20L0%2C4.567%20L2.751%2C24.85%20C2.751%2C26.896%207.773%2C28%2012.5%2C28%20C17.226%2C28%2022.249%2C26.896%2022.244%2C24.917%20L23.396%2C16.39%20C24.217%2C16.604%2024.881%2C16.718%2025.392%2C16.718%20C25.985%2C16.718%2026.386%2C16.574%2026.628%2C16.285%20C26.827%2C16.047%2026.903%2C15.76%2026.845%2C15.454%20C26.708%2C14.716%2025.797%2C13.919%2023.89%2C12.87%20L23.869%2C12.896%20L25%2C4.567%20L25%2C4.5%20Z%22%20id%3D%22Amazon-Simple-Storage-Service-Icon_32_Squid%22%3E%3C%2Fpath%3E%0A%20%20%20%20%20%20%20%20%3C%2Fg%3E%0A%20%20%20%20%3C%2Fg%3E%0A%3C%2Fsvg%3E;" vertex="1" parent="s3box">
+          <mxGeometry x="20" y="20" width="56" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="client_to_app" value="Consulta e altera o carrinho;&lt;br&gt;solicita e consulta o pedido" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;endSize=9;startArrow=none;exitDx=0;exitDy=0;entryDx=0;entryDy=0;fontFamily=Arial;fontSize=18;fontColor=#232F3E;labelBackgroundColor=none;strokeColor=#546778;strokeWidth=1.6;exitX=1;exitY=0.5;entryX=0;entryY=0.5396825397;" edge="1" parent="1" source="browser" target="ec2box">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="0" y="-47" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="app_to_rds" value="Lê catálogo&lt;br&gt;Grava e consulta&lt;br&gt;carrinhos e pedidos" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;endSize=9;startArrow=none;exitDx=0;exitDy=0;entryDx=0;entryDy=0;fontFamily=Arial;fontSize=18;fontColor=#232F3E;labelBackgroundColor=none;strokeColor=#546778;strokeWidth=1.6;exitX=1;exitY=0.3333333333;entryX=0;entryY=0.462962963;" edge="1" parent="aws" source="ec2box" target="rdsbox">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="0" y="-62" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="app_to_s3" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;endSize=9;startArrow=none;exitDx=0;exitDy=0;entryDx=0;entryDy=0;fontFamily=Arial;fontSize=18;fontColor=#232F3E;labelBackgroundColor=none;strokeColor=#546778;strokeWidth=1.6;exitX=0.5;exitY=1;entryX=0;entryY=0.5;dashed=1;dashPattern=6 4;strokeColor=#8B959F;strokeWidth=1.4;" edge="1" parent="aws" source="ec2box" target="s3box">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="0" y="0" as="offset" />
+            <Array as="points">
+              <mxPoint x="220" y="470" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="s3_flow" value="Obtém fotografias&lt;br&gt;(fluxo da Aula 1)" style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=middle;fontFamily=Arial;fontColor=#232F3E;align=center;fontSize=17;fontColor=#546778;" vertex="1" parent="aws">
+          <mxGeometry x="350" y="406" width="290" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="rules" value="Carrinho não reserva estoque. Criar um pedido não confirma pagamento." style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=middle;fontFamily=Arial;fontColor=#232F3E;fontSize=19;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="748" width="1520" height="38" as="geometry" />
+        </mxCell>
+        <mxCell id="limits" value="Visão lógica. Rede, TLS, zonas de disponibilidade e configuração operacional foram omitidos." style="text;html=1;whiteSpace=wrap;align=left;verticalAlign=middle;fontFamily=Arial;fontColor=#232F3E;fontSize=16;fontColor=#546778;" vertex="1" parent="1">
+          <mxGeometry x="40" y="798" width="1520" height="32" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

@@ -55,19 +55,26 @@ Estas regras valem para toda a trilha. São **escolhas do cenário**, não regra
 3. **A reserva precisa impedir prometer duas vezes a última unidade.** Quando houver reserva, duas pessoas não podem receber a promessa da mesma última unidade.
 4. **O pagamento usa um provedor externo fictício.** A loja não processa o pagamento sozinha.
 
-Os **mecanismos** de reserva e de pagamento (como garantir a regra 3, como lidar com uma resposta de pagamento perdida) ficam para **aulas posteriores**. Aqui eles são apenas regras declaradas.
+A [Aula 6](06-last-unit.md) propõe a aquisição de uma reserva em uma disputa concorrente. Expiração, liberação e sua coordenação com outras transições ainda precisam de desenvolvimento e testes próprios. A [Aula 7](07-payment-uncertain.md) propõe o acompanhamento de um pagamento com resposta perdida, sob um contrato explícito de provedor fictício; não fornece coordenação completa com o ciclo de vida da reserva. A [Aula 8](08-async-work.md) propõe uma tarefa durável de acompanhamento, com outbox, fila e tratamento de reentregas; operação dos processos, retenção e intervenção ainda exigem validação. A [Aula 9](09-failure-recovery.md) compara continuidade após a queda de uma aplicação e recuperação de dados após erro lógico; Multi-AZ, backups, restauração e reconciliação são propostas, sem exercícios operacionais executados. A [Aula 10](10-safe-changes.md) propõe atualização gradual com contratos compatíveis entre versões; não executa implantação ou migração e não trata retorno de código como reversão de dados ou pagamentos.
 
 ## O que vale agora × o que vem depois
 
-| Agora (primeiras aulas) | Desenvolvido depois |
-|---|---|
-| Consultar e exibir um produto do catálogo | Carrinho e pedido |
-| Separar os dados do produto dos arquivos de imagem | Reserva da última unidade |
-| Entender o caminho de uma consulta e uma falha simples | Pagamento com resposta perdida |
-| | Escala, sessão, consultas e índices |
-| | Cache e CDN |
-| | Processamento assíncrono e recuperação de falhas |
-| | Implantação de mudanças |
+O quadro reúne as propostas didáticas desenvolvidas nas dez aulas; não representa capacidades implantadas ou validadas em produção.
+
+| Propostas desenvolvidas nesta sequência |
+|---|
+| Consultar e exibir um produto do catálogo |
+| Separar os dados do produto dos arquivos de imagem |
+| Entender o caminho de uma consulta e uma falha simples |
+| Guardar carrinhos e registrar pedidos pendentes das próximas etapas |
+| Listar produtos por categoria e preço, com avaliação de um índice para a consulta |
+| Propor duas cópias da aplicação e continuidade por sessão compartilhada |
+| Propor cache compartilhado para listagens públicas e CloudFront para fotografias |
+| Propor aquisição de reserva com alteração condicional e registro na mesma transação |
+| Propor intenção de pagamento durável, repetição contratada e reconciliação |
+| Propor acompanhamento assíncrono com tarefa, outbox e fila |
+| Propor continuidade e recuperação de dados com validação e reconciliação |
+| Propor atualização gradual com compatibilidade, observação e retorno de código condicionado ao estado atual |
 
 Não trate um requisito futuro como garantia já atendida pela arquitetura inicial.
 

@@ -427,4 +427,4 @@ Use este checklist para revisar:
 - [ ] Consigo aplicar o mesmo caminho a outro arquivo do produto, como um manual.
 - [ ] Sei o que precisaria ser testado antes de afirmar que a arquitetura atende aos requisitos.
 
-**Próxima etapa (planejada):** carrinho e pedido — o que a loja precisa guardar para continuar a compra de Ana? Essa aula ainda não está disponível. As etapas seguintes estão listadas na [trilha System Design a partir do zero](../00-system-design-from-zero.md).
+**Continue na [Aula 2 — Você colocou no carrinho. O que a loja precisa guardar?](02-from-cart-to-order.md):** da escolha de produtos ao registro de um pedido. As etapas seguintes estão listadas na [trilha System Design a partir do zero](../00-system-design-from-zero.md).

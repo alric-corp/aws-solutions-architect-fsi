@@ -140,7 +140,8 @@ export async function checkAcidBrowser({ browser, base, manifest, root }) {
     await visit(page, '/cases/01-payment-processing-pix.html');
     await visit(page, '/interview/simulations/04-troubleshooting/02-pedido-durante-falha-do-banco/instrutor.html');
     await visit(page, '/index.html');
-    await page.locator('.home-resume').waitFor({ state: 'visible' });
+    await visit(page, '/meu-estudo/index.html');
+    await page.locator('.resume-study').waitFor({ state: 'visible' });
     assert.ok((await page.locator('#resume-link').getAttribute('href')).startsWith(isolation));
     assert.deepEqual(await page.evaluate(() => JSON.parse(localStorage.getItem('architecture-practice:study:v2')).resume.student), resumeBefore);
     report.checks.push('SQL copiado, âncora ACID com refresh, leitura persistida e retomada ACID preservada após case/instrutor');

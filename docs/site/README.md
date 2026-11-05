@@ -22,7 +22,7 @@ Para conferir as alterações previstas no S3 sem publicar ou invalidar:
 npm run deploy -- --dry-run
 ```
 
-Os arquivos elegíveis são `README.md` e os Markdown e assets **rastreados pelo Git** nas pastas de estudo definidas em [content.mjs](content.mjs). Alterações locais em arquivos já rastreados entram no build, mesmo antes do commit. Para uma aula ou imagem nova, adicione explicitamente o arquivo ao Git antes do deploy:
+Os arquivos elegíveis são `README.md` e os Markdown e assets **rastreados pelo Git** nas pastas de estudo definidas em [content.mjs](../../site/content.mjs). Alterações locais em arquivos já rastreados entram no build, mesmo antes do commit. Para uma aula ou imagem nova, adicione explicitamente o arquivo ao Git antes do deploy:
 
 ```bash
 git add technical-knowledge/caminho/da-nova-aula.md
@@ -30,6 +30,8 @@ npm run deploy
 ```
 
 Notas ignoradas pelo Git, `scratchpad/`, credenciais, `site/`, `scripts/` e os metadados do repositório não são copiados para o site. Os templates de acompanhamento publicados permanecem em branco; preenchimentos pessoais devem continuar na área privada.
+
+A capa global tem uma fonte explícita em `assets/amazon.jpg` e continua publicada em `/assets/amazon.jpg`. Mover a fonte não altera o endereço usado pela homepage.
 
 ## Recursos provisionados
 
@@ -51,7 +53,7 @@ Os IDs são lidos dos outputs do CloudFormation a cada execução. Uma cópia lo
 
 ## Configuração inicial e mudanças na infraestrutura
 
-O provisionamento inicial já foi executado. O template está em [aws-stack.json](aws-stack.json). Após uma alteração deliberada nesse template, aplique com:
+O provisionamento inicial já foi executado. O template está em [aws-stack.json](../../site/aws-stack.json). Após uma alteração deliberada nesse template, aplique com:
 
 ```bash
 npm run setup:aws
@@ -80,7 +82,7 @@ Para testar a interface após mudanças no gerador, CSS, JavaScript ou diagramas
 CHROMIUM_PATH=/caminho/do/chromium npm run test:browser
 ```
 
-No macOS Apple Silicon, o teste também encontra um Chromium Headless Shell previamente instalado pelo Playwright. Ele verifica navegação, busca, respostas recolhidas, imagens, progresso de leitura, todos os diagramas Mermaid, leitura sem JavaScript e layout de celular. Não instala um navegador automaticamente. Capturas ficam em `.site/screenshots/`.
+No macOS Apple Silicon, o teste também encontra um Chromium Headless Shell previamente instalado pelo Playwright. Ele verifica navegação, busca, respostas recolhidas, imagens, progresso de leitura, todos os diagramas Mermaid, leitura sem JavaScript e layout de celular. Não instala um navegador automaticamente. Capturas ficam em `.site/cases-isolation/after/`.
 
 Para executar os mesmos testes no site publicado:
 

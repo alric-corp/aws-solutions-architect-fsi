@@ -71,11 +71,8 @@ Os 16 Leadership Principles da Amazon, o método STAR e a preparação de respos
 
 | Arquivo | Conteúdo |
 |---|---|
-| [interview-preparation-plan.md](interview/interview-preparation-plan.md) | Plano de estudo em 16 sessões |
 | [interview-process.md](interview/interview-process.md) | O que esperar em cada etapa da entrevista |
-| [common-questions.md](interview/common-questions.md) | “Fale sobre você” e “Por que a Amazon?” |
 | [tips-and-strategies.md](interview/tips-and-strategies.md) | Dicas e estratégias |
-| [checklist.md](interview/checklist.md) | Checklist de preparação |
 | [simulations/](interview/simulations/README.md) | Roteiros comportamental e técnico, perguntas de design e trilha prática de troubleshooting |
 
 ## Progress
