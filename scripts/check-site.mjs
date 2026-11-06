@@ -35,6 +35,26 @@ for (const file of files.filter(file => file.endsWith('.html'))) {
   if (!content.includes('<h1')) errors.push(`${file}: título principal ausente`);
 }
 let links = 0;
+// The owner explicitly requested this named mentoring script. Permit its two
+// display titles in generated navigation and names inside these exact pages;
+// keep the personal-name check everywhere else and local-path checks everywhere.
+const namedMentorshipPages = new Set([
+  'interview/simulations/05-mentoria-transacoes/candidato.html',
+  'interview/simulations/05-mentoria-transacoes/instrutor.html'
+]);
+function hasUnexpectedPersonalData(file, content) {
+  if (/\/Users\/tomasalric/.test(content)) return true;
+  let checked = content
+    .replaceAll('Conversa técnica — Vitória e Cleber', 'Conversa técnica')
+    .replaceAll('Mentoria técnica — Vitória e Cleber', 'Mentoria técnica');
+  if (namedMentorshipPages.has(file)) checked = checked.replace(/Vitória|Vitória/g, 'participante');
+  return /Vitória|Vitória|Tomas e Vitória/.test(checked);
+}
+assert.equal(hasUnexpectedPersonalData('index.html', 'Vitória'), true, 'Nome pessoal continua vedado fora do roteiro autorizado');
+assert.equal(hasUnexpectedPersonalData('index.html', 'Tomas e Vitória'), true, 'Avaliação ou relato pessoal não ganha liberação global');
+assert.equal(hasUnexpectedPersonalData('praticar/index.html', 'Conversa técnica — Vitória e Cleber'), false, 'Título solicitado pode identificar o acesso à mentoria');
+assert.equal(hasUnexpectedPersonalData('interview/simulations/05-mentoria-transacoes/candidato.html', 'Vitória explica primeiro'), false, 'Nomes solicitados no roteiro autorizado');
+assert.equal(hasUnexpectedPersonalData('interview/simulations/05-mentoria-transacoes/instrutor.html', '/Users/tomasalric/privado'), true, 'Caminhos locais continuam vedados também na mentoria');
 for (const [file, content] of html) {
   for (const match of content.matchAll(/\b(?:href|src)=["']([^"']+)["']/g)) {
     const value = decode(match[1]);
@@ -282,7 +302,7 @@ if (baseline) {
 for (const [file, content] of html) {
   if (/<script\b(?![^>]*\bsrc=)[^>]*>[\s\S]*?\S[\s\S]*?<\/script>/i.test(content)) errors.push(`Script inline incompatível com CSP: ${file}`);
   if (file.includes('/candidato.html') && /href=["'][^"']*(?:instrutor\.html|guia-do-instrutor\.html|diagnostico-inicial\.html)/.test(content)) errors.push(`Atalho para gabarito na página da candidata: ${file}`);
-  if (/(?:Vitória|Vitória|Tomas e Vitória|\/Users\/tomasalric)/.test(content)) errors.push(`Dado pessoal ou caminho local no HTML: ${file}`);
+  if (hasUnexpectedPersonalData(file, content)) errors.push(`Dado pessoal ou caminho local no HTML: ${file}`);
 }
 if (errors.length) {
   console.error(errors.join('\n'));
