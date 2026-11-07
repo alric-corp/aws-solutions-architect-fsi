@@ -8,6 +8,14 @@ Antes da sessão, reúna fatos em uma cópia privada da [ficha STAR](../../../te
 
 Para aprofundar influência, discordância e feedback, selecione perguntas existentes como [LP02-Q08](../../../leadership-principles/02-ownership.md#lp02-q08), [LP13-Q02](../../../leadership-principles/13-have-backbone-disagree-and-commit.md#lp13-q02) e [LP11-Q03](../../../leadership-principles/11-earn-trust.md#lp11-q03). Pergunte qual era a divergência, o que a pessoa fez, que argumento ouviu e qual mudança observável ocorreu. Avalie aderência, fatos, autoria, raciocínio, colaboração, resultado e aprendizado; não forneça uma biografia ou complete lacunas por ela.
 
+## Rodada adaptativa
+
+Peça que a pessoa identifique o comportamento solicitado antes de escolher o episódio. Interrompa uma vez com um aprofundamento: o que fez, por que, como e o que essa ação permitiu descobrir ou mudar? A resposta deve tratar desse ponto sem recomeçar toda a história.
+
+Depois mude o foco para falha, discordância ou mudança de opinião. Os fatos permanecem iguais; se o episódio não atender à nova pergunta, a pessoa pode escolher outro. O [guia de repertório](../../../leadership-principles/repertorio-de-episodios.md) distingue também apresentação, motivação, desenvolvimento e problema técnico hipotético: nem toda pergunta exige um STAR completo.
+
+## Perguntas da sessão
+
 1. Apresente-se em um minuto e diga por que esta vaga agora.
 2. O que atrai você na AWS e no setor financeiro?
 3. **Customer Obsession:** conte uma situação em que o pedido do cliente não resolvia o problema real dele. — [LP 01](../../../leadership-principles/01-customer-obsession.md)

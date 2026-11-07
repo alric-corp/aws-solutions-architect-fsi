@@ -6,6 +6,8 @@ Uma boa resposta comportamental deixa visíveis sua responsabilidade, seu racioc
 
 Este guia transforma insumos de preparação em perguntas e exercícios autorais. Não reproduz transcrições, avaliações individuais ou histórias de uma pessoa candidata. Os exemplos são fictícios; as fichas publicadas ficam em branco. Use uma cópia privada para seus episódios reais.
 
+Para distinguir projeto, episódio e resposta, preparar motivação e ponto de desenvolvimento e trabalhar evolução e métricas, siga o capítulo [Repertório de episódios e respostas à pergunta](repertorio-de-episodios.md). O [mapa de episódios em branco](../templates/episode-map.md) ajuda a delimitar experiências sem multiplicar resultados.
+
 ## Comece pela necessidade do cliente
 
 Antes do nome de uma tecnologia, responda: **quem precisava de quê, qual era a dificuldade e por que aquilo importava?** Cliente pode ser uma equipe interna. Não invente contato com consumidores para tornar o episódio mais relevante. A explicação oficial sobre Customer Obsession também contempla clientes internos. [B2](#b2)
@@ -19,6 +21,8 @@ O molde serve para localizar informação. Não é uma abertura para decorar nem
 ## Ação executada, decisão e colaboração
 
 Planejar pode ser uma ação importante, mas não substitui explicar o que efetivamente foi feito. Reconstrua a sequência: qual foi sua primeira ação, o que descobriu, que decisão tomou com essa informação, o que fez depois e onde precisou mudar de abordagem.
+
+Para cada ação decisiva, explicite **o que fez, por que, como e o que isso permitiu descobrir ou mudar**. Separe o raciocínio usado na época da avaliação retrospectiva que consegue fazer hoje.
 
 “Alinhei com os envolvidos” precisa de complemento: o que estava desalinhado, quais prioridades eram diferentes, o que você apresentou, qual argumento da outra pessoa era válido e que decisão mudou. Participar de uma reunião não demonstra, sozinho, influência.
 
@@ -45,7 +49,7 @@ Uma história técnica pode evidenciar esses comportamentos. O serviço escolhid
 
 Separe **entrega**, **efeito observado** e **possibilidade futura**. Publicar uma funcionalidade não comprova adoção; reduzir latência não demonstra automaticamente aumento de receita. Um resultado do time também não é integralmente atribuível a uma pessoa.
 
-Para uma métrica, registre definição, período, população ou base de comparação, fonte e método. Identifique o que foi medido e o que foi estimado. Sem número confiável, procure evidência qualitativa concreta: uma decisão registrada, um processo adotado, uma validação realizada ou uma mudança observada. Não invente precisão.
+Para uma métrica, registre definição, período, população ou base de comparação, fonte e método. Classifique a afirmação como medida, estimada, qualitativa observada ou ainda não confirmada. Sem número confiável, procure evidência qualitativa concreta: uma decisão registrada, um processo adotado, uma validação realizada ou uma mudança observada. Não invente precisão. O [exercício de taxas e atribuição](repertorio-de-episodios.md#exercício-numérico-fictício--taxa-não-é-receita) distingue pontos percentuais, variação relativa e efeito financeiro.
 
 Resultados incompletos podem ser contados com honestidade. Reconstrua: **o que não funcionou → qual foi minha responsabilidade → como comuniquei e corrigi → o que passei a fazer diferente**. Uma falha não precisa virar uma vitória espetacular nem garante uma avaliação positiva. As orientações oficiais incluem sucessos e falhas na preparação. [B3](#b3)
 
@@ -64,10 +68,10 @@ O inventário deve buscar cobertura e qualidade. Não há uma meta deste guia de
 | Nível | Para que serve | Referência deste treino |
 |---|---|---|
 | Síntese | Identificar o essencial ou responder a um pedido breve | Cerca de 45–60 segundos |
-| Resposta inicial | Apresentar um episódio completo, com ações e resultado | Aproximadamente 2–4 minutos |
+| Resposta inicial | Apresentar um episódio completo, com ações e resultado | Cerca de 2–3 minutos, ajustável à pergunta |
 | Aprofundamentos | Explicar decisão, alternativas, dados, discordância, falha e aprendizado | Responder diretamente ao ponto solicitado |
 
-Esses tempos são **referências didáticas**, não uma duração oficial universal. Um guia editorial da Amazon recomenda respostas tipicamente de **2–3 minutos**; outras orientações enfatizam concisão e espaço para aprofundamentos. A pergunta e as instruções recebidas prevalecem. [B4](#b4) · [B5](#b5)
+Esses tempos são **referências de preparação**, não uma duração oficial universal. Um guia editorial da Amazon recomenda respostas tipicamente de **2–3 minutos**; outro recomenda **quatro minutos ou menos**, preservando espaço para aprofundamento. A pergunta e as instruções recebidas prevalecem; a conversa posterior pode exigir mais detalhe. [B4](#b4) · [B5](#b5) · [B7](#b7)
 
 Não apresente os três níveis em sequência. Escolha a profundidade adequada. A primeira resposta já deve mostrar o que você fez e o que aconteceu, sem esperar que a pessoa entrevistadora extraia cada elemento.
 
@@ -139,7 +143,7 @@ Para novos vídeos, use o [registro de extração de insumos](../templates/sourc
 
 ## Fontes e escopo da revisão
 
-Consulta em **6 de novembro de 2026, horário de São Paulo** — 7 de novembro em UTC. Esta é uma revisão documental. Perguntas, moldes, faixas de ensaio e critérios de feedback são propostas autorais, não rubrica oficial de contratação. A síntese recebida não permite conferir integralmente os vídeos e transcrições mencionados; seu conteúdo pessoal permanece fora da versão pública.
+Revisão inicial em **6 de novembro de 2026, horário de São Paulo** — 7 de novembro em UTC. Ampliação, nova conferência de B5 e acréscimo de B7–B9 em **7 de novembro de 2026**, horário de São Paulo. Esta é uma revisão documental. Perguntas, moldes, faixas de ensaio e critérios de feedback são propostas de preparação, não rubrica oficial de contratação. As sínteses recebidas não permitem conferir integralmente os vídeos e transcrições mencionados; seu conteúdo pessoal permanece fora da versão pública.
 
 ### B1
 
@@ -164,5 +168,17 @@ Consulta em **6 de novembro de 2026, horário de São Paulo** — 7 de novembro 
 ### B6
 
 [AWS Careers — How we hire, FAQ sobre múltiplas candidaturas](https://aws.amazon.com/careers/how-we-hire/). Permissão para funções alinhadas ao perfil, avaliadas por requisitos próprios. A revisão usa essa FAQ específica; outros trechos antigos da página não são adotados como processo atual.
+
+### B7
+
+[About Amazon — 6 common interview mistakes](https://www.aboutamazon.com/news/workplace/amazon-jobs-interview-mistakes). Recomenda respostas de quatro minutos ou menos, variedade e uma ou duas realizações por princípio; inclui evidências qualitativas e avaliação mútua. Não estabelece 32 episódios independentes nem uma proibição absoluta de reutilização.
+
+### B8
+
+[About Amazon — 11 interview tips from recruiters](https://www.aboutamazon.com/news/workplace/recruiters-offer-their-best-tips-for-interviewing-at-amazon). Motivação ligada à trajetória, contribuição e aprendizado; notas para acompanhar exemplos e perguntas. Não é autorização irrestrita para ler respostas ou usar assistência em qualquer etapa.
+
+### B9
+
+[About Amazon — What is an Amazon Bar Raiser?](https://www.aboutamazon.com/news/workplace/amazon-bar-raiser). Perspectiva externa ao time, debrief, decisão com o gestor e comparação com pares em funções semelhantes. A referência a 50% não fornece uma fórmula de nota individual. Contagens históricas citadas no artigo não são adotadas como quantidade atual.
 
 [Próximo passo: preencher a ficha factual em cópia privada →](../templates/star-story.md)

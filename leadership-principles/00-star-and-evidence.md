@@ -79,9 +79,11 @@ Em um projeto em andamento, delimite um episódio já ocorrido e um resultado qu
 <a id="preparar-duas-profundidades"></a>
 ## Preparar três níveis de detalhe
 
-Prepare uma síntese de cerca de 45–60 segundos, uma resposta inicial de aproximadamente 2–4 minutos e detalhes para aprofundamentos. São referências deste ensaio, não um cronômetro universal. Um guia editorial da Amazon sugere respostas tipicamente de 2–3 minutos; a pergunta e as instruções recebidas prevalecem. As fontes e seus limites estão no [guia complementar](historias-com-evidencias.md#três-níveis-de-detalhe-para-ensaiar).
+Prepare uma síntese de cerca de 45–60 segundos, uma resposta inicial com referência de 2–3 minutos e detalhes para aprofundamentos. Não são limites universais. Um guia editorial da Amazon sugere tipicamente 2–3 minutos; outro recomenda quatro minutos ou menos para preservar o aprofundamento. A pergunta e as instruções recebidas prevalecem. As fontes e seus limites estão no [guia complementar](historias-com-evidencias.md#três-níveis-de-detalhe-para-ensaiar).
 
 Não apresente as três versões em sequência. A resposta inicial já precisa mostrar ações e resultado; o aprofundamento responde diretamente ao ponto solicitado, sem reiniciar a história inteira. Use pontos-chave e preserve as evidências ao cortar contexto excessivo.
+
+Antes de escolher a história, identifique que evidência a pergunta solicita. O capítulo [Repertório de episódios](repertorio-de-episodios.md) distingue projeto, episódio e resposta e propõe estruturas próprias para motivação, ponto de desenvolvimento e problemas hipotéticos.
 
 Treine perguntas como: por que essa opção? O que você fez pessoalmente? Como mediu? Quem discordou? Qual erro foi seu? O que teria acontecido sem sua ação? O que mudou depois?
 

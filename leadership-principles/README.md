@@ -16,6 +16,7 @@ Nove princípios foram destacados na conversa de preparação para o loop e apar
 | Entender um princípio e encontrar experiências relacionadas | [Índice dos 16 princípios](#os-16-princípios) |
 | Estruturar uma história verdadeira e explicar sua contribuição | [STAR e evidências](00-star-and-evidence.md) |
 | Aprofundar influência, discordância, feedback e decisões sob restrições | [Histórias com evidências](historias-com-evidencias.md) |
+| Delimitar episódios e escolher a estrutura adequada à pergunta | [Repertório de episódios e respostas](repertorio-de-episodios.md) e [mapa em branco](../templates/episode-map.md) |
 | Escolher perguntas por princípio, tema ou rodada | [Guia de prática](practice-guide.md) |
 | Treinar inglês por uma hora com uma professora sem contexto técnico | [Sessão de inglês: perguntas mistas e respostas fictícias expansíveis](english-practice-60-min.md) |
 | Registrar sua experiência | [Template STAR](../templates/star-story.md), em cópia privada |

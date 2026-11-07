@@ -20,6 +20,8 @@ Use também o ciclo **pergunta inédita → episódio → resposta → aprofunda
 
 Na revisão, observe aderência, fatos, autoria, raciocínio, colaboração, resultado e aprendizado. O cronômetro é uma referência de ensaio; não substitui esses critérios nem vira pontuação de carreira.
 
+Antes da resposta, formule mentalmente “esta pergunta pede evidência de quê?”. Delimite o episódio no [mapa de projetos e episódios](../templates/episode-map.md). Na nova tentativa, mude o foco da pergunta e peça uma decisão, dado ou consequência sem reiniciar o STAR. A [simulação adaptativa](repertorio-de-episodios.md#simulação-adaptativa-aprofundar-sem-recomeçar) mostra como reconhecer quando outra história é necessária.
+
 Se você não tiver vivido o cenário de SA/FSI, use um episódio equivalente de outro contexto e explique a transferência. Uma lacuna pode ficar registrada para desenvolvimento. A seção “Aplicação FSI” de cada ficha serve para discutir “o que você faria”; as perguntas comportamentais pedem o que aconteceu.
 
 ## Banco por princípio

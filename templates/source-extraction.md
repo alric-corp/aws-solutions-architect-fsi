@@ -28,6 +28,18 @@ Não complete uma lacuna como se estivesse no áudio. Se só houver resumo, regi
 
 Uma opinião repetida por várias pessoas não se transforma automaticamente em regra de contratação.
 
+## Recomendações conflitantes
+
+- Orientação A, origem e contexto:
+- Orientação B, origem e contexto:
+- Tratam da mesma pergunta, etapa e público?
+- Temos o original, uma transcrição ou somente resumo de cada fonte?
+- O que a orientação oficial consultada sustenta e o que não sustenta:
+- Decisão de treino adotada e por quê:
+- Orientação específica do processo que precisa prevalecer:
+
+Não somar quantidades de histórias, minutos ou princípios como obrigações cumulativas. Uma sugestão de realizações por princípio não é automaticamente uma quota de episódios distintos; uma orientação sobre resposta comportamental não define a duração de uma apresentação técnica.
+
 ## Aplicação observável
 
 - Pergunta, exercício ou campo da ficha a melhorar:
