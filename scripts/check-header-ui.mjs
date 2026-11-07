@@ -24,7 +24,7 @@ const browser = await chromium.launch({ executablePath, headless: true });
 const report = { base, browserVersion: browser.version(), fixture: 'Synthetic isolated browser storage; no personal data.', screenshots: [], matrix: [], checks: [], limits: ['Chromium local only; Safari and physical mobile keyboards were not tested.', 'Root font-size enlargement tests are reflow tests, not browser zoom.', 'No performance, usability-with-people or complete WCAG claim.'] };
 const failures = [];
 const requestedOrigins = new Set();
-const targets = ['Início', 'Trilhas', 'Biblioteca', 'Praticar', 'Meu estudo'];
+const targets = ['Início', 'Biblioteca', 'Praticar', 'Meu estudo'];
 const fixtureState = { schemaVersion: 2, reading: { [foundation.id]: { marked:true, origin:'manual', markedAt:'2020-01-01T00:00:00Z' } }, resume:{ student:{ contentId:foundation.id, anchor:'idempotencia-concorrencia', contentVersion:foundation.contentVersion } } };
 function monitor(page) {
   page.on('request', request => { if(/^https?:/.test(request.url())) requestedOrigins.add(new URL(request.url()).origin); });

@@ -35,8 +35,8 @@ for (const file of files.filter(file => file.endsWith('.html'))) {
   if (!content.includes('<h1')) errors.push(`${file}: título principal ausente`);
 }
 let links = 0;
-// The owner explicitly requested this named mentoring script. Permit its two
-// display titles in generated navigation and names inside these exact pages;
+// The owner requested named mentoring reviews. Permit their exact display
+// titles in navigation and names inside the originally authorized pages;
 // keep the personal-name check everywhere else and local-path checks everywhere.
 const namedMentorshipPages = new Set([
   'interview/simulations/05-mentoria-transacoes/candidato.html',
@@ -46,6 +46,7 @@ function hasUnexpectedPersonalData(file, content) {
   if (/\/Users\/tomasalric/.test(content)) return true;
   let checked = content
     .replaceAll('Conversa técnica — Vitória e Cleber', 'Conversa técnica')
+    .replaceAll('Conversa técnica — Vitória e Adassa', 'Conversa técnica')
     .replaceAll('Mentoria técnica — Vitória e Cleber', 'Mentoria técnica');
   if (namedMentorshipPages.has(file)) checked = checked.replace(/Vitória|Vitória/g, 'participante');
   return /Vitória|Vitória|Tomas e Vitória/.test(checked);
@@ -53,6 +54,8 @@ function hasUnexpectedPersonalData(file, content) {
 assert.equal(hasUnexpectedPersonalData('index.html', 'Vitória'), true, 'Nome pessoal continua vedado fora do roteiro autorizado');
 assert.equal(hasUnexpectedPersonalData('index.html', 'Tomas e Vitória'), true, 'Avaliação ou relato pessoal não ganha liberação global');
 assert.equal(hasUnexpectedPersonalData('praticar/index.html', 'Conversa técnica — Vitória e Cleber'), false, 'Título solicitado pode identificar o acesso à mentoria');
+assert.equal(hasUnexpectedPersonalData('praticar/index.html', 'Conversa técnica — Vitória e Adassa'), false, 'Título da revisão de redes pode identificar seu acesso');
+assert.equal(hasUnexpectedPersonalData('interview/simulations/07-mentoria-redes/candidato.html', 'Vitória precisa melhorar'), true, 'O título não autoriza publicar avaliação pessoal na nova revisão');
 assert.equal(hasUnexpectedPersonalData('interview/simulations/05-mentoria-transacoes/candidato.html', 'Vitória explica primeiro'), false, 'Nomes solicitados no roteiro autorizado');
 assert.equal(hasUnexpectedPersonalData('interview/simulations/05-mentoria-transacoes/instrutor.html', '/Users/tomasalric/privado'), true, 'Caminhos locais continuam vedados também na mentoria');
 for (const [file, content] of html) {
@@ -110,6 +113,40 @@ assert.ok(safeFixture.includes('EXPLICACAO_PUBLICA_UNICA'), 'Detalhes explicativ
 assert.ok(safeFixture.includes('Como distinguir tentativa de efeito?'), 'A pergunta deve ser preservada');
 assert.ok(!safeFixture.includes('RESPOSTA_OCULTA_UNICA') && !safeFixture.includes('GABARITO_MISTO_UNICO'), 'Corpos de resposta não podem entrar na busca');
 assert.equal(metadataFor('interview/simulations/04-troubleshooting/02-pedido-durante-falha-do-banco/instrutor.md').search, false, 'Instrutor excluído no build');
+// The completed conversation is a review, while other oral exercises keep
+// their existing presentation and audience policies.
+const conversationSource = 'interview/simulations/05-mentoria-transacoes/candidato.md';
+const conversationHtml = html.get(conversationSource.replace(/\.md$/, '.html')) || '';
+const conversationArticle = conversationHtml.match(/<article class="prose">([\s\S]*?)<\/article>/)?.[1] || '';
+assert.equal(metadataFor(conversationSource).readingLabel, 'Revisão da conversa · próximos passos');
+assert.ok(conversationHtml.includes('<div class="article-kicker"><span>Revisão da conversa · próximos passos</span>'), 'A conversa encerrada não deve ser rotulada como simulado oral');
+assert.ok(conversationArticle.includes('Quatro perguntas para fechar a sustentação') && conversationArticle.includes('Próximas revisões, em ordem'), 'A revisão deve conter validação e próximos passos');
+assert.ok(!/<h[2-6]\b[^>]*>[^<]*(?:Agenda|Mensagem de abertura|Combinado de condução)/i.test(conversationArticle), 'A pauta encerrada não deve continuar visível');
+assert.ok(!/\b\d[\d.,]*\s*(?:mil\b|milh(?:ão|ões)\b|%)/i.test(conversationArticle), 'Números pessoais não confirmados não devem ser publicados na revisão');
+const otherPractice = 'interview/simulations/04-troubleshooting/01-checkout-lento/candidato.md';
+assert.equal(metadataFor(otherPractice).readingLabel, undefined, 'A apresentação dos demais exercícios deve permanecer igual');
+assert.ok(html.get(otherPractice.replace(/\.md$/, '.html')).includes('<div class="article-kicker"><span>Simulado oral · candidata</span>'));
+const conversationInstructor = metadataFor('interview/simulations/05-mentoria-transacoes/instrutor.md');
+assert.equal(conversationInstructor.search, false, 'Apoio do instrutor continua fora da busca');
+assert.equal(conversationInstructor.progress, false, 'Apoio do instrutor continua fora do progresso');
+const reviewInstructorHtml = html.get('interview/simulations/05-mentoria-transacoes/instrutor.html');
+assert.ok(reviewInstructorHtml.includes('Apoio de revisão com perguntas e fichas em branco.'), 'O apoio de revisão deve ter aviso coerente com o novo conteúdo');
+assert.ok(!reviewInstructorHtml.includes('Compartilhe somente a abertura da candidata.'), 'A revisão não deve apresentar instruções da antiga sessão');
+assert.ok(html.get('interview/simulations/04-troubleshooting/01-checkout-lento/instrutor.html').includes('Compartilhe somente a abertura da candidata.'), 'A orientação dos demais simulados deve ser preservada');
+const networkReviewSource = 'interview/simulations/07-mentoria-redes/candidato.md';
+const networkReviewUrl = `/${networkReviewSource.replace(/\.md$/, '.html')}`;
+const networkReviewHtml = html.get(networkReviewUrl.slice(1)) || '';
+const networkReviewArticle = networkReviewHtml.match(/<article class="prose">([\s\S]*?)<\/article>/)?.[1] || '';
+const networkReviewMetadata = metadataFor(networkReviewSource);
+assert.equal(networkReviewMetadata.readingLabel, 'Revisão da conversa · próximos passos');
+assert.ok(networkReviewHtml.includes('<div class="article-kicker"><span>Revisão da conversa · próximos passos</span>'), 'A revisão de redes deve usar o rótulo de aprendizado pós-conversa');
+assert.ok(manifestByUrl.has(networkReviewUrl), 'A nova página precisa entrar na saída real do build');
+assert.ok(html.get('praticar/index.html').includes(`href="${networkReviewUrl}"`), 'Praticar deve dar acesso à revisão de redes');
+assert.ok(index.some(row => row.url.split('#')[0] === networkReviewUrl), 'A revisão pública deve ser encontrável na busca');
+assert.ok(!/<h[2-6]\b[^>]*>[^<]*(?:Agenda|Mensagem de abertura|Combinado de condução)/i.test(networkReviewArticle), 'A revisão de redes não deve parecer uma sessão futura');
+assert.ok(networkReviewArticle.includes('sem substituir suas aulas ou criar outro catálogo de simulados'), 'A revisão deve reutilizar a trilha de Redes');
+assert.ok(networkReviewArticle.includes('transcrição integral e os desenhos da sessão não foram recebidos'), 'O insumo deve ser identificado sem alegar conferência da transcrição');
+assert.ok(!/\b\d[\d.,]*\s*%/.test(networkReviewArticle), 'A revisão não deve conter avaliação percentual da preparação');
 const matchingFixture = [
   { title: 'Estar disponível', section: 'Leitura', description: 'A pessoa pode estar aqui', text: 'Estar é uma palavra completa.' },
   { title: 'Método STAR', section: 'Prática', description: 'Situação e tarefa', text: 'Método STAR para organizar histórias.' },
@@ -347,10 +384,147 @@ if (baseline) {
     'https://aws.amazon.com/builders-library/automating-safe-hands-off-deployments/',
     'https://docs.aws.amazon.com/whitepapers/latest/overview-deployment-options/canary-deployments.html'
   ].map(canonical));
+  // Reviewed primary references added by the Redes course and by the
+  // integration of the networking track. Each set is an explicit allowlist by
+  // exact URL, scoped to the pages that introduced the link — the verifier
+  // still rejects any external destination not listed here. All domains are
+  // AWS/Amazon or recognized standards/tooling sources (RFC Editor, Python,
+  // OpenSSL, curl, OpenTelemetry, node-postgres).
+  const redesReferences = new Set([
+    'https://curl.se/docs/manpage.html#--connect-timeout',
+    'https://curl.se/docs/manpage.html#--resolve',
+    'https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-eni.html',
+    'https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html',
+    'https://docs.aws.amazon.com/cli/latest/reference/ec2/modify-vpn-tunnel-options.html',
+    'https://docs.aws.amazon.com/directconnect/latest/UserGuide/routing-and-bgp.html',
+    'https://docs.aws.amazon.com/directconnect/latest/UserGuide/virtualgateways.html',
+    'https://docs.aws.amazon.com/directconnect/latest/UserGuide/Welcome.html',
+    'https://docs.aws.amazon.com/elasticloadbalancing/latest/application/application-load-balancers.html#subnets-load-balancer',
+    'https://docs.aws.amazon.com/elasticloadbalancing/latest/application/load-balancer-listeners.html',
+    'https://docs.aws.amazon.com/elasticloadbalancing/latest/application/load-balancer-update-security-groups.html',
+    'https://docs.aws.amazon.com/elasticloadbalancing/latest/application/target-group-health-checks.html',
+    'https://docs.aws.amazon.com/IAM/latest/UserGuide/introduction.html',
+    'https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/dns-failover-configuring.html',
+    'https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/dns-failover.html',
+    'https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/resolver-forwarding-inbound-queries-values.html',
+    'https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/resolver-forwarding-inbound-queries.html',
+    'https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/resolver-forwarding-outbound-queries-endpoint-values.html',
+    'https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/resolver-forwarding-outbound-queries.html',
+    'https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/resource-record-sets-values-basic.html',
+    'https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/routing-policy-latency.html',
+    'https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/routing-policy-weighted.html',
+    'https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/routing-policy.html',
+    'https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/routing-to-aws-resources.html',
+    'https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/routing-to-elb-load-balancer.html',
+    'https://docs.aws.amazon.com/vpc/latest/peering/vpc-peering-basics.html',
+    'https://docs.aws.amazon.com/vpc/latest/peering/vpc-peering-routing.html',
+    'https://docs.aws.amazon.com/vpc/latest/privatelink/what-is-privatelink.html',
+    'https://docs.aws.amazon.com/vpc/latest/reachability/how-reachability-analyzer-works.html',
+    'https://docs.aws.amazon.com/vpc/latest/tgw/how-transit-gateways-work.html',
+    'https://docs.aws.amazon.com/vpc/latest/tgw/tgw-route-tables.html',
+    'https://docs.aws.amazon.com/vpc/latest/userguide/configure-subnets.html',
+    'https://docs.aws.amazon.com/vpc/latest/userguide/custom-network-acl.html#nacl-ephemeral-ports',
+    'https://docs.aws.amazon.com/vpc/latest/userguide/flow-log-records.html',
+    'https://docs.aws.amazon.com/vpc/latest/userguide/nat-gateways-regional.html',
+    'https://docs.aws.amazon.com/vpc/latest/userguide/route-tables-priority.html',
+    'https://docs.aws.amazon.com/vpc/latest/userguide/security-group-rules.html',
+    'https://docs.aws.amazon.com/vpc/latest/userguide/security-group-rules.html#security-group-rule-basics',
+    'https://docs.aws.amazon.com/vpc/latest/userguide/subnet-sizing.html',
+    'https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Internet_Gateway.html',
+    'https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Route_Tables.html',
+    'https://docs.aws.amazon.com/vpc/latest/userguide/vpc-network-acls.html#nacl-basics',
+    'https://docs.aws.amazon.com/vpn/latest/s2svpn/how_it_works.html',
+    'https://docs.aws.amazon.com/vpn/latest/s2svpn/tunnel-configure.html',
+    'https://docs.aws.amazon.com/vpn/latest/s2svpn/vpn-redundant-connection.html',
+    'https://docs.aws.amazon.com/vpn/latest/s2svpn/VPNRoutingTypes.html',
+    'https://docs.aws.amazon.com/vpn/latest/s2svpn/VPNTunnels.html',
+    'https://docs.aws.amazon.com/waf/latest/developerguide/what-is-aws-waf.html',
+    'https://docs.openssl.org/master/man1/openssl-req/',
+    'https://docs.python.org/3.15/library/http.server.html',
+    'https://docs.python.org/3.15/library/ipaddress.html',
+    'https://docs.python.org/3.15/library/ssl.html',
+    'https://docs.python.org/3/library/ipaddress.html',
+    'https://www.rfc-editor.org/rfc/rfc1034.html',
+    'https://www.rfc-editor.org/rfc/rfc1034.html#section-4.3.4',
+    'https://www.rfc-editor.org/rfc/rfc1035.html',
+    'https://www.rfc-editor.org/rfc/rfc1122.html',
+    'https://www.rfc-editor.org/rfc/rfc1122.html#section-1.1.3',
+    'https://www.rfc-editor.org/rfc/rfc1918.html',
+    'https://www.rfc-editor.org/rfc/rfc2104.html',
+    'https://www.rfc-editor.org/rfc/rfc2308.html',
+    'https://www.rfc-editor.org/rfc/rfc3849.html',
+    'https://www.rfc-editor.org/rfc/rfc4271.html',
+    'https://www.rfc-editor.org/rfc/rfc4291.html',
+    'https://www.rfc-editor.org/rfc/rfc4632.html',
+    'https://www.rfc-editor.org/rfc/rfc6349.html',
+    'https://www.rfc-editor.org/rfc/rfc6349.html#section-3.1',
+    'https://www.rfc-editor.org/rfc/rfc6761.html#section-6.2',
+    'https://www.rfc-editor.org/rfc/rfc7296.html',
+    'https://www.rfc-editor.org/rfc/rfc768.html',
+    'https://www.rfc-editor.org/rfc/rfc792.html',
+    'https://www.rfc-editor.org/rfc/rfc8200.html',
+    'https://www.rfc-editor.org/rfc/rfc8446.html',
+    'https://www.rfc-editor.org/rfc/rfc8446.html#section-1',
+    'https://www.rfc-editor.org/rfc/rfc8446.html#section-2',
+    'https://www.rfc-editor.org/rfc/rfc9110.html',
+    'https://www.rfc-editor.org/rfc/rfc9114.html',
+    'https://www.rfc-editor.org/rfc/rfc9293.html',
+    'https://www.rfc-editor.org/rfc/rfc9525.html#section-4.1'
+  ].map(canonical));
+  // Reviewed hiring/interview references added by the Redes integration to
+  // three study pages outside the networking track.
+  const mentorshipReferences = new Set([
+    'https://node-postgres.com/features/pooling',
+    'https://opentelemetry.io/docs/concepts/signals/traces/'
+  ].map(canonical));
+  // Primary references checked for the post-mentoring network review. Keep the
+  // exception scoped to its exact page; no domain-wide publication exception.
+  const networkReviewReferences = new Set([
+    'https://docs.aws.amazon.com/vpc/latest/peering/vpc-peering-basics.html',
+    'https://docs.aws.amazon.com/vpc/latest/tgw/how-transit-gateways-work.html',
+    'https://docs.aws.amazon.com/vpc/latest/userguide/security-group-rules.html',
+    'https://docs.aws.amazon.com/elasticloadbalancing/latest/application/load-balancer-troubleshooting.html',
+    'https://docs.aws.amazon.com/directconnect/latest/UserGuide/routing-and-bgp.html',
+    'https://docs.aws.amazon.com/directconnect/latest/UserGuide/ts-routing.html',
+    'https://docs.aws.amazon.com/directconnect/latest/UserGuide/encryption-in-transit.html',
+    'https://docs.aws.amazon.com/vpn/latest/s2svpn/tunnel-configure.html',
+    'https://docs.aws.amazon.com/vpn/latest/s2svpn/cgw-best-practice.html',
+    'https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Internet_Gateway.html',
+    'https://docs.aws.amazon.com/vpc/latest/userguide/vpc-nat-gateway.html',
+    'https://docs.aws.amazon.com/vpc/latest/userguide/subnet-sizing.html'
+  ].map(canonical));
+  const leadershipReferences = new Set([
+    'https://aws.amazon.com/careers/how-we-hire/',
+    'https://aws.amazon.com/careers/life-at-aws-recruiters-share-10-ways-to-excel-in-your-aws-in-person-interview/',
+    'https://www.aboutamazon.com/news/workplace/amazon-bar-raiser',
+    'https://www.aboutamazon.com/news/workplace/amazon-interview-best-tips',
+    'https://www.aboutamazon.com/news/workplace/amazon-interview-guide',
+    'https://www.aboutamazon.com/news/workplace/amazon-jobs-interview-mistakes',
+    'https://www.aboutamazon.com/news/workplace/recruiters-offer-their-best-tips-for-interviewing-at-amazon',
+    'https://www.aboutamazon.com/news/workplace/what-do-each-of-amazons-leadership-principles-really-mean'
+  ].map(canonical));
+  const professionalReferences = new Set([
+    'https://aws.amazon.com/blogs/training-and-certification/landing-your-early-cloud-career-role-blog-3-sharpening-your-presentation-skills/',
+    'https://www.aboutamazon.co.uk/news/working-at-amazon/whats-it-like-to-interview-for-a-tech-role-at-amazon',
+    'https://www.aboutamazon.com/news/workplace/amazon-bar-raiser',
+    'https://www.aboutamazon.com/news/workplace/amazon-interview-guide',
+    'https://www.aboutamazon.com/news/workplace/amazon-job-interview-mistakes',
+    'https://www.aboutamazon.com/news/workplace/amazon-leadership-principles-tips-beth-galetti',
+    'https://www.amazon.jobs/content/en/how-we-hire/remote-interview',
+    'https://www.amazon.jobs/pt/jobs/10581001/solutions-architect-brazil-solutions-architecture-fsi'
+  ].map(canonical));
+  function isReviewedExternal(file, target) {
+    if (file === 'technical-knowledge/learning-guide.html' && horizonteReferences.has(target)) return true;
+    if (file.startsWith('technical-knowledge/01-fundamentals/redes/') && redesReferences.has(target)) return true;
+    if (file === 'interview/simulations/05-mentoria-transacoes/instrutor.html' && mentorshipReferences.has(target)) return true;
+    if (file === networkReviewUrl.slice(1) && networkReviewReferences.has(target)) return true;
+    if (file === 'leadership-principles/historias-com-evidencias.html' && leadershipReferences.has(target)) return true;
+    if (file === 'references/sa-conversa-profissional.html' && professionalReferences.has(target)) return true;
+    return false;
+  }
   for (const [file, content] of html) for (const match of content.matchAll(/(?:href|src)=["'](https?:[^"']+)/g)) {
     const target = canonical(match[1]);
-    const reviewed = file === 'technical-knowledge/learning-guide.html' && horizonteReferences.has(target);
-    if (!beforeExternal.has(target) && !reviewed) errors.push(`Novo destino externo em ${file}: ${match[1]}`);
+    if (!beforeExternal.has(target) && !isReviewedExternal(file, target)) errors.push(`Novo destino externo em ${file}: ${match[1]}`);
   }
 }
 for (const [file, content] of html) {
