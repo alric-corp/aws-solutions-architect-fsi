@@ -100,6 +100,8 @@ export function metadataFor(source) {
     id: source.replace(/\.md$/, ''), sourcePath: source,
     type: source.endsWith('/candidato.md') ? 'practice' : audience === 'instructor' ? 'instructor-guide' : isStandaloneReference(source) ? 'case' : 'reading',
     audience, publication: 'public', ...collectionMetadataFor(source, audience),
+    ...(source === 'interview/simulations/05-mentoria-transacoes/candidato.md' ? { readingLabel: 'Revisão da conversa · próximos passos' } : {}),
+    ...(source === 'interview/simulations/05-mentoria-transacoes/instrutor.md' ? { instructorNotice: 'Apoio de revisão com perguntas e fichas em branco. Material público; mantenha respostas preenchidas e evidências internas em uma cópia privada.' } : {}),
     topics: !isStandaloneReference(source) && /06-databases|02-pedido-durante/.test(source) ? ['transacoes-idempotencia'] : [],
     tracks: isAcidSource(source) ? [acidCourse.id] : isRedesSource(source) && audience === 'student' ? [redesCourse.id] : [], prerequisites: [], relatedPractice: !isStandaloneReference(source) && /06-databases/.test(source) ? [pilot.practice] : []
   };

@@ -1,75 +1,148 @@
 # Conversa técnica — Vitória e Cleber
 
-Uma conversa de 60 minutos para praticar o raciocínio sobre transações, repetição segura e investigação de falhas, usando três situações fictícias da Loja Horizonte.
+Aprendizados e próximos passos após a conversa: esclarecer o problema antes da tecnologia, sustentar decisões com evidências e explicar o que cada verificação permitiu — e não permitiu — concluir.
 
-**Participantes:** Vitória e Cleber. Este é o roteiro da participante, sem respostas ou diagnóstico antecipado. Não exige slides, instalação de banco, conta cloud ou acesso a sistemas reais.
+<!-- Compatibilidade com links de seção da pauta anterior. -->
+<div id="mensagem-de-abertura" aria-hidden="true"></div>
+<div id="agenda--60-minutos" aria-hidden="true"></div>
+<div id="combinado-de-condução" aria-hidden="true"></div>
+<div id="cenário-fictício-compartilhado" aria-hidden="true"></div>
 
-## Mensagem de abertura
+## Contexto e foco da revisão
 
-> Cleber, para aproveitar nossa hora, queria focar no meu raciocínio sobre transações e investigação de falhas. Estou revisando ACID, concorrência, idempotência e troubleshooting, mas queria sair das definições e discutir situações concretas.
->
-> Pensei em três situações: duas pessoas comprando a última unidade de um produto; uma compra que retorna timeout e deixa dúvida sobre o resultado; e uma operação lenta mesmo com o sistema aparentemente disponível.
->
-> Queria tentar explicar minha abordagem primeiro e depois receber suas perguntas, contrapontos e correções. No final, gostaria de identificar dois pontos prioritários para aprofundar e uma forma prática de exercitá-los.
+A conversa já aconteceu. Esta página substitui a pauta de preparação por uma síntese didática dos temas recuperados na análise fornecida. Não é transcrição, avaliação oficial da AWS ou comprovação do histórico de um projeto. Perguntas e exemplos abaixo são propostas de revisão; informações pessoais e números ainda a confirmar ficam em material privado.
 
-## Agenda — 60 minutos
+A pergunta que orienta o próximo estudo é: **consigo explicar o que fiz, por que fiz naquele contexto, o que verifiquei e o que essa verificação não me permitia garantir?**
 
-- **00–05 —** Alinhar objetivo e dinâmica.
-- **05–20 —** Compra da última unidade: transação, regras e concorrência.
-- **20–35 —** Compra com timeout: resultado desconhecido e repetição segura.
-- **35–53 —** Checkout lento: diagnóstico por evidências, mitigação e validação.
-- **53–60 —** Feedback específico, síntese e duas ações de estudo.
+Não é necessário acrescentar mais nomes de padrões e serviços à apresentação. É mais útil tornar visíveis necessidade, decisão, risco, mecanismo, validação e limite.
 
-Os tempos são um orçamento de conversa, não duração medida. Se faltar tempo, reduzir o aprofundamento em níveis de isolamento e preservar os sete minutos finais.
+## Descobrir o problema antes de dimensionar a solução
 
-## Combinado de condução
+Siga a sequência **objetivo e jornada → regras do negócio → restrições e escala → alternativas técnicas**. Perguntar volume, picos ou crescimento é útil quando o contexto permite entender por que esses números importam.
 
-Vitória explica primeiro, por cerca de **60–90 segundos**, antes de receber pistas. Cleber aprofunda com perguntas sobre mecanismos, alternativas, limites e testes e anota os pontos de dúvida sem completar a resposta dela.
+Para uma loja fictícia que está começando, perguntas de descoberta seriam:
 
-Após cada correção importante, Vitória explica novamente com suas palavras ou responde a uma pequena variação. O objetivo é verificar o entendimento, não terminar a correção apenas com “entendi”.
+- O que pretende vender, para quem e como a operação funciona hoje?
+- Como estoque, confirmação do pagamento e aceitação da compra devem funcionar?
+- O que precisa estar disponível no primeiro lançamento?
+- Qual consequência é mais grave: atrasar uma confirmação, vender sem estoque ou perder uma compra?
+- Com essas regras e restrições, qual volume precisamos estimar e quais alternativas devemos comparar?
 
-## Cenário fictício compartilhado
+Essas perguntas não reproduzem uma entrevista. Elas ajudam a ligar uma resposta técnica ao problema que a pessoa cliente precisa resolver.
 
-A Loja Horizonte tem um produto com **uma unidade disponível**. A compra aceita deve registrar o pedido e reduzir o estoque **no mesmo banco relacional**. Colocar no carrinho não reserva o produto.
+<!-- Compatibilidade com links de seção da pauta anterior. -->
+<div id="0520--uma-unidade-duas-compras" aria-hidden="true"></div>
 
-Neste modelo inicial não há cobrança externa, tarifas, envio de mensagens ou e-mail. Essas situações podem ser acrescentadas depois, com novas premissas explícitas. PostgreSQL 18 é a referência quando a discussão depender de um comportamento específico da engine.
+## Justificar os dados pelas operações e regras
 
-## 05–20 — Uma unidade, duas compras
+“Há relacionamentos, joins e necessidade de consistência” é um começo, mas ainda falta dizer **qual domínio**, **quais operações** e **quais regras**. Pergunte o que precisa ser alterado junto, quais consultas são importantes e quais restrições tornam a escolha adequada.
 
-Duas pessoas tentam comprar ao mesmo tempo. Registrar uma compra exige reduzir o estoque e criar um pedido no mesmo banco de dados. Como você organizaria isso para não vender duas vezes a mesma unidade nem deixar metade da operação confirmada?
+Um banco relacional pode ser apropriado sem ser a única alternativa possível. A defesa deve mostrar a relação entre requisito e decisão, não trocar de tecnologia automaticamente diante de um contraponto.
 
-Comece pela regra que precisa preservar. Desenhe onde começa e termina a transação e explique em que momento considera a compra aceita.
+A [trilha de transações e ACID](../../../technical-knowledge/01-fundamentals/acid/README.md) ajuda a revisar atomicidade, concorrência e idempotência. Esses mecanismos têm responsabilidades diferentes; o uso de uma transação não inventa as regras da compra.
 
-**Pergunta central:** onde começa e termina a transação? Como evitar aceitar duas compras diferentes da última unidade?
+<!-- Compatibilidade com links de seção da pauta anterior. -->
+<div id="3553--a-página-abre-mas-o-checkout-está-lento" aria-hidden="true"></div>
 
-## 20–35 — A compra retornou timeout
+## Troubleshooting: investigar o trabalho executado
 
-Uma pessoa envia uma compra. A aplicação demora e ela recebe timeout. O banco pode ter confirmado o pedido antes de a resposta se perder. O usuário tenta novamente.
+Conecte **sintoma do cliente → operação afetada → espera ou consumo → instrução ou dependência → hipótese → contenção → validação da jornada**. Não substitua uma investigação por uma lista de métricas ou comandos.
 
-**Pergunta central:** como descobrir o que aconteceu e permitir uma nova tentativa sem criar outra compra? Como distinguir a repetição da mesma intenção de uma nova compra legítima?
+| Observação a solicitar | Pergunta que precisa responder | Limite |
+|---|---|---|
+| Tempo por etapa da requisição | A consulta começou ou a aplicação ainda espera uma conexão? | Tempo de aquisição de conexão não é execução SQL |
+| Carga, eventos de espera e principais SQLs | O trabalho está consumindo CPU, aguardando recurso ou competindo com outra atividade? | CPU normal não encerra a investigação |
+| Frequência, volume processado e plano quando disponível | É uma execução custosa, repetição muito frequente ou contenção? | Uma amostra ou um plano não representa automaticamente toda a carga |
+| Mudança proposta e observação posterior | A ação reduz impacto ou trata a causa? Como verificar o efeito? | Restabelecer atendimento não comprova correção permanente |
 
-## 35–53 — A página abre, mas o checkout está lento
+A documentação atual de [CloudWatch Database Insights](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Database-Insights-Database-Instance-Dashboard.html) descreve investigação de carga por dimensões como SQL e esperas; planos dependem da engine e do suporte disponível. Não se presume que essa instrumentação existia no ambiente discutido.
 
-Clientes relatam lentidão e timeout ao concluir compras. A página inicial abre normalmente. A equipe do banco diz que há conexões ativas e que a CPU não está alta.
+Aumentar capacidade precisa de hipótese, risco, efeito esperado e verificação. A [documentação do RDS](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_ModifyInstance.Settings.html) informa indisponibilidade para mudanças de classe da instância. Isso não torna a mudança proibida nem a primeira ação obrigatória de todo incidente.
 
-**Pergunta central:** como localizar a espera antes de escolher uma solução? Peça as informações que ajudariam a distinguir suas hipóteses. As evidências serão liberadas conforme a investigação; não é preciso executar ferramentas.
+## Aplicativo acessível não significa jornada disponível
 
-## Perguntas para atravessar os três blocos
+No exemplo fictício da Loja Horizonte, o catálogo pode abrir enquanto a confirmação de pedidos está interrompida. O diagnóstico deve identificar a capacidade de negócio afetada, a população e a consequência, além da condição de infraestrutura.
 
-- Qual regra você está tentando preservar?
-- O que esse mecanismo garante e o que não garante?
-- Qual evidência confirma ou contradiz sua hipótese?
-- Qual alternativa você consideraria?
-- Como verificaria o resultado para o cliente?
+Para observabilidade de negócio, reconstrua **risco identificado → indicador necessário → equipe responsável → mecanismo implementado → ação que passou a ser possível**. Pergunte quem recebia o sinal, qual antecedência era necessária, se o acompanhamento entrou em uso e que evidência demonstra sua utilidade.
 
-## 53–60 — Fechamento
+A ferramenta entra como parte do mecanismo, não como resultado por si só. Uma possibilidade de alerta também não deve ser narrada como uma prevenção já observada.
 
-Qual conceito ficou menos claro? Qual parte da investigação foi prematura? O que foi conhecimento insuficiente e o que foi dificuldade de explicar? Quais **duas ações concretas** devem vir a seguir?
+<!-- Compatibilidade com links de seção da pauta anterior. -->
+<div id="2035--a-compra-retornou-timeout" aria-hidden="true"></div>
 
-Para cada ação, combinar uma prática e uma evidência de aprendizado: uma explicação refeita, um desenho ou uma variação resolvida. Não há pontuação de carreira nem promessa de resultado em entrevista.
+## Migração: delimitar a validação e a recuperação
 
-## Acessos da sessão
+Uma verificação só sustenta aquilo que examinou. Quantidades de linhas iguais não demonstram valores iguais; tamanho dos dados também não é uma comparação completa. Reconstrua tabelas, campos, chaves, critérios, regras de negócio e aceitação que foram realmente verificados.
 
-[← Voltar às simulações](../README.md) · [Praticar](../../../praticar/index.html)
+### Quatro perguntas para fechar a sustentação
 
-**Para Cleber:** o guia de condução está em [Praticar, no acesso do instrutor](../../../praticar/index.html#instrutor). Contém referências de raciocínio, respostas, evidências progressivas e espaço de registro em branco. Abra-o separadamente; não compartilhe toda a tela com a participante. A separação de audiência organiza o treino e não é autenticação.
+1. **Alternativa de snapshot:** quais escritas estavam interrompidas, em qual instante e por qual motivo concreto a opção não atendia? Não concluir que seria melhor ou pior sem essas premissas. A restauração de um [snapshot do RDS](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_RestoreFromSnapshot.html) cria uma nova instância; a adequação depende do contexto.
+2. **Equivalência dos dados:** houve reconciliação por chave e valores, amostragem ou somente contagem? A [validação do DMS](https://docs.aws.amazon.com/dms/latest/userguide/CHAP_Validating.html) precisa estar habilitada e ser aplicável, tem condições e limitações e consome recursos. Ter usado DMS não comprova que esse recurso foi utilizado, concluído ou suficiente.
+3. **Retorno após novas escritas:** o que acontece com dados existentes somente no destino se a aplicação voltar à origem? A [orientação de cutover](https://docs.aws.amazon.com/prescriptive-guidance/latest/best-practices-migration-cutover/cutover-stage.html) distingue esse caso de um retorno sem transações novas. Trocar endpoint ou feature flag não reconcilia os dados sozinho.
+4. **Desativação da origem:** quais ciclos e processos críticos foram cobertos, quais testes foram aceitos e quem autorizou encerrar a contingência? Um prazo isolado não explica o critério de encerramento.
+
+A resposta deve representar o que aconteceu. Se as verificações foram limitadas, delimite a conclusão e apresente uma reconciliação mais ampla como melhoria futura, sem afirmar que ela já ocorreu.
+
+## Recuperar episódios sem misturar os resultados
+
+Uma negociação de manutenção pode ser um episódio diferente de uma recuperação emergencial. Para demonstrar influência, recupere prioridade concorrente, participantes, resistência ou dúvida, evidência apresentada, acordo e o que foi executado. O tempo concedido para trabalhar é um possível resultado da negociação; não explica, sozinho, as ações que a produziram.
+
+Colaboração com outra área também exige autoria delimitada: quem identificou a necessidade, definiu o indicador, implementou e observou o uso? Não atribua protagonismo, emoção ou discordância a alguém a partir de um trecho ambíguo.
+
+Separe **impacto da interrupção**, **resultado da recuperação** e **melhorias posteriores de manutenção**. Para qualquer número, confirme definição, população, período, fonte, grau de certeza e permissão de divulgação. Projeção de escala não é carga efetivamente atendida; possibilidade futura não é adoção realizada.
+
+Use o [mapa de episódios](../../../templates/episode-map.md) e a [ficha STAR](../../../templates/star-story.md) em cópia privada, sem converter uma hipótese de história em experiência confirmada.
+
+## Apresentar a decisão sem reescrever o passado
+
+| Campo | Como delimitar a explicação |
+|---|---|
+| Análise e decisão realizadas na época | Naquele momento, considerei… |
+| Reflexão construída depois | Revendo essa decisão, percebo… |
+| Melhoria de uma próxima execução | Em um próximo caso, acrescentaria… |
+
+Não transforme uma avaliação informal em análise formal nem uma justificativa posterior em ação passada. Para discutir risco, explique impacto, alcance, recuperabilidade, incerteza e autoridade de decisão, em vez de adotar apenas o rótulo “baixo”.
+
+A sequência para cada decisão importante pode ser **consequência para a jornada → motivo da escolha → mecanismo essencial → validação → limitação**. Ajuste os detalhes à audiência, preservando a sustentação técnica. Descreva condições observadas do ambiente sem transformar a apresentação em julgamento de pessoas.
+
+No [C4, contexto](https://c4model.com/diagrams/system-context) privilegia pessoas e sistemas e serve a públicos amplos. O [diagrama de containers](https://c4model.com/diagrams/container) já mostra aplicações, armazenamentos, responsabilidades e escolhas tecnológicas, principalmente para público técnico; “container” não exige Docker.
+
+Ao mencionar [Well-Architected](https://docs.aws.amazon.com/wellarchitected/latest/framework/welcome.html), diferencie usar pilares como organização, consultar práticas, executar uma revisão estruturada e utilizar o Tool. O framework apoia a discussão de decisões e melhorias; não é um selo automático de conformidade.
+
+## Revisões técnicas para sustentar decisões
+
+As ressalvas abaixo verificam mecanismos. Não são atribuições de erros a falantes de uma transcrição nem uma receita de adicionar padrões à arquitetura.
+
+| Tema | Distinção que precisa ficar clara |
+|---|---|
+| Atomicidade, concorrência e idempotência | Atomicidade agrupa mudanças integralmente; proteger compras diferentes contra disputa e reconhecer repetição da mesma intenção são problemas distintos. [PostgreSQL 18](https://www.postgresql.org/docs/18/tutorial-transactions.html) · [Idempotência](https://aws.amazon.com/builders-library/making-retries-safe-with-idempotent-APIs/) |
+| CQRS | Separa modelos de comando e consulta; não exige dois microsserviços ou dois bancos. A complexidade precisa se justificar. [Fowler](https://martinfowler.com/bliki/CQRS.html) |
+| Retry e circuit breaker | Retry repete; circuit breaker pode interromper novas chamadas diante de falhas recorrentes e verificar recuperação. Quantidade de tentativas não define o segundo mecanismo. [Retry](https://docs.aws.amazon.com/prescriptive-guidance/latest/cloud-design-patterns/retry-backoff.html) · [Circuit breaker](https://docs.aws.amazon.com/prescriptive-guidance/latest/cloud-design-patterns/circuit-breaker.html) |
+| Mensageria e reconstrução | Ter eventos ou um broker não comprova que seja possível reconstruir a base. Event Sourcing exige histórico e mecanismos apropriados para reaplicar mudanças. [Fowler](https://martinfowler.com/eaaDev/EventSourcing.html) |
+| TTL curto | Pode ser útil se houver reutilização no intervalo e desatualização aceitável. O benefício depende do acesso real e precisa ser medido. [AWS Caching](https://aws.amazon.com/caching/best-practices/) |
+| Detecção de anomalias | Compara a métrica a uma faixa esperada aprendida; não garante antecipar qualquer esgotamento ou falha da jornada. [CloudWatch](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Anomaly_Detection.html) |
+
+<!-- Compatibilidade com links de seção da pauta anterior. -->
+<div id="perguntas-para-atravessar-os-três-blocos" aria-hidden="true"></div>
+<div id="5360--fechamento" aria-hidden="true"></div>
+
+## Próximas revisões, em ordem
+
+1. **Sustentação da migração:** uma ficha factual de escolha, snapshot, validação, troca, recuperação e desativação, com evidências e limites.
+2. **Negociação da manutenção:** um episódio próprio com ações individuais, acordo e resultados, separado da recuperação.
+3. **Troubleshooting por evidências:** refazer a [abertura existente de checkout lento](../04-troubleshooting/01-checkout-lento/candidato.md), solicitando dados conforme as hipóteses. Consulta, pool e dependência externa são etapas diferentes; não pressupor a causa.
+4. **Números utilizáveis:** separar métricas confirmadas das afirmações que precisam ser qualificadas ou retiradas.
+5. **Conceitos pontuais:** explicar os mecanismos acima e responder a uma variação de cenário, sem abrir uma revisão extensa de todos os padrões.
+
+ACID, resultado desconhecido e repetição segura continuam disponíveis na [trilha existente](../../../technical-knowledge/01-fundamentals/acid/README.md). Uma conversa de mentoria não equivale, por si só, à execução e conclusão de todos esses exercícios.
+
+<!-- Compatibilidade com links de seção da pauta anterior. -->
+<div id="acessos-da-sessão" aria-hidden="true"></div>
+
+## Apoios e fontes
+
+Esta síntese usa a análise fornecida pelo usuário; a transcrição integral não foi recebida para conferência nesta rodada. As referências técnicas foram consultadas em **7 de novembro de 2026**. Elas verificam conceitos e condições documentadas, não o histórico dos projetos. Nenhum cenário ou teste AWS foi executado para produzir a página.
+
+[← Praticar](../../../praticar/index.html) · [Fundamentos](../../../technical-knowledge/01-fundamentals/README.md) · [Registro de evidências e feedback](../../../templates/mock-interview-feedback.md)
+
+O apoio de condução e as perguntas de revisão permanecem no [acesso do instrutor](../../../praticar/index.html#instrutor). Registros preenchidos e dados internos devem permanecer privados.

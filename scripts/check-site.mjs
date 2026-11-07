@@ -110,6 +110,26 @@ assert.ok(safeFixture.includes('EXPLICACAO_PUBLICA_UNICA'), 'Detalhes explicativ
 assert.ok(safeFixture.includes('Como distinguir tentativa de efeito?'), 'A pergunta deve ser preservada');
 assert.ok(!safeFixture.includes('RESPOSTA_OCULTA_UNICA') && !safeFixture.includes('GABARITO_MISTO_UNICO'), 'Corpos de resposta não podem entrar na busca');
 assert.equal(metadataFor('interview/simulations/04-troubleshooting/02-pedido-durante-falha-do-banco/instrutor.md').search, false, 'Instrutor excluído no build');
+// The completed conversation is a review, while other oral exercises keep
+// their existing presentation and audience policies.
+const conversationSource = 'interview/simulations/05-mentoria-transacoes/candidato.md';
+const conversationHtml = html.get(conversationSource.replace(/\.md$/, '.html')) || '';
+const conversationArticle = conversationHtml.match(/<article class="prose">([\s\S]*?)<\/article>/)?.[1] || '';
+assert.equal(metadataFor(conversationSource).readingLabel, 'Revisão da conversa · próximos passos');
+assert.ok(conversationHtml.includes('<div class="article-kicker"><span>Revisão da conversa · próximos passos</span>'), 'A conversa encerrada não deve ser rotulada como simulado oral');
+assert.ok(conversationArticle.includes('Quatro perguntas para fechar a sustentação') && conversationArticle.includes('Próximas revisões, em ordem'), 'A revisão deve conter validação e próximos passos');
+assert.ok(!/<h[2-6]\b[^>]*>[^<]*(?:Agenda|Mensagem de abertura|Combinado de condução)/i.test(conversationArticle), 'A pauta encerrada não deve continuar visível');
+assert.ok(!/97\s*mil|4\s*milhões|45\s*%|30\s*%|70\s*%/i.test(conversationArticle), 'Números pessoais não confirmados não devem ser publicados na revisão');
+const otherPractice = 'interview/simulations/04-troubleshooting/01-checkout-lento/candidato.md';
+assert.equal(metadataFor(otherPractice).readingLabel, undefined, 'A apresentação dos demais exercícios deve permanecer igual');
+assert.ok(html.get(otherPractice.replace(/\.md$/, '.html')).includes('<div class="article-kicker"><span>Simulado oral · candidata</span>'));
+const conversationInstructor = metadataFor('interview/simulations/05-mentoria-transacoes/instrutor.md');
+assert.equal(conversationInstructor.search, false, 'Apoio do instrutor continua fora da busca');
+assert.equal(conversationInstructor.progress, false, 'Apoio do instrutor continua fora do progresso');
+const reviewInstructorHtml = html.get('interview/simulations/05-mentoria-transacoes/instrutor.html');
+assert.ok(reviewInstructorHtml.includes('Apoio de revisão com perguntas e fichas em branco.'), 'O apoio de revisão deve ter aviso coerente com o novo conteúdo');
+assert.ok(!reviewInstructorHtml.includes('Compartilhe somente a abertura da candidata.'), 'A revisão não deve apresentar instruções da antiga sessão');
+assert.ok(html.get('interview/simulations/04-troubleshooting/01-checkout-lento/instrutor.html').includes('Compartilhe somente a abertura da candidata.'), 'A orientação dos demais simulados deve ser preservada');
 const matchingFixture = [
   { title: 'Estar disponível', section: 'Leitura', description: 'A pessoa pode estar aqui', text: 'Estar é uma palavra completa.' },
   { title: 'Método STAR', section: 'Prática', description: 'Situação e tarefa', text: 'Método STAR para organizar histórias.' },
