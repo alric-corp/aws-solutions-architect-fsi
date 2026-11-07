@@ -35,8 +35,8 @@ for (const file of files.filter(file => file.endsWith('.html'))) {
   if (!content.includes('<h1')) errors.push(`${file}: título principal ausente`);
 }
 let links = 0;
-// The owner explicitly requested this named mentoring script. Permit its two
-// display titles in generated navigation and names inside these exact pages;
+// The owner requested named mentoring reviews. Permit their exact display
+// titles in navigation and names inside the originally authorized pages;
 // keep the personal-name check everywhere else and local-path checks everywhere.
 const namedMentorshipPages = new Set([
   'interview/simulations/05-mentoria-transacoes/candidato.html',
@@ -46,6 +46,7 @@ function hasUnexpectedPersonalData(file, content) {
   if (/\/Users\/tomasalric/.test(content)) return true;
   let checked = content
     .replaceAll('Conversa técnica — Vitória e Cleber', 'Conversa técnica')
+    .replaceAll('Conversa técnica — Vitória e Adassa', 'Conversa técnica')
     .replaceAll('Mentoria técnica — Vitória e Cleber', 'Mentoria técnica');
   if (namedMentorshipPages.has(file)) checked = checked.replace(/Vitória|Vitória/g, 'participante');
   return /Vitória|Vitória|Tomas e Vitória/.test(checked);
@@ -53,6 +54,8 @@ function hasUnexpectedPersonalData(file, content) {
 assert.equal(hasUnexpectedPersonalData('index.html', 'Vitória'), true, 'Nome pessoal continua vedado fora do roteiro autorizado');
 assert.equal(hasUnexpectedPersonalData('index.html', 'Tomas e Vitória'), true, 'Avaliação ou relato pessoal não ganha liberação global');
 assert.equal(hasUnexpectedPersonalData('praticar/index.html', 'Conversa técnica — Vitória e Cleber'), false, 'Título solicitado pode identificar o acesso à mentoria');
+assert.equal(hasUnexpectedPersonalData('praticar/index.html', 'Conversa técnica — Vitória e Adassa'), false, 'Título da revisão de redes pode identificar seu acesso');
+assert.equal(hasUnexpectedPersonalData('interview/simulations/07-mentoria-redes/candidato.html', 'Vitória precisa melhorar'), true, 'O título não autoriza publicar avaliação pessoal na nova revisão');
 assert.equal(hasUnexpectedPersonalData('interview/simulations/05-mentoria-transacoes/candidato.html', 'Vitória explica primeiro'), false, 'Nomes solicitados no roteiro autorizado');
 assert.equal(hasUnexpectedPersonalData('interview/simulations/05-mentoria-transacoes/instrutor.html', '/Users/tomasalric/privado'), true, 'Caminhos locais continuam vedados também na mentoria');
 for (const [file, content] of html) {
@@ -130,6 +133,20 @@ const reviewInstructorHtml = html.get('interview/simulations/05-mentoria-transac
 assert.ok(reviewInstructorHtml.includes('Apoio de revisão com perguntas e fichas em branco.'), 'O apoio de revisão deve ter aviso coerente com o novo conteúdo');
 assert.ok(!reviewInstructorHtml.includes('Compartilhe somente a abertura da candidata.'), 'A revisão não deve apresentar instruções da antiga sessão');
 assert.ok(html.get('interview/simulations/04-troubleshooting/01-checkout-lento/instrutor.html').includes('Compartilhe somente a abertura da candidata.'), 'A orientação dos demais simulados deve ser preservada');
+const networkReviewSource = 'interview/simulations/07-mentoria-redes/candidato.md';
+const networkReviewUrl = `/${networkReviewSource.replace(/\.md$/, '.html')}`;
+const networkReviewHtml = html.get(networkReviewUrl.slice(1)) || '';
+const networkReviewArticle = networkReviewHtml.match(/<article class="prose">([\s\S]*?)<\/article>/)?.[1] || '';
+const networkReviewMetadata = metadataFor(networkReviewSource);
+assert.equal(networkReviewMetadata.readingLabel, 'Revisão da conversa · próximos passos');
+assert.ok(networkReviewHtml.includes('<div class="article-kicker"><span>Revisão da conversa · próximos passos</span>'), 'A revisão de redes deve usar o rótulo de aprendizado pós-conversa');
+assert.ok(manifestByUrl.has(networkReviewUrl), 'A nova página precisa entrar na saída real do build');
+assert.ok(html.get('praticar/index.html').includes(`href="${networkReviewUrl}"`), 'Praticar deve dar acesso à revisão de redes');
+assert.ok(index.some(row => row.url.split('#')[0] === networkReviewUrl), 'A revisão pública deve ser encontrável na busca');
+assert.ok(!/<h[2-6]\b[^>]*>[^<]*(?:Agenda|Mensagem de abertura|Combinado de condução)/i.test(networkReviewArticle), 'A revisão de redes não deve parecer uma sessão futura');
+assert.ok(networkReviewArticle.includes('sem substituir suas aulas ou criar outro catálogo de simulados'), 'A revisão deve reutilizar a trilha de Redes');
+assert.ok(networkReviewArticle.includes('transcrição integral e os desenhos da sessão não foram recebidos'), 'O insumo deve ser identificado sem alegar conferência da transcrição');
+assert.ok(!/\b\d[\d.,]*\s*%/.test(networkReviewArticle), 'A revisão não deve conter avaliação percentual da preparação');
 const matchingFixture = [
   { title: 'Estar disponível', section: 'Leitura', description: 'A pessoa pode estar aqui', text: 'Estar é uma palavra completa.' },
   { title: 'Método STAR', section: 'Prática', description: 'Situação e tarefa', text: 'Método STAR para organizar histórias.' },
@@ -460,6 +477,22 @@ if (baseline) {
     'https://node-postgres.com/features/pooling',
     'https://opentelemetry.io/docs/concepts/signals/traces/'
   ].map(canonical));
+  // Primary references checked for the post-mentoring network review. Keep the
+  // exception scoped to its exact page; no domain-wide publication exception.
+  const networkReviewReferences = new Set([
+    'https://docs.aws.amazon.com/vpc/latest/peering/vpc-peering-basics.html',
+    'https://docs.aws.amazon.com/vpc/latest/tgw/how-transit-gateways-work.html',
+    'https://docs.aws.amazon.com/vpc/latest/userguide/security-group-rules.html',
+    'https://docs.aws.amazon.com/elasticloadbalancing/latest/application/load-balancer-troubleshooting.html',
+    'https://docs.aws.amazon.com/directconnect/latest/UserGuide/routing-and-bgp.html',
+    'https://docs.aws.amazon.com/directconnect/latest/UserGuide/ts-routing.html',
+    'https://docs.aws.amazon.com/directconnect/latest/UserGuide/encryption-in-transit.html',
+    'https://docs.aws.amazon.com/vpn/latest/s2svpn/tunnel-configure.html',
+    'https://docs.aws.amazon.com/vpn/latest/s2svpn/cgw-best-practice.html',
+    'https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Internet_Gateway.html',
+    'https://docs.aws.amazon.com/vpc/latest/userguide/vpc-nat-gateway.html',
+    'https://docs.aws.amazon.com/vpc/latest/userguide/subnet-sizing.html'
+  ].map(canonical));
   const leadershipReferences = new Set([
     'https://aws.amazon.com/careers/how-we-hire/',
     'https://aws.amazon.com/careers/life-at-aws-recruiters-share-10-ways-to-excel-in-your-aws-in-person-interview/',
@@ -484,6 +517,7 @@ if (baseline) {
     if (file === 'technical-knowledge/learning-guide.html' && horizonteReferences.has(target)) return true;
     if (file.startsWith('technical-knowledge/01-fundamentals/redes/') && redesReferences.has(target)) return true;
     if (file === 'interview/simulations/05-mentoria-transacoes/instrutor.html' && mentorshipReferences.has(target)) return true;
+    if (file === networkReviewUrl.slice(1) && networkReviewReferences.has(target)) return true;
     if (file === 'leadership-principles/historias-com-evidencias.html' && leadershipReferences.has(target)) return true;
     if (file === 'references/sa-conversa-profissional.html' && professionalReferences.has(target)) return true;
     return false;
