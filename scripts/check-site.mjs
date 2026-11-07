@@ -347,10 +347,130 @@ if (baseline) {
     'https://aws.amazon.com/builders-library/automating-safe-hands-off-deployments/',
     'https://docs.aws.amazon.com/whitepapers/latest/overview-deployment-options/canary-deployments.html'
   ].map(canonical));
+  // Reviewed primary references added by the Redes course and by the
+  // integration of the networking track. Each set is an explicit allowlist by
+  // exact URL, scoped to the pages that introduced the link — the verifier
+  // still rejects any external destination not listed here. All domains are
+  // AWS/Amazon or recognized standards/tooling sources (RFC Editor, Python,
+  // OpenSSL, curl, OpenTelemetry, node-postgres).
+  const redesReferences = new Set([
+    'https://curl.se/docs/manpage.html#--connect-timeout',
+    'https://curl.se/docs/manpage.html#--resolve',
+    'https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-eni.html',
+    'https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html',
+    'https://docs.aws.amazon.com/cli/latest/reference/ec2/modify-vpn-tunnel-options.html',
+    'https://docs.aws.amazon.com/directconnect/latest/UserGuide/routing-and-bgp.html',
+    'https://docs.aws.amazon.com/directconnect/latest/UserGuide/virtualgateways.html',
+    'https://docs.aws.amazon.com/directconnect/latest/UserGuide/Welcome.html',
+    'https://docs.aws.amazon.com/elasticloadbalancing/latest/application/application-load-balancers.html#subnets-load-balancer',
+    'https://docs.aws.amazon.com/elasticloadbalancing/latest/application/load-balancer-listeners.html',
+    'https://docs.aws.amazon.com/elasticloadbalancing/latest/application/load-balancer-update-security-groups.html',
+    'https://docs.aws.amazon.com/elasticloadbalancing/latest/application/target-group-health-checks.html',
+    'https://docs.aws.amazon.com/IAM/latest/UserGuide/introduction.html',
+    'https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/dns-failover-configuring.html',
+    'https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/dns-failover.html',
+    'https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/resolver-forwarding-inbound-queries-values.html',
+    'https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/resolver-forwarding-inbound-queries.html',
+    'https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/resolver-forwarding-outbound-queries-endpoint-values.html',
+    'https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/resolver-forwarding-outbound-queries.html',
+    'https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/resource-record-sets-values-basic.html',
+    'https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/routing-policy-latency.html',
+    'https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/routing-policy-weighted.html',
+    'https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/routing-policy.html',
+    'https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/routing-to-aws-resources.html',
+    'https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/routing-to-elb-load-balancer.html',
+    'https://docs.aws.amazon.com/vpc/latest/peering/vpc-peering-basics.html',
+    'https://docs.aws.amazon.com/vpc/latest/peering/vpc-peering-routing.html',
+    'https://docs.aws.amazon.com/vpc/latest/privatelink/what-is-privatelink.html',
+    'https://docs.aws.amazon.com/vpc/latest/reachability/how-reachability-analyzer-works.html',
+    'https://docs.aws.amazon.com/vpc/latest/tgw/how-transit-gateways-work.html',
+    'https://docs.aws.amazon.com/vpc/latest/tgw/tgw-route-tables.html',
+    'https://docs.aws.amazon.com/vpc/latest/userguide/configure-subnets.html',
+    'https://docs.aws.amazon.com/vpc/latest/userguide/custom-network-acl.html#nacl-ephemeral-ports',
+    'https://docs.aws.amazon.com/vpc/latest/userguide/flow-log-records.html',
+    'https://docs.aws.amazon.com/vpc/latest/userguide/nat-gateways-regional.html',
+    'https://docs.aws.amazon.com/vpc/latest/userguide/route-tables-priority.html',
+    'https://docs.aws.amazon.com/vpc/latest/userguide/security-group-rules.html',
+    'https://docs.aws.amazon.com/vpc/latest/userguide/security-group-rules.html#security-group-rule-basics',
+    'https://docs.aws.amazon.com/vpc/latest/userguide/subnet-sizing.html',
+    'https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Internet_Gateway.html',
+    'https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Route_Tables.html',
+    'https://docs.aws.amazon.com/vpc/latest/userguide/vpc-network-acls.html#nacl-basics',
+    'https://docs.aws.amazon.com/vpn/latest/s2svpn/how_it_works.html',
+    'https://docs.aws.amazon.com/vpn/latest/s2svpn/tunnel-configure.html',
+    'https://docs.aws.amazon.com/vpn/latest/s2svpn/vpn-redundant-connection.html',
+    'https://docs.aws.amazon.com/vpn/latest/s2svpn/VPNRoutingTypes.html',
+    'https://docs.aws.amazon.com/vpn/latest/s2svpn/VPNTunnels.html',
+    'https://docs.aws.amazon.com/waf/latest/developerguide/what-is-aws-waf.html',
+    'https://docs.openssl.org/master/man1/openssl-req/',
+    'https://docs.python.org/3.15/library/http.server.html',
+    'https://docs.python.org/3.15/library/ipaddress.html',
+    'https://docs.python.org/3.15/library/ssl.html',
+    'https://docs.python.org/3/library/ipaddress.html',
+    'https://www.rfc-editor.org/rfc/rfc1034.html',
+    'https://www.rfc-editor.org/rfc/rfc1034.html#section-4.3.4',
+    'https://www.rfc-editor.org/rfc/rfc1035.html',
+    'https://www.rfc-editor.org/rfc/rfc1122.html',
+    'https://www.rfc-editor.org/rfc/rfc1122.html#section-1.1.3',
+    'https://www.rfc-editor.org/rfc/rfc1918.html',
+    'https://www.rfc-editor.org/rfc/rfc2104.html',
+    'https://www.rfc-editor.org/rfc/rfc2308.html',
+    'https://www.rfc-editor.org/rfc/rfc3849.html',
+    'https://www.rfc-editor.org/rfc/rfc4271.html',
+    'https://www.rfc-editor.org/rfc/rfc4291.html',
+    'https://www.rfc-editor.org/rfc/rfc4632.html',
+    'https://www.rfc-editor.org/rfc/rfc6349.html',
+    'https://www.rfc-editor.org/rfc/rfc6349.html#section-3.1',
+    'https://www.rfc-editor.org/rfc/rfc6761.html#section-6.2',
+    'https://www.rfc-editor.org/rfc/rfc7296.html',
+    'https://www.rfc-editor.org/rfc/rfc768.html',
+    'https://www.rfc-editor.org/rfc/rfc792.html',
+    'https://www.rfc-editor.org/rfc/rfc8200.html',
+    'https://www.rfc-editor.org/rfc/rfc8446.html',
+    'https://www.rfc-editor.org/rfc/rfc8446.html#section-1',
+    'https://www.rfc-editor.org/rfc/rfc8446.html#section-2',
+    'https://www.rfc-editor.org/rfc/rfc9110.html',
+    'https://www.rfc-editor.org/rfc/rfc9114.html',
+    'https://www.rfc-editor.org/rfc/rfc9293.html',
+    'https://www.rfc-editor.org/rfc/rfc9525.html#section-4.1'
+  ].map(canonical));
+  // Reviewed hiring/interview references added by the Redes integration to
+  // three study pages outside the networking track.
+  const mentorshipReferences = new Set([
+    'https://node-postgres.com/features/pooling',
+    'https://opentelemetry.io/docs/concepts/signals/traces/'
+  ].map(canonical));
+  const leadershipReferences = new Set([
+    'https://aws.amazon.com/careers/how-we-hire/',
+    'https://aws.amazon.com/careers/life-at-aws-recruiters-share-10-ways-to-excel-in-your-aws-in-person-interview/',
+    'https://www.aboutamazon.com/news/workplace/amazon-bar-raiser',
+    'https://www.aboutamazon.com/news/workplace/amazon-interview-best-tips',
+    'https://www.aboutamazon.com/news/workplace/amazon-interview-guide',
+    'https://www.aboutamazon.com/news/workplace/amazon-jobs-interview-mistakes',
+    'https://www.aboutamazon.com/news/workplace/recruiters-offer-their-best-tips-for-interviewing-at-amazon',
+    'https://www.aboutamazon.com/news/workplace/what-do-each-of-amazons-leadership-principles-really-mean'
+  ].map(canonical));
+  const professionalReferences = new Set([
+    'https://aws.amazon.com/blogs/training-and-certification/landing-your-early-cloud-career-role-blog-3-sharpening-your-presentation-skills/',
+    'https://www.aboutamazon.co.uk/news/working-at-amazon/whats-it-like-to-interview-for-a-tech-role-at-amazon',
+    'https://www.aboutamazon.com/news/workplace/amazon-bar-raiser',
+    'https://www.aboutamazon.com/news/workplace/amazon-interview-guide',
+    'https://www.aboutamazon.com/news/workplace/amazon-job-interview-mistakes',
+    'https://www.aboutamazon.com/news/workplace/amazon-leadership-principles-tips-beth-galetti',
+    'https://www.amazon.jobs/content/en/how-we-hire/remote-interview',
+    'https://www.amazon.jobs/pt/jobs/10581001/solutions-architect-brazil-solutions-architecture-fsi'
+  ].map(canonical));
+  function isReviewedExternal(file, target) {
+    if (file === 'technical-knowledge/learning-guide.html' && horizonteReferences.has(target)) return true;
+    if (file.startsWith('technical-knowledge/01-fundamentals/redes/') && redesReferences.has(target)) return true;
+    if (file === 'interview/simulations/05-mentoria-transacoes/instrutor.html' && mentorshipReferences.has(target)) return true;
+    if (file === 'leadership-principles/historias-com-evidencias.html' && leadershipReferences.has(target)) return true;
+    if (file === 'references/sa-conversa-profissional.html' && professionalReferences.has(target)) return true;
+    return false;
+  }
   for (const [file, content] of html) for (const match of content.matchAll(/(?:href|src)=["'](https?:[^"']+)/g)) {
     const target = canonical(match[1]);
-    const reviewed = file === 'technical-knowledge/learning-guide.html' && horizonteReferences.has(target);
-    if (!beforeExternal.has(target) && !reviewed) errors.push(`Novo destino externo em ${file}: ${match[1]}`);
+    if (!beforeExternal.has(target) && !isReviewedExternal(file, target)) errors.push(`Novo destino externo em ${file}: ${match[1]}`);
   }
 }
 for (const [file, content] of html) {

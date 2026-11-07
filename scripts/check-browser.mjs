@@ -123,7 +123,7 @@ try {
   assert.equal(await cover.count(), 1, 'Capa real na home');
   assert.ok(await cover.evaluate(element => element.naturalWidth > 0));
   assert.ok(await cover.evaluate(element => Math.abs(element.width / element.height - element.naturalWidth / element.naturalHeight) < .02), 'Proporção da capa preservada');
-  for (const label of ['Início', 'Trilhas', 'Biblioteca', 'Praticar', 'Meu estudo']) assert.ok(await page.locator('.topbar').getByRole('link', { name: label, exact: true }).count(), `Navegação global: ${label}`);
+  for (const label of ['Início', 'Biblioteca', 'Praticar', 'Meu estudo']) assert.ok(await page.locator('.topbar').getByRole('link', { name: label, exact: true }).count(), `Navegação global: ${label}`);
   assert.ok(await page.locator('.track-card').count() >= 1, 'Percursos acessíveis na home');
   await noOverflow(page);
   await save(page, 'home', true);
