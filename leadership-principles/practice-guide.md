@@ -16,6 +16,10 @@ Para uma aula com professora de inglês sem contexto técnico, use a [sessão de
 4. Revise a resposta: relevância, contribuição individual, motivos da decisão, resultado verificável e mudança posterior.
 5. Repita em inglês a partir de pontos-chave, mantendo autoria, métricas e grau de certeza.
 
+Use também o ciclo **pergunta inédita → episódio → resposta → aprofundamento → feedback → nova tentativa**, explicado em [Histórias com evidências](historias-com-evidencias.md#um-ciclo-curto-de-prática). Aprofunde influência entre equipes, discordância, feedback difícil e decisões sob restrições. Mudar o foco de uma pergunta não autoriza mudar os fatos.
+
+Na revisão, observe aderência, fatos, autoria, raciocínio, colaboração, resultado e aprendizado. O cronômetro é uma referência de ensaio; não substitui esses critérios nem vira pontuação de carreira.
+
 Se você não tiver vivido o cenário de SA/FSI, use um episódio equivalente de outro contexto e explique a transferência. Uma lacuna pode ficar registrada para desenvolvimento. A seção “Aplicação FSI” de cada ficha serve para discutir “o que você faria”; as perguntas comportamentais pedem o que aconteceu.
 
 ## Banco por princípio
