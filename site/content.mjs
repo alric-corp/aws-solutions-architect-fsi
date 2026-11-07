@@ -10,6 +10,7 @@ export const libraryGroups = [
     entries: [
       { source: 'technical-knowledge/02-system-design/00-system-design-from-zero.md', label: 'Loja Horizonte — comece do zero', description: 'Aulas guiadas que evoluem uma aplicação a partir de necessidades concretas.' },
       { source: 'technical-knowledge/01-fundamentals/README.md', label: 'Fundamentos', description: 'Redes, computação, segurança, dados, observabilidade e resiliência.' },
+      { source: 'technical-knowledge/01-fundamentals/redes/README.md', label: 'Redes do zero', description: 'Do clique à resposta: endereços, caminhos, nomes, proteção e investigação.' },
       { source: 'technical-knowledge/01-fundamentals/acid/README.md', label: 'Transações e ACID do zero', description: 'Conceitos, concorrência e laboratórios para compreender transações.' },
       { source: 'technical-knowledge/02-system-design/README.md', label: 'System Design', description: 'Componentes, alternativas e trade-offs de arquitetura.' },
       { source: 'templates/technical-module.md', support: true, label: 'Template de módulo técnico', description: 'Estruture mecanismos, limites e evidências de um assunto técnico.' },

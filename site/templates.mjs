@@ -1,7 +1,7 @@
 import { siteName, sections, libraryGroups } from './content.mjs';
 import { caseCollection, isStandalone, mainSections, participatesInMainStudy } from './collection-policy.mjs';
 const learningSections = mainSections(sections).filter(section => section.description);
-import { pilot, caseGroups, caseSectionContracts, acidCourse, isAcidSource } from './content-policy.mjs';
+import { pilot, caseGroups, caseSectionContracts, courses } from './content-policy.mjs';
 import { focusHub } from './focus-policy.mjs';
 import { renderStudyPlan } from './study-plan.mjs';
 export const escape = value => String(value).replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char]);
@@ -29,31 +29,41 @@ const icons = {
 const icon = (name, cls = '') => `<svg class="icon ${cls}" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${icons[name] || icons.file}</svg>`;
 
 const globals = [ ['Início','/index.html'],['Trilhas','/trilhas/index.html'],['Biblioteca','/biblioteca/index.html'],['Praticar','/praticar/index.html'],['Meu estudo','/meu-estudo/index.html'] ];
-const acidEntries = [...acidCourse.lessons, ...acidCourse.support];
-const acidIndex = `${acidCourse.prefix}README.md`;
-export const labelFor = doc => (isAcidSource(doc.source) && acidEntries.find(([file]) => acidCourse.prefix + file === doc.source)?.[1]) || (doc.source.endsWith('/README.md') ? 'Visão geral' : doc.title.replace(/^\d+\s*[—–-]\s*/, '').replace(/^Case \d+\s*[—–-]\s*/, ''));
+const courseEntries = course => [...course.lessons, ...course.support];
+const courseIndex = course => `${course.prefix}README.md`;
+const courseMap = new Map(courses.flatMap(course => courseEntries(course).map(([file, label]) => [course.prefix + file, { course, label }])));
+const activeCourseFor = source => courseMap.get(source)?.course || null;
+export const labelFor = doc => courseMap.get(doc.source)?.label || (doc.source.endsWith('/README.md') ? 'Visão geral' : doc.title.replace(/^\d+\s*[—–-]\s*/, '').replace(/^Case \d+\s*[—–-]\s*/, ''));
 export const hrefFor = (source, docs) => docs.get(source)?.url || `/${source.replace(/\/$/, '')}/index.html`;
 export function contextualDocuments(active, docs) {
   if (!active) return [];
   if (isStandalone(active)) return [...docs.values()].filter(doc => isStandalone(doc) && doc.collection === active.collection);
-  if (isAcidSource(active.source)) return acidEntries.flatMap(([file]) => docs.get(acidCourse.prefix + file) || []);
+  if (active.audience === 'instructor') return [...docs.values()].filter(doc => !isStandalone(doc) && doc.audience === 'instructor');
   if (active.type === 'practice') return [...docs.values()].filter(doc => doc.type === 'practice');
-  return [...docs.values()].filter(doc => !isStandalone(doc) && !isAcidSource(doc.source) && doc.section.id === active.section.id && (active.audience === 'instructor' || doc.audience === 'student'));
+  const course = activeCourseFor(active.source);
+  if (course) return courseEntries(course).flatMap(([file]) => docs.get(course.prefix + file) || []);
+  return [...docs.values()].filter(doc => !isStandalone(doc) && !activeCourseFor(doc.source) && doc.section.id === active.section.id && doc.audience === 'student');
 }
 function sidebar(active, docs) {
   const siblings = contextualDocuments(active, docs);
-  const inAcid = isAcidSource(active?.source);
+  const course = activeCourseFor(active?.source);
   const link = doc => `<a href="${doc.url}" ${active.id === doc.id ? 'aria-current="page" class="active"' : ''}>${escape(labelFor(doc))}</a>`;
-  const courseEntry = !inAcid && active?.section.id === 'fundamentals' && docs.has(acidIndex) ? `<a href="${hrefFor(acidIndex, docs)}">${acidCourse.label} →</a>` : '';
-  const items = inAcid
-    ? siblings.map(doc => `${doc.source === acidCourse.prefix + acidCourse.support[0][0] ? '<p class="nav-label">APOIO E LABORATÓRIOS</p>' : ''}${link(doc)}`).join('')
+  const courseEntry = !course && active?.section.id === 'fundamentals' && active?.type !== 'practice' && active?.audience !== 'instructor'
+    ? courses.filter(item => docs.has(courseIndex(item))).map(item => `<a href="${hrefFor(courseIndex(item), docs)}">${item.label} →</a>`).join('')
+    : '';
+  const items = course
+    ? siblings.map(doc => `${doc.source === course.prefix + course.support[0][0] ? '<p class="nav-label">APOIO E LABORATÓRIOS</p>' : ''}${link(doc)}`).join('')
     : siblings.map(link).join('');
-  return `<aside class="sidebar" id="navigation" aria-label="Navegação contextual"><a class="context-back" href="${active ? active.type === 'practice' || active.audience === 'instructor' ? '/praticar/index.html' : hrefFor(active.section.index, docs) : '/trilhas/index.html'}">← ${active?.type === 'practice' ? 'Praticar' : active?.section.label || 'Explorar trilhas'}</a><p class="nav-label">${inAcid ? acidCourse.label : active ? active.audience === 'instructor' ? 'MATERIAL DO INSTRUTOR' : active.type === 'practice' ? 'SIMULADOS · CANDIDATA' : 'NESTA ÁREA' : 'SEU PRÓXIMO PASSO'}</p><nav class="nav-items">${courseEntry}${siblings.length ? items : `<a href="${pilot.topic}">Transações e idempotência</a><a href="/technical-knowledge/02-system-design/00-system-design-from-zero.html">Comece do zero</a><a href="/praticar/index.html">Escolha um simulado</a>`}</nav></aside>`;
+  return `<aside class="sidebar" id="navigation" aria-label="Navegação contextual"><a class="context-back" href="${active ? active.type === 'practice' || active.audience === 'instructor' ? '/praticar/index.html' : hrefFor(active.section.index, docs) : '/trilhas/index.html'}">← ${active?.type === 'practice' ? 'Praticar' : active?.section.label || 'Explorar trilhas'}</a><p class="nav-label">${course ? course.label : active ? active.audience === 'instructor' ? 'MATERIAL DO INSTRUTOR' : active.type === 'practice' ? 'SIMULADOS · CANDIDATA' : 'NESTA ÁREA' : 'SEU PRÓXIMO PASSO'}</p><nav class="nav-items">${courseEntry}${siblings.length ? items : `<a href="${pilot.topic}">Transações e idempotência</a><a href="/technical-knowledge/02-system-design/00-system-design-from-zero.html">Comece do zero</a><a href="/praticar/index.html">Escolha um simulado</a>`}</nav></aside>`;
 }
 function breadcrumbsFor(active, docs) {
   const separator = '<span aria-hidden="true">/</span>';
   const section = `<a href="${active.type === 'practice' || active.audience === 'instructor' ? '/praticar/index.html' : hrefFor(active.section.index, docs)}">${active.type === 'practice' ? 'Praticar' : active.section.label}</a>`;
-  if (isAcidSource(active.source)) return `<a href="/biblioteca/index.html">Biblioteca</a>${separator}${section}${separator}${active.source === acidIndex ? `<span aria-current="location">${acidCourse.label}</span>` : `<a href="${hrefFor(acidIndex, docs)}">${acidCourse.label}</a>${separator}<span aria-current="location">${escape(labelFor(active))}</span>`}`;
+  const course = activeCourseFor(active.source);
+  if (course) {
+    const index = courseIndex(course);
+    return `<a href="/biblioteca/index.html">Biblioteca</a>${separator}${section}${separator}${active.source === index ? `<span aria-current="location">${course.label}</span>` : `<a href="${hrefFor(index, docs)}">${course.label}</a>${separator}<span aria-current="location">${escape(labelFor(active))}</span>`}`;
+  }
   return `${isStandalone(active) ? `<a href="/biblioteca/index.html">Biblioteca</a>${separator}` : ''}${section}${separator}<span aria-current="location">${active.audience === 'instructor' ? 'Material do instrutor' : escape(labelFor(active))}</span>`;
 }
 function headerMarkup(current) {
@@ -90,14 +100,14 @@ export function tocFor(doc) {
   return `<details class="toc" id="page-toc" open><summary>Nesta página</summary><nav aria-label="Sumário do documento"><ol>${items}</ol></nav><a class="back-top" href="#main">Voltar ao início ↑</a></details>`;
 }
 export function articleBody(doc, html, docs) {
-  const sequence=contextualDocuments(doc,docs), position=sequence.indexOf(doc), next=sequence[position+1], previous=sequence[position-1];
+  const sequence=contextualDocuments(doc,docs), position=sequence.indexOf(doc), next=sequence[position+1], previous=sequence[position-1], course=activeCourseFor(doc.source);
   const toolbar=`<div class="reader-toolbar" role="group" aria-label="Preferências de leitura"><button id="focus-toggle" aria-pressed="false">Modo foco</button><div class="text-controls"><button data-text-size="decrease" aria-label="Diminuir texto">A−</button><span class="text-size-label" aria-live="polite">Texto padrão</span><button data-text-size="increase" aria-label="Aumentar texto">A+</button></div></div>`;
   const contracts=caseSectionContracts[doc.source]||{};
   const mappedGroups=caseGroups.map(group=>({label:group.label,anchor:group.anchors.find(anchor=>contracts[anchor]&&doc.existingAnchors.includes(anchor)&&doc.headings.some(heading=>heading.title===contracts[anchor]))})).filter(group=>group.anchor);
   const groups=doc.type==='case'?`<nav class="case-sections" aria-label="Blocos do case">${mappedGroups.map(group=>`<a href="#${group.anchor}">${group.label}</a>`).join('')}</nav>`:'';
   const pilotLinks=doc.url===pilot.foundation.split('#')[0]?`<a href="${pilot.practice}">Praticar: pedido durante falha do banco →</a>`:doc.url===pilot.practice?`<a href="${pilot.foundation}">Voltar à seção estudada no F06 →</a>`:'';
   const collectionNotice=isStandalone(doc)?'<p class="audience-notice">Coleção de consulta opcional · a leitura aqui fica separada do percurso principal. <a href="/biblioteca/index.html">Voltar à Biblioteca</a></p>':'';
-  return `<div class="article-column">${toolbar}<div class="article-kicker"><span>${doc.audience==='instructor'?'Leitura deliberada · material público do instrutor':doc.type==='practice'?'Simulado oral · candidata':escape(doc.section.label)}</span><span>${doc.minutes} min de leitura estimada</span></div>${doc.audience==='instructor'?'<p class="audience-notice">Este roteiro contém respostas e evidências. Compartilhe somente a abertura da candidata. Ele é público e não exige autenticação.</p>':''}${collectionNotice}${groups}<article class="prose">${html}</article>${pilotLinks?`<nav class="pilot-links" aria-label="Continuar o percurso de transações e idempotência">${pilotLinks}</nav>`:''}<div class="study-actions"><div><strong>${isStandalone(doc)?'Registrar leitura nesta coleção':'Registrar esta leitura'}</strong><p>${isStandalone(doc)?'Este registro não altera o progresso principal.':'A marcação registra leitura; não é uma avaliação de domínio.'}</p></div><button class="read-toggle" aria-pressed="false">${icon('check')}<span>Marcar como lido</span></button></div><nav class="article-pagination" aria-label="Continuidade de leitura">${previous?`<a href="${previous.url}"><small>← ANTERIOR</small>${escape(labelFor(previous))}</a>`:'<span></span>'}${next?`<a href="${next.url}"><small>PRÓXIMO →</small>${escape(labelFor(next))}</a>`:isAcidSource(doc.source)?`<a href="${hrefFor(acidIndex, docs)}">Voltar à trilha ACID →</a>`:'<a href="/biblioteca/index.html">Voltar à biblioteca →</a>'}</nav></div>`;
+  return `<div class="article-column">${toolbar}<div class="article-kicker"><span>${doc.audience==='instructor'?'Leitura deliberada · material público do instrutor':doc.type==='practice'?'Simulado oral · candidata':escape(doc.section.label)}</span><span>${doc.minutes} min de leitura estimada</span></div>${doc.audience==='instructor'?'<p class="audience-notice">Este roteiro contém respostas e evidências. Compartilhe somente a abertura da candidata. Ele é público e não exige autenticação.</p>':''}${collectionNotice}${groups}<article class="prose">${html}</article>${pilotLinks?`<nav class="pilot-links" aria-label="Continuar o percurso de transações e idempotência">${pilotLinks}</nav>`:''}<div class="study-actions"><div><strong>${isStandalone(doc)?'Registrar leitura nesta coleção':'Registrar esta leitura'}</strong><p>${isStandalone(doc)?'Este registro não altera o progresso principal.':'A marcação registra leitura; não é uma avaliação de domínio.'}</p></div><button class="read-toggle" aria-pressed="false">${icon('check')}<span>Marcar como lido</span></button></div><nav class="article-pagination" aria-label="Continuidade de leitura">${previous?`<a href="${previous.url}"><small>← ANTERIOR</small>${escape(labelFor(previous))}</a>`:'<span></span>'}${next?`<a href="${next.url}"><small>PRÓXIMO →</small>${escape(labelFor(next))}</a>`:course?`<a href="${hrefFor(courseIndex(course), docs)}">Voltar à trilha ${course.id === 'acid-do-zero' ? 'ACID' : escape(course.label)} →</a>`:'<a href="/biblioteca/index.html">Voltar à biblioteca →</a>'}</nav></div>`;
 }
 const resume = `<section class="resume-study" hidden><div><span class="eyebrow">CONTINUAR SEU ESTUDO</span><h2>Retome a última seção.</h2><a id="resume-link" data-resume-link href="${pilot.foundation}"></a></div>${icon('arrow')}</section>`;
 export function homeBody(docs) {

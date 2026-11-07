@@ -2,6 +2,8 @@
 
 **Base:** N01/N05 listam CIDR, OSI, latência, VPN, Direct Connect e diagnóstico de transferência. **Complemento:** organizar a investigação por camadas e separar conectividade, segurança e desempenho. [Referências](../../references/README.md)
 
+> Primeiro contato? Siga [Redes do zero](redes/README.md); este F01 permanece como visão geral e aprofundamento.
+
 ## Modelo mental
 
 IP e prefixo descrevem endereçamento; rotas escolhem caminhos; protocolos de transporte conectam endpoints; DNS resolve nomes; TLS protege uma comunicação; HTTP define a troca da aplicação. Não são etapas intercambiáveis nem todos os protocolos seguem exatamente o mesmo transporte.

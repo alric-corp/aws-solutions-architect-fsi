@@ -1,0 +1,13 @@
+{
+  "scope": "Registros sintéticos; nenhum pacote é enviado.",
+  "routes": [
+    {"cidr": "10.20.0.0/16", "target": "local-ficticio"},
+    {"cidr": "10.20.3.0/24", "target": "inspecao-ficticia"},
+    {"cidr": "0.0.0.0/0", "target": "saida-ficticia"}
+  ],
+  "queries": [
+    {"address": "10.20.3.20", "expected": "inspecao-ficticia"},
+    {"address": "10.20.2.10", "expected": "local-ficticio"},
+    {"address": "203.0.113.9", "expected": "saida-ficticia"}
+  ]
+}

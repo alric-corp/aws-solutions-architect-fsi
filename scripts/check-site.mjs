@@ -222,6 +222,60 @@ if (sqlCopies.length !== 5) errors.push('SQL completo do laboratório deve conte
 for (const [, filename, sql] of sqlCopies) if (sql.trim() !== (await fs.readFile(path.join(root, acidPrefix, 'laboratorio/postgresql', filename), 'utf8')).trim()) errors.push(`SQL copiável diverge do arquivo: ${filename}`);
 for (const file of files) if (/\.(?:sql|sh|py)$/.test(file)) errors.push(`Script executável fora da distribuição revisada: ${file}`);
 
+const redesPrefix = 'technical-knowledge/01-fundamentals/redes/';
+const redesDocuments = manifest.filter(item => item.sourcePath.startsWith(redesPrefix));
+const redesFiles = [];
+async function findRedesMarkdown(folder) {
+  for (const entry of await fs.readdir(path.join(root, folder), { withFileTypes: true })) {
+    const file = `${folder}/${entry.name}`;
+    if (entry.isDirectory()) await findRedesMarkdown(file);
+    else if (file.endsWith('.md')) redesFiles.push(file);
+  }
+}
+await findRedesMarkdown(redesPrefix.slice(0, -1));
+const redesSearch = index.filter(item => item.url.startsWith(`/${redesPrefix}`));
+const redesSearchText = redesSearch.map(item => item.text).join(' ');
+for (const source of redesFiles) {
+  const item = redesDocuments.find(entry => entry.sourcePath === source);
+  if (!item || !inventory.sourceFiles.includes(source)) { errors.push(`Aula/apoio Redes não renderizado: ${source}`); continue; }
+  const isInstructor = source.endsWith('/instrutor.md');
+  if (isInstructor) {
+    if (item.audience !== 'instructor' || item.search || item.progress) errors.push(`Política de instrutor incorreta em Redes: ${source}`);
+  } else {
+    if (!item.search || !item.progress || item.standalone || item.audience !== 'student' || !item.tracks.includes('redes-do-zero')) errors.push(`Política da trilha Redes incorreta: ${source}`);
+    const markdown = await fs.readFile(path.join(root, source), 'utf8');
+    if (crypto.createHash('sha256').update(markdown).digest('hex').slice(0, 16) !== item.contentVersion) errors.push(`Build Redes desatualizado: ${source}`);
+    for (const answer of markdown.matchAll(/<details\b[^>]*>\s*<summary>(.*?)<\/summary>([\s\S]*?)<\/details>/g)) {
+      const sample = searchPlain(answer[2]).slice(0, 120);
+      if (sample.length > 80 && redesSearchText.includes(sample)) errors.push(`Resposta Redes vazou no índice: ${source}`);
+    }
+    if (!source.endsWith('/candidato.md')) {
+      const content = html.get(item.canonicalUrl.slice(1)) || '';
+      const pagination = content.match(/<nav class="article-pagination"[\s\S]*?<\/nav>/)?.[0] || '';
+      for (const link of pagination.matchAll(/href="([^"]+)"/g)) if (!link[1].startsWith(`/${redesPrefix}`)) errors.push(`Paginação Redes escapou da trilha: ${source}`);
+    }
+  }
+}
+const redesLessons = redesFiles.filter(source => /^\d{2}-[^/]+\.md$/.test(source.slice(redesPrefix.length))).sort();
+if (redesLessons.length !== 14) errors.push(`Aulas Redes 00–13 incompletas: ${redesLessons.length}`);
+const redesUrl = source => `/${source.replace(/README\.md$/, 'index.html').replace(/\.md$/, '.html')}`;
+for (let position = 0; position < redesLessons.length; position++) {
+  const content = html.get(redesUrl(redesLessons[position]).slice(1)) || '';
+  const pagination = content.match(/<nav class="article-pagination"[\s\S]*?<\/nav>/)?.[0] || '';
+  const previous = position ? redesLessons[position - 1] : `${redesPrefix}README.md`;
+  if (!pagination.includes(`href="${redesUrl(previous)}"`)) errors.push(`Anterior Redes incorreto: ${redesLessons[position]}`);
+  if (position < redesLessons.length - 1 && !pagination.includes(`href="${redesUrl(redesLessons[position + 1])}"`)) errors.push(`Próximo Redes incorreto: ${redesLessons[position]}`);
+}
+for (const file of ['biblioteca/index.html', 'technical-knowledge/01-fundamentals/index.html', 'technical-knowledge/01-fundamentals/01-networking-dns-connectivity.html']) {
+  if (!html.get(file)?.includes(`href="/${redesPrefix}index.html"`)) errors.push(`Entrada Redes ausente: ${file}`);
+}
+for (const query of ['CIDR', 'DNS', 'NACL', 'peering', 'BGP']) {
+  if (!rankSearch(redesSearch, query).length) errors.push(`Redes não encontrado pela busca: ${query}`);
+}
+for (const file of files.filter(item => item.startsWith(redesPrefix))) {
+  if (/\.(?:py|json|key|pem|crt)$/.test(file)) errors.push(`Fixture ou runtime privado de Redes publicado: ${file}`);
+}
+
 const isolationBaseline = await fs.readFile(path.join(root, '.site/cases-isolation/baseline.json'), 'utf8').then(JSON.parse).catch(() => null);
 if (isolationBaseline) {
   for (const route of isolationBaseline.routes) if (!isRetiredUrl(route) && !fileSet.has(route.slice(1))) errors.push(`Rota anterior ao isolamento perdida: ${route}`);

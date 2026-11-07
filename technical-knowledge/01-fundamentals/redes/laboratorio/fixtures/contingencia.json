@@ -1,0 +1,9 @@
+{
+  "scope": "Todos os horários, endereços, respostas e conexões abaixo são SINTÉTICOS; nenhum resolvedor foi consultado.",
+  "name": "loja.test",
+  "authoritative_answer_after_change": "10.20.2.11",
+  "cached_answer_in_one_client": {"address": "10.20.2.10", "remaining_ttl_seconds": 35},
+  "existing_connection": {"peer": "10.20.2.10", "opened_before_change": true},
+  "new_connection_after_fresh_lookup": {"peer": "10.20.2.11", "tcp": "established", "tls": "validated", "health_http": 200, "checkout_http": 503},
+  "limits": "Nova resposta DNS não move conexão já aberta. Health 200 não comprova compra. Este arquivo não mede TTL real, Route 53, BGP, failover ou RTO."
+}

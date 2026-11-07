@@ -34,6 +34,7 @@ const specifications = [
   ['technical', 'Aprendizagem técnica', [
     ['technical-knowledge/02-system-design/00-system-design-from-zero.md', 'Loja Horizonte — comece do zero'],
     ['technical-knowledge/01-fundamentals/README.md', 'Fundamentos'],
+    ['technical-knowledge/01-fundamentals/redes/README.md', 'Redes do zero'],
     ['technical-knowledge/01-fundamentals/acid/README.md', 'Transações e ACID do zero'],
     ['technical-knowledge/02-system-design/README.md', 'System Design'],
     ['templates/technical-module.md', 'Template de módulo técnico', true], ['templates/poc.md', 'Template de PoC', true]

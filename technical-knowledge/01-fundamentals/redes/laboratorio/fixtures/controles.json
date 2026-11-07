@@ -1,0 +1,12 @@
+{
+  "scope": "Recorte SINTÉTICO IPv4/TCP. Rotas locais declaradas nos dois sentidos; SGs permitem a requisição. O retorno SG pertence ao fluxo acompanhado. Sem NAT/proxy.",
+  "request": {"src": "10.20.2.10", "src_port": 40000, "dst": "10.20.3.20", "dst_port": 5432},
+  "response": {"src": "10.20.3.20", "src_port": 5432, "dst": "10.20.2.10", "dst_port": 40000},
+  "sg_return": "Declarado permitido pelo estado do fluxo; isto não é um mecanismo de connection tracking implementado.",
+  "app_out": [{"number": 100, "peer_field": "dst", "cidr": "10.20.3.0/24", "ports": [5432, 5432], "action": "allow"}],
+  "app_in_broken": [{"number": 100, "peer_field": "src", "cidr": "10.20.3.0/24", "ports": [5432, 5432], "action": "allow"}],
+  "app_in_fixed": [{"number": 100, "peer_field": "src", "cidr": "10.20.3.0/24", "ports": [32768, 60999], "action": "allow"}],
+  "db_in": [{"number": 100, "peer_field": "src", "cidr": "10.20.2.0/24", "ports": [5432, 5432], "action": "allow"}],
+  "db_out": [{"number": 100, "peer_field": "dst", "cidr": "10.20.2.0/24", "ports": [32768, 60999], "action": "allow"}],
+  "client_ephemeral_scope": "32768–60999 é premissa deste cliente fictício, não faixa universal. Ausência de correspondência termina em deny."
+}

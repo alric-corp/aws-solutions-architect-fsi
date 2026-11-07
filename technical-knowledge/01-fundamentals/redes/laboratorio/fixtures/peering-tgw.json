@@ -1,0 +1,16 @@
+{
+  "scope": "Inventário SINTÉTICO. Não cria attachments, anuncia BGP nem encaminha pacotes.",
+  "vpcs": {"A": "10.20.0.0/16", "B": "10.30.0.0/16", "C": "10.40.0.0/16"},
+  "peerings": [["A", "B"], ["B", "C"]],
+  "peering_limit": "A–B e B–C não oferecem trânsito de A para C. Um proxy de aplicação em B seria outra comunicação, não trânsito por peering.",
+  "tgw_attachments": ["A", "B", "C"],
+  "tgw_associations": {"A": "from_A", "B": "from_B", "C": "from_C"},
+  "vpc_routes_declared": "A tem rota para B via attachment; B tem retorno para A. Nenhuma rota VPC aprovada A↔C neste recorte.",
+  "tgw_tables": {
+    "from_A": [{"cidr": "10.30.0.0/16", "target": "attachment-B"}],
+    "from_B": [{"cidr": "10.20.0.0/16", "target": "attachment-A"}],
+    "from_C": []
+  },
+  "propagation": "Não presumir propagação automática: estes são os registros efetivamente presentes no snapshot.",
+  "limits": "A↔B tem caminhos declarados; SG/NACL/serviço continuam exigindo verificação. A→C não ganha caminho por ter attachment."
+}

@@ -9,6 +9,7 @@ Começando em SQL e transações? A trilha [Transações e ACID do zero](acid/RE
 | Módulo | Conteúdo | Aplicação nos cases |
 |---|---|---|
 | [Computação em nuvem e por que AWS](00-cloud-computing.md) | Definição de nuvem (NIST), modelos de serviço, responsabilidade compartilhada e benefícios | — |
+| [Redes do zero](redes/README.md) | Do clique à resposta: endereços, caminhos, nomes, proteção e investigação | — |
 | [Redes, DNS e conectividade híbrida](01-networking-dns-connectivity.md) | CIDR, TCP/UDP, DNS, versões do HTTP, rotas, latência, VPN, Direct Connect e MPLS | 02, 05, 09, 10 |
 | [HTTP, REST, OpenAPI e borda](02-http-rest-openapi.md) | Contratos, métodos, stateless, erros, REST/RPC/gRPC, cache e CDN | 01, 02, 06 |
 | [Segurança e identidade](03-security-identity.md) | Autenticação, autorização, TLS, IAM, segredos e proteção de dados | 02, 04, 06, 08 |

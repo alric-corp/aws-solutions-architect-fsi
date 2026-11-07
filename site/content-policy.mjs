@@ -50,7 +50,43 @@ export const acidCourse = {
     ['laboratorio/mysql-comparativo/README.md', 'MySQL: comparativo']
   ]
 };
+export const redesCourse = {
+  id: 'redes-do-zero',
+  label: 'Redes do zero',
+  prefix: 'technical-knowledge/01-fundamentals/redes/',
+  lessons: [
+    ['README.md', 'Visão geral da trilha'],
+    ['00-clique-resposta.md', '00 — Do clique à resposta'],
+    ['01-ip-cidr-subnets.md', '01 — IP, CIDR e sub-redes'],
+    ['02-rotas-ida-volta.md', '02 — Rotas de ida e volta'],
+    ['03-dns-nomes.md', '03 — DNS e nomes'],
+    ['04-transportes-portas-http.md', '04 — Transportes, portas e HTTP'],
+    ['05-https-tls.md', '05 — HTTPS e TLS'],
+    ['06-vpc-subnets-saida.md', '06 — VPC, subnets e saída'],
+    ['07-sg-nacl.md', '07 — SG e NACL'],
+    ['08-publicar-aplicacao.md', '08 — Publicar uma aplicação'],
+    ['09-investigacao-evidencias.md', '09 — Investigar com evidências'],
+    ['10-peering-tgw.md', '10 — Peering, TGW e segmentação'],
+    ['11-conectividade-hibrida.md', '11 — Rede local, VPN, DX e BGP'],
+    ['12-falha-recuperacao-dns.md', '12 — Falha, recuperação e DNS'],
+    ['13-revisao-desafios.md', '13 — Revisão e desafios']
+  ],
+  support: [
+    ['glossario.md', 'Glossário'],
+    ['equivocos-correcoes.md', 'Equívocos e correções'],
+    ['referencias-e-revisao-tecnica.md', 'Referências e revisão técnica'],
+    ['laboratorio/README.md', 'Laboratórios: visão geral'],
+    ['laboratorio/l1-cidr-rotas.md', 'L1 — CIDR e rotas'],
+    ['laboratorio/l2-processo-porta.md', 'L2 — Processo e porta'],
+    ['laboratorio/l3-conectou-demorou.md', 'L3 — Conectou e demorou'],
+    ['laboratorio/l4-nome-certificado.md', 'L4 — Nome e certificado'],
+    ['laboratorio/l5-topologias-registros.md', 'L5 — Topologias e registros'],
+    ['simulados/README.md', 'Simulados da trilha']
+  ]
+};
+export const courses = [redesCourse, acidCourse];
 export const isAcidSource = source => typeof source === 'string' && source.startsWith(acidCourse.prefix);
+export const isRedesSource = source => typeof source === 'string' && source.startsWith(redesCourse.prefix);
 const instructorPaths = new Set([
   'interview/simulations/04-troubleshooting/guia-do-instrutor.md',
   'interview/simulations/04-troubleshooting/diagnostico-inicial.md',
@@ -65,7 +101,7 @@ export function metadataFor(source) {
     type: source.endsWith('/candidato.md') ? 'practice' : audience === 'instructor' ? 'instructor-guide' : isStandaloneReference(source) ? 'case' : 'reading',
     audience, publication: 'public', ...collectionMetadataFor(source, audience),
     topics: !isStandaloneReference(source) && /06-databases|02-pedido-durante/.test(source) ? ['transacoes-idempotencia'] : [],
-    tracks: isAcidSource(source) ? [acidCourse.id] : [], prerequisites: [], relatedPractice: !isStandaloneReference(source) && /06-databases/.test(source) ? [pilot.practice] : []
+    tracks: isAcidSource(source) ? [acidCourse.id] : isRedesSource(source) && audience === 'student' ? [redesCourse.id] : [], prerequisites: [], relatedPractice: !isStandaloneReference(source) && /06-databases/.test(source) ? [pilot.practice] : []
   };
 }
 const text = value => value.replace(/<[^>]*>/g, '').replace(/[*_`]/g, '').trim();
