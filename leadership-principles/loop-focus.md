@@ -60,8 +60,8 @@ STAR-01 a STAR-07 seguem a numeração da tabela original de histórias; STAR-08
 
 ## Como treinar cada história
 
-1. Conte a história em cerca de 90 segundos, sem olhar o texto.
+1. Escolha uma pergunta e conte o episódio a partir de fatos confirmados e pontos-chave. Use uma síntese breve, uma resposta inicial completa ou aprofundamentos conforme o pedido; as [faixas de ensaio](historias-com-evidencias.md#três-níveis-de-detalhe-para-ensaiar) não são limites universais de entrevista.
 2. Nas perguntas que você já preparou, responda em voz alta antes de abrir a resposta.
 3. No aprofundamento, responda antes de abrir o que a resposta precisa conter. Quando não souber um fato, diga que não sabe e como confirmaria. Uma versão plausível inventada não resiste ao follow-up seguinte.
-4. Use cada história em no máximo duas entrevistas. Os entrevistadores comparam anotações no debrief.
+4. Busque variedade quando houver alternativas, sem impor um número universal de reutilizações. A história precisa responder à pergunta, e seus fatos permanecem iguais. Siga as orientações específicas recebidas no seu processo.
 5. Treine também em inglês as respostas marcadas como EN, mantendo os mesmos números.

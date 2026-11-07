@@ -266,6 +266,42 @@ body.header-unpinned .topbar { position: static; }
 .collection-list h2 { font-size: 1.4rem; margin: 5px 0 10px; }
 .collection-list p { color: var(--muted); line-height: 1.6; max-width: 75ch; }
 .collection-list .icon { color: var(--link); }
+/* Biblioteca: quatro blocos de materiais; a coleção opcional permanece independente. */
+.library-catalog .library-jump-links { margin-top: 1.5rem; }
+.library-catalog .library-jump-links > p { margin-bottom: .5rem; color: var(--muted); font-size: .875rem; }
+.library-catalog .library-jump-links ul, .library-catalog .library-materials, .library-catalog .library-support-list { margin: 0; padding: 0; list-style: none; }
+.library-catalog .library-jump-links ul { display: flex; flex-wrap: wrap; gap: .5rem; }
+.library-catalog .library-jump-links li { min-width: 0; }
+.library-catalog .library-jump-links a { display: inline-flex; align-items: center; min-height: 2.75rem; max-width: 100%; padding: .5rem .75rem; border: 1px solid var(--border); border-radius: .5rem; background: var(--surface-subtle); color: var(--ink); font-weight: 600; line-height: 1.4; text-decoration: none; overflow-wrap: anywhere; }
+.library-catalog .library-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1.5rem; align-items: stretch; margin-top: 1.5rem; }
+.library-catalog .library-group { display: flex; flex-direction: column; min-width: 0; padding: clamp(1rem, 3vw, 1.5rem); border: 1px solid var(--border); border-radius: .75rem; background: var(--surface); }
+.library-catalog .library-group-heading { display: flex; align-items: flex-start; gap: .75rem; min-width: 0; }
+.library-catalog .library-group-heading > div { min-width: 0; }
+.library-catalog .library-group-icon { display: inline-flex; flex-shrink: 0; color: var(--link); }
+.library-catalog .library-group-icon .icon { width: 1.75rem; height: 1.75rem; }
+.library-catalog .library-group-heading h2 { margin: 0; font-size: clamp(1.5rem, 2vw, 1.75rem); overflow-wrap: anywhere; }
+.library-catalog .library-group-heading h2:focus-visible { outline: 3px solid var(--focus); outline-offset: 4px; border-radius: 3px; }
+.library-catalog .library-group-heading p { max-width: 40ch; margin-top: .5rem; color: var(--muted); font-size: 1rem; line-height: 1.5; }
+.library-catalog .library-materials { margin-top: 1.25rem; }
+.library-catalog .library-materials > li + li { border-top: 1px solid var(--border); }
+.library-catalog .library-materials > li > a { display: flex; align-items: center; justify-content: space-between; gap: 1rem; min-height: 2.75rem; padding: .75rem 0; color: var(--ink); text-decoration: none; }
+.library-catalog .library-materials > li > a > div { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+.library-catalog .library-materials h3 { margin: 0; font-size: 1.125rem; font-weight: 600; line-height: 1.4; }
+.library-catalog .library-materials p { margin-top: .25rem; color: var(--muted); font-size: .9375rem; line-height: 1.5; }
+.library-catalog .library-materials .icon, .library-catalog .library-support-list .icon { color: var(--link); }
+.library-catalog .library-support { margin-top: auto; padding-top: 1.25rem; border-top: 1px solid var(--border); }
+.library-catalog .library-support > h3 { margin: 0 0 .25rem; color: var(--muted); font-size: 1rem; font-weight: 600; line-height: 1.4; letter-spacing: normal; }
+.library-catalog .library-support-list > li > a { display: flex; align-items: center; justify-content: space-between; gap: .75rem; min-height: 2.75rem; padding: .5rem 0; color: var(--link); font-size: 1rem; font-weight: 600; line-height: 1.4; text-decoration: none; }
+.library-catalog .library-support-list span { min-width: 0; overflow-wrap: anywhere; }
+.library-catalog .library-jump-links a:is(:hover, :focus-visible), .library-catalog .library-materials a:is(:hover, :focus-visible) h3, .library-catalog .library-support-list a:is(:hover, :focus-visible) span { text-decoration: underline; }
+.library-catalog .library-instructor-note { margin-top: 1rem; color: var(--muted); font-size: .875rem; line-height: 1.5; }
+.library-catalog .library-standalone { margin-top: 2rem; padding: 1.25rem; border: 1px solid var(--border); border-radius: .75rem; background: var(--surface-subtle); }
+.library-catalog .library-standalone > a { display: inline-flex; align-items: center; min-height: 2.75rem; margin-bottom: .5rem; font-weight: 650; }
+.library-catalog .library-standalone > p { max-width: 68ch; color: var(--muted); }
+.library-catalog > .library-resources { margin-top: 1.5rem; font-size: 1rem; }
+@media (min-width: 64rem) {
+  .library-catalog .library-grid { grid-template-columns: repeat(auto-fit, minmax(min(100%, 23rem), 1fr)); }
+}
 .journey-steps { padding-left: 24px; margin: 32px 0; max-width: 75ch; }
 .journey-steps li { padding: 6px 0 20px 10px; }
 .journey-steps li::marker { color: var(--link); font-weight: 700; }
@@ -278,6 +314,25 @@ body.header-unpinned .topbar { position: static; }
 .study-history { padding: 0; list-style: none; margin-top: 28px; }
 .study-history li { padding: 18px 0; border-bottom: 1px solid var(--border); }
 .study-history small { display: block; color: var(--muted); }
+/* Plano até a entrevista (Meu estudo). Dia atual com a cor de destaque; tarefa feita fica riscada. */
+.study-plan { margin: 36px 0 48px; padding: 28px; border: 1px solid var(--border); border-left: 4px solid var(--action); border-radius: 6px; background: var(--surface); }
+.study-plan h2 { margin: 0 0 8px; }
+.plan-countdown { color: var(--ink); font-weight: 600; }
+.plan-summary { color: var(--muted); margin-bottom: 0; }
+/* Barra própria do plano, em laranja; a .progress-track (verde) continua sendo só a de leituras. */
+.plan-progress { height: 6px; overflow: hidden; background: var(--border); border-radius: 3px; margin: 18px 0; }
+.plan-progress span { display: block; height: 100%; background: var(--action); }
+.plan-days { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 21rem), 1fr)); gap: 16px; margin-top: 8px; }
+.plan-day { padding: 16px 18px; border: 1px solid var(--border); border-radius: 6px; }
+.plan-day.is-today { border-color: var(--action); }
+.plan-day.is-today h3::after { content: ' · hoje'; color: var(--link); }
+.plan-day h3 { font-size: 1rem; margin: 0 0 10px; }
+.plan-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
+.plan-list li { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.plan-list label { display: flex; align-items: flex-start; gap: 10px; cursor: pointer; line-height: 1.45; }
+.plan-list input { accent-color: var(--action); width: 18px; height: 18px; margin: 2px 0 0; flex: none; }
+.plan-list label:has(input:checked) span { color: var(--muted); text-decoration: line-through; }
+.plan-list a { white-space: nowrap; font-size: .875rem; }
 .storage-notice, .resume-notice { margin: 18px 0; padding: 13px 18px; border: 1px solid var(--border-strong); border-radius: 4px; background: var(--notice-surface); color: var(--ink); font-size: .9375rem; }
 .page-footer { max-width: 1320px; margin: 0 auto; border-top: 1px solid var(--border); padding: 26px 36px; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px 25px; color: var(--muted); font-size: .875rem; }
 .page-footer a { color: var(--muted); }

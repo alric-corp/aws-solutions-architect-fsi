@@ -12,6 +12,29 @@ Tipo de entrevista: comportamental, técnica ou system design.
 
 Registre a ideia principal e a decisão defendida, não uma transcrição interminável.
 
+## O que ficou registrado?
+
+Quem ouviu preenche antes de pedir ajuda ou comparar com a intenção de quem respondeu. É um teste didático de compreensão, não formulário oficial de contratação.
+
+- Problema apresentado:
+- Responsabilidade individual:
+- Decisão principal:
+- Ações observáveis:
+- Resultado e evidência:
+- Principal dúvida que permaneceu:
+
+Depois compare as duas perspectivas. Se a contribuição ou o resultado não ficaram reconhecíveis, identifique se faltou explicar ou se faltam fatos; não preencha a lacuna por inferência.
+
+## Afirmações da experiência a aprofundar
+
+Antes ou depois da rodada, reveja as afirmações do currículo relacionadas ao episódio. Classifique o envolvimento: **implementei diretamente · decidi ou desenhei · acompanhei a execução · estudei sem executar**. São descrições de experiência, não uma nota de valor.
+
+| Afirmação | Meu envolvimento | O que consigo explicar | Limite ou dado a confirmar |
+|---|---|---|---|
+| A preencher | A preencher | A preencher | A preencher |
+
+Para observabilidade, cache, migração ou eventos, procurar problema, mecanismo, decisão, responsabilidade e resultado compatíveis com a afirmação. Não exigir domínio de todos os detalhes de um sistema apenas por ter participado dele, nem transformar estudo em implementação.
+
 ## Observações
 
 | Dimensão | Evidência observada | Próximo ajuste |

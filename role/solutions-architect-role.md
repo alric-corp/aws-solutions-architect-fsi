@@ -28,7 +28,7 @@ Transforma requisitos de negócio em arquiteturas viáveis na AWS e as revisa co
 
 ### 3. Discute trade-offs
 
-...
+Compara alternativas em função da necessidade e das restrições: segurança, qualidade, velocidade, custo e capacidade de operação. Explica o que priorizou, o que permanece incerto e qual evidência permite avançar ou rever a recomendação. Uma escolha técnica precisa ser compreensível para quem decide.
 
 ### 4. Atua como trusted advisor
 
@@ -40,19 +40,19 @@ Trabalha com o time de contas na estratégia de cada cliente e com especialistas
 
 ### 6. Cria PoCs e demonstrações
 
-...
+Uma prova de conceito examina uma hipótese delimitada; seu resultado não demonstra automaticamente prontidão para produção. Defina com o cliente o que será validado, o critério de sucesso e o limite do teste. PoC ou piloto é uma opção conforme a necessidade, não uma resposta obrigatória a todo pedido.
 
 ### 7. Transfere conhecimento
 
-...
+Ajuda o cliente a compreender decisões e operar com mais autonomia. Ao explicar a mesma solução para negócio, arquitetura e operação, mantém os fatos e ajusta os detalhes: consequência e opções, mecanismo e premissas, responsabilidade e recuperação.
 
 ### 8. Produz conteúdo técnico
 
-...
+Registra decisões, padrões e aprendizados que outras pessoas consigam usar. Documentação só demonstra valor continuado quando há evidência de uso e efeito. Compartilhar conhecimento também exige preservar dados proprietários e respeitar o escopo de divulgação permitido.
 
 ### 9. Leva feedback dos clientes para dentro da AWS
 
-...
+Conecta necessidades e dificuldades do cliente aos times de serviço e suporte, comunicando contexto, impacto e limites. Não promete uma capacidade ainda não confirmada; ajuda a encaminhar a questão para quem pode avaliar ou decidir.
 
 ### 10. Continua estudando
 
@@ -85,3 +85,9 @@ Pela [descrição da vaga](job-description.md), o tempo se divide entre:
 **Técnicas:** fundamentos de redes, computação, armazenamento, bancos de dados e segurança, estudados em [fundamentals](../technical-knowledge/01-fundamentals/README.md), e padrões de arquitetura em [system design](../technical-knowledge/02-system-design/README.md).
 
 **Comportamentais:** comunicação clara, condução da descoberta com o cliente e resolução estruturada de problemas.
+
+## Praticar a combinação
+
+Use a [conversa consultiva de SA](../interview/simulations/06-conversa-consultiva/candidato.md) para integrar necessidade, alternativas, julgamento e comunicação, sem começar por um catálogo de serviços. É um exercício fictício, não uma etapa confirmada do processo.
+
+As [fontes complementares](../references/sa-conversa-profissional.md) incluem uma liderança de SA e outra publicação brasileira de SA FSI, Job ID 10581001. Essa publicação ajuda a examinar responsabilidades; não confirma o escopo integral da vaga-alvo descrita neste acervo nem seu formato de entrevista.

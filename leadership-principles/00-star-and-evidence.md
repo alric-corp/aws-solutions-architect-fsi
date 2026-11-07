@@ -4,6 +4,8 @@
 
 As notas N01 e N02 enfatizam exemplos específicos, ação individual, resultado e honestidade. N03 acrescenta ensaio em voz alta e uso de pontos-chave. Esta ficha transforma essas orientações em um processo, sem transformar números de histórias ou minutos em regras oficiais.
 
+Uma boa resposta deixa visíveis sua responsabilidade, seu raciocínio, a atuação com outras pessoas e o resultado que consegue demonstrar. O guia [Histórias com evidências](historias-com-evidencias.md) aprofunda esse método com foco em influência, discordância, feedback difícil e decisões sob restrições.
+
 ## STAR como estrutura, não como teatro
 
 **Situação:** qual contexto é necessário para entender o problema?
@@ -37,11 +39,15 @@ Comece por episódios concretos: cliente insatisfeito, investigação, decisão 
 
 Para cada episódio, registre data aproximada, papel, problema, decisão principal e resultado observado. Só depois associe princípios. Isso reduz a tentação de fabricar uma história para uma sigla.
 
+Antes de citar tecnologias, identifique quem precisava de quê e por que isso importava. O cliente pode ser uma equipe interna. Colete os fatos na [ficha STAR](../templates/star-story.md), inclusive o que ainda precisa confirmar e as perguntas às quais aquele episódio não responde.
+
 ## “Eu” e “nós” têm funções diferentes
 
 “Eu formulei a hipótese e construí o teste” descreve sua contribuição. “O time colocou a solução em produção” pode ser a atribuição correta do resultado coletivo. Não elimine a equipe do relato para parecer mais relevante.
 
 Diferencie quem propôs, quem aprovou, quem implementou e quem operou. Uma pessoa pode ter feito mais de um papel; não precisa ter feito todos para demonstrar contribuição.
+
+O “A” descreve ações executadas, não somente um plano. Se disser “alinhei”, explique o que estava desalinhado, o argumento que ouviu, o que apresentou e qual decisão mudou. Planejar pode ser parte da ação; não substitui contar o que fez depois.
 
 ## Métricas sem invenção
 
@@ -70,9 +76,14 @@ Não exclua toda história de resultado negativo. Um erro assumido, investigado 
 
 Em um projeto em andamento, delimite um episódio já ocorrido e um resultado que foi efetivamente observado. Não conte benefício futuro como entrega concluída. Essa nuance substitui a regra absoluta encontrada em um dos relatos do curso.
 
-## Preparar duas profundidades
+<a id="preparar-duas-profundidades"></a>
+## Preparar três níveis de detalhe
 
-Crie um resumo de pontos-chave que caiba em poucos minutos, deixando a investigação para os aprofundamentos. O entrevistador pode interromper, pedir números ou mudar o foco. Isso não significa que você precisa acelerar e recitar o texto até o fim.
+Prepare uma síntese de cerca de 45–60 segundos, uma resposta inicial com referência de 2–3 minutos e detalhes para aprofundamentos. Não são limites universais. Um guia editorial da Amazon sugere tipicamente 2–3 minutos; outro recomenda quatro minutos ou menos para preservar o aprofundamento. A pergunta e as instruções recebidas prevalecem. As fontes e seus limites estão no [guia complementar](historias-com-evidencias.md#três-níveis-de-detalhe-para-ensaiar).
+
+Não apresente as três versões em sequência. A resposta inicial já precisa mostrar ações e resultado; o aprofundamento responde diretamente ao ponto solicitado, sem reiniciar a história inteira. Use pontos-chave e preserve as evidências ao cortar contexto excessivo.
+
+Antes de escolher a história, identifique que evidência a pergunta solicita. O capítulo [Repertório de episódios](repertorio-de-episodios.md) distingue projeto, episódio e resposta e propõe estruturas próprias para motivação, ponto de desenvolvimento e problemas hipotéticos.
 
 Treine perguntas como: por que essa opção? O que você fez pessoalmente? Como mediu? Quem discordou? Qual erro foi seu? O que teria acontecido sem sua ação? O que mudou depois?
 

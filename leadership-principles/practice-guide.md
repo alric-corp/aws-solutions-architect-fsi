@@ -16,6 +16,14 @@ Para uma aula com professora de inglês sem contexto técnico, use a [sessão de
 4. Revise a resposta: relevância, contribuição individual, motivos da decisão, resultado verificável e mudança posterior.
 5. Repita em inglês a partir de pontos-chave, mantendo autoria, métricas e grau de certeza.
 
+Use também o ciclo **pergunta inédita → episódio → resposta → aprofundamento → feedback → nova tentativa**, explicado em [Histórias com evidências](historias-com-evidencias.md#um-ciclo-curto-de-prática). Aprofunde influência entre equipes, discordância, feedback difícil e decisões sob restrições. Mudar o foco de uma pergunta não autoriza mudar os fatos.
+
+Na revisão, observe aderência, fatos, autoria, raciocínio, colaboração, resultado e aprendizado. O cronômetro é uma referência de ensaio; não substitui esses critérios nem vira pontuação de carreira.
+
+Antes da resposta, formule mentalmente “esta pergunta pede evidência de quê?”. Delimite o episódio no [mapa de projetos e episódios](../templates/episode-map.md). Na nova tentativa, mude o foco da pergunta e peça uma decisão, dado ou consequência sem reiniciar o STAR. A [simulação adaptativa](repertorio-de-episodios.md#simulação-adaptativa-aprofundar-sem-recomeçar) mostra como reconhecer quando outra história é necessária.
+
+Para integrar técnica, julgamento e cliente, pratique a [conversa consultiva de SA](../interview/simulations/06-conversa-consultiva/candidato.md). O guia de condução oferece cinco treinos: conversa consultiva, decisão sob tensão, aprofundamento sem roteiro, mudança de audiência e debrief simulado. Use o [registro do que foi entendido](../templates/mock-interview-feedback.md#o-que-ficou-registrado) antes do feedback. São propostas de treino, não atividades confirmadas de uma entrevista.
+
 Se você não tiver vivido o cenário de SA/FSI, use um episódio equivalente de outro contexto e explique a transferência. Uma lacuna pode ficar registrada para desenvolvimento. A seção “Aplicação FSI” de cada ficha serve para discutir “o que você faria”; as perguntas comportamentais pedem o que aconteceu.
 
 ## Banco por princípio

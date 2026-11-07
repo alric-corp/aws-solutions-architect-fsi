@@ -6,7 +6,7 @@ Mapa das etapas e de onde cada uma é treinada neste repositório. O formato mud
 
 | Etapa | Foco provável | Onde se preparar |
 |---|---|---|
-| Triagem inicial | Trajetória, motivação, base técnica e uma ou duas perguntas comportamentais | [Perguntas comuns](common-questions.md) · [Fundamentals](../technical-knowledge/01-fundamentals/README.md) |
+| Triagem inicial | Trajetória, motivação, base técnica e uma ou duas perguntas comportamentais | [Fundamentals](../technical-knowledge/01-fundamentals/README.md) |
 | Entrevistas técnicas | Profundidade nos fundamentos e capacidade de desenhar e defender uma arquitetura | [Fundamentals](../technical-knowledge/01-fundamentals/README.md) · [System Design](../technical-knowledge/02-system-design/README.md) · [cases](../cases/) |
 | Entrevistas comportamentais | Evidência dos Leadership Principles em experiências reais | [Leadership Principles](../leadership-principles/README.md) |
 
@@ -18,7 +18,7 @@ Conversa curta para confirmar aderência antes do restante do processo. **Neste 
 
 Leve preparado:
 
-- uma apresentação de cerca de um minuto que ligue sua trajetória à vaga ([roteiro](common-questions.md));
+- uma apresentação de cerca de um minuto que ligue sua trajetória à vaga;
 - os motivos para AWS e para FSI, com exemplos concretos;
 - explicações curtas de conceitos de nuvem e dos serviços que você já usou, sem inflar a experiência;
 - duas ou três histórias STAR que aguentem aprofundamento;
@@ -75,5 +75,3 @@ Como se preparar:
 - traga números quando existirem e saiba como foram medidos;
 - inclua histórias de erro, com o que mudou depois;
 - treine com o [roteiro comportamental](simulations/01-behavioral/mock-script.md).
-
-Para a reta final, use o [checklist](checklist.md).

@@ -25,12 +25,6 @@ export const caseReferenceEdits = {
     "| Cases FSI (FSI01–FSI10) | Aplicar os dois níveis a problemas do setor financeiro | [cases](../cases/) |": "",
     "Os IDs servem de referência rápida: F06 é um fundamento, SD03 um padrão de system design, FSI03 um case financeiro e STAR03 uma experiência comportamental.": "Os IDs servem de referência rápida: F06 é um fundamento, SD03 um padrão de system design e STAR03 uma experiência comportamental."
   },
-  "interview/checklist.md": {
-    "- [ ] Refazer de memória o desenho de um case FSI → [cases](../cases/)": "- [ ] Refazer de memória um desenho dos exercícios de [System Design](../technical-knowledge/02-system-design/README.md)."
-  },
-  "interview/common-questions.md": {
-    "- **Cliente FSI:** o que atrai você nos problemas de bancos e meios de pagamento, como regulação, disponibilidade, fraude e modernização ([cases](../cases/)).": "- **Cliente FSI:** o que atrai você nos problemas de bancos e meios de pagamento, como regulação, disponibilidade, fraude e modernização."
-  },
   "interview/interview-process.md": {
     "| Entrevistas técnicas | Profundidade nos fundamentos e capacidade de desenhar e defender uma arquitetura | [Fundamentals](../technical-knowledge/01-fundamentals/README.md) · [System Design](../technical-knowledge/02-system-design/README.md) · [cases](../cases/) |": "| Entrevistas técnicas | Profundidade nos fundamentos e capacidade de desenhar e defender uma arquitetura | [Fundamentals](../technical-knowledge/01-fundamentals/README.md) · [System Design](../technical-knowledge/02-system-design/README.md) |"
   },
@@ -192,38 +186,6 @@ export const caseReferenceEdits = {
   "technical-knowledge/02-system-design/README.md": {
     "| 19 | Saga | [Saga na prática](03-distributed-workflows.md#saga) · [Case 03](../../cases/03-event-driven-banking.md) |": "| 19 | Saga | [Saga na prática](03-distributed-workflows.md#saga) |"
   },
-  "interview/interview-preparation-plan.md": {
-    "| Case hipotético financeiro | FSI-01 a FSI-10 | Pasta cases |": "",
-    "**Recorte aplicado:** [FSI-01 — Pagamentos e Pix](../cases/01-payment-processing-pix.md).": "**Prática aplicada:** use os exercícios das leituras de apoio indicadas nesta sessão.",
-    "**Recorte aplicado:** [FSI-04 — KYC e abertura de conta](../cases/04-kyc-account-opening.md).": "**Prática aplicada:** use os exercícios das leituras de apoio indicadas nesta sessão.",
-    "**Recorte aplicado:** [FSI-10 — Autorização de cartões](../cases/10-card-authorization-platform.md).": "**Prática aplicada:** use os exercícios das leituras de apoio indicadas nesta sessão.",
-    "**Recorte aplicado:** [FSI-02 — Open Finance APIs](../cases/02-open-finance-apis.md).": "**Prática aplicada:** use os exercícios das leituras de apoio indicadas nesta sessão.",
-    "**Recorte aplicado:** [FSI-09 — Internet Banking Multi-Region](../cases/09-multi-region-internet-banking.md).": "**Prática aplicada:** use os exercícios das leituras de apoio indicadas nesta sessão.",
-    "**Recorte aplicado:** [FSI-06 — GenAI para assessor financeiro](../cases/06-genai-financial-advisor.md).": "**Prática aplicada:** use os exercícios das leituras de apoio indicadas nesta sessão.",
-    "**Recorte aplicado:** [FSI-03 — Banking Event-Driven](../cases/03-event-driven-banking.md).": "**Prática aplicada:** use os exercícios das leituras de apoio indicadas nesta sessão.",
-    "**Recorte aplicado:** [FSI-08 — Data Lake financeiro](../cases/08-financial-data-lake.md).": "**Prática aplicada:** use os exercícios das leituras de apoio indicadas nesta sessão.",
-    "**Recorte aplicado:** [FSI-07 — Fraude em tempo real](../cases/07-real-time-fraud-detection.md).": "**Prática aplicada:** use os exercícios das leituras de apoio indicadas nesta sessão.",
-    "**Recorte aplicado:** [FSI-05 — Modernização do core](../cases/05-core-banking-modernization.md).": "**Prática aplicada:** use os exercícios das leituras de apoio indicadas nesta sessão.",
-    "| [FSI-01 — Pagamentos e Pix](../cases/01-payment-processing-pix.md) | 1, 8, 16 | Quais requisitos faltam e como tratar uma operação repetida ou de resultado desconhecido? |": "| 1, 8, 16 | Quais requisitos faltam e como tratar uma operação repetida ou de resultado desconhecido? |",
-    "| [FSI-02 — Open Finance APIs](../cases/02-open-finance-apis.md) | 4 | A instituição pode acessar este recurso e o consentimento ainda permite isso? |": "| 4 | A instituição pode acessar este recurso e o consentimento ainda permite isso? |",
-    "| [FSI-03 — Banking Event-Driven](../cases/03-event-driven-banking.md) | 7 | Quem decide cada etapa e como tratar efeitos de negócio diante de falhas? |": "| 7 | Quem decide cada etapa e como tratar efeitos de negócio diante de falhas? |",
-    "| [FSI-04 — KYC e abertura de conta](../cases/04-kyc-account-opening.md) | 2 | Por onde passam a API e os documentos, e quem pode acessá-los? |": "| 2 | Por onde passam a API e os documentos, e quem pode acessá-los? |",
-    "| [FSI-05 — Modernização do core](../cases/05-core-banking-modernization.md) | 11 | Que evidência permite transferir uma capacidade e desativar o escritor antigo? |": "| 11 | Que evidência permite transferir uma capacidade e desativar o escritor antigo? |",
-    "| [FSI-06 — GenAI para assessor financeiro](../cases/06-genai-financial-advisor.md) | 6, 13 | Onde roda o backend, quem autoriza a recuperação e como validar uma mudança? |": "| 6, 13 | Onde roda o backend, quem autoriza a recuperação e como validar uma mudança? |",
-    "| [FSI-07 — Fraude em tempo real](../cases/07-real-time-fraud-detection.md) | 10, 14 | O que deve responder agora e o que pode ser atualizado pelo stream? |": "| 10, 14 | O que deve responder agora e o que pode ser atualizado pelo stream? |",
-    "| [FSI-08 — Data Lake financeiro](../cases/08-financial-data-lake.md) | 9 | O dado está pronto para análise e quem pode acessar também os resultados? |": "| 9 | O dado está pronto para análise e quem pode acessar também os resultados? |",
-    "| [FSI-09 — Internet Banking Multi-Region](../cases/09-multi-region-internet-banking.md) | 5, 12, 15 | Que jornadas podem funcionar durante a falha e quais dependências permanecem? |": "| 5, 12, 15 | Que jornadas podem funcionar durante a falha e quais dependências permanecem? |",
-    "| [FSI-10 — Autorização de cartões](../cases/10-card-authorization-platform.md) | 3 | Que requisitos de protocolo, conexão e disponibilidade alteram a entrada da aplicação? |": "| 3 | Que requisitos de protocolo, conexão e disponibilidade alteram a entrada da aplicação? |",
-    "A origem usa “Case 1”, “Case 2” etc. em alguns blocos comportamentais, mas não declara um namespace para essas referências. **Não reinterpretar automaticamente esses números como FSI-01 e FSI-02.** Na proposta, cada tipo recebe um prefixo explícito.": "A origem usa referências numéricas em alguns blocos comportamentais, mas não declara um namespace. Não as transforme automaticamente em pré-requisitos de estudo: experiências reais usam o prefixo STAR e exercícios gerais usam o prefixo SD.",
-    "Um case FSI não deve virar história de experiência profissional. Um laboratório pode ser apresentado como laboratório, com seu escopo real.": "Um cenário hipotético não deve virar história de experiência profissional. Um laboratório pode ser apresentado como laboratório, com seu escopo real.",
-    "Quando o tema ainda não estiver compreendido, reduza o recorte do case. **Não tente ler um case inteiro, fazer um laboratório AWS e simular a entrevista dentro de 50 minutos.**": "Quando o tema ainda não estiver compreendido, reduza o recorte do exercício. **Não tente ler um módulo inteiro, fazer um laboratório AWS e simular a entrevista dentro de 50 minutos.**",
-    "A ordem, os temas e as datas de referência vêm da aba Cronograma. Leituras, recortes FSI e entregas são sugestões novas. Escolher dois módulos como apoio significa consultar trechos, não ler ambos integralmente.": "A ordem, os temas e as datas de referência vêm da aba Cronograma. Leituras, exercícios e entregas são sugestões novas. Escolher dois módulos como apoio significa consultar trechos, não ler ambos integralmente.",
-    "**50 min — exercício proposto:** Manter o desenho de alta disponibilidade. Contrastar a entrada HTTP do e-commerce com a integração do case de cartões e perguntar qual protocolo e comportamento de conexão são exigidos.": "**50 min — exercício proposto:** Manter o desenho de alta disponibilidade. Contrastar a entrada HTTP do e-commerce com uma integração hipotética de cartões e perguntar qual protocolo e comportamento de conexão são exigidos.",
-    "Esta é **cobertura planejada de recortes**, não atestado de domínio dos dez documentos. A primeira passagem conecta os fundamentos; aprofundamentos posteriores dependem do diagnóstico.": "Estas são **perguntas de revisão dos fundamentos**, não atestado de domínio. A primeira passagem conecta os conceitos; aprofundamentos posteriores dependem do diagnóstico.",
-    "| Case | Dias de contato planejado | Pergunta do recorte |": "| Dias de prática | Pergunta para revisar os fundamentos |",
-    "**50 min — exercício proposto:** Simulado de 50 minutos com o case 09, ou trocar pelo case de maior lacuna já estudado. Não trocar a sessão por leitura da resposta.": "**50 min — exercício proposto:** Simulado de 50 minutos com uma das aberturas de troubleshooting já estudadas, escolhida pela maior lacuna observada. Não trocar a sessão por leitura da resposta.",
-    "**50 min — exercício proposto:** Um desenho curto de um case já conhecido (01 ou 09) e explicação das setas. Preferir clareza a acrescentar mais serviços.": "**50 min — exercício proposto:** Um desenho curto de um exercício de arquitetura já conhecido e explicação das setas. Preferir clareza a acrescentar mais serviços."
-  },
   "technical-knowledge/01-fundamentals/README.md": {
     "| Módulo | Conteúdo | Aplicação nos cases |": "| Módulo | Conteúdo |",
     "|---|---|---|": "| --- | --- |",
@@ -264,9 +226,6 @@ const headingTitles = {
   },
   "technical-knowledge/01-fundamentals/README.md": {
     "Fundamentos para sustentar os cases": "Fundamentos para decisões de arquitetura"
-  },
-  "interview/interview-preparation-plan.md": {
-    "5. Cobertura dos dez cases": "5. Perguntas para a revisão"
   }
 };
 export const visibleHeadingTitle = (title, source) => headingTitles[source]?.[title] || title;
@@ -283,10 +242,5 @@ export function projectMainMarkdown(markdown, source) {
     text = text.replace(/(## Cases FSI\n[\s\S]*?)\n\|---\|---\|\n/, '$1\n');
   }
   if (source === 'technical-knowledge/README.md') text = text.replace('System Design\n    ↓\n    ↓\nMock Interviews', 'System Design\n    ↓\nMock Interviews');
-  if (source === 'interview/interview-preparation-plan.md') {
-    const start = text.indexOf('## 5. Cobertura dos dez cases');
-    const end = text.indexOf('## 6.', start);
-    if (start >= 0 && end > start) text = text.slice(0,start) + text.slice(start,end).replace('|---|---|---|','|---|---|') + text.slice(end);
-  }
   return text;
 }

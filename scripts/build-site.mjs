@@ -7,16 +7,17 @@ import GithubSlugger from 'github-slugger';
 import { createHash } from 'node:crypto';
 import { isStandalone, caseCollection } from '../site/collection-policy.mjs';
 import { projectMainMarkdown, visibleHeadingTitle } from '../site/case-reference-policy.mjs';
-import { metadataFor, studentSearchMarkdown } from '../site/content-policy.mjs';
+import { metadataFor, studentSearchMarkdown, isRetiredSource } from '../site/content-policy.mjs';
 import { layout, tocFor, articleBody, homeBody, collectionBody, hubs, standaloneCollectionBody } from '../site/templates.mjs';
 import { siteName, firstLesson, sections, publicRoots, allowedAssetExtensions, sectionFor } from '../site/content.mjs';
+import { coverAssetPath } from './lib/project-paths.mjs';
 import { focusTitle, focusHeading, focusHub } from '../site/focus-policy.mjs';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 const output = path.join(root, 'dist');
 const tracked = execFileSync('git', ['ls-files', '-z'], { cwd: root, encoding: 'utf8' }).split('\0').filter(Boolean);
 const publicPath = file => file === 'README.md' || publicRoots.some(prefix => file.startsWith(prefix));
-const sources = tracked.filter(file => publicPath(file) && file.endsWith('.md'));
+const sources = tracked.filter(file => publicPath(file) && file.endsWith('.md') && !isRetiredSource(file));
 if (sources.length < 10) throw new Error('Conteúdo de estudo ausente. Execute o build no checkout completo do Git.');
 const escape = value => String(value).replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char]);
 const plain = value => value.replace(/<[^>]*>/g, '').replace(/!?\[([^\]]+)\]\([^)]*\)/g, '$1').replace(/[*_`#]/g, '').replace(/\s+/g, ' ').trim();
@@ -164,7 +165,7 @@ for (const [family, name] of [['source-sans-3', 'source-sans']]) {
   await write(`assets/licenses/${name}.txt`, await fs.readFile(path.join(root, 'node_modules', '@fontsource-variable', family, 'LICENSE')));
 }
 // The original cover is explicit, independent of tracked Markdown selection.
-await write('assets/amazon.jpg', await fs.readFile(path.join(root, 'amazon.jpg')));
+await write(coverAssetPath, await fs.readFile(path.join(root, coverAssetPath)));
 // Mermaid stays self-hosted; no third-party CDN or runtime dependency on GitHub.
 const mermaidDir = path.join(root, 'node_modules/mermaid/dist');
 await write('assets/licenses/mermaid.txt', await fs.readFile(path.join(root, 'node_modules/mermaid/LICENSE')));

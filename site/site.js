@@ -676,3 +676,35 @@ function scheduleDiagrams() {
   });
 }
 document.addEventListener('architecture-theme-change', scheduleDiagrams); scheduleDiagrams();
+
+// Plano até a entrevista (Meu estudo): marcações salvas neste navegador pelo id de cada tarefa.
+(() => {
+  const plan = document.querySelector('[data-plan]');
+  if (!plan) return;
+  const key = 'architecture-practice:plan:v1';
+  let saved = {};
+  try { saved = JSON.parse(localStorage.getItem(key)) || {}; } catch { saved = {}; }
+  const boxes = [...plan.querySelectorAll('input[data-plan-task]')];
+  const update = () => {
+    const done = boxes.filter(box => box.checked).length;
+    const counter = plan.querySelector('[data-plan-done]'); if (counter) counter.textContent = String(done);
+    const bar = plan.querySelector('[data-plan-bar]');
+    if (bar) { bar.setAttribute('aria-valuenow', String(done)); const fill = bar.querySelector('span'); if (fill) fill.style.width = `${boxes.length ? done / boxes.length * 100 : 0}%`; }
+  };
+  boxes.forEach(box => {
+    const id = box.dataset.planTask;
+    if (Object.prototype.hasOwnProperty.call(saved, id)) box.checked = Boolean(saved[id]);
+    box.addEventListener('change', () => { saved[id] = box.checked; try { localStorage.setItem(key, JSON.stringify(saved)); } catch { /* armazenamento bloqueado: vale só nesta visita */ } update(); });
+  });
+  update();
+  const now = new Date();
+  const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+  plan.querySelectorAll('[data-plan-day]').forEach(day => day.classList.toggle('is-today', day.dataset.planDay === today));
+  const countdown = plan.querySelector('[data-plan-countdown]');
+  const [year, month, date] = (plan.dataset.interview || '').split('-').map(Number);
+  if (countdown && year) {
+    const diff = Math.round((new Date(year, month - 1, date) - new Date(now.getFullYear(), now.getMonth(), now.getDate())) / 86400000);
+    const status = diff > 1 ? `Faltam ${diff} dias para a entrevista.` : diff === 1 ? 'A entrevista é amanhã.' : diff === 0 ? 'A entrevista é hoje.' : 'A entrevista já aconteceu.';
+    countdown.textContent = `${status} ${countdown.dataset.planNote || ''}`.trim();
+  }
+})();

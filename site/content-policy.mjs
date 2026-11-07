@@ -1,4 +1,18 @@
 import { collectionMetadataFor, isStandaloneReference } from './collection-policy.mjs';
+// Explicitly retired by the owner. Keep the lifecycle list central so old Git
+// entries cannot republish them and route audits exempt only these removals.
+export const retiredDocuments = [
+  'interview/checklist.md',
+  'interview/common-questions.md',
+  'interview/interview-preparation-plan.md'
+].map(source => ({ source, url: `/${source.replace(/\.md$/, '.html')}` }));
+const retiredSources = new Set(retiredDocuments.map(doc => doc.source));
+const retiredUrls = new Set(retiredDocuments.map(doc => doc.url));
+export const isRetiredSource = source => retiredSources.has(source);
+export const isRetiredUrl = value => {
+  const pathname = String(value).split(/[?#]/, 1)[0];
+  return retiredUrls.has(pathname.startsWith('/') ? pathname : `/${pathname}`);
+};
 // Publication, audience and search are independent decisions. These rules apply
 // only to the repository's explicitly allowed, versioned study sources.
 export const normalize = value => value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();

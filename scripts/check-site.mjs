@@ -5,7 +5,7 @@ import { execFileSync } from 'node:child_process';
 import crypto from 'node:crypto';
 import assert from 'node:assert/strict';
 import { publicRoots } from '../site/content.mjs';
-import { metadataFor, studentSearchMarkdown } from '../site/content-policy.mjs';
+import { metadataFor, studentSearchMarkdown, retiredDocuments, isRetiredSource, isRetiredUrl } from '../site/content-policy.mjs';
 import { rankSearch } from '../site/search.mjs';
 import { continuityScopeFor } from '../site/collection-policy.mjs';
 
@@ -35,6 +35,26 @@ for (const file of files.filter(file => file.endsWith('.html'))) {
   if (!content.includes('<h1')) errors.push(`${file}: título principal ausente`);
 }
 let links = 0;
+// The owner explicitly requested this named mentoring script. Permit its two
+// display titles in generated navigation and names inside these exact pages;
+// keep the personal-name check everywhere else and local-path checks everywhere.
+const namedMentorshipPages = new Set([
+  'interview/simulations/05-mentoria-transacoes/candidato.html',
+  'interview/simulations/05-mentoria-transacoes/instrutor.html'
+]);
+function hasUnexpectedPersonalData(file, content) {
+  if (/\/Users\/tomasalric/.test(content)) return true;
+  let checked = content
+    .replaceAll('Conversa técnica — Vitória e Cleber', 'Conversa técnica')
+    .replaceAll('Mentoria técnica — Vitória e Cleber', 'Mentoria técnica');
+  if (namedMentorshipPages.has(file)) checked = checked.replace(/Vitória|Vitória/g, 'participante');
+  return /Vitória|Vitória|Tomas e Vitória/.test(checked);
+}
+assert.equal(hasUnexpectedPersonalData('index.html', 'Vitória'), true, 'Nome pessoal continua vedado fora do roteiro autorizado');
+assert.equal(hasUnexpectedPersonalData('index.html', 'Tomas e Vitória'), true, 'Avaliação ou relato pessoal não ganha liberação global');
+assert.equal(hasUnexpectedPersonalData('praticar/index.html', 'Conversa técnica — Vitória e Cleber'), false, 'Título solicitado pode identificar o acesso à mentoria');
+assert.equal(hasUnexpectedPersonalData('interview/simulations/05-mentoria-transacoes/candidato.html', 'Vitória explica primeiro'), false, 'Nomes solicitados no roteiro autorizado');
+assert.equal(hasUnexpectedPersonalData('interview/simulations/05-mentoria-transacoes/instrutor.html', '/Users/tomasalric/privado'), true, 'Caminhos locais continuam vedados também na mentoria');
 for (const [file, content] of html) {
   for (const match of content.matchAll(/\b(?:href|src)=["']([^"']+)["']/g)) {
     const value = decode(match[1]);
@@ -60,6 +80,11 @@ for (const file of files) {
 const index = JSON.parse(await fs.readFile(path.join(directory, 'search-index.json'), 'utf8'));
 const manifest = JSON.parse(await fs.readFile(path.join(directory, 'content-manifest.json'), 'utf8'));
 const manifestByUrl = new Map(manifest.map(item => [item.canonicalUrl, item]));
+for (const retired of retiredDocuments) {
+  if (fileSet.has(retired.url.slice(1))) errors.push(`Página retirada reapareceu no artefato: ${retired.url}`);
+  if (manifest.some(item => isRetiredSource(item.sourcePath))) errors.push(`Documento retirado reapareceu no manifesto: ${retired.source}`);
+  if (index.some(item => isRetiredUrl(item.url))) errors.push(`Página retirada reapareceu na busca: ${retired.url}`);
+}
 if (manifest.length !== inventory.documents) errors.push('Manifesto incompleto em relação ao inventário de documentos');
 for (const item of manifest) {
   for (const field of ['id', 'sourcePath', 'canonicalUrl', 'type', 'audience', 'publication', 'existingAnchors', 'contentVersion']) if (item[field] === undefined) errors.push(`Campo ${field} ausente no manifesto: ${item.canonicalUrl}`);
@@ -199,8 +224,9 @@ for (const file of files) if (/\.(?:sql|sh|py)$/.test(file)) errors.push(`Script
 
 const isolationBaseline = await fs.readFile(path.join(root, '.site/cases-isolation/baseline.json'), 'utf8').then(JSON.parse).catch(() => null);
 if (isolationBaseline) {
-  for (const route of isolationBaseline.routes) if (!fileSet.has(route.slice(1))) errors.push(`Rota anterior ao isolamento perdida: ${route}`);
+  for (const route of isolationBaseline.routes) if (!isRetiredUrl(route) && !fileSet.has(route.slice(1))) errors.push(`Rota anterior ao isolamento perdida: ${route}`);
   for (const [route, before] of Object.entries(isolationBaseline.pages)) {
+    if (isRetiredUrl(route)) continue;
     for (const id of before.ids) if (!ids.get(route.slice(1))?.has(decode(id))) errors.push(`Âncora anterior ao isolamento perdida: ${route}#${id}`);
   }
   for (const [source, expected] of Object.entries(isolationBaseline.caseSources)) {
@@ -224,8 +250,9 @@ if (isolationBaseline) {
 // destinations and infrastructure, instead of hard-coding historic counts.
 const baseline = await fs.readFile(path.join(root, '.site/p0/baseline.json'), 'utf8').then(JSON.parse).catch(() => null);
 if (baseline) {
-  for (const route of baseline.routes) if (!fileSet.has(route.slice(1))) errors.push(`Rota anterior perdida: ${route}`);
+  for (const route of baseline.routes) if (!isRetiredUrl(route) && !fileSet.has(route.slice(1))) errors.push(`Rota anterior perdida: ${route}`);
   for (const [route, before] of Object.entries(baseline.pages)) {
+    if (isRetiredUrl(route)) continue;
     for (const id of before.ids) if (!ids.get(route.slice(1))?.has(decode(id))) errors.push(`Âncora anterior perdida: ${route}#${id}`);
   }
   for (const [file, expected] of Object.entries(baseline.hashes)) {
@@ -234,12 +261,48 @@ if (baseline) {
   }
   const canonical = value => new URL(decode(value)).href;
   const beforeExternal = new Set(baseline.externalDestinations.map(canonical));
-  for (const [file, content] of html) for (const match of content.matchAll(/(?:href|src)=["'](https?:[^"']+)/g)) if (!beforeExternal.has(canonical(match[1]))) errors.push(`Novo destino externo em ${file}: ${match[1]}`);
+  // Reviewed primary references added by Loja Horizonte. The historic UI baseline
+  // remains intact; only these exact links in the maintenance guide are new.
+  const horizonteReferences = new Set([
+    'https://www.rfc-editor.org/rfc/rfc9110.html#section-9.2.1',
+    'https://www.rfc-editor.org/rfc/rfc9110.html#section-9.3.1',
+    'https://www.rfc-editor.org/rfc/rfc9110.html#section-9.3.3',
+    'https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/concepts.html',
+    'https://docs.aws.amazon.com/AmazonS3/latest/userguide/access-control-block-public-access.html',
+    'https://community.owasp.org/attacks/Web_Parameter_Tampering',
+    'https://cheatsheetseries.owasp.org/cheatsheets/Insecure_Direct_Object_Reference_Prevention_Cheat_Sheet.html#identifier-complexity',
+    'https://docs.aws.amazon.com/elasticloadbalancing/latest/application/introduction.html',
+    'https://docs.aws.amazon.com/elasticloadbalancing/latest/application/edit-target-group-attributes.html#modify-routing-algorithm',
+    'https://docs.aws.amazon.com/elasticloadbalancing/latest/application/target-group-health-checks.html',
+    'https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html',
+    'https://www.postgresql.org/docs/18/indexes-intro.html',
+    'https://www.postgresql.org/docs/18/indexes-ordering.html',
+    'https://www.postgresql.org/docs/18/sql-createindex.html',
+    'https://www.postgresql.org/docs/18/libpq-exec.html#LIBPQ-PQEXECPARAMS',
+    'https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/CHAP_PostgreSQL.html',
+    'https://docs.aws.amazon.com/AmazonElastiCache/latest/dg/Strategies.html',
+    'https://docs.aws.amazon.com/AmazonElastiCache/latest/dg/WhatIs.html',
+    'https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/Invalidation.html',
+    'https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/UpdatingExistingObjects.html',
+    'https://www.rfc-editor.org/rfc/rfc9111.html#section-5.2.2',
+    'https://www.rfc-editor.org/rfc/rfc9110.html#section-9.2.2',
+    'https://www.rfc-editor.org/rfc/rfc9110.html#section-15.3.3',
+    'https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-configure-dead-letter-queue-redrive.html',
+    'https://docs.aws.amazon.com/wellarchitected/latest/reliability-pillar/disaster-recovery-dr-objectives.html',
+    'https://aws.amazon.com/builders-library/ensuring-rollback-safety-during-deployments/',
+    'https://aws.amazon.com/builders-library/automating-safe-hands-off-deployments/',
+    'https://docs.aws.amazon.com/whitepapers/latest/overview-deployment-options/canary-deployments.html'
+  ].map(canonical));
+  for (const [file, content] of html) for (const match of content.matchAll(/(?:href|src)=["'](https?:[^"']+)/g)) {
+    const target = canonical(match[1]);
+    const reviewed = file === 'technical-knowledge/learning-guide.html' && horizonteReferences.has(target);
+    if (!beforeExternal.has(target) && !reviewed) errors.push(`Novo destino externo em ${file}: ${match[1]}`);
+  }
 }
 for (const [file, content] of html) {
   if (/<script\b(?![^>]*\bsrc=)[^>]*>[\s\S]*?\S[\s\S]*?<\/script>/i.test(content)) errors.push(`Script inline incompatível com CSP: ${file}`);
   if (file.includes('/candidato.html') && /href=["'][^"']*(?:instrutor\.html|guia-do-instrutor\.html|diagnostico-inicial\.html)/.test(content)) errors.push(`Atalho para gabarito na página da candidata: ${file}`);
-  if (/(?:Vitória|Vitória|Tomas e Vitória|\/Users\/tomasalric)/.test(content)) errors.push(`Dado pessoal ou caminho local no HTML: ${file}`);
+  if (hasUnexpectedPersonalData(file, content)) errors.push(`Dado pessoal ou caminho local no HTML: ${file}`);
 }
 if (errors.length) {
   console.error(errors.join('\n'));
