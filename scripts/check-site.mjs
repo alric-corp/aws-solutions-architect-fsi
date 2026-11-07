@@ -119,7 +119,7 @@ assert.equal(metadataFor(conversationSource).readingLabel, 'Revisão da conversa
 assert.ok(conversationHtml.includes('<div class="article-kicker"><span>Revisão da conversa · próximos passos</span>'), 'A conversa encerrada não deve ser rotulada como simulado oral');
 assert.ok(conversationArticle.includes('Quatro perguntas para fechar a sustentação') && conversationArticle.includes('Próximas revisões, em ordem'), 'A revisão deve conter validação e próximos passos');
 assert.ok(!/<h[2-6]\b[^>]*>[^<]*(?:Agenda|Mensagem de abertura|Combinado de condução)/i.test(conversationArticle), 'A pauta encerrada não deve continuar visível');
-assert.ok(!/97\s*mil|4\s*milhões|45\s*%|30\s*%|70\s*%/i.test(conversationArticle), 'Números pessoais não confirmados não devem ser publicados na revisão');
+assert.ok(!/\b\d[\d.,]*\s*(?:mil\b|milh(?:ão|ões)\b|%)/i.test(conversationArticle), 'Números pessoais não confirmados não devem ser publicados na revisão');
 const otherPractice = 'interview/simulations/04-troubleshooting/01-checkout-lento/candidato.md';
 assert.equal(metadataFor(otherPractice).readingLabel, undefined, 'A apresentação dos demais exercícios deve permanecer igual');
 assert.ok(html.get(otherPractice.replace(/\.md$/, '.html')).includes('<div class="article-kicker"><span>Simulado oral · candidata</span>'));
