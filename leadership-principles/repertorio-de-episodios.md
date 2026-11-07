@@ -122,6 +122,8 @@ Esse é um molde em branco, não uma afirmação sobre um projeto real nem um cr
 
 Use o [ciclo de prática](historias-com-evidencias.md#um-ciclo-curto-de-prática). Antes da fala, escolha o episódio pelo comportamento pedido. Quem conduz pode interromper com uma pergunta de decisão, evidência ou alternativa; quem responde trata daquele ponto diretamente, sem voltar ao início do STAR.
 
+Varie entre esclarecimento (“o que validou?”), teste da decisão (“por que não a alternativa?”) e teste do limite (“quando deixaria de ser adequado?”). Uma interrupção pode pedir autoria: pare, esclareça e retome. Perguntas adicionais fazem parte do aprofundamento; isoladamente, não permitem concluir aprovação ou reprovação. O [exercício consultivo de SA](../interview/simulations/06-conversa-consultiva/candidato.md) acrescenta mudança de audiência e registro independente do que o ouvinte entendeu.
+
 Depois, mantenha o episódio e mude a pergunta. Uma versão pode pedir discordância; outra, resultado; outra, mudança de opinião. Os fatos não mudam. Se o episódio não demonstrar o novo comportamento, escolher outro ou declarar o limite é parte do exercício.
 
 **Exercício fictício:** uma pessoa ajudou uma colega da Loja Horizonte a executar uma tarefa e recebeu um retorno favorável. A pergunta pede uma ocasião em que ela própria mudou de opinião depois de ouvir alguém. A ajuda, sozinha, responde à pergunta?

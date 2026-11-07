@@ -36,6 +36,15 @@ Qual foi a primeira ação e o que descobriu com ela? O que precisou mudar duran
 
 Para cada ação decisiva, preencher **o que / por que / como / o que permitiu descobrir ou mudar**. Distinguir o raciocínio efetivamente usado na época da análise retrospectiva feita hoje.
 
+## Julgamento e limites da decisão
+
+- Tensão ou trade-off real:
+- O que eu sabia na época e o que descobri depois:
+- Qual evidência poderia ter mudado minha decisão:
+- Limite técnico ou de confidencialidade que preciso preservar:
+
+Recuperar a dificuldade real quando ela existiu, sem acrescentar artificialmente um conflito. Separar o resultado observado da explicação de como a decisão foi tomada com a informação disponível.
+
 ## Resultado
 
 O que aconteceu? Qual comparação demonstra o efeito? Que parte foi estimada? Que resultado foi coletivo? O que não deu certo ou não foi concluído?
@@ -49,6 +58,8 @@ Qual foi a entrega e qual efeito foi realmente observado? O que não foi atingid
 Qual resultado é deste episódio e qual pertence ao projeto inteiro? A mudança ocorreu depois da ação ou há evidência para atribuí-la à ação? Os períodos e populações são comparáveis? Evitar repetir integralmente o impacto global em histórias diferentes.
 
 Não anexar fontes internas ao repositório. É suficiente registrar, em local privado apropriado, como você confirmou o fato.
+
+Precisão não autoriza divulgação: informação pública pede fonte; informação interna só deve ser usada no escopo autorizado; dado restrito ou com permissão desconhecida não deve ser exposto. Uma estimativa exige método e também permissão. Arredondar um número não torna seu compartilhamento automaticamente permitido. Pode explicar problema, critérios e contribuição preservando detalhes restritos. [Fonte e limites](../references/sa-conversa-profissional.md#s6--confidencialidade-durante-a-entrevista)
 
 ## Reflexão
 

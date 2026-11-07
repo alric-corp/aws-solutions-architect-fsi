@@ -8,6 +8,8 @@ Este guia transforma insumos de preparação em perguntas e exercícios autorais
 
 Para distinguir projeto, episódio e resposta, preparar motivação e ponto de desenvolvimento e trabalhar evolução e métricas, siga o capítulo [Repertório de episódios e respostas à pergunta](repertorio-de-episodios.md). O [mapa de episódios em branco](../templates/episode-map.md) ajuda a delimitar experiências sem multiplicar resultados.
 
+Para colocar essas evidências numa conversa próxima ao trabalho de SA, use a [simulação consultiva](../interview/simulations/06-conversa-consultiva/candidato.md): esclarecer demanda, equilibrar interesses, reconhecer limites e propor validação. Técnica e comportamento aparecem juntos; as [fontes específicas](../references/sa-conversa-profissional.md) distinguem responsabilidades da função, recomendações de entrevista e exercícios autorais.
+
 ## Comece pela necessidade do cliente
 
 Antes do nome de uma tecnologia, responda: **quem precisava de quê, qual era a dificuldade e por que aquilo importava?** Cliente pode ser uma equipe interna. Não invente contato com consumidores para tornar o episódio mais relevante. A explicação oficial sobre Customer Obsession também contempla clientes internos. [B2](#b2)

@@ -22,6 +22,8 @@ Na revisão, observe aderência, fatos, autoria, raciocínio, colaboração, res
 
 Antes da resposta, formule mentalmente “esta pergunta pede evidência de quê?”. Delimite o episódio no [mapa de projetos e episódios](../templates/episode-map.md). Na nova tentativa, mude o foco da pergunta e peça uma decisão, dado ou consequência sem reiniciar o STAR. A [simulação adaptativa](repertorio-de-episodios.md#simulação-adaptativa-aprofundar-sem-recomeçar) mostra como reconhecer quando outra história é necessária.
 
+Para integrar técnica, julgamento e cliente, pratique a [conversa consultiva de SA](../interview/simulations/06-conversa-consultiva/candidato.md). O guia de condução oferece cinco treinos: conversa consultiva, decisão sob tensão, aprofundamento sem roteiro, mudança de audiência e debrief simulado. Use o [registro do que foi entendido](../templates/mock-interview-feedback.md#o-que-ficou-registrado) antes do feedback. São propostas de treino, não atividades confirmadas de uma entrevista.
+
 Se você não tiver vivido o cenário de SA/FSI, use um episódio equivalente de outro contexto e explique a transferência. Uma lacuna pode ficar registrada para desenvolvimento. A seção “Aplicação FSI” de cada ficha serve para discutir “o que você faria”; as perguntas comportamentais pedem o que aconteceu.
 
 ## Banco por princípio
