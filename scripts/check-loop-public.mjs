@@ -8,9 +8,10 @@ import { execFileSync } from 'node:child_process';
 import MarkdownIt from 'markdown-it';
 import { publicRoots } from '../site/content.mjs';
 import { isRetiredSource } from '../site/content-policy.mjs';
+import { validatePublication } from '../site/loop-publication.mjs';
 
 // Validation only: this script never builds, deploys, opens a real browser profile,
-// imports the private generator, or reads private schedules/records.
+// runs the private generator, or reads private schedules/records.
 const root = fileURLToPath(new URL('../', import.meta.url));
 const dist = path.join(root, 'dist');
 const sourceRoot = path.join(root, 'site/loop-training');
@@ -29,6 +30,10 @@ const presentationIds = {
 };
 const priorityCodes = ['T1', 'T3', 'T6', 'T7', 'B1', 'B6'];
 const presentationOrder = [...priorityCodes, 'T2', 'T4', 'T5', 'T8', 'T9', 'T10', 'B2', 'B3', 'B4', 'B5', 'B7', 'B8'];
+const assessmentQualities = ['nao-observado', 'incompleta', 'regular', 'boa', 'excelente'];
+const assessmentSupports = ['espontanea', 'apos-aprofundamento', 'apos-explicacao'];
+const assessmentBases = ['fato-projeto', 'a-confirmar', 'hipotese', 'melhoria-hoje'];
+const assessmentActions = ['melhorar-explicacao', 'confirmar-evidencia', 'revisar-conceito', 'variar-cenario'];
 const legacyPresentationIds = [
   ...[['01', 4], ['02', 5], ['03', 5], ['04', 4], ['05', 5]].flatMap(([group, count]) =>
     Array.from({ length: count }, (_, index) => `AP-${group}-${String(index + 1).padStart(2, '0')}`)),
@@ -88,6 +93,49 @@ function presentationCode(question) {
   const match = /^(?:Prioridade\s+(\d+)\s*·\s*)?([TB]\d+)(?:\s*·\s*|$)/.exec(question.category || '');
   assert.ok(match && presentationIds[match[2]], `Categoria precisa identificar o código de apresentação: ${question.id}`);
   return { code: match[2], priority: match[1] ? Number(match[1]) : null };
+}
+
+function checkEvaluatorGuides(session, approved) {
+  const guide = session.evaluationGuide;
+  assert.ok(guide, 'A apresentação precisa do guia geral de avaliação');
+  assert.deepEqual(guide, approved.evaluationGuide);
+  for (const field of ['title', 'notice', 'example', 'closing']) assert.ok(typeof guide[field] === 'string' && normalized(guide[field]), `Guia geral sem ${field}`);
+  for (const [field, values] of [['levels', assessmentQualities], ['supports', assessmentSupports], ['bases', assessmentBases], ['actions', assessmentActions]]) {
+    assert.deepEqual(guide[field]?.map(item => item.value), values, `Opções de avaliação divergentes: ${field}`);
+    for (const option of guide[field]) {
+      assert.ok(typeof option.label === 'string' && normalized(option.label));
+      if (['levels', 'supports'].includes(field)) assert.ok(typeof option.description === 'string' && normalized(option.description));
+    }
+  }
+  for (const field of ['instructions', 'pocketQuestions']) assert.ok(Array.isArray(guide[field]) && guide[field].length && guide[field].every(item => typeof item === 'string' && normalized(item)));
+  assert.equal(guide.neutralPrompts?.length, 4, 'Quatro pares de condução devem contrastar indução e pergunta neutra');
+  for (const prompt of guide.neutralPrompts) {
+    assert.ok(typeof prompt.leading === 'string' && normalized(prompt.leading));
+    assert.ok(typeof prompt.neutral === 'string' && normalized(prompt.neutral));
+    assert.notEqual(folded(prompt.leading), folded(prompt.neutral));
+  }
+  const guidance = folded(JSON.stringify(guide));
+  for (const pattern of [/honest|sincer/, /complet/, /nao observado|nao-observado/, /zero/, /oficial/, /media|somar|somatorio|pontuacao/, /perfei|gabarito unico/]) assert.match(guidance, pattern, 'O guia deve preservar os limites didáticos da avaliação');
+  const signatures = Object.fromEntries(['expected', 'nextFollowup', ...assessmentQualities.slice(1)].map(key => [key, new Set()]));
+  for (const question of session.questions) {
+    const expected = approved.questions.find(item => item.id === question.id)?.evaluatorGuide;
+    const item = question.evaluatorGuide;
+    assert.ok(item && expected, `Guia específico ausente: ${question.id}`);
+    assert.deepEqual(item, expected, 'O guia publicado deve preservar o guia aprovado da pergunta');
+    assert.equal(item.code, presentationCode(question).code);
+    assert.deepEqual(Object.keys(item.levels || {}).sort(), [...assessmentQualities.slice(1)].sort());
+    for (const field of ['expected', 'nextFollowup']) {
+      assert.ok(typeof item[field] === 'string' && normalized(item[field]), `Guia ${item.code} sem ${field}`);
+      signatures[field].add(folded(item[field]));
+    }
+    const levels = Object.values(item.levels);
+    assert.ok(levels.every(level => typeof level === 'string' && normalized(level)));
+    assert.equal(new Set(levels.map(folded)).size, 4, 'Cada pergunta precisa de quatro níveis distintos');
+    for (const quality of assessmentQualities.slice(1)) signatures[quality].add(folded(item.levels[quality]));
+    for (const field of ['cautions', 'factsToConfirm']) assert.ok(Array.isArray(item[field]) && item[field].length && item[field].every(text => typeof text === 'string' && normalized(text)), `Guia ${item.code} sem limites/fatos a confirmar`);
+  }
+  for (const [field, values] of Object.entries(signatures)) assert.equal(values.size, 18, `Os 18 guias precisam de conteúdo específico em ${field}`);
+  return { guides: 18, qualityOptions: assessmentQualities.length, supports: assessmentSupports.length, bases: assessmentBases.length, actions: assessmentActions.length };
 }
 
 function checkPresentation(page, approvedPage) {
@@ -150,7 +198,7 @@ function checkPresentation(page, approvedPage) {
   assert.match(scope, /fala|oral|gravacao|transcricao/);
   assert.match(scope, /nao|sem/);
   assert.match(scope, /consult|analis|receb|disponib|acess/);
-  return { primary: 18, technical: 10, business: 8, priorities: [...priorityCodes], totalWithReserves: all.length, unchangedReserves: Object.keys(unchangedReserveHashes).length };
+  return { primary: 18, technical: 10, business: 8, priorities: [...priorityCodes], totalWithReserves: all.length, unchangedReserves: Object.keys(unchangedReserveHashes).length, evaluation: checkEvaluatorGuides(session, approved) };
 }
 
 async function filesIn(folder) {
@@ -174,6 +222,7 @@ function assertNoFilledRecords(value, location = 'payload') {
   if (!value || typeof value !== 'object') return;
   for (const [key, item] of Object.entries(value)) {
     assert.notEqual(key, 'privateMarker', 'Marcador da antiga publicação privada não pertence ao material publicado');
+    assert.notEqual(key, 'questionAssessments', 'Fichas e histórico preenchidos pertencem somente ao navegador, não ao build');
     if (['episodio', 'duvida', 'ajuda', 'proxima', 'updatedAt', 'releasedAt'].includes(key)) {
       assert.ok(item === '' || item === null || item === undefined, `Registro preenchido em ${location}.${key}`);
     }
@@ -229,6 +278,9 @@ async function checkStatic() {
   const configFiles = (await fs.readdir(sourceRoot)).filter(file => file.endsWith('.json')).sort();
   assert.deepEqual(configFiles, ['agenda.json', 'behavioral.json', 'technical.json'], 'Somente os três JSON aprovados devem compor a publicação');
   [agenda, behavioral, technical] = await Promise.all(['agenda', 'behavioral', 'technical'].map(name => readJSON(`site/loop-training/${name}.json`)));
+  assert.doesNotThrow(() => validatePublication(agenda));
+  assert.throws(() => validatePublication({ questionAssessments: {} }), /questionAssessments/);
+  assert.throws(() => validatePublication({ pages: [{ sessions: [{ questionAssessments: { FIXTURE_AP: { draft: { said: 'FIXTURE_NAO_PUBLICAVEL' }, observations: [] } } }] }] }), /questionAssessments/);
   for (const source of [agenda, behavioral, technical]) assertNoFilledRecords(source, 'fonte aprovada');
   assert.deepEqual(agenda.pages.map(page => page.pageId), pageIds);
   assert.deepEqual(agenda.pages.flatMap(page => page.sessions.filter(session => session.id !== 'apresentacao').map(session => session.name)), ['Edu', 'Bru', 'Rica', 'Fer', 'Luca'], 'A publicação deve usar os cinco nomes abreviados aprovados');
@@ -302,6 +354,8 @@ async function checkStatic() {
     assert.equal(page.sessions.length, approved.sessions.length);
     for (const [sessionIndex, session] of page.sessions.entries()) {
       const recipe = approved.sessions[sessionIndex];
+      const assessmentSession = page.pageId === 'dia-10' && session.id === 'apresentacao';
+      assert.equal(Boolean(session.evaluationGuide), assessmentSession, 'Guia geral de avaliação pertence apenas à apresentação do Dia10');
       assert.deepEqual(without(session, ['questions', 'reserves', 'notesHtml']), without(recipe, ['questions', 'reserves']), 'Cada rodada deve preservar sua agenda completa');
       assert.equal(session.notesHtml, markdown(recipe.notesMarkdown));
       assert.equal(session.agenda.reduce((sum, phase) => sum + phase.minutes, 0), 60, 'O ensaio deve declarar seus 60 minutos, incluindo feedback');
@@ -309,6 +363,8 @@ async function checkStatic() {
         assert.equal((session[collection] || []).length, (recipe[collection] || []).length);
         for (const [index, question] of (session[collection] || []).entries()) {
           const questionRecipe = recipe[collection][index];
+          const assessmentQuestion = assessmentSession && collection === 'questions' && Object.values(presentationIds).includes(question.id);
+          assert.equal(Boolean(question.evaluatorGuide), assessmentQuestion, 'Guia específico pertence apenas às 18 perguntas principais AP');
           questions++;
           assert.ok(question.notes?.objective && question.notes.evidence?.length && question.notes.limits?.length, 'Toda pergunta deve ter orientação e limites separados');
           if (questionRecipe.lpId) {
@@ -426,6 +482,28 @@ async function checkBrowser() {
     await page.locator('#loop-question-select').selectOption(await option.getAttribute('value'));
     assert.equal(await page.locator('#loop-question-area').getAttribute('data-question-id'), id);
   }
+  async function assessmentForm(page, defaults = false) {
+    const form = page.locator('details[data-assessment]');
+    assert.equal(await form.count(), 1, 'A pergunta AP precisa de uma ficha própria');
+    if (!await form.evaluate(element => element.open)) await form.locator(':scope > summary').click();
+    assert.deepEqual(await form.locator('[data-assessment-field="quality"] option').evaluateAll(options => options.map(option => option.value)), assessmentQualities);
+    assert.deepEqual(await form.locator('[data-assessment-field="support"] option').evaluateAll(options => options.map(option => option.value).filter(Boolean)), assessmentSupports);
+    assert.deepEqual(await form.locator('[data-assessment-basis]').evaluateAll(elements => elements.map(element => element.dataset.assessmentBasis)), assessmentBases);
+    assert.deepEqual(await form.locator('[data-assessment-action]').evaluateAll(elements => elements.map(element => element.dataset.assessmentAction)), assessmentActions);
+    assert.equal(await form.locator('[data-assessment-history]').count(), 1);
+    if (defaults) {
+      for (const field of ['date', 'support', 'said', 'demonstrated', 'missing', 'nextTest']) assert.equal(await form.locator(`[data-assessment-field="${field}"]`).inputValue(), '', 'Ficha nova deve começar vazia');
+      assert.equal(await form.locator('[data-assessment-field="quality"]').inputValue(), 'nao-observado');
+      assert.equal(await form.locator('[data-assessment-basis]:checked, [data-assessment-action]:checked').count(), 0);
+    }
+    return form;
+  }
+  async function downloadRecord(page) {
+    const pending = page.waitForEvent('download');
+    await page.locator('[data-action="export-record"]').click();
+    const download = await pending;
+    return JSON.parse(await fs.readFile(await download.path(), 'utf8'));
+  }
   async function present(page, action, expectedText, capture) {
     const pending = page.waitForEvent('popup');
     await action();
@@ -445,6 +523,102 @@ async function checkBrowser() {
     if (capture) { await popup.screenshot({ path: path.join(review, capture) }); report.captures.push(capture); }
     await popup.close();
   }
+  async function checkAssessmentRecords(page) {
+    const pageData = pages.find(item => item.pageId === 'dia-10');
+    const session = pageData.sessions.find(item => item.id === 'apresentacao');
+    const key = `${namespace}:${pageData.pageId}:${session.id}`;
+    const legacy = {
+      schemaVersion: 1, pageId: pageData.pageId, sessionId: session.id, updatedAt: '2026-11-08T12:00:00.000Z',
+      episodio: 'FIXTURE_LEGADO_EPISODIO', duvida: 'FIXTURE_LEGADO_DUVIDA', ajuda: 'FIXTURE_LEGADO_AJUDA', proxima: 'FIXTURE_LEGADO_PROXIMA',
+      dimensions: Object.fromEntries(['aderencia', 'responsabilidade', 'raciocinio', 'colaboracao', 'resultado', 'aprendizado'].map(name => [name, { status: 'parcial', note: `FIXTURE_LEGADO_${name}` }])),
+      evidenceLog: [], exerciseDrafts: {},
+    };
+    await page.evaluate(({ key, value }) => localStorage.setItem(key, JSON.stringify(value)), { key, value: legacy });
+    const record = async () => page.evaluate(key => JSON.parse(localStorage.getItem(key)), key);
+    async function select(code) {
+      await page.locator(`[data-session-id="${session.id}"]`).click();
+      await selectQuestion(page, presentationIds[code]);
+    }
+    await visit(page, pageData.pageId); await select('T6');
+    assert.equal(await page.locator('[data-record-field="episodio"]').inputValue(), legacy.episodio);
+    for (const question of session.questions) {
+      await selectQuestion(page, question.id);
+      assert.equal(await page.locator('details[data-evaluator-guide]').count(), 1);
+      assert.equal(await page.locator('details[data-assessment]').count(), 1);
+      assert.equal(await page.locator('details[data-assessment]').evaluate(element => element.open), false);
+    }
+    await selectQuestion(page, 'AP-RES-01');
+    assert.equal(await page.locator('[data-assessment], [data-evaluator-guide]').count(), 0, 'Reservas sem guia não recebem ficha');
+    await selectQuestion(page, presentationIds.T6);
+    let form = await assessmentForm(page, true);
+    const xss = 'FIXTURE_FICHA_T6 <img src=x onerror="window.__assessmentXss=true">';
+    const firstDraft = { date: '2026-11-08', quality: 'excelente', support: 'apos-aprofundamento', said: xss, demonstrated: 'FIXTURE_MECANISMO_DEMONSTRADO', missing: 'FIXTURE_FALTA_DE_EVIDENCIA', bases: ['fato-projeto', 'a-confirmar'], actions: ['confirmar-evidencia', 'variar-cenario'], nextTest: 'FIXTURE_PROXIMO_TESTE' };
+    for (const field of ['date', 'said', 'demonstrated', 'missing', 'nextTest']) await form.locator(`[data-assessment-field="${field}"]`).fill(firstDraft[field]);
+    await form.locator('[data-assessment-field="quality"]').selectOption(firstDraft.quality);
+    await form.locator('[data-assessment-field="support"]').selectOption(firstDraft.support);
+    for (const value of firstDraft.bases) await form.locator(`[data-assessment-basis="${value}"]`).check();
+    for (const value of firstDraft.actions) await form.locator(`[data-assessment-action="${value}"]`).check();
+    let saved = await record();
+    assert.deepEqual(saved.questionAssessments[presentationIds.T6].draft, firstDraft, 'Autosave deve preservar qualidade e apoio independentes');
+    assert.equal(saved.questionAssessments[presentationIds.T6].observations.length, 0, 'Digitar não pode acrescentar uma observação ao histórico');
+    await form.locator('[data-action="save-assessment"]').click();
+    saved = await record();
+    const first = saved.questionAssessments[presentationIds.T6].observations[0];
+    assert.equal(saved.questionAssessments[presentationIds.T6].observations.length, 1);
+    assert.deepEqual(without(first, ['savedAt']), firstDraft);
+    assert.ok(typeof first.savedAt === 'string' && /T/.test(first.savedAt) && Number.isFinite(Date.parse(first.savedAt)), 'Observações precisam de instante ISO explícito');
+    await form.locator('[data-assessment-field="said"]').fill('FIXTURE_SEGUNDA_RESPOSTA_T6');
+    await form.locator('[data-assessment-field="quality"]').selectOption('boa');
+    await form.locator('[data-assessment-field="support"]').selectOption('apos-explicacao');
+    await form.locator('[data-assessment-basis="fato-projeto"]').uncheck();
+    await form.locator('[data-assessment-basis="hipotese"]').check();
+    await form.locator('[data-assessment-action="confirmar-evidencia"]').uncheck();
+    await form.locator('[data-assessment-action="revisar-conceito"]').check();
+    saved = await record();
+    const secondDraft = saved.questionAssessments[presentationIds.T6].draft;
+    assert.equal(saved.questionAssessments[presentationIds.T6].observations.length, 1);
+    assert.deepEqual(saved.questionAssessments[presentationIds.T6].observations[0], first, 'Modificar texto, bases e ações não deve modificar o primeiro snapshot');
+    await form.locator('[data-action="save-assessment"]').click();
+    saved = await record();
+    assert.equal(saved.questionAssessments[presentationIds.T6].observations.length, 2);
+    assert.deepEqual(saved.questionAssessments[presentationIds.T6].observations[0], first);
+    assert.deepEqual(without(saved.questionAssessments[presentationIds.T6].observations[1], ['savedAt']), secondDraft);
+    assert.equal(await page.locator('[data-assessment] img').count(), 0);
+    assert.equal(await page.evaluate(() => window.__assessmentXss), undefined, 'Rascunho e histórico devem permanecer texto inerte');
+    await selectQuestion(page, presentationIds.T7);
+    form = await assessmentForm(page, true);
+    await form.locator('[data-assessment-field="said"]').fill('FIXTURE_T7_ISOLADA');
+    await form.locator('[data-assessment-field="quality"]').selectOption('regular');
+    await page.reload(); await page.locator('#loop-question-prompt').waitFor(); await select('T7');
+    form = await assessmentForm(page);
+    assert.equal(await form.locator('[data-assessment-field="said"]').inputValue(), 'FIXTURE_T7_ISOLADA');
+    assert.equal(await form.locator('[data-assessment-field="quality"]').inputValue(), 'regular');
+    await selectQuestion(page, presentationIds.T6);
+    form = await assessmentForm(page);
+    assert.equal(await form.locator('[data-assessment-field="said"]').inputValue(), secondDraft.said);
+    assert.equal(await form.locator('[data-assessment-field="support"]').inputValue(), 'apos-explicacao');
+    assert.ok((await form.locator('[data-assessment-history]').innerText()).includes('FIXTURE_FICHA_T6'));
+    assert.ok((await form.locator('[data-assessment-history]').innerText()).includes(secondDraft.said));
+    await page.locator('[data-instructor-notes] > summary').click();
+    await page.locator('[data-evaluator-guide] > summary').click();
+    await form.screenshot({ path: path.join(review, 'avaliador-T6-historico-recarregado-1440.png') }); report.captures.push('avaliador-T6-historico-recarregado-1440.png');
+    await present(page, () => page.locator('[data-action="present-prompt"]').click(), session.questions.find(question => question.id === presentationIds.T6).prompt, 'avaliador-popup-ficha-preenchida-sem-vazamento.png');
+    const exported = await downloadRecord(page);
+    assert.equal(exported.schemaVersion, 1, 'O formato legado permanece versão1');
+    for (const field of ['pageId', 'sessionId', 'episodio', 'duvida', 'ajuda', 'proxima', 'dimensions', 'evidenceLog', 'exerciseDrafts']) assert.deepEqual(exported[field], legacy[field], 'Adicionar fichas não deve apagar o registro legado');
+    assert.equal(exported.questionAssessments[presentationIds.T6].observations.length, 2);
+    assert.equal(exported.questionAssessments[presentationIds.T7].observations.length, 0);
+    assert.equal(exported.questionAssessments[presentationIds.T7].draft.said, 'FIXTURE_T7_ISOLADA');
+    assert.ok(Object.keys(exported.questionAssessments).every(id => Object.values(presentationIds).includes(id)), 'Apenas perguntas com guia podem ter fichas');
+    for (const field of ['evaluationGuide', 'evaluatorGuide', 'sessions', 'questions', 'reserves', 'agenda']) assert.equal(exported[field], undefined, 'Exportação não inclui roteiro ou guias');
+    const storage = await page.evaluate(() => Object.fromEntries(Object.entries(localStorage)));
+    for (const [recordKey, value] of Object.entries(storage)) {
+      if (!recordKey.startsWith(namespace + ':') || recordKey === `${namespace}:theme` || recordKey === key) continue;
+      assert.equal(JSON.parse(value).questionAssessments, undefined, 'Edu e Dia11 não recebem o novo registro');
+    }
+    report.browser.assessments = { guides: 18, observations: 2, draftAutosave: true, explicitAppend: true, historyDeepCloned: true, reloadAndExport: true, legacySchema: 1, perQuestionIsolation: true, safeText: true };
+    report.checks.push('Ficha por APid: opções5/3/4/4, autosave separado do append explícito, dois snapshots imutáveis, reload/export, texto inerte e campos legados preservados.');
+  }
   try {
     for (const width of report.browser.widths) for (const preference of report.browser.themes) {
       const ctx = await context({ viewport: { width, height: width === 390 ? 844 : 1000 }, colorScheme: 'dark' });
@@ -460,6 +634,9 @@ async function checkBrowser() {
           await page.locator(`[data-session-id="${session.id}"]`).click();
           assert.equal(await page.locator('#loop-session-title').innerText(), session.name);
           assert.equal(await page.locator('details[open]').count(), 0);
+          const evaluator = Boolean(session.evaluationGuide);
+          assert.equal(await page.locator('details[data-evaluator-guide]').count(), evaluator ? 1 : 0);
+          assert.equal(await page.locator('details[data-assessment]').count(), evaluator ? 1 : 0);
           for (const field of await page.locator('[data-record-field], [data-dimension-field="note"]').all()) assert.equal(await field.inputValue(), '');
           for (const field of await page.locator('[data-dimension-field="status"]').all()) assert.equal(await field.inputValue(), 'nao-observado');
           await noOverflow(page);
@@ -526,6 +703,29 @@ async function checkBrowser() {
         await notes.locator(':scope > summary').click();
         assert.equal(await notes.evaluate(element => element.open), true);
         assert.ok((await notes.innerText()).includes(question.notes.objective));
+        const evaluatorGuide = presenter.locator('details[data-evaluator-guide]');
+        assert.equal(await evaluatorGuide.evaluate(element => element.open), false);
+        await evaluatorGuide.locator(':scope > summary').click();
+        const assessment = await assessmentForm(presenter, true);
+        if (code === 'T6') {
+          await assessment.locator('[data-assessment-field="date"]').fill('2026-11-08');
+          await assessment.locator('[data-assessment-field="quality"]').selectOption('boa');
+          await assessment.locator('[data-assessment-field="support"]').selectOption('espontanea');
+          await assessment.locator('[data-assessment-field="said"]').fill('FIXTURE_T6_PRIMEIRA_OBSERVACAO');
+          await assessment.locator('[data-assessment-field="demonstrated"]').fill('FIXTURE_LIMITE_DA_VERIFICACAO');
+          await assessment.locator('[data-assessment-field="missing"]').fill('FIXTURE_CRITERIO_A_CONFIRMAR');
+          await assessment.locator('[data-assessment-field="nextTest"]').fill('FIXTURE_VARIAR_O_CENARIO');
+          await assessment.locator('[data-action="save-assessment"]').click();
+          await assessment.locator('[data-assessment-field="quality"]').selectOption('excelente');
+          await assessment.locator('[data-assessment-field="support"]').selectOption('apos-aprofundamento');
+          await assessment.locator('[data-assessment-field="said"]').fill('FIXTURE_T6_SEGUNDA_OBSERVACAO');
+          await assessment.locator('[data-action="save-assessment"]').click();
+          assert.equal(await assessment.locator('[data-assessment-observation-index]').count(), 2);
+          for (const [element, capture] of [[evaluatorGuide, `avaliador-cola-T6-${width}-${theme}.png`], [assessment, `avaliador-ficha-T6-duas-observacoes-${width}-${theme}.png`]]) {
+            await element.screenshot({ path: path.join(review, capture) }); report.captures.push(capture);
+          }
+        }
+        await noOverflow(presenter);
         if (code === 'T6') {
           const capture = `apresentacao-T6-nota-aberta-${width}-${theme}.png`;
           await notes.scrollIntoViewIfNeeded();
@@ -538,8 +738,8 @@ async function checkBrowser() {
       }
       await presentationContext.close(); contexts.delete(presentationContext);
     }
-    report.browser.presentation = { codes: presentationSubset, widths: [390, 1440], themes: ['light', 'dark'], selections: presentationSelections, notesInitiallyClosed: true, popupOnlyPrompt: true };
-    report.checks.push('Apresentação: T6/T7/B2/B6 em 390/1440px e claro/escuro; notas e aprofundamentos começam fechados, e popup contém só a pergunta mesmo após abrir as notas.');
+    report.browser.presentation = { codes: presentationSubset, widths: [390, 1440], themes: ['light', 'dark'], selections: presentationSelections, notesInitiallyClosed: true, popupOnlyPrompt: true, guideAndAssessmentInitiallyClosed: true };
+    report.checks.push('Apresentação: T6/T7/B2/B6 em 390/1440px e claro/escuro; notas, cola e ficha começam fechadas; popup contém só a pergunta mesmo com notas, guia e ficha abertos.');
     // Exercise every evidence card, including a reserve and the original consultative flow.
     for (const pageData of pages) for (const session of pageData.sessions) {
       const exercises = [...session.questions, ...(session.reserves || [])].filter(question => question.exercise);
@@ -600,6 +800,7 @@ async function checkBrowser() {
     const download = await downloadPending;
     const exported = JSON.parse(await fs.readFile(await download.path(), 'utf8'));
     assert.equal(exported.episodio, fixture);
+    assert.equal(exported.questionAssessments, undefined, 'A sessão Edu preserva o formato legado sem fichas AP');
     assert.equal(exported.dimensions.aderencia.status, 'demonstrado');
     assert.equal(exported.pageId, pages[0].pageId); assert.equal(exported.sessionId, firstSession.id);
     for (const key of ['sessions', 'questions', 'reserves', 'agenda', 'notes', 'exercise']) assert.equal(exported[key], undefined, 'Exportação deve conter apenas o registro selecionado');
@@ -619,6 +820,8 @@ async function checkBrowser() {
     for (const key of Object.keys(storage)) assert.ok(key in protectedStorage || key.startsWith(namespace + ':'), 'Escrita fora do namespace exclusivo do treino');
     assert.ok(Object.keys(storage).some(key => key === `${namespace}:${pages[0].pageId}:${firstSession.id}`), 'O registro usa o namespace de prática pública');
     report.checks.push('Cronômetro manual, texto inerte, persistência e isolamento por rodada/dia, exportação só do registro e storage público/privado preservado.');
+    await checkAssessmentRecords(page);
+    for (const [key, value] of Object.entries(protectedStorage)) assert.equal(await page.evaluate(key => localStorage.getItem(key), key), value, 'Preencher fichas não altera namespaces privados ou do site');
     const blocked = await context();
     await blocked.addInitScript(() => Object.defineProperty(window, 'localStorage', { get() { throw new DOMException('Blocked', 'SecurityError'); } }));
     const blockedPage = await blocked.newPage(); monitor(blockedPage); await visit(blockedPage, pages[1].pageId);

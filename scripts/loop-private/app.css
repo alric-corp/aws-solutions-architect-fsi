@@ -281,6 +281,15 @@
 .loop-app .loop-dimension-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
 .loop-app .loop-dimension { display: grid; align-content: start; gap: .65rem; min-width: 0; padding: 1rem; border: 1px solid var(--border); border-radius: .3rem; background: var(--surface-subtle); }
 .loop-app .loop-dimension textarea { min-height: 5.5rem; }
+.loop-app .loop-assessment-options { min-width: 0; margin: 0; padding: 1rem; border: 1px solid var(--border); border-radius: .3rem; background: var(--surface-subtle); }
+.loop-app .loop-assessment-options legend { max-width: 100%; padding-inline: .35rem; font-weight: 650; overflow-wrap: anywhere; }
+.loop-app .loop-assessment-text,
+.loop-app .loop-assessment-history dd { white-space: pre-wrap; overflow-wrap: anywhere; }
+.loop-app .loop-assessment-observations { display: grid; gap: 1rem; padding-inline-start: 1.5rem; }
+.loop-app .loop-assessment-observations > li + li { margin-top: 0; }
+.loop-app .loop-assessment-history dl { min-width: 0; margin: 0; }
+.loop-app .loop-assessment-history dt { font-weight: 650; }
+.loop-app .loop-assessment-history dd { margin: .2rem 0 .85rem; }
 .loop-app .loop-status { color: var(--muted); font-size: .875rem; }
 .loop-app .loop-warning,
 .loop-app .loop-toast { min-width: 0; padding: .85rem 1rem; border: 1px solid var(--border-strong); border-left: 4px solid var(--action); border-radius: .3rem; background: var(--notice-surface); color: var(--ink); }

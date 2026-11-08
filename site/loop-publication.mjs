@@ -12,8 +12,8 @@ export const loopPageUrl = id => `/praticar/loop/${id}/index.html`;
 export const loopPublicPages = agenda.pages.map(page => ({ id: page.pageId, title: page.title, url: loopPageUrl(page.pageId) }));
 export const isLoopPublicRoute = value => loopPublicPages.some(page => page.url === `/${String(value).replace(/^\//, '')}`);
 const escape = value => String(value).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const recordKeys = new Set(['evidenceLog','exerciseDrafts','dimensions','episodio','duvida','ajuda','proxima','updatedAt','privateMarker']);
-function validatePublication(value) {
+const recordKeys = new Set(['evidenceLog','exerciseDrafts','questionAssessments','dimensions','episodio','duvida','ajuda','proxima','updatedAt','privateMarker']);
+export function validatePublication(value) {
   if (Array.isArray(value)) { value.forEach(validatePublication); return; }
   if (value && typeof value === 'object') for (const [key, child] of Object.entries(value)) {
     if (recordKeys.has(key)) throw new Error(`Dados locais não publicáveis no loop: ${key}`);

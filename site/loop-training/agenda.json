@@ -204,6 +204,24 @@
                   "Aprofunde somente onde houver lacuna; não apresente as orientações do instrutor como resposta da participante.",
                   "Ao registrar, distinga fato do projeto, explicação conceitual e proposta do que faria hoje. Não complete uma lacuna com uma prática recomendada."
                 ]
+              },
+              "evaluatorGuide": {
+                "code": "T1",
+                "expected": "A ligação entre falha da carga, sinais observados, hipóteses consideradas e conclusão; não somente uma definição de RAM.",
+                "levels": {
+                  "incompleta": "“Era memória porque a instância tinha só quatro GiB.” Trata o tamanho da instância como prova suficiente.",
+                  "regular": "Explica FreeableMemory, swap e armazenamento, mas não conecta esses sinais ao incidente real.",
+                  "boa": "Descreve as evidências observadas durante a carga, relaciona-as ao sintoma e explica como chegou à hipótese de pressão de memória.",
+                  "excelente": "Diferencia evidência de correlação, explica alternativas investigadas e reconhece o que a análise não permitia excluir. Considera outras mudanças antes de atribuir toda a melhora à RAM."
+                },
+                "nextFollowup": "Qual evidência da investigação mais fortaleceu essa conclusão? Qual outra hipótese ela enfraqueceu?",
+                "cautions": [
+                  "Conhecer nomes de métricas não substitui o diagnóstico do incidente. Interpretar recursos conforme carga, comportamento habitual, configuração e consultas.",
+                  "Não exigir valores inventados para completar a resposta nem aceitar capacidade nominal como causa comprovada."
+                ],
+                "factsToConfirm": [
+                  "A análise escrita menciona quatro GiB e métricas, mas não apresenta valores observados ou mensagens de erro. Confirmar a sequência factual e a engine."
+                ]
               }
             },
             {
@@ -243,6 +261,24 @@
                 "observations": [
                   "Aprofunde somente onde houver lacuna; não apresente as orientações do instrutor como resposta da participante.",
                   "Ao registrar, distinga fato do projeto, explicação conceitual e proposta do que faria hoje. Não complete uma lacuna com uma prática recomendada."
+                ]
+              },
+              "evaluatorGuide": {
+                "code": "T3",
+                "expected": "Restrições concretas, alternativas comparadas e custo da escolha naquele ambiente.",
+                "levels": {
+                  "incompleta": "“Escolhi DMS porque é o serviço da AWS para migração.” Não liga a escolha às restrições.",
+                  "regular": "Repete as alternativas, mas não esclarece o impedimento concreto de cada uma.",
+                  "boa": "Explica as restrições do ambiente e por que a opção escolhida podia avançar; reconhece preparação adicional e custo temporário.",
+                  "excelente": "Sustenta a comparação entre recuperar o caminho antigo e executar o novo, com informações da época, dependências, riscos e condições para reconsiderar."
+                },
+                "nextFollowup": "O que tornava o provisionamento novo executável, enquanto o ajuste da base existente continuava bloqueado?",
+                "cautions": [
+                  "Não exigir que DMS seja universalmente superior a snapshot; a decisão precisa fazer sentido naquele contexto.",
+                  "Não transformar ausência de fluxo operacional em impossibilidade técnica do serviço, nem atribuir à época uma justificativa descoberta agora."
+                ],
+                "factsToConfirm": [
+                  "Confirmar bloqueio da pipeline, escopo da negativa de acesso, disponibilidade do fluxo de snapshot e participação na decisão. A divergência DMS/snapshot entre fontes permanece aberta."
                 ]
               }
             },
@@ -285,6 +321,25 @@
                   "Aprofunde somente onde houver lacuna; não apresente as orientações do instrutor como resposta da participante.",
                   "Ao registrar, distinga fato do projeto, explicação conceitual e proposta do que faria hoje. Não complete uma lacuna com uma prática recomendada."
                 ]
+              },
+              "evaluatorGuide": {
+                "code": "T6",
+                "expected": "Método, alcance e limite da validação, com conclusões proporcionais ao que foi verificado.",
+                "levels": {
+                  "incompleta": "“A quantidade de linhas era igual, então todos os dados estavam iguais.” Confunde equivalência de contagem com conteúdo.",
+                  "regular": "Lista consultas e contagens, mas continua usando uma conclusão mais ampla que as verificações sustentam.",
+                  "boa": "Explica exatamente o que comparou, o que isso demonstrava e o que não demonstrava. Distingue volume, conteúdo e funcionamento da aplicação.",
+                  "excelente": "Sustenta critérios de aceite e limitações, explica tratamento de divergências e separa melhorias propostas hoje do procedimento realizado. Não transforma risco aceito em garantia de equivalência."
+                },
+                "nextFollowup": "Duas tabelas com a mesma quantidade de linhas poderiam ter recomendações diferentes? O que suas verificações conseguiriam detectar?",
+                "cautions": [
+                  "Não exigir “usei validação do DMS” como condição para boa avaliação; exigir sustentação do alcance do que realmente foi feito.",
+                  "Quando habilitada e aplicável, a validação do DMS compara registros correspondentes. Seu uso e conclusão neste case não estão confirmados.",
+                  "Reconhecer uma validação limitada com precisão pode ser uma resposta forte; não exige inventar uma execução perfeita."
+                ],
+                "factsToConfirm": [
+                  "A análise descreve presença de tabelas, contagens, tamanho em disco complementar e documentação. Não confirma comparação completa de valores nem validação do DMS habilitada."
+                ]
               }
             },
             {
@@ -326,6 +381,24 @@
                   "Aprofunde somente onde houver lacuna; não apresente as orientações do instrutor como resposta da participante.",
                   "Ao registrar, distinga fato do projeto, explicação conceitual e proposta do que faria hoje. Não complete uma lacuna com uma prática recomendada."
                 ]
+              },
+              "evaluatorGuide": {
+                "code": "T7",
+                "expected": "Sequência, responsabilidade, critérios de parada e tratamento dos dados durante a recuperação da troca.",
+                "levels": {
+                  "incompleta": "“Era só apontar novamente para a base antiga”, independentemente de novas gravações.",
+                  "regular": "Diz que manteria a base anterior, mas não explica quando ela ainda representaria o estado correto.",
+                  "boa": "Distingue falha antes e depois de novas escritas. Explica o procedimento real, quem decidia e quais pontos não consegue confirmar.",
+                  "excelente": "Conecta sequência da troca, consumidores, dados novos, critérios de parada e validação da recuperação. Justifica limites da estratégia ou reconhece a lacuna sem encobri-la."
+                },
+                "nextFollowup": "A nova base já recebeu dados que não existem na antiga. O que muda no seu plano?",
+                "cautions": [
+                  "Após novas transações, redirecionar tráfego não resolve sozinho a diferença entre bases.",
+                  "Se o plano histórico não foi recuperado, avaliar separadamente compreensão conceitual e evidência pendente. Não inventar replicação reversa, feature toggle ou dupla escrita."
+                ],
+                "factsToConfirm": [
+                  "A análise atribui preparação à participante e troca aos colegas; fontes do repositório ainda divergem sobre autoria. Confirmar quem executou e o plano de rollback, sem eleger uma versão."
+                ]
               }
             },
             {
@@ -366,6 +439,24 @@
                 "observations": [
                   "Aprofunde somente onde houver lacuna; não apresente as orientações do instrutor como resposta da participante.",
                   "Ao registrar, distinga fato do projeto, explicação conceitual e proposta do que faria hoje. Não complete uma lacuna com uma prática recomendada."
+                ]
+              },
+              "evaluatorGuide": {
+                "code": "B1",
+                "expected": "Distinção entre campanha bloqueada, consultas preservadas e risco de renovação para o público correto.",
+                "levels": {
+                  "incompleta": "Diz que todo o aplicativo ficou fora ou que quatro milhões de clientes foram afetados pelo incidente.",
+                  "regular": "Explica que a carga parou, mas mistura público planejado, impacto ocorrido e risco futuro.",
+                  "boa": "Delimita o que estava bloqueado, o que continuava funcionando e quem dependia da publicação.",
+                  "excelente": "Explica a consequência para a experiência, separa impacto observado de possibilidade futura e mostra como isso orientou urgência e comunicação."
+                },
+                "nextFollowup": "Os 97 mil eram clientes já afetados no aplicativo ou o público de uma campanha cuja publicação estava bloqueada?",
+                "cautions": [
+                  "Não minimizar a jornada comprometida porque o aplicativo abria nem transformar interrupção parcial em indisponibilidade total.",
+                  "Separar os quatro milhões de expansão futura do público da carga interrompida; não presumir perda de receita."
+                ],
+                "factsToConfirm": [
+                  "Confirmar significado dos 97 mil, publicação/notificação, impacto realmente observado e eventual fallback. A análise não é auditoria desses números."
                 ]
               }
             },
@@ -409,6 +500,24 @@
                   "Aprofunde somente onde houver lacuna; não apresente as orientações do instrutor como resposta da participante.",
                   "Ao registrar, distinga fato do projeto, explicação conceitual e proposta do que faria hoje. Não complete uma lacuna com uma prática recomendada."
                 ]
+              },
+              "evaluatorGuide": {
+                "code": "B6",
+                "expected": "Influência, negociação e custo da priorização, com ações para construir a decisão.",
+                "levels": {
+                  "incompleta": "“Eu mandei corrigir” ou “a liderança percebeu que eu estava certa”. Não mostra construção do acordo.",
+                  "regular": "“Mostrei os problemas e consegui dois meses.” Relata o acordo sem demonstrar a negociação.",
+                  "boa": "Explica prioridades concorrentes, argumentos apresentados, sua atuação e o acordo que permitiu avançar.",
+                  "excelente": "Mostra como incorporou preocupações legítimas, negociou escopo ou alocação e acompanhou compromissos, relacionando manutenção à capacidade de entregar valor."
+                },
+                "nextFollowup": "O que a liderança estava tentando proteger ao priorizar funcionalidades? Como sua proposta considerou essa preocupação?",
+                "cautions": [
+                  "Não exigir briga. Divergência de prioridades pode ser suficiente; o ponto é como a participante atuou.",
+                  "Não converter resultado coletivo em autoria exclusiva nem criar resistência entre equipes para adaptar a história à pergunta."
+                ],
+                "factsToConfirm": [
+                  "O insumo menciona um mês solicitado, dois aprovados e alocação de dois desenvolvedores em manutenção e um em operação. Confirmar acordo, concessões, interlocutores e acompanhamento."
+                ]
               }
             },
             {
@@ -449,6 +558,24 @@
                   "Aprofunde somente onde houver lacuna; não apresente as orientações do instrutor como resposta da participante.",
                   "Ao registrar, distinga fato do projeto, explicação conceitual e proposta do que faria hoje. Não complete uma lacuna com uma prática recomendada."
                 ]
+              },
+              "evaluatorGuide": {
+                "code": "T2",
+                "expected": "Critério de dimensionamento, alcance do que foi testado e distinção entre recuperar a carga atual e preparar crescimento.",
+                "levels": {
+                  "incompleta": "“Dobrei a memória, então suportaria quatro milhões de clientes.” Usa a alteração de capacidade como prova da projeção.",
+                  "regular": "Diz que precisava de margem, mas não explica carga, concorrência ou comportamento considerados.",
+                  "boa": "Explica o critério efetivamente utilizado e separa público elegível, volume processado e acessos simultâneos. Delimita o que foi validado.",
+                  "excelente": "Distingue recuperação imediata e capacidade futura, reconhece incerteza da projeção e explica quais sinais ou testes orientariam o próximo ajuste."
+                },
+                "nextFollowup": "O que vocês conseguiram demonstrar com essa configuração e o que ainda era uma expectativa?",
+                "cautions": [
+                  "Não cobrar um teste de carga que não ocorreu; cobrar precisão sobre sua existência ou ausência.",
+                  "Uma escolha pragmática pode ser bem explicada sem virar benchmark. Se a capacidade alegada não puder ser sustentada, registrar a pendência."
+                ],
+                "factsToConfirm": [
+                  "O insumo cita oito GiB no destino e expansão para quatro milhões, mas não fornece cálculo ou teste que comprove suporte a essa escala."
+                ]
               }
             },
             {
@@ -474,7 +601,7 @@
                 "evidence": [
                   "Identifica modo de migração e por que ele correspondia à presença ou ausência de alterações na origem.",
                   "Distingue objetos preparados separadamente, monitoramento da transferência e validação posterior.",
-                    "Delimita quem preparou objetos, migrou dados, validou e executou a troca, sem resolver divergências de autoria por suposição."
+                  "Delimita quem preparou objetos, migrou dados, validou e executou a troca, sem resolver divergências de autoria por suposição."
                 ],
                 "limits": [
                   "Pergunta autoral de ensaio; não confirma fatos do projeto nem antecipa uma questão real da AWS.",
@@ -488,6 +615,24 @@
                 "observations": [
                   "Aprofunde somente onde houver lacuna; não apresente as orientações do instrutor como resposta da participante.",
                   "Ao registrar, distinga fato do projeto, explicação conceitual e proposta do que faria hoje. Não complete uma lacuna com uma prática recomendada."
+                ]
+              },
+              "evaluatorGuide": {
+                "code": "T4",
+                "expected": "O funcionamento da execução real: configuração relevante, escopo, preparação e acompanhamento.",
+                "levels": {
+                  "incompleta": "“O DMS levou tudo automaticamente.” Não distingue dados, estrutura e configuração.",
+                  "regular": "Explica origem e destino, mas não delimita escopo, acompanhamento ou configuração relevante.",
+                  "boa": "Explica modo utilizado, tabelas incluídas, preparação do destino e acompanhamento, somente nos pontos que consegue confirmar; marca o detalhe indispensável ainda não demonstrado.",
+                  "excelente": "Esclarece responsabilidades por objetos e configurações, tratamento de falhas e impacto sobre a origem que continuava atendendo consultas."
+                },
+                "nextFollowup": "O que vocês precisaram preparar fora do DMS e como verificaram que nenhuma tabela ficou pendente?",
+                "cautions": [
+                  "A replicação básica do DMS não cria automaticamente todos os objetos, como índices secundários, chaves estrangeiras e usuários.",
+                  "Admitir que não lembra o modo é honesto, mas não demonstra esse detalhe. Não aceitar “copiou tudo” sem delimitar o significado."
+                ],
+                "factsToConfirm": [
+                  "A análise relata preparação com ADs/DBAs e transferência de tabelas, sem informar modo de migração. Confirmar configuração, objetos e responsabilidades."
                 ]
               }
             },
@@ -522,11 +667,29 @@
                 ],
                 "clarifications": [
                   "Onde surge no insumo: ligação entre slides 3 e 6. A associação ao slide foi informada pelo proprietário e não conferida no PowerPoint.",
-                    "O que preparar: a lista de escritores, a sequência real entre validação e execução da troca e seus responsáveis."
+                  "O que preparar: a lista de escritores, a sequência real entre validação e execução da troca e seus responsáveis."
                 ],
                 "observations": [
                   "Aprofunde somente onde houver lacuna; não apresente as orientações do instrutor como resposta da participante.",
                   "Ao registrar, distinga fato do projeto, explicação conceitual e proposta do que faria hoje. Não complete uma lacuna com uma prática recomendada."
+                ]
+              },
+              "evaluatorGuide": {
+                "code": "T5",
+                "expected": "Fontes de escrita e tratamento das alterações entre copiar, validar e trocar.",
+                "levels": {
+                  "incompleta": "Assume que nenhuma escrita existia apenas porque a carga principal estava parada.",
+                  "regular": "Reconhece possíveis outros processos, mas não sabe se foram verificados.",
+                  "boa": "Identifica os processos relevantes e explica quais foram suspensos, mantidos ou tratados de outra forma.",
+                  "excelente": "Explica a janela entre cópia, validação e troca, incluindo como verificaram a atualidade do destino ou qual risco permaneceu."
+                },
+                "nextFollowup": "Se uma recomendação expirasse depois da cópia e antes da troca, o que aconteceria?",
+                "cautions": [
+                  "Se não souber o que ocorreu, marcar comportamento da origem a confirmar.",
+                  "Uma solução hipotética para lidar com mudanças não fecha a lacuna histórica. Ausência da carga principal não prova ausência de qualquer escritor."
+                ],
+                "factsToConfirm": [
+                  "O insumo descreve novas recomendações suspensas e processo automático de expiração; não esclarece o comportamento da expiração durante a migração."
                 ]
               }
             },
@@ -567,6 +730,24 @@
                 "observations": [
                   "Aprofunde somente onde houver lacuna; não apresente as orientações do instrutor como resposta da participante.",
                   "Ao registrar, distinga fato do projeto, explicação conceitual e proposta do que faria hoje. Não complete uma lacuna com uma prática recomendada."
+                ]
+              },
+              "evaluatorGuide": {
+                "code": "T8",
+                "expected": "Fronteira da operação, identificação do processamento e recuperação do estado após interrupção.",
+                "levels": {
+                  "incompleta": "“Como o banco é relacional, basta rodar novamente.” Presume repetição segura pelo tipo do banco.",
+                  "regular": "Usa “transação” ou “idempotência”, mas não explica o mecanismo da carga.",
+                  "boa": "Explica lotes ou transação única, como identificavam o processado e o comportamento da reexecução. Delimita o que desconhece.",
+                  "excelente": "Sustenta uma variação de interrupção no meio, repetição ou execuções simultâneas, relacionando estado persistido, regras de publicação e prevenção de efeitos repetidos."
+                },
+                "nextFollowup": "A carga processou parte dos dados e perdeu a confirmação. Como saber o que repetir?",
+                "cautions": [
+                  "Repetição segura depende do contrato e dos mecanismos; uma resposta perdida pode deixar o resultado desconhecido para o chamador.",
+                  "Não presumir implementação de idempotência ou execução em transação única. Uma explicação conceitual não substitui confirmar o comportamento histórico."
+                ],
+                "factsToConfirm": [
+                  "O comportamento de carga parcial, reexecução e concorrência não está detalhado no insumo. Recuperar com responsáveis, sem transportar a variante fictícia de outro simulado."
                 ]
               }
             },
@@ -609,6 +790,24 @@
                   "Aprofunde somente onde houver lacuna; não apresente as orientações do instrutor como resposta da participante.",
                   "Ao registrar, distinga fato do projeto, explicação conceitual e proposta do que faria hoje. Não complete uma lacuna com uma prática recomendada."
                 ]
+              },
+              "evaluatorGuide": {
+                "code": "T9",
+                "expected": "Relação entre sinal, comportamento esperado e ação após o alarme.",
+                "levels": {
+                  "incompleta": "“Coloquei CloudWatch, então não aconteceria novamente.” Confunde alarme com garantia de prevenção.",
+                  "regular": "Repete limites configurados, mas não explica sua escolha ou o que acontecia depois do alerta.",
+                  "boa": "Explica o critério realmente utilizado, quem recebia o alerta e qual investigação ou ação deveria seguir.",
+                  "excelente": "Discute tempo para agir, alertas tardios ou desnecessários, comportamento observado e revisão dos limites, sem prometer prevenção garantida."
+                },
+                "nextFollowup": "Uma carga poderia falhar antes de completar a janela do alarme? Como vocês avaliariam isso?",
+                "cautions": [
+                  "Não usar um número universal como gabarito; interpretar limites e janelas conforme carga e comportamento habitual.",
+                  "Distinguir regra criada, notificação testada e resposta operacional observada. Nenhuma delas implica automaticamente as demais."
+                ],
+                "factsToConfirm": [
+                  "Confirmar origem e justificativa dos limites de memória e disco, responsáveis, procedimentos e evidência de acionamento."
+                ]
               }
             },
             {
@@ -648,6 +847,24 @@
                 "observations": [
                   "Aprofunde somente onde houver lacuna; não apresente as orientações do instrutor como resposta da participante.",
                   "Ao registrar, distinga fato do projeto, explicação conceitual e proposta do que faria hoje. Não complete uma lacuna com uma prática recomendada."
+                ]
+              },
+              "evaluatorGuide": {
+                "code": "T10",
+                "expected": "Controles concretos, finalidade dos acessos e limites de responsabilidade, sem divulgação de segredos.",
+                "levels": {
+                  "incompleta": "“Era seguro porque estava na AWS” ou “Break Glass é sempre errado”. Substitui controles por rótulos.",
+                  "regular": "Cita política e mínimo privilégio, mas não descreve como se aplicavam ao caso.",
+                  "boa": "Explica finalidade, escopo, aprovação e duração dos acessos utilizados, sem expor segredos.",
+                  "excelente": "Relaciona controles ao risco da mudança, esclarece responsabilidades e distingue restrição institucional de impossibilidade técnica. Reconhece o que não verificou pessoalmente."
+                },
+                "nextFollowup": "O que você podia fazer com esse acesso temporário e o que continuava impedida de fazer?",
+                "cautions": [
+                  "O nome break glass não define universalmente escopo ou adequação; descrever o procedimento específico.",
+                  "Precisão não autoriza divulgar credenciais ou dados restritos. Não presumir que o destino herdava os controles da origem."
+                ],
+                "factsToConfirm": [
+                  "A análise relata exceção emergencial negada e acesso de consulta de uma semana limitado à base. Confirmar escopo, aprovação, revogação e controles, sem ampliar a análise da época."
                 ]
               }
             },
@@ -689,6 +906,24 @@
                   "Aprofunde somente onde houver lacuna; não apresente as orientações do instrutor como resposta da participante.",
                   "Ao registrar, distinga fato do projeto, explicação conceitual e proposta do que faria hoje. Não complete uma lacuna com uma prática recomendada."
                 ]
+              },
+              "evaluatorGuide": {
+                "code": "B2",
+                "expected": "Definição, origem, período e alcance da conversão, separando valor histórico da intervenção.",
+                "levels": {
+                  "incompleta": "Atribui os 9,3% à migração ou calcula receita recuperada sem fundamento.",
+                  "regular": "Repete o percentual, mas não sabe o que foi contado ou comparado.",
+                  "boa": "Explica indicador e recorte, separando relevância histórica da jornada de resultado da recuperação.",
+                  "excelente": "Delimita comparabilidade e atribuição: o que o dado permite concluir e o que não permite. Não transforma associação em causalidade comprovada."
+                },
+                "nextFollowup": "Essa métrica demonstra o valor da jornada ou o resultado da sua intervenção?",
+                "cautions": [
+                  "A definição precisa ser confirmada. Não premiar uma explicação precisa, mas sem fundamento, nem pedir valores plausíveis inventados.",
+                  "Distinguir aumento relativo de pontos percentuais; não atribuir conversão histórica ao DMS ou à recuperação."
+                ],
+                "factsToConfirm": [
+                  "O insumo situa o indicador no primeiro semestre de 2024, comparando jornada individual e padrão. Denominador, base, comparabilidade e tipo de variação continuam a confirmar."
+                ]
               }
             },
             {
@@ -727,6 +962,24 @@
                 "observations": [
                   "Aprofunde somente onde houver lacuna; não apresente as orientações do instrutor como resposta da participante.",
                   "Ao registrar, distinga fato do projeto, explicação conceitual e proposta do que faria hoje. Não complete uma lacuna com uma prática recomendada."
+                ]
+              },
+              "evaluatorGuide": {
+                "code": "B3",
+                "expected": "Prioridade orientada ao negócio e relação entre prazo, consequência e validação.",
+                "levels": {
+                  "incompleta": "Justifica o prazo somente pelas próprias férias.",
+                  "regular": "Diz que era urgente sem explicar o evento ou consequência que o tornava urgente.",
+                  "boa": "Relaciona campanha, vencimentos, validação e prazo, explicando de quem obteve as informações.",
+                  "excelente": "Explica dependências críticas, acompanhamento do risco de atraso e decisões necessárias se o prazo deixasse de ser viável."
+                },
+                "nextFollowup": "Se a preparação do destino atrasasse três dias, qual decisão precisaria ser reavaliada?",
+                "cautions": [
+                  "Não exigir justificativa defensiva para férias: o foco é necessidade do negócio e continuidade.",
+                  "Não inventar datas precisas; diferenciar objetivo de recuperação e duração efetivamente observada."
+                ],
+                "factsToConfirm": [
+                  "A análise relaciona vencimentos estimados em duas semanas com meta de recuperação em uma e margem de validação. Confirmar fonte, prioridade, linha do tempo e caminho crítico."
                 ]
               }
             },
@@ -768,6 +1021,24 @@
                   "Aprofunde somente onde houver lacuna; não apresente as orientações do instrutor como resposta da participante.",
                   "Ao registrar, distinga fato do projeto, explicação conceitual e proposta do que faria hoje. Não complete uma lacuna com uma prática recomendada."
                 ]
+              },
+              "evaluatorGuide": {
+                "code": "B4",
+                "expected": "Comparação entre custo, tempo, risco e viabilidade no caminho autorizado.",
+                "levels": {
+                  "incompleta": "“O custo não importava porque era urgente.” Ignora a restrição e sua responsabilidade.",
+                  "regular": "Reconhece custo adicional, mas não explica benefício ou alternativa comparada.",
+                  "boa": "Relaciona gasto temporário à recuperação pelo caminho autorizado e explica o nível de análise realizado, quantitativo ou qualitativo.",
+                  "excelente": "Distingue custo temporário e recorrente, explicita responsabilidades e condições de encerramento, sem inventar retorno financeiro ou economia não medida."
+                },
+                "nextFollowup": "Que condição faria esse caminho deixar de ser aceitável, mesmo sendo executável?",
+                "cautions": [
+                  "Não exigir ROI inventado para validar uma avaliação qualitativa bem delimitada.",
+                  "Não usar a urgência como autorização genérica para ignorar custo, aprovação ou controles."
+                ],
+                "factsToConfirm": [
+                  "Confirmar preparação adicional, coexistência de bases/recursos, aprovação e responsáveis pelo encerramento. O insumo não fornece orçamento auditado."
+                ]
               }
             },
             {
@@ -792,7 +1063,7 @@
                 "objective": "Diferenciar envio de documentação de transferência de capacidade para executar e decidir.",
                 "evidence": [
                   "Explica preparação, ensaio, responsáveis e condições para interromper ou pedir ajuda.",
-                    "Identifica quem preparou, validou e executou a troca segundo os fatos confirmados; não atribui a si o trabalho de colegas nem escolhe uma versão ainda pendente.",
+                  "Identifica quem preparou, validou e executou a troca segundo os fatos confirmados; não atribui a si o trabalho de colegas nem escolhe uma versão ainda pendente.",
                   "Identifica como o resultado foi confirmado depois ou reconhece o que ainda precisa ser recuperado."
                 ],
                 "limits": [
@@ -807,6 +1078,24 @@
                 "observations": [
                   "Aprofunde somente onde houver lacuna; não apresente as orientações do instrutor como resposta da participante.",
                   "Ao registrar, distinga fato do projeto, explicação conceitual e proposta do que faria hoje. Não complete uma lacuna com uma prática recomendada."
+                ]
+              },
+              "evaluatorGuide": {
+                "code": "B5",
+                "expected": "Transferência de capacidade para executar e decidir, com autoria e acompanhamento claros.",
+                "levels": {
+                  "incompleta": "Reivindica toda a execução sem sustentação ou não consegue explicar quem deu continuidade. Uma nova informação deve ter origem registrada, não ser descartada automaticamente.",
+                  "regular": "“Deixei um documento e fiz uma reunião.” Lista atividades sem demonstrar prontidão.",
+                  "boa": "Explica demonstração, verificação de entendimento, responsável pela execução e separação de autoria conforme os fatos confirmados.",
+                  "excelente": "Mostra como identificou dúvidas ou lacunas de prontidão, como foram tratadas e como recebeu confirmação do resultado, delimitando o que acompanhou diretamente."
+                },
+                "nextFollowup": "O que o colega fez ou explicou que lhe permitiu concluir que estava preparado?",
+                "cautions": [
+                  "Não exigir crise inventada; uma dúvida esclarecida ou procedimento ensaiado já ajuda a demonstrar transferência.",
+                  "A análise relata execução final por colegas, mas a divergência de autoria no repositório permanece pendente. Não impor essa versão como resposta obrigatória."
+                ],
+                "factsToConfirm": [
+                  "Confirmar documentação, demonstração em homologação, explicação de volta, responsáveis e quem efetivamente realizou e validou a troca."
                 ]
               }
             },
@@ -848,6 +1137,24 @@
                   "Aprofunde somente onde houver lacuna; não apresente as orientações do instrutor como resposta da participante.",
                   "Ao registrar, distinga fato do projeto, explicação conceitual e proposta do que faria hoje. Não complete uma lacuna com uma prática recomendada."
                 ]
+              },
+              "evaluatorGuide": {
+                "code": "B7",
+                "expected": "Definição, comparação, atribuição e limites dos resultados do ciclo amplo de manutenção.",
+                "levels": {
+                  "incompleta": "Atribui todos os ganhos ao DMS ou à própria atuação isolada.",
+                  "regular": "Repete percentuais sem explicar período, escopo ou fonte.",
+                  "boa": "Explica o que foi comparado, origem dos dados e atividades que contribuíram. Distingue resultado coletivo e contribuição individual.",
+                  "excelente": "Discute comparabilidade dos períodos, mudanças de volume ou escopo e limites de causalidade. Sustenta o resultado sem exagerar precisão."
+                },
+                "nextFollowup": "O que entrou nessa contagem de incidentes e quais custos estavam dentro do recorte?",
+                "cautions": [
+                  "Se não recuperar a base, marcar percentual a confirmar; não completar de memória com valores plausíveis.",
+                  "Os resultados são atribuídos no insumo ao ciclo mais amplo de manutenção, não somente à migração; divulgação também depende de permissão."
+                ],
+                "factsToConfirm": [
+                  "Confirmar fórmula, período, escopo e fonte de 45% menos incidentes e 30% menos custo, além de outras iniciativas e contribuição individual."
+                ]
               }
             },
             {
@@ -888,6 +1195,24 @@
                 "observations": [
                   "Aprofunde somente onde houver lacuna; não apresente as orientações do instrutor como resposta da participante.",
                   "Ao registrar, distinga fato do projeto, explicação conceitual e proposta do que faria hoje. Não complete uma lacuna com uma prática recomendada."
+                ]
+              },
+              "evaluatorGuide": {
+                "code": "B8",
+                "expected": "Mecanismos utilizados, responsáveis e acompanhamento, com evidência de adoção quando disponível.",
+                "levels": {
+                  "incompleta": "“Depois disso nunca mais aconteceria.” Promete ausência de recorrência.",
+                  "regular": "Lista alarmes, dashboard e revisão mensal sem explicar quem usa ou como isso muda a operação.",
+                  "boa": "Explica responsáveis, procedimento de resposta e rotina de revisão, separando ações implantadas de propostas.",
+                  "excelente": "Apresenta evidência de uso ou evolução posterior, reconhece riscos remanescentes e mostra como a equipe continuaria ajustando os mecanismos."
+                },
+                "nextFollowup": "Qual exemplo posterior mostra que o time passou a agir ou mudar a plataforma de outra forma?",
+                "cautions": [
+                  "Sem exemplo posterior, pode haver mecanismo bem definido; adoção e eficácia posterior continuam não demonstradas.",
+                  "Criar ferramenta não comprova uso. Separar melhoria após férias, manutenção posterior e revisão apenas proposta; não garantir prevenção."
+                ],
+                "factsToConfirm": [
+                  "Confirmar cronologia, responsáveis e uso dos alarmes e painel. O insumo separa observabilidade após férias, manutenção na primeira release de 2025 e revisão mensal proposta."
                 ]
               }
             }
@@ -1447,7 +1772,132 @@
             }
           ],
           "candidateQuestion": "Que parte da decisão ainda precisa de evidência para ficar suficientemente clara para vocês?",
-          "notesMarkdown": "## Perguntas, não respostas confirmadas\n\nTreine a recuperação da jornada de recomendações de investimentos usando somente fatos que a participante possa sustentar. As perguntas de negócio, arquitetura, migração, segurança e liderança foram propostas neste pedido. Não constituem descrição confirmada do projeto nem perguntas reais da AWS.\n\n## Pendências factuais obrigatórias\n\n- **DMS/snapshot e autoria:** leadership-principles/stories/star-06-emergency-db-migration.md:7 registra que a apresentação descreve DMS e troca por colegas, enquanto STAR-06 descreve snapshot e troca pela candidata. O arquivo não resolve a divergência. Não escolher a versão verdadeira.\n- **Rollback após novas escritas:** STAR-06:165–167 fala em voltar ao endpoint anterior. A revisão Cleber (interview/simulations/05-mentoria-transacoes/candidato.md, seção de migração) pede esclarecer os dados gravados apenas no destino. Redirecionar tráfego não prova reconciliação.\n- **Validação:** termos como integridade, contagens ou tamanho não documentam equivalência por chave/valores. Confirmar método, amostragem, critérios e aceite. Uso de DMS não demonstra recurso de validação habilitado/concluído.\n- **Snapshot e perda zero:** confirmar todos os escritores e a janela entre cópia e troca. Ausência de escrita contínua não prova ausência de qualquer delta.\n- **Encerramento da contingência:** confirmar processos e ciclos críticos cobertos e autoridade do aceite. Não deduzir suficiência só pelo prazo de observação.\n- **Segurança:** confirmar uso, solicitação e autorização de permissões/break glass. Não transformar uma pergunta em confirmação de uso ou de recusa.\n\nNão usar o cenário fictício do simulado06 de troubleshooting para completar o histórico da STAR-06. STAR-03 trata migração de contrato/identificador, outra história. Sugestões da conversa com Cleber não são automaticamente análises realizadas na época.\n\n## Feedback\n\nRegistrar o que o ouvinte entendeu: problema, responsabilidade, decisão, ações, resultado/evidência e dúvida. Priorizar até duas práticas. Não fornecer nota L5/L6 nem probabilidade de contratação.\n\n## Ampliação a partir da análise escrita da apresentação\n\nEsta ampliação usa somente a análise fornecida pelo proprietário. **Os dez slides e a fala original não foram consultados nesta revisão.** A numeração abaixo é a do PowerPoint indicada no insumo; a fala foi descrita como tendo um Slide 4 repetido. Perguntas autorais, não previsão de perguntas de entrevistadores. Referências técnicas explicam limites gerais; não verificam o histórico do projeto.\n\n## Seis prioridades para um ensaio\n\nNão percorrer todo o banco em quinze minutos. As seis prioridades aparecem primeiro no seletor. Comece por uma pergunta e aprofunde somente onde houver lacuna; se faltar tempo, continue em outro ensaio sem retirar o feedback.\n\n1. **T1 — Diagnóstico de memória:** qual evidência sustentou a causa, em vez de apenas citar métricas?\n2. **T3 — Viabilidade:** por que o caminho escolhido era executável quando as alternativas não eram?\n3. **T6 — Validação:** o que as verificações permitiam afirmar e o que não comprovavam?\n4. **T7 — Recuperação:** como voltar depois de novas gravações sem ignorar dados no destino?\n5. **B1 — Impacto:** quem foi realmente prejudicado? Aprofundar definição e contexto da conversão em **B2**, se necessário.\n6. **B6 — Manutenção:** quais ações obtiveram a priorização? Aprofundar medição e atribuição dos resultados em **B7**, se necessário.\n\nAs perguntas anteriores continuam nas reservas quando o tema passou a ter uma abertura mais específica. Os identificadores antigos permanecem disponíveis; não é preciso repetir todas as versões de uma pergunta.\n\n## Mapa dos aprofundamentos técnicos\n\n- **T1, slide 4:** erro, engine, métricas, consultas e carga na sustentação do diagnóstico de memória.\n- **T2, slides 2 e 5:** oito GiB, capacidade escolhida/testada e quatro milhões como projeção a confirmar.\n- **T3, slide 5:** pipeline, acessos e alternativas; limitação do ambiente não é limitação universal do serviço.\n- **T4, slide 6:** modo DMS, objetos preparados separadamente, impacto na origem e autoria.\n- **T5, slides 3 e 6:** todos os escritores e a janela entre cópia, validação e troca.\n- **T6, slide 6:** contagens, chaves/valores, amostragem, regras, critérios e aceite.\n- **T7, slide 6:** sequência da troca, conexões, autoridade, novas escritas e fim da contingência.\n- **T8, slides 3, 6 e 7:** falha parcial, lotes, repetição segura e interação com expiração.\n- **T9, slide 8:** limites e janelas dos alarmes, padrão normal, notificação e ação.\n- **T10, slides 5 e 6:** escopo do acesso, aprovação, revogação e controles da segunda cópia.\n\n## Mapa das perguntas de negócio\n\n- **B1, slide 3:** impacto ocorrido, entrega bloqueada e risco futuro; consultas disponíveis não provam jornada completa.\n- **B2, slide 2:** definição, população, origem e período da conversão; variação relativa versus pontos percentuais.\n- **B3, slides 2, 3 e 7:** prazo, caminho crítico, margem e plano em caso de atraso.\n- **B4, slide 5:** custo temporário, risco de esperar, autorização e encerramento de recursos.\n- **B5, slide 6:** continuidade, ensaio, responsabilidade e confirmação após a ausência.\n- **B6, slide 9:** prioridades concorrentes, argumentos, concessões e acordo da manutenção.\n- **B7, slide 9:** definição, fórmula e escopo dos incidentes e custos; contribuição individual e trabalho coletivo.\n- **B8, slides 8 a 10:** cronologia, responsabilidades, uso dos mecanismos e observabilidade de negócio.\n\n## Revisão de precisão antes do ensaio\n\n| Expressão ou visual relatado | Pergunta de conferência | Limite da afirmação |\n| --- | --- | --- |\n| Curva de queda e recuperação na capa | Representa qual métrica e qual fonte? | Se ilustrativa, dizer isso; não apresentar como telemetria medida. |\n| Novos clientes ficaram sem recomendação | Sem nenhuma, sem personalização ou sem atualização? | Delimitar efeito observado e público, sem generalizar indisponibilidade. |\n| Dados validados | Quais critérios e qual cobertura? | Contagem e tamanho não demonstram equivalência integral. |\n| Quatro milhões considerados no dimensionamento | Qual carga foi testada? | Separar projeção, capacidade escolhida e teste executado. |\n| Jornada recuperada; controles em operação | Os controles já existiam naquele momento? | Distinguir retomada, melhorias após férias e manutenção posterior. |\n| 33 meses sem critério de revisão | Qual lacuna foi identificada? | Não converter ausência de critério em ausência de qualquer manutenção. |\n\nResolver anotações editoriais sobre break glass antes de tratá-las como posição da época. Não assumir que o nome do procedimento define permissões. Valores, datas e relações causais do insumo ainda precisam de definição, fonte e confirmação, inclusive autorização de divulgação; não são resultados auditados por este material.\n\n## Registro após cada resposta\n\nUse o registro da sessão já existente, sem nova chave de armazenamento. No campo de evidência da dimensão pertinente, identifique o tipo da afirmação e o que o ouvinte conseguiu compreender:\n\n- **Fato do projeto:** “Na época fizemos…” — quem, quando e com qual evidência?\n- **Alcance da verificação:** “A verificação demonstrava…” e “Ela não comprovava…” — qual conclusão e qual limite?\n- **Proposta atual:** “Hoje eu acrescentaria…” — melhoria, sem incorporá-la retroativamente à execução.\n\nReconstruir problema → restrições → escolha → contribuição individual → verificação → limite. Resultado observado, autoria coletiva e melhorias posteriores ficam distintos. Encerrar com até duas próximas práticas, sem nota de carreira ou previsão de aprovação.\n\n## Conferência técnica complementar\n\nFontes primárias consultadas em 08/11/2026; leitura documental, sem acesso ao ambiente, PowerPoint ou telemetria do projeto.\n\n- **Memória em RDS:** FreeableMemory exige contexto; correlacionar erro, memória, swap, configuração, consultas e efeito na aplicação antes de concluir pela classe. A documentação não diagnostica este case. https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/CHAP_Troubleshooting.html\n- **Exemplo específico PostgreSQL:** baixa memória disponível pode refletir cache; a interpretação depende da engine. Confirmar engine e versão antes de aplicar exemplos PostgreSQL ou Aurora ao histórico. https://aws.amazon.com/blogs/database/understand-memory-management-in-amazon-rds-for-postgresql-to-avoid-out-of-memory/\n- **Preparação do destino DMS:** replicação básica não cria automaticamente todos os índices secundários, chaves estrangeiras e usuários. Não confundir transferência com conversão de esquema nem supor o conteúdo dos scripts dos DBAs. https://docs.aws.amazon.com/dms/latest/userguide/CHAP_BestPractices.html\n- **Validação DMS:** quando habilitada e compatível, compara registros correspondentes e informa estados/divergências; há requisitos, limitações e consumo adicional. Uso do DMS não comprova uso ou conclusão da validação. https://docs.aws.amazon.com/dms/latest/userguide/CHAP_Validating.html\n- **Rollback após troca:** distinguir retorno sem dados novos de retorno após novas transações, que exige tratamento dos dados produzidos no destino. Não atribuir replicação reversa ou dupla escrita à experiência sem confirmação. https://docs.aws.amazon.com/prescriptive-guidance/latest/best-practices-migration-cutover/cutover-stage.html\n- **Alarmes RDS no CloudWatch:** os limites dependem de carga, classe, armazenamento e histórico; períodos e pontos de avaliação também importam. Os números do insumo são configurações a justificar, não garantias universais de reação. https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Best_Practice_Recommended_Alarms_AWS_Services.html\n"
+          "notesMarkdown": "## Perguntas, não respostas confirmadas\n\nTreine a recuperação da jornada de recomendações de investimentos usando somente fatos que a participante possa sustentar. As perguntas de negócio, arquitetura, migração, segurança e liderança foram propostas neste pedido. Não constituem descrição confirmada do projeto nem perguntas reais da AWS.\n\n## Pendências factuais obrigatórias\n\n- **DMS/snapshot e autoria:** leadership-principles/stories/star-06-emergency-db-migration.md:7 registra que a apresentação descreve DMS e troca por colegas, enquanto STAR-06 descreve snapshot e troca pela candidata. O arquivo não resolve a divergência. Não escolher a versão verdadeira.\n- **Rollback após novas escritas:** STAR-06:165–167 fala em voltar ao endpoint anterior. A revisão Cleber (interview/simulations/05-mentoria-transacoes/candidato.md, seção de migração) pede esclarecer os dados gravados apenas no destino. Redirecionar tráfego não prova reconciliação.\n- **Validação:** termos como integridade, contagens ou tamanho não documentam equivalência por chave/valores. Confirmar método, amostragem, critérios e aceite. Uso de DMS não demonstra recurso de validação habilitado/concluído.\n- **Snapshot e perda zero:** confirmar todos os escritores e a janela entre cópia e troca. Ausência de escrita contínua não prova ausência de qualquer delta.\n- **Encerramento da contingência:** confirmar processos e ciclos críticos cobertos e autoridade do aceite. Não deduzir suficiência só pelo prazo de observação.\n- **Segurança:** confirmar uso, solicitação e autorização de permissões/break glass. Não transformar uma pergunta em confirmação de uso ou de recusa.\n\nNão usar o cenário fictício do simulado06 de troubleshooting para completar o histórico da STAR-06. STAR-03 trata migração de contrato/identificador, outra história. Sugestões da conversa com Cleber não são automaticamente análises realizadas na época.\n\n## Feedback\n\nRegistrar o que o ouvinte entendeu: problema, responsabilidade, decisão, ações, resultado/evidência e dúvida. Priorizar até duas práticas. Não fornecer nota L5/L6 nem probabilidade de contratação.\n\n## Ampliação a partir da análise escrita da apresentação\n\nEsta ampliação usa somente a análise fornecida pelo proprietário. **Os dez slides e a fala original não foram consultados nesta revisão.** A numeração abaixo é a do PowerPoint indicada no insumo; a fala foi descrita como tendo um Slide 4 repetido. Perguntas autorais, não previsão de perguntas de entrevistadores. Referências técnicas explicam limites gerais; não verificam o histórico do projeto.\n\n## Seis prioridades para um ensaio\n\nNão percorrer todo o banco em quinze minutos. As seis prioridades aparecem primeiro no seletor. Comece por uma pergunta e aprofunde somente onde houver lacuna; se faltar tempo, continue em outro ensaio sem retirar o feedback.\n\n1. **T1 — Diagnóstico de memória:** qual evidência sustentou a causa, em vez de apenas citar métricas?\n2. **T3 — Viabilidade:** por que o caminho escolhido era executável quando as alternativas não eram?\n3. **T6 — Validação:** o que as verificações permitiam afirmar e o que não comprovavam?\n4. **T7 — Recuperação:** como voltar depois de novas gravações sem ignorar dados no destino?\n5. **B1 — Impacto:** quem foi realmente prejudicado? Aprofundar definição e contexto da conversão em **B2**, se necessário.\n6. **B6 — Manutenção:** quais ações obtiveram a priorização? Aprofundar medição e atribuição dos resultados em **B7**, se necessário.\n\nAs perguntas anteriores continuam nas reservas quando o tema passou a ter uma abertura mais específica. Os identificadores antigos permanecem disponíveis; não é preciso repetir todas as versões de uma pergunta.\n\n## Mapa dos aprofundamentos técnicos\n\n- **T1, slide 4:** erro, engine, métricas, consultas e carga na sustentação do diagnóstico de memória.\n- **T2, slides 2 e 5:** oito GiB, capacidade escolhida/testada e quatro milhões como projeção a confirmar.\n- **T3, slide 5:** pipeline, acessos e alternativas; limitação do ambiente não é limitação universal do serviço.\n- **T4, slide 6:** modo DMS, objetos preparados separadamente, impacto na origem e autoria.\n- **T5, slides 3 e 6:** todos os escritores e a janela entre cópia, validação e troca.\n- **T6, slide 6:** contagens, chaves/valores, amostragem, regras, critérios e aceite.\n- **T7, slide 6:** sequência da troca, conexões, autoridade, novas escritas e fim da contingência.\n- **T8, slides 3, 6 e 7:** falha parcial, lotes, repetição segura e interação com expiração.\n- **T9, slide 8:** limites e janelas dos alarmes, padrão normal, notificação e ação.\n- **T10, slides 5 e 6:** escopo do acesso, aprovação, revogação e controles da segunda cópia.\n\n## Mapa das perguntas de negócio\n\n- **B1, slide 3:** impacto ocorrido, entrega bloqueada e risco futuro; consultas disponíveis não provam jornada completa.\n- **B2, slide 2:** definição, população, origem e período da conversão; variação relativa versus pontos percentuais.\n- **B3, slides 2, 3 e 7:** prazo, caminho crítico, margem e plano em caso de atraso.\n- **B4, slide 5:** custo temporário, risco de esperar, autorização e encerramento de recursos.\n- **B5, slide 6:** continuidade, ensaio, responsabilidade e confirmação após a ausência.\n- **B6, slide 9:** prioridades concorrentes, argumentos, concessões e acordo da manutenção.\n- **B7, slide 9:** definição, fórmula e escopo dos incidentes e custos; contribuição individual e trabalho coletivo.\n- **B8, slides 8 a 10:** cronologia, responsabilidades, uso dos mecanismos e observabilidade de negócio.\n\n## Revisão de precisão antes do ensaio\n\n| Expressão ou visual relatado | Pergunta de conferência | Limite da afirmação |\n| --- | --- | --- |\n| Curva de queda e recuperação na capa | Representa qual métrica e qual fonte? | Se ilustrativa, dizer isso; não apresentar como telemetria medida. |\n| Novos clientes ficaram sem recomendação | Sem nenhuma, sem personalização ou sem atualização? | Delimitar efeito observado e público, sem generalizar indisponibilidade. |\n| Dados validados | Quais critérios e qual cobertura? | Contagem e tamanho não demonstram equivalência integral. |\n| Quatro milhões considerados no dimensionamento | Qual carga foi testada? | Separar projeção, capacidade escolhida e teste executado. |\n| Jornada recuperada; controles em operação | Os controles já existiam naquele momento? | Distinguir retomada, melhorias após férias e manutenção posterior. |\n| 33 meses sem critério de revisão | Qual lacuna foi identificada? | Não converter ausência de critério em ausência de qualquer manutenção. |\n\nResolver anotações editoriais sobre break glass antes de tratá-las como posição da época. Não assumir que o nome do procedimento define permissões. Valores, datas e relações causais do insumo ainda precisam de definição, fonte e confirmação, inclusive autorização de divulgação; não são resultados auditados por este material.\n\n## Registro após cada resposta\n\nUse o registro da sessão já existente, sem nova chave de armazenamento. No campo de evidência da dimensão pertinente, identifique o tipo da afirmação e o que o ouvinte conseguiu compreender:\n\n- **Fato do projeto:** “Na época fizemos…” — quem, quando e com qual evidência?\n- **Alcance da verificação:** “A verificação demonstrava…” e “Ela não comprovava…” — qual conclusão e qual limite?\n- **Proposta atual:** “Hoje eu acrescentaria…” — melhoria, sem incorporá-la retroativamente à execução.\n\nReconstruir problema → restrições → escolha → contribuição individual → verificação → limite. Resultado observado, autoria coletiva e melhorias posteriores ficam distintos. Encerrar com até duas próximas práticas, sem nota de carreira ou previsão de aprovação.\n\n## Conferência técnica complementar\n\nFontes primárias consultadas em 08/11/2026; leitura documental, sem acesso ao ambiente, PowerPoint ou telemetria do projeto.\n\n- **Memória em RDS:** FreeableMemory exige contexto; correlacionar erro, memória, swap, configuração, consultas e efeito na aplicação antes de concluir pela classe. A documentação não diagnostica este case. https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/CHAP_Troubleshooting.html\n- **Exemplo específico PostgreSQL:** baixa memória disponível pode refletir cache; a interpretação depende da engine. Confirmar engine e versão antes de aplicar exemplos PostgreSQL ou Aurora ao histórico. https://aws.amazon.com/blogs/database/understand-memory-management-in-amazon-rds-for-postgresql-to-avoid-out-of-memory/\n- **Preparação do destino DMS:** replicação básica não cria automaticamente todos os índices secundários, chaves estrangeiras e usuários. Não confundir transferência com conversão de esquema nem supor o conteúdo dos scripts dos DBAs. https://docs.aws.amazon.com/dms/latest/userguide/CHAP_BestPractices.html\n- **Validação DMS:** quando habilitada e compatível, compara registros correspondentes e informa estados/divergências; há requisitos, limitações e consumo adicional. Uso do DMS não comprova uso ou conclusão da validação. https://docs.aws.amazon.com/dms/latest/userguide/CHAP_Validating.html\n- **Rollback após troca:** distinguir retorno sem dados novos de retorno após novas transações, que exige tratamento dos dados produzidos no destino. Não atribuir replicação reversa ou dupla escrita à experiência sem confirmação. https://docs.aws.amazon.com/prescriptive-guidance/latest/best-practices-migration-cutover/cutover-stage.html\n- **Alarmes RDS no CloudWatch:** os limites dependem de carga, classe, armazenamento e histórico; períodos e pontos de avaliação também importam. Os números do insumo são configurações a justificar, não garantias universais de reação. https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Best_Practice_Recommended_Alarms_AWS_Services.html\n\n\n## Cola do avaliador e ficha por pergunta\n\nCada tópico T1–T10 e B1–B8 possui uma cola inicialmente recolhida com o que procurar, sinais de quatro níveis e próximo aprofundamento. Classifique a resposta desta rodada, não a pessoa. A régua é autoral de preparação, sem vínculo com avaliação oficial da AWS, nível L5/L6 ou contratação. Execução imperfeita pode ser explicada de maneira excelente quando há precisão e honestidade sobre as evidências.\n\nA ficha da resposta guarda qualidade, tipo de apoio, fala que sustenta a classificação, o que ficou demonstrado, lacunas, base da afirmação e próxima prática. Pode marcar informação a confirmar, hipótese ou melhoria proposta hoje. Após um aprofundamento ou explicação, acrescente nova observação para preservar a resposta inicial e a evolução. Não calcular média nem transformar Não observado em zero.\n\nComeçar por T1, T3, T6, T7, B1 e B6 ou B7; usar até dois aprofundamentos neutros por abertura. Se ensinar, registrar a ajuda e retestar autonomia depois. Não exigir que todos os aprofundamentos sejam respondidos para considerar uma resposta boa. A ficha preenchida fica apenas no navegador e no export local do registro da sessão, nunca no build ou no índice de busca.\n",
+          "evaluationGuide": {
+            "title": "Régua de preparação — resposta demonstrada nesta rodada",
+            "notice": "Esta escala é nossa ferramenta de preparação. Classifica a resposta observada nesta rodada, não a participante como profissional. Não representa uma régua oficial da AWS, nível L5/L6 ou previsão de contratação. Uma resposta excelente não exige execução perfeita: exige precisão sobre o que aconteceu, decisões justificadas e limites reconhecidos.",
+            "levels": [
+              {
+                "value": "nao-observado",
+                "label": "Não observado",
+                "description": "O ponto não foi explorado ou não houve oportunidade de demonstrá-lo. Não significa nota zero."
+              },
+              {
+                "value": "incompleta",
+                "label": "1 — Incompleta",
+                "description": "Não responde ao ponto central, apresenta confusão importante ou afirma algo sem conseguir explicar seu fundamento."
+              },
+              {
+                "value": "regular",
+                "label": "2 — Regular",
+                "description": "Segue uma direção adequada, mas permanece genérica: cita ferramentas, atividades ou resultados sem sustentar mecanismo, decisão ou evidência."
+              },
+              {
+                "value": "boa",
+                "label": "3 — Boa",
+                "description": "Responde diretamente, explica o que ocorreu, participação, motivo e evidência disponível. Distingue fatos de hipóteses e reconhece limites."
+              },
+              {
+                "value": "excelente",
+                "label": "4 — Excelente",
+                "description": "Além de uma resposta boa, sustenta aprofundamentos: compara alternativas, explica riscos e condições, relaciona técnica e negócio e identifica o que mudaria sua conclusão."
+              }
+            ],
+            "supports": [
+              {
+                "value": "espontanea",
+                "label": "Espontânea",
+                "description": "Apresentou o raciocínio sem direcionamento."
+              },
+              {
+                "value": "apos-aprofundamento",
+                "label": "Após aprofundamento neutro",
+                "description": "O avaliador pediu esclarecimento sem fornecer a solução. A resposta pode continuar sendo excelente."
+              },
+              {
+                "value": "apos-explicacao",
+                "label": "Após explicação / direcionamento",
+                "description": "O avaliador ensinou ou entregou parte decisiva do raciocínio. Registrar aprendizado e realizar outro teste para verificar autonomia."
+              }
+            ],
+            "bases": [
+              {
+                "value": "fato-projeto",
+                "label": "Fato do projeto explicado"
+              },
+              {
+                "value": "a-confirmar",
+                "label": "Informação a confirmar"
+              },
+              {
+                "value": "hipotese",
+                "label": "Hipótese explicitamente apresentada"
+              },
+              {
+                "value": "melhoria-hoje",
+                "label": "Melhoria proposta hoje, não realizada na época"
+              }
+            ],
+            "actions": [
+              {
+                "value": "melhorar-explicacao",
+                "label": "Melhorar a explicação"
+              },
+              {
+                "value": "confirmar-evidencia",
+                "label": "Recuperar evidência / confirmar um fato"
+              },
+              {
+                "value": "revisar-conceito",
+                "label": "Revisar o conceito"
+              },
+              {
+                "value": "variar-cenario",
+                "label": "Praticar uma variação do cenário"
+              }
+            ],
+            "instructions": [
+              "Use uma pergunta principal e até dois aprofundamentos neutros. Não é necessário esgotar todos os aprofundamentos para marcar uma resposta boa.",
+              "Registre a classificação e o apoio separadamente. Um aprofundamento neutro não impõe desconto automático e pode revelar uma resposta excelente.",
+              "Se precisar ensinar, ensine; registre após explicação e faça uma nova variação depois. Aprendizado assistido não é demonstração independente de autonomia.",
+              "Honestidade e completude são diferentes. Não lembrar o modo do DMS é melhor que inventar, mas esse detalhe continua não demonstrado. Um número secundário esquecido não invalida, por si só, o mecanismo correto.",
+              "Marque informação a confirmar quando a sustentação estiver pendente. Um fato novo não deve ser tratado automaticamente como invenção: registre sua origem ou a confirmação necessária.",
+              "Ouça separadamente o que a participante fez na época, o que foi feito por outra pessoa, o que não consegue confirmar e o que faria diferente hoje. Uma boa proposta atual não preenche uma lacuna do histórico.",
+              "As divergências de DMS/snapshot e autoria continuam pendentes nas fontes. As descrições da análise escrita não encerram essas divergências; não escolha uma versão como gabarito.",
+              "Avalie compreensão conceitual e evidência histórica separadamente quando necessário. Um rollback conceitualmente adequado não comprova que aquele plano existia no projeto.",
+              "Não observado não equivale a zero. Não faça média, ranking ou decisão de aprovação; uma média pode esconder uma lacuna importante sobre dados ou recuperação.",
+              "Na ficha, o rascunho é salvo a cada alteração. Registrar observação acrescenta um retrato ao histórico sem apagar a resposta inicial. Registre a evolução em nova observação, com o tipo de ajuda e a evidência correspondente.",
+              "Comece por T1, T3, T6, T7, B1 e B6 ou B7. As demais perguntas podem ficar para outra rodada; preserve o feedback e escolha até duas próximas práticas.",
+              "A cola e os critérios são públicos. Fichas preenchidas, classificações e histórico ficam apenas neste navegador; use somente a janela da seleção para compartilhar a pergunta."
+            ],
+            "pocketQuestions": [
+              "Respondeu ao que perguntei?",
+              "Explicou o que fez e por que fez?",
+              "Apresentou uma evidência compatível com a conclusão?",
+              "Distinguiu sua contribuição da dos colegas?",
+              "Reconheceu limites sem inventar uma versão melhor do passado?"
+            ],
+            "neutralPrompts": [
+              {
+                "leading": "Mas contar linhas não prova igualdade, certo?",
+                "neutral": "O que a contagem permite concluir e o que não permite?"
+              },
+              {
+                "leading": "Você precisa considerar as novas escritas no rollback.",
+                "neutral": "O que muda se o destino recebeu dados novos?"
+              },
+              {
+                "leading": "Fala que você negociou com a liderança.",
+                "neutral": "Qual foi sua ação para mudar a prioridade?"
+              },
+              {
+                "leading": "A métrica veio antes da migração.",
+                "neutral": "Qual período esse indicador representa?"
+              }
+            ],
+            "example": "Exemplo hipotético, não fala atribuída à participante: “Comparei a quantidade de linhas. Como estava igual, estava tudo correto.” Registro inicial de T6: Incompleta — confundiu equivalência de contagem com equivalência de conteúdo. Após perguntar se tabelas com a mesma quantidade de linhas podem ter valores diferentes, registre outra observação se ela reconhecer o limite. Preserve a primeira e anote: após aprofundamento, reconheceu o limite; critérios de aceite do caso ainda a confirmar. Isso mostra evolução sem apagar a lacuna histórica.",
+            "closing": "Exemplo de feedback, não avaliação realizada: “Você explicou bem impacto e autoria. Na validação, reconheceu o limite, mas os critérios de aceite ainda precisam ser recuperados. No dimensionamento, a justificativa continua genérica. Vamos trabalhar esses dois pontos primeiro.” Boa: você entende a decisão e sua sustentação. Excelente: você consegue questioná-la e a explicação continua coerente, precisa e honesta."
+          }
         }
       ],
       "publication": "public",

@@ -19,6 +19,12 @@ const KIND_LABELS = {
   consultative: 'Conversa consultiva',
   presentation: 'Apresentação',
 };
+const ASSESSMENT_VALUES = {
+  quality: ['nao-observado', 'incompleta', 'regular', 'boa', 'excelente'],
+  support: ['espontanea', 'apos-aprofundamento', 'apos-explicacao'],
+  bases: ['fato-projeto', 'a-confirmar', 'hipotese', 'melhoria-hoje'],
+  actions: ['melhorar-explicacao', 'confirmar-evidencia', 'revisar-conceito', 'variar-cenario'],
+};
 
 function node(tag, attributes = {}, children = []) {
   const element = document.createElement(tag);
@@ -136,12 +142,45 @@ function startApp() {
 
   function recordKey(session) { return `${STORAGE_PREFIX}:${data.pageId}:${session.id}`; }
 
+  function guidedQuestions(session) {
+    if (!session.evaluationGuide) return [];
+    return (session.questions || []).filter(question => question.evaluatorGuide && typeof question.id === 'string');
+  }
+
+  function hasEvaluatorGuide(session, question) {
+    return guidedQuestions(session).some(item => item.id === question.id);
+  }
+
+  function assessmentDraft(value) {
+    const source = value && typeof value === 'object' && !Array.isArray(value) ? value : {};
+    const draft = {
+      date: '', quality: 'nao-observado', support: '', said: '', demonstrated: '', missing: '',
+      bases: [], actions: [], nextTest: '',
+    };
+    for (const field of ['said', 'demonstrated', 'missing', 'nextTest']) {
+      if (typeof source[field] === 'string') draft[field] = source[field];
+    }
+    if (typeof source.date === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(source.date)) {
+      const date = new Date(`${source.date}T00:00:00Z`);
+      if (Number.isFinite(date.getTime()) && date.toISOString().slice(0, 10) === source.date) draft.date = source.date;
+    }
+    for (const field of ['quality', 'support']) {
+      if (ASSESSMENT_VALUES[field].includes(source[field])) draft[field] = source[field];
+    }
+    for (const field of ['bases', 'actions']) {
+      if (Array.isArray(source[field])) draft[field] = [...new Set(source[field].filter(value => ASSESSMENT_VALUES[field].includes(value)))];
+    }
+    return draft;
+  }
+
   function emptyRecord(session) {
-    return {
+    const record = {
       schemaVersion: 1, pageId: String(data.pageId), sessionId: String(session.id), updatedAt: null,
       episodio: '', dimensions: Object.fromEntries(DIMENSIONS.map(([key]) => [key, { status: 'nao-observado', note: '' }])),
       duvida: '', ajuda: '', proxima: '', evidenceLog: [], exerciseDrafts: {},
     };
+    if (guidedQuestions(session).length) record.questionAssessments = {};
+    return record;
   }
 
   function recordFor(session) {
@@ -170,6 +209,19 @@ function startApp() {
               if (draft && typeof draft.request === 'string') {
                 record.exerciseDrafts[question.id] = { request: draft.request };
               }
+            }
+          }
+          if (record.questionAssessments && saved.questionAssessments && typeof saved.questionAssessments === 'object' && !Array.isArray(saved.questionAssessments)) {
+            for (const question of guidedQuestions(session)) {
+              if (!Object.prototype.hasOwnProperty.call(saved.questionAssessments, question.id)) continue;
+              const assessment = saved.questionAssessments[question.id];
+              if (!assessment || typeof assessment !== 'object' || Array.isArray(assessment)) continue;
+              record.questionAssessments[question.id] = {
+                draft: assessmentDraft(assessment.draft),
+                observations: Array.isArray(assessment.observations) ? assessment.observations.filter(observation =>
+                  observation && typeof observation.savedAt === 'string' && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/.test(observation.savedAt) && Number.isFinite(Date.parse(observation.savedAt))
+                ).map(observation => ({ ...assessmentDraft(observation), savedAt: observation.savedAt })) : [],
+              };
             }
           }
         }
@@ -421,6 +473,8 @@ function startApp() {
       node('h3', { id: 'loop-question-heading', tabindex: '-1', text: question.kind === 'presentation' ? 'Contexto e tarefa de apresentação' : 'Pergunta para a candidata' }),
       node('p', { id: 'loop-question-prompt', className: 'loop-prompt', 'data-prompt': '', text: question.prompt }),
       node('div', { className: 'loop-question-actions' }, [readButton, present]), readout,
+      hasEvaluatorGuide(session, question) ? renderEvaluatorGuide(session, question) : null,
+      hasEvaluatorGuide(session, question) ? renderAssessment(session, question, serial) : null,
       node('section', { className: 'loop-stack', 'aria-label': isPublic ? 'Aprofundamentos para condução' : 'Aprofundamentos privados' }, (question.followups || []).map((followup, followupIndex) => details(`Aprofundamento ${followupIndex + 1}`, node('p', { text: followup }), { className: 'loop-details loop-followup', 'data-followup-index': followupIndex }))),
       notes,
       question.exercise ? renderExercise(session, question, serial) : null,
@@ -428,6 +482,138 @@ function startApp() {
       session.notesHtml ? details('Notas gerais da sessão', htmlBlock(session.notesHtml), { 'data-session-notes': '' }) : null,
     );
     if (focus) document.getElementById('loop-question-heading')?.focus();
+  }
+
+  function renderEvaluatorGuide(session, question) {
+    const guide = question.evaluatorGuide;
+    const common = session.evaluationGuide;
+    const section = (title, content) => node('section', { className: 'loop-stack' }, [node('h4', { text: title }), content]);
+    const legend = (title, entries) => section(title, node('ul', {}, entries.map(entry => node('li', {}, [
+      node('strong', { text: entry.label }), entry.description ? ` — ${entry.description}` : '',
+    ]))));
+    const commonGuide = details('Legenda e orientações da sessão', [
+      node('h4', { text: common.title }), node('p', { className: 'loop-muted', text: common.notice }),
+      legend('Qualidade observada', common.levels || []),
+      legend('Apoio durante a resposta', common.supports || []),
+      legend('Base da anotação', common.bases || []),
+      legend('Ações para o próximo treino', common.actions || []),
+      common.instructions?.length ? section('Como usar a ficha', textList(common.instructions)) : null,
+      common.pocketQuestions?.length ? section('Perguntas de bolso', textList(common.pocketQuestions)) : null,
+      common.neutralPrompts?.length ? section('Aprofundar sem induzir', node('ul', {}, common.neutralPrompts.map(prompt => node('li', { className: 'loop-stack' }, [
+        node('p', {}, [node('strong', { text: 'Evite induzir: ' }), String(prompt.leading || '')]),
+        node('p', {}, [node('strong', { text: 'Pergunta neutra: ' }), String(prompt.neutral || '')]),
+      ])))) : null,
+      common.example ? section('Exemplo de anotação', node('p', { className: 'loop-assessment-text', text: common.example })) : null,
+      common.closing ? section('Fechamento da conversa', node('p', { text: common.closing })) : null,
+    ], { 'data-evaluation-guide': '' });
+    return details(`Cola do avaliador · ${guide.code}`, [
+      section('O que se espera nesta pergunta', node('p', { text: guide.expected })),
+      ...['incompleta', 'regular', 'boa', 'excelente'].map(value => section(
+        common.levels?.find(level => level.value === value)?.label || value,
+        node('p', { text: guide.levels?.[value] || '' }),
+      )),
+      section('Próximo aprofundamento', node('p', { text: guide.nextFollowup })),
+      guide.cautions?.length ? section('Cuidados na observação', textList(guide.cautions)) : null,
+      guide.factsToConfirm?.length ? section('Fatos a confirmar', textList(guide.factsToConfirm)) : null,
+      commonGuide,
+    ], { 'data-evaluator-guide': '', 'data-evaluator-code': guide.code });
+  }
+
+  function renderAssessment(session, question, serial) {
+    const record = recordFor(session);
+    if (!record.questionAssessments[question.id]) record.questionAssessments[question.id] = { draft: assessmentDraft(), observations: [] };
+    const assessment = record.questionAssessments[question.id];
+    const draft = assessment.draft;
+    const common = session.evaluationGuide;
+    const code = question.evaluatorGuide.code;
+    const prefix = `loop-assessment-${serial}`;
+    function updateDraft(field, value) {
+      Object.assign(draft, assessmentDraft({ ...draft, [field]: value }));
+      saveRecord(session);
+    }
+    function textField(field, label, rows = 3) {
+      const id = `${prefix}-${field}`;
+      const input = node('textarea', { id, rows, value: draft[field], 'data-assessment-field': field });
+      input.addEventListener('input', () => updateDraft(field, input.value));
+      return node('div', { className: 'loop-field' }, [node('label', { for: id, text: label }), input]);
+    }
+    function selectField(field, label, choices, emptyLabel) {
+      const id = `${prefix}-${field}`;
+      const input = node('select', { id, 'data-assessment-field': field }, [
+        emptyLabel ? node('option', { value: '', text: emptyLabel }) : null,
+        ...choices.filter(choice => ASSESSMENT_VALUES[field].includes(choice.value)).map(choice => node('option', { value: choice.value, text: choice.label })),
+      ]);
+      input.value = draft[field];
+      input.addEventListener('change', () => { updateDraft(field, input.value); input.value = draft[field]; });
+      return node('div', { className: 'loop-field' }, [node('label', { for: id, text: label }), input]);
+    }
+    function choicesField(field, label, choices, attribute) {
+      return node('fieldset', { className: 'loop-assessment-options' }, [
+        node('legend', { text: label }),
+        ...choices.filter(choice => ASSESSMENT_VALUES[field].includes(choice.value)).map((choice, index) => {
+          const id = `${prefix}-${field}-${index}`;
+          const input = node('input', { type: 'checkbox', id, checked: draft[field].includes(choice.value), [attribute]: choice.value });
+          input.addEventListener('change', () => {
+            const selected = input.checked ? [...draft[field], choice.value] : draft[field].filter(value => value !== choice.value);
+            updateDraft(field, selected);
+          });
+          return node('label', { className: 'loop-check', for: id }, [input, node('span', { text: choice.label })]);
+        }),
+      ]);
+    }
+    const dateId = `${prefix}-date`;
+    const dateInput = node('input', { id: dateId, type: 'date', value: draft.date, 'data-assessment-field': 'date' });
+    dateInput.addEventListener('input', () => updateDraft('date', dateInput.value));
+    const history = node('section', { className: 'loop-stack loop-assessment-history', 'data-assessment-history': '', 'aria-label': `Histórico privado de observações · ${code}` });
+    const displayLabel = (choices, value) => choices?.find(choice => choice.value === value)?.label || 'Não registrado';
+    function renderHistory() {
+      replaceContent(history, node('h4', { text: 'Histórico de observações' }),
+        assessment.observations.length ? node('ol', { className: 'loop-assessment-observations' }, assessment.observations.map((observation, index) => {
+          const fields = [
+            ['Data da observação', observation.date],
+            ['Qualidade observada', displayLabel(common.levels, observation.quality)],
+            ['Apoio observado', displayLabel(common.supports, observation.support)],
+            ['O que a candidata disse', observation.said],
+            ['O que foi demonstrado', observation.demonstrated],
+            ['O que falta observar ou confirmar', observation.missing],
+            ['Base da anotação', observation.bases.map(value => displayLabel(common.bases, value)).join('; ')],
+            ['Próximas ações', observation.actions.map(value => displayLabel(common.actions, value)).join('; ')],
+            ['Próximo teste ou pergunta', observation.nextTest],
+          ];
+          return node('li', { className: 'loop-card loop-stack', 'data-assessment-observation-index': index }, [
+            node('h4', { text: `Observação ${index + 1}` }),
+            node('p', { className: 'loop-muted' }, [node('span', { text: 'Registrada em ' }), node('time', { datetime: observation.savedAt, text: new Date(observation.savedAt).toLocaleString('pt-BR') })]),
+            node('dl', {}, fields.flatMap(([label, value]) => [node('dt', { text: label }), node('dd', { text: value || 'Não registrado' })])),
+          ]);
+        })) : node('p', { className: 'loop-muted', text: 'Nenhuma observação registrada. O rascunho é salvo automaticamente; use Registrar observação para preservar esta resposta no histórico.' }),
+      );
+    }
+    const save = button('Registrar observação', 'save-assessment', { className: 'loop-button loop-button-primary' });
+    save.addEventListener('click', () => {
+      assessment.observations.push({ ...assessmentDraft(draft), savedAt: new Date().toISOString() });
+      saveRecord(session);
+      renderHistory();
+      announce(`Observação registrada para ${code}. O histórico anterior e o rascunho foram preservados.`);
+    });
+    renderHistory();
+    return details(`Ficha privada da resposta · ${code}`, [
+      node('p', { className: 'loop-muted', text: 'Esta ficha fica apenas neste navegador. Preserve a primeira resposta e registre novas observações para acompanhar a evolução. O botão abaixo acrescenta uma observação ao histórico e mantém o rascunho.' }),
+      node('p', { className: 'loop-muted', text: 'Classifique a resposta desta rodada, não a pessoa. Esta é uma régua de preparação, sem média ou vínculo com avaliação oficial. Não observado não é zero.' }),
+      node('div', { className: 'loop-dimension-grid' }, [
+        node('div', { className: 'loop-field' }, [node('label', { for: dateId, text: 'Data da observação' }), dateInput]),
+        selectField('quality', 'Qualidade observada', common.levels || []),
+        selectField('support', 'Apoio observado durante a resposta', common.supports || [], 'Não registrado'),
+      ]),
+      node('div', { className: 'loop-dimension-grid' }, [
+        textField('said', 'O que a candidata disse'), textField('demonstrated', 'O que foi demonstrado'),
+        textField('missing', 'O que falta observar ou confirmar'), textField('nextTest', 'Próximo teste ou pergunta'),
+      ]),
+      node('div', { className: 'loop-dimension-grid' }, [
+        choicesField('bases', 'Base da anotação', common.bases || [], 'data-assessment-basis'),
+        choicesField('actions', 'Próximas ações de treino', common.actions || [], 'data-assessment-action'),
+      ]),
+      save, history,
+    ], { 'data-assessment': '', 'data-assessment-question-id': question.id, 'data-evaluator-code': code });
   }
 
   function renderExercise(session, question, serial) {
