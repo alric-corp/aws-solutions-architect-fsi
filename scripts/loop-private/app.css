@@ -290,6 +290,25 @@
 .loop-app .loop-assessment-history dl { min-width: 0; margin: 0; }
 .loop-app .loop-assessment-history dt { font-weight: 650; }
 .loop-app .loop-assessment-history dd { margin: .2rem 0 .85rem; }
+.loop-app .loop-deep-module,
+.loop-app .loop-deep-history,
+.loop-app .loop-deep-remaining { min-width: 0; }
+.loop-app .loop-deep-observation > legend { min-width: 0; max-width: 100%; padding-inline: .35rem; font-weight: 650; overflow-wrap: anywhere; }
+.loop-app .loop-deep-controls,
+.loop-app .loop-deep-command-input { display: flex; flex-wrap: wrap; align-items: center; gap: .65rem; min-width: 0; }
+.loop-app .loop-deep-command-input { align-items: end; }
+.loop-app .loop-deep-command-input > :where(input, .loop-field) { flex: 1 1 16rem; }
+.loop-app .loop-deep-status { min-width: 0; padding: .85rem 1rem; border: 1px solid var(--border); border-left: 3px solid var(--action); border-radius: .3rem; background: var(--notice-surface); }
+.loop-app .loop-deep-status > * + * { margin-top: .5rem; }
+.loop-app .loop-deep-command-log { min-width: 0; padding-inline-start: 1.5rem; }
+.loop-app .loop-deep-command-log :where(li, p, code),
+.loop-app .loop-deep-history :where(p, dd, code) { white-space: pre-wrap; overflow-wrap: anywhere; }
+.loop-app .loop-deep-observation { min-width: 0; max-width: 100%; margin: 0; padding: 1rem; border: 1px solid var(--border); border-radius: .3rem; background: var(--surface-subtle); }
+.loop-app .loop-deep-debrief-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; min-width: 0; }
+.loop-app .loop-deep-list-item { display: grid; gap: .65rem; min-width: 0; padding: 1rem; border: 1px solid var(--border); border-radius: .3rem; background: var(--surface); }
+.loop-app .loop-deep-priorities { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr)); gap: .75rem; min-width: 0; }
+.loop-app .loop-deep-facets { display: grid; grid-template-columns: minmax(0, 1fr); gap: .65rem; min-width: 0; }
+.loop-app .loop-deep-label { font-weight: 650; }
 .loop-app .loop-status { color: var(--muted); font-size: .875rem; }
 .loop-app .loop-warning,
 .loop-app .loop-toast { min-width: 0; padding: .85rem 1rem; border: 1px solid var(--border-strong); border-left: 4px solid var(--action); border-radius: .3rem; background: var(--notice-surface); color: var(--ink); }
@@ -340,7 +359,8 @@
   .loop-app .loop-layout { padding-top: 1.25rem; }
   .loop-app .loop-grid,
   .loop-app .loop-evidence-grid,
-  .loop-app .loop-dimension-grid { grid-template-columns: minmax(0, 1fr); }
+  .loop-app .loop-dimension-grid,
+  .loop-app .loop-deep-debrief-grid { grid-template-columns: minmax(0, 1fr); }
   .loop-app .loop-question-nav > .loop-field { flex-basis: 100%; }
   .loop-app .loop-question-nav > .loop-button { flex: 1 1 auto; }
   .loop-app .loop-card { padding: 1rem; }

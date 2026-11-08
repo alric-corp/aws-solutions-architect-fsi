@@ -61,7 +61,7 @@ function renderExercise(exercise) {
     ...exercise,
     premisesHtml: markdown(exercise.premisesMarkdown),
     instructorHtml: markdown(exercise.instructorMarkdown),
-    cards: exercise.cards.map(card => ({ ...card, studentHtml: markdown(card.studentMarkdown), notesHtml: markdown(card.notesMarkdown) }))
+    cards: exercise.cards.map(card => ({ ...card, studentHtml: markdown(card.studentMarkdown), notesHtml: markdown(card.notesMarkdown), ...(card.studentMarkdownEn ? { studentHtmlEn: markdown(card.studentMarkdownEn) } : {}) }))
   };
 }
 export function serializeLoopData(value) {
@@ -105,7 +105,18 @@ export async function compileLoopPages({ agenda, behavioral, technical, urlForPa
       const reserves = [];
       for (const recipe of session.reserves || []) reserves.push(await resolveQuestion(recipe));
       if (new Set([...questions, ...reserves].map(q => q.id)).size !== questions.length + reserves.length) throw new Error(`IDs repetidos na rodada: ${session.id}`);
-      sessions.push({ ...session, questions, reserves, notesHtml: markdown(session.notesMarkdown) });
+      let deepDiveTraining;
+      if (session.deepDiveTraining) {
+        const variants = [];
+        for (const variant of session.deepDiveTraining.variants) {
+          const variantQuestions = [];
+          for (const recipe of variant.questions) variantQuestions.push(await resolveQuestion(recipe));
+          if (new Set(variantQuestions.map(question => question.id)).size !== variantQuestions.length) throw new Error(`IDs repetidos na variante: ${variant.id}`);
+          variants.push({ ...variant, questions: variantQuestions });
+        }
+        deepDiveTraining = { ...session.deepDiveTraining, variants };
+      }
+      sessions.push({ ...session, questions, reserves, notesHtml: markdown(session.notesMarkdown), ...(deepDiveTraining ? { deepDiveTraining } : {}) });
     }
     pages.push({ ...page, schemaVersion: 1, sessions });
   }

@@ -116,6 +116,9 @@ function startApp() {
   let storageBlocked = false;
   const recordCache = new Map();
   const runtime = new Map();
+  const deepRuntime = new Map();
+  const deepContexts = new WeakMap();
+  const deepProxies = new Map();
   let activeSessionIndex = 0;
   let questionSerial = 0;
   let themePreference = 'system';
@@ -141,6 +144,80 @@ function startApp() {
   }
 
   function recordKey(session) { return `${STORAGE_PREFIX}:${data.pageId}:${session.id}`; }
+
+  function deepVariants(session) { return session.deepDiveTraining?.variants || []; }
+
+  function isoDate(value) {
+    return typeof value === 'string' && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/.test(value) && Number.isFinite(Date.parse(value));
+  }
+
+  function deepDebrief(value, module) {
+    const source = value && typeof value === 'object' && !Array.isArray(value) ? value : {};
+    const output = {
+      opinion: '', justification: '', comparison: '', facets: {}, technical: {}, ladderMap: '', corrections: '',
+      priorities: Array.from({ length: 3 }, () => ({ practice: '', criterion: '' })),
+      realStoryConfirmed: source.realStoryConfirmed === true,
+      star: { situation: '', task: '', action: '', result: '' }, extraQuestions: ['', '', ''],
+      englishFeedback: '', nextVersion: '', nextReason: '',
+    };
+    for (const field of ['justification', 'comparison', 'ladderMap', 'corrections', 'englishFeedback', 'nextReason']) if (typeof source[field] === 'string') output[field] = source[field];
+    if (['inclined', 'not-inclined', 'inconclusivo'].includes(source.opinion)) output.opinion = source.opinion;
+    if (['v1', 'v2', 'v3'].includes(source.nextVersion)) output.nextVersion = source.nextVersion;
+    for (const [field, definitions] of [['facets', module.facets || []], ['technical', module.technicalDimensions || []]]) {
+      for (const definition of definitions) {
+        const item = source[field]?.[definition.id];
+        const observation = { evidence: '', quality: 'nao-observado', support: '', concern: '' };
+        for (const key of ['evidence', 'concern']) if (typeof item?.[key] === 'string') observation[key] = item[key];
+        if (ASSESSMENT_VALUES.quality.includes(item?.quality)) observation.quality = item.quality;
+        if (ASSESSMENT_VALUES.support.includes(item?.support)) observation.support = item.support;
+        output[field][definition.id] = observation;
+      }
+    }
+    for (let index = 0; index < 3; index += 1) {
+      for (const field of ['practice', 'criterion']) if (typeof source.priorities?.[index]?.[field] === 'string') output.priorities[index][field] = source.priorities[index][field];
+      if (typeof source.extraQuestions?.[index] === 'string') output.extraQuestions[index] = source.extraQuestions[index];
+    }
+    for (const field of ['situation', 'task', 'action', 'result']) if (typeof source.star?.[field] === 'string') output.star[field] = source.star[field];
+    return output;
+  }
+
+  function restoreDeepRuns(value, session) {
+    const module = session.deepDiveTraining;
+    if (!module || !value || typeof value !== 'object' || Array.isArray(value)) return null;
+    const restored = { nextSequence: 1, order: [], attempts: {} };
+    const knownEvents = ['start', 'pause', 'coaching', 'debrief', 'retry', 'english', 'portuguese', 'time', 'next', 'instructor', 'exposure', 'question', 'phase', 'resume', 'record-debrief'];
+    const attempts = value.attempts && typeof value.attempts === 'object' && !Array.isArray(value.attempts) ? value.attempts : {};
+    const orderedIds = [...new Set([...(Array.isArray(value.order) ? value.order : []), ...Object.keys(attempts)])];
+    for (const id of orderedIds) {
+      if (typeof id !== 'string' || !/^run-[1-9]\d*$/.test(id) || !Number.isSafeInteger(Number(id.slice(4))) || Number(id.slice(4)) >= Number.MAX_SAFE_INTEGER || !Object.prototype.hasOwnProperty.call(attempts, id)) continue;
+      const source = attempts[id];
+      const variant = deepVariants(session).find(item => item.id === source?.variantId);
+      if (!variant || !isoDate(source.createdAt)) continue;
+      const questions = [...(variant.questions || []), ...(variant.reserves || [])];
+      const attempt = {
+        id, variantId: variant.id, createdAt: source.createdAt, language: source.language === 'en' ? 'en' : 'pt',
+        status: source.status === 'debrief' ? 'debrief' : 'practice', exposed: source.exposed === true,
+        remainingMinutes: Number.isSafeInteger(source.remainingMinutes) && source.remainingMinutes >= 0 ? source.remainingMinutes : null,
+        phaseIndex: Number.isInteger(source.phaseIndex) && source.phaseIndex >= 0 && source.phaseIndex < variant.agenda.length ? source.phaseIndex : 0,
+        questionIndex: Number.isInteger(source.questionIndex) && source.questionIndex >= 0 && source.questionIndex < questions.length ? source.questionIndex : 0,
+        coachingDraft: typeof source.coachingDraft === 'string' ? source.coachingDraft : '',
+        coverageNotes: typeof source.coverageNotes === 'string' ? source.coverageNotes : '',
+        coachingLog: Array.isArray(source.coachingLog) ? source.coachingLog.filter(item => isoDate(item?.at) && typeof item.note === 'string').map(item => ({ at: item.at, note: item.note })) : [],
+        events: Array.isArray(source.events) ? source.events.filter(item => isoDate(item?.at) && knownEvents.includes(item.type)).map(item => ({ at: item.at, type: item.type, message: typeof item.message === 'string' ? item.message : '' })) : [],
+        evidenceLog: [], exerciseDrafts: {}, debrief: deepDebrief(source.debrief, module),
+        debriefRecordedAt: isoDate(source.debriefRecordedAt) ? source.debriefRecordedAt : null,
+      };
+      if (Array.isArray(source.evidenceLog)) attempt.evidenceLog = source.evidenceLog.filter(entry => {
+        const question = questions.find(item => item.id === entry?.questionId);
+        return isoDate(entry?.releasedAt) && question?.exercise?.cards?.some(card => card.id === entry.cardId);
+      }).map(entry => ({ questionId: entry.questionId, cardId: entry.cardId, releasedAt: entry.releasedAt, request: typeof entry.request === 'string' ? entry.request : '', conditionalConfirmed: entry.conditionalConfirmed === true }));
+      for (const question of questions) if (typeof source.exerciseDrafts?.[question.id]?.request === 'string') attempt.exerciseDrafts[question.id] = { request: source.exerciseDrafts[question.id].request };
+      restored.attempts[id] = attempt;
+      restored.order.push(id);
+      restored.nextSequence = Math.max(restored.nextSequence, Number(id.slice(4)) + 1);
+    }
+    return restored;
+  }
 
   function guidedQuestions(session) {
     if (!session.evaluationGuide) return [];
@@ -184,6 +261,8 @@ function startApp() {
   }
 
   function recordFor(session) {
+    const context = deepContexts.get(session);
+    if (context) return context.attempt;
     const key = recordKey(session);
     if (recordCache.has(key)) return recordCache.get(key);
     const record = emptyRecord(session);
@@ -224,6 +303,8 @@ function startApp() {
               };
             }
           }
+          const deepRuns = restoreDeepRuns(saved.deepDiveRuns, session);
+          if (deepRuns) record.deepDiveRuns = deepRuns;
         }
       } catch { announce('O registro local anterior não pôde ser lido. Um registro vazio está disponível nesta sessão.'); }
     }
@@ -232,6 +313,8 @@ function startApp() {
   }
 
   function saveRecord(session) {
+    const context = deepContexts.get(session);
+    if (context) { saveRecord(context.owner); return; }
     const record = recordFor(session);
     record.updatedAt = new Date().toISOString();
     writeStorage(recordKey(session), JSON.stringify(record));
@@ -317,6 +400,362 @@ function startApp() {
 
   function selectedSession() { return data.sessions[activeSessionIndex]; }
 
+  function deepState(session) {
+    if (!deepRuntime.has(session.id)) deepRuntime.set(session.id, { mode: 'legacy', attemptId: null });
+    return deepRuntime.get(session.id);
+  }
+
+  function currentDeepAttempt(session) {
+    if (!session.deepDiveTraining) return null;
+    const state = deepState(session);
+    return state.mode === 'legacy' ? null : recordFor(session).deepDiveRuns?.attempts[state.attemptId] || null;
+  }
+
+  function deepEvent(attempt, type, message) {
+    attempt.events.push({ at: new Date().toISOString(), type, message });
+  }
+
+  function pausePractice(session) {
+    const state = sessionRuntime(session);
+    if (state.running) state.elapsedMs = elapsedFor(state);
+    state.running = false;
+    state.startedAt = null;
+  }
+
+  function createDeepAttempt(session, variantId, retry = false) {
+    const variant = deepVariants(session).find(item => item.id === variantId);
+    if (!variant) return null;
+    pausePractice(practiceSession(session));
+    const record = recordFor(session);
+    if (!record.deepDiveRuns) record.deepDiveRuns = { nextSequence: 1, order: [], attempts: {} };
+    const runs = record.deepDiveRuns;
+    const id = `run-${runs.nextSequence++}`;
+    const previous = currentDeepAttempt(session);
+    const currentIndex = previous?.variantId === variantId ? previous.questionIndex : -1;
+    const currentQuestion = variant.questions[currentIndex];
+    const fallbackIndex = variant.questions.findIndex(question => question.exercise || /-(?:REAL|AI|MIGRATION|TRANSFER)$/.test(question.id));
+    const questionIndex = retry ? Math.max(0, currentQuestion && !/-(?:INTRO|END)$/.test(currentQuestion.id) ? currentIndex : fallbackIndex) : 0;
+    const attempt = {
+      id, variantId, createdAt: new Date().toISOString(), language: retry && previous?.language === 'en' ? 'en' : 'pt', status: 'practice',
+      exposed: false, remainingMinutes: null, phaseIndex: 0, questionIndex,
+      coachingDraft: '', coachingLog: [], coverageNotes: '', events: [], evidenceLog: [], exerciseDrafts: {},
+      debrief: deepDebrief(null, session.deepDiveTraining), debriefRecordedAt: null,
+    };
+    deepEvent(attempt, retry ? 'retry' : 'start', retry ? 'Reteste do mesmo cenário após debrief; evidências e rascunhos não foram herdados. Compare a compreensão com a tentativa anterior, sem presumir independência após exposição.' : `Versão escolhida manualmente: ${variant.label}.`);
+    runs.attempts[id] = attempt;
+    runs.order.push(id);
+    Object.assign(deepState(session), { mode: variantId, attemptId: id });
+    saveRecord(session);
+    return attempt;
+  }
+
+  function practiceSession(owner) {
+    if (!owner.deepDiveTraining) return owner;
+    const attempt = currentDeepAttempt(owner);
+    const variant = attempt && deepVariants(owner).find(item => item.id === attempt.variantId);
+    if (!variant) return owner;
+    const proxyKey = `${owner.id}:${attempt.id}:${attempt.language}`;
+    if (!deepProxies.has(proxyKey)) {
+      const translate = question => ({
+        ...question,
+        prompt: attempt.language === 'en' && typeof question.promptEn === 'string' ? question.promptEn : question.prompt,
+        followups: attempt.language === 'en' && Array.isArray(question.followupsEn) ? question.followupsEn : question.followups,
+        ...(question.exercise ? { exercise: { ...question.exercise, cards: question.exercise.cards.map(card => ({
+          ...card, studentHtml: attempt.language === 'en' && typeof card.studentHtmlEn === 'string' ? card.studentHtmlEn : card.studentHtml,
+        })) } } : {}),
+      });
+      const proxy = {
+        ...owner, id: `${owner.id}:deep:${attempt.id}`, agenda: variant.agenda,
+        questions: variant.questions.map(translate), reserves: (variant.reserves || []).map(translate),
+        candidateQuestion: '', notesHtml: '', evaluationGuide: undefined, deepDiveTraining: undefined,
+      };
+      deepContexts.set(proxy, { owner, attempt, variant });
+      deepProxies.set(proxyKey, proxy);
+      if (!runtime.has(proxy.id)) runtime.set(proxy.id, { questionIndex: attempt.questionIndex, phaseIndex: attempt.phaseIndex, elapsedMs: 0, startedAt: null, running: false });
+    }
+    return deepProxies.get(proxyKey);
+  }
+
+  function activePracticeSession() { return practiceSession(selectedSession()); }
+
+  function rememberDeepPosition(session, type) {
+    const context = deepContexts.get(session);
+    if (!context) return;
+    const state = sessionRuntime(session);
+    context.attempt.questionIndex = state.questionIndex;
+    context.attempt.phaseIndex = state.phaseIndex;
+    if (type) deepEvent(context.attempt, type, type === 'question' ? `Pergunta selecionada: ${allQuestions(session)[state.questionIndex]?.question.id || ''}.` : `Fase escolhida: ${session.agenda[state.phaseIndex]?.label || ''}.`);
+    saveRecord(context.owner);
+  }
+
+  function refreshDeepSession(focusId = 'loop-deep-mode') {
+    selectSession(activeSessionIndex, false);
+    document.getElementById(focusId)?.focus();
+  }
+
+  function runDeepCommand(owner, command, amount) {
+    const attempt = currentDeepAttempt(owner);
+    if (!attempt) { announce('Escolha V1, V2 ou V3 antes de usar os comandos de treino.'); return; }
+    const practice = practiceSession(owner);
+    const state = sessionRuntime(practice);
+    if (command === 'retry') {
+      if (attempt.status !== 'debrief') { announce('Use /debrief antes de refazer. A tentativa atual será preservada.'); return; }
+      createDeepAttempt(owner, attempt.variantId, true);
+      refreshDeepSession();
+      announce('Nova tentativa iniciada, sem evidências liberadas ou feedback herdado. A anterior continua no histórico.');
+      return;
+    }
+    if (command === 'pause') {
+      pausePractice(practice);
+      const note = attempt.coachingDraft.trim() || 'Pausa/coaching solicitada pelo operador; ajuda específica ainda não registrada.';
+      attempt.coachingLog.push({ at: new Date().toISOString(), note });
+      deepEvent(attempt, 'pause', 'Cronômetro pausado; apoio registrado separadamente da resposta espontânea.');
+    } else if (command === 'debrief') {
+      pausePractice(practice);
+      attempt.status = 'debrief';
+      deepEvent(attempt, 'debrief', 'Debrief manual iniciado fora da agenda de 60 minutos.');
+    } else if (command === 'english' || command === 'portuguese') {
+      attempt.language = command === 'english' ? 'en' : 'pt';
+      deepEvent(attempt, command, command === 'english' ? 'Perguntas, aprofundamentos e cartões preparados em inglês selecionados; notas permanecem em português.' : 'Perguntas e cartões em português selecionados.');
+    } else if (command === 'time') {
+      if (!Number.isSafeInteger(amount) || amount < 0) { announce('Informe minutos inteiros maiores ou iguais a zero. O valor é informado pelo operador, sem calcular tempo decorrido.'); return; }
+      attempt.remainingMinutes = amount;
+      deepEvent(attempt, 'time', `${amount} minutos restantes informados pelo operador; cronômetro não recalculado.`);
+    } else if (command === 'next') {
+      if (attempt.status === 'debrief') { announce('O debrief está fora da agenda. Use Refazer para uma nova tentativa.'); return; }
+      if (state.phaseIndex >= practice.agenda.length - 1) { announce('Esta é a última fase da agenda. Abra o debrief manualmente quando desejar; a cobertura não é presumida.'); return; }
+      pausePractice(practice);
+      if (state.phaseIndex < practice.agenda.length - 1) { state.phaseIndex += 1; state.elapsedMs = 0; }
+      attempt.phaseIndex = state.phaseIndex;
+      deepEvent(attempt, 'next', `Fase selecionada manualmente: ${practice.agenda[state.phaseIndex]?.label || ''}. Cobertura a registrar pelo operador; nenhuma competência foi presumida.`);
+    } else if (command === 'instructor') {
+      deepEvent(attempt, 'instructor', 'Orientações reservadas do caso atual abertas pelo operador; isso não confirma exposição à candidata.');
+    } else if (command === 'resume') {
+      if (attempt.status === 'debrief') { announce('O debrief não acrescenta tempo à rodada. Use Refazer para voltar à prática.'); return; }
+      if (!state.running && elapsedFor(state) < durationFor(practice, state)) { state.startedAt = Date.now(); state.running = true; }
+      deepEvent(attempt, 'resume', 'Cronômetro retomado manualmente.');
+    } else return;
+    saveRecord(owner);
+    refreshDeepSession(command === 'debrief' ? 'loop-deep-debrief-title' : 'loop-deep-operator-title');
+    if (command === 'instructor') {
+      for (const element of document.querySelectorAll('[data-deep-instructor], #loop-question-area [data-instructor-notes], #loop-question-area [data-exercise-instructor]')) element.open = true;
+      document.querySelector('[data-deep-instructor] > summary')?.focus();
+      announce('Ficha do instrutor aberta. O roteiro é público, sem autenticação. Registre se houve exposição à candidata.');
+    } else if (command === 'time') announce(`${amount} minutos restantes registrados como informação do operador. O cronômetro não foi alterado.`);
+    else if (command === 'next') announce('Próxima fase selecionada manualmente. Registre o que foi coberto; nenhuma evidência foi liberada.');
+    else if (command === 'debrief') announce('Debrief aberto fora dos 60 minutos, sem avaliação automática.');
+    else if (command === 'pause') announce('Pausa registrada. Apoio e exposição precisam ser considerados ao descrever a independência da resposta.');
+    else if (command === 'english' || command === 'portuguese') announce(command === 'english' ? 'Textos preparados em inglês ativos. O feedback de inglês permanece separado do técnico.' : 'Textos em português ativos.');
+  }
+
+  function renderDeepDiveModule(owner) {
+    const module = owner.deepDiveTraining;
+    const attempt = currentDeepAttempt(owner);
+    const variant = attempt && deepVariants(owner).find(item => item.id === attempt.variantId);
+    const mode = node('select', { id: 'loop-deep-mode', 'data-deep-dive-mode': '' }, [
+      node('option', { value: 'legacy', text: 'Roteiro legado — preservado' }),
+      ...deepVariants(owner).map(item => node('option', { value: item.id, text: item.label })),
+    ]);
+    mode.value = attempt ? attempt.variantId : 'legacy';
+    mode.addEventListener('change', () => {
+      if (mode.value === 'legacy') {
+        pausePractice(practiceSession(owner));
+        Object.assign(deepState(owner), { mode: 'legacy', attemptId: null });
+      } else createDeepAttempt(owner, mode.value);
+      refreshDeepSession();
+    });
+    const runs = recordFor(owner).deepDiveRuns;
+    const historySelect = node('select', { id: 'loop-deep-attempt', 'data-deep-attempt': '' }, [
+      node('option', { value: '', text: 'Escolha uma tentativa para retomar' }),
+      ...(runs?.order || []).map(id => {
+        const item = runs.attempts[id];
+        const label = deepVariants(owner).find(candidate => candidate.id === item.variantId)?.label || item.variantId;
+        return node('option', { value: id, text: `${id} · ${label} · ${item.status === 'debrief' ? 'debrief' : 'prática'}` });
+      }),
+    ]);
+    historySelect.value = attempt?.id || '';
+    historySelect.addEventListener('change', () => {
+      const selected = runs?.attempts[historySelect.value];
+      if (!selected) return;
+      pausePractice(practiceSession(owner));
+      Object.assign(deepState(owner), { mode: selected.variantId, attemptId: selected.id });
+      refreshDeepSession();
+      announce('Tentativa retomada. O cronômetro local não reconstrói o tempo decorrido antes de recarregar a página.');
+    });
+    const reserved = details('Ficha reservada do instrutor — não apresentar à candidata', [
+      node('p', { className: 'loop-deep-status', text: 'Roteiro público, sem autenticação. Abrir este painel não libera cartões nem abre a apresentação. Se a candidata viu a ficha, registre a exposição; a independência da resposta pode ter sido afetada.' }),
+      variant ? node('p', { className: 'loop-assessment-text', text: variant.instructorNotes }) : null,
+      details('Regras e preparação', [
+        node('p', { text: attempt?.language === 'en' ? module.introductionEn : module.introductionPt }), textList(module.rules),
+      ]),
+      details('Facetas de Dive Deep e perguntas de apoio', (module.facets || []).map(facet => node('section', { className: 'loop-stack' }, [node('h4', { text: facet.label }), textList(facet.prompts)]))),
+      details('Régua autoral da resposta — não é régua de carreira', [
+        textList((module.qualityLevels || []).map(level => `${level.label} — ${level.description}`)),
+        textList((module.supportLevels || []).map(level => `${level.label} — ${level.description || ''}`)),
+        node('p', { text: 'Marque fato a confirmar quando a sustentação estiver pendente. Não faça média nem use estatísticas de reprovação. Depois de ensinar a solução, registre a ajuda e reteste a compreensão.' }),
+      ]),
+      details('Escada de aprofundamento', node('ol', {}, (module.ladder || []).map(item => node('li', {}, [node('strong', { text: item.label }), node('p', { text: item.prompt })])))),
+      module.pixExtension ? details('Extensão Pix — somente quando preparada', [node('p', { text: module.pixExtension.notice }), textList((module.pixExtension.references || []).map(reference => `${reference.title} · ${reference.url}`))]) : null,
+    ], { 'data-deep-instructor': '' });
+    return node('section', { className: 'loop-card loop-stack loop-deep-module', 'data-deep-dive-training': '', 'data-deep-current-attempt': attempt?.id || '', 'data-deep-current-variant': attempt?.variantId || 'legacy', 'aria-labelledby': 'loop-deep-title' }, [
+      node('h3', { id: 'loop-deep-title', text: module.title }), node('p', { className: 'loop-muted', text: module.notice }),
+      node('p', { className: 'loop-deep-status', text: 'Qual versão vamos praticar: V1, V2 ou V3? O roteiro legado permanece disponível. Cada escolha de versão inicia uma tentativa separada.' }),
+      node('div', { className: 'loop-deep-debrief-grid' }, [
+        node('div', { className: 'loop-field' }, [node('label', { for: 'loop-deep-mode', text: 'Versão e cenário da prática' }), mode]),
+        runs?.order.length ? node('div', { className: 'loop-field' }, [node('label', { for: 'loop-deep-attempt', text: 'Retomar tentativa e debrief local' }), historySelect]) : null,
+      ]),
+      variant ? node('p', { text: variant.objective }) : null,
+      variant ? node('p', { className: 'loop-muted', text: `Agenda desta versão: 60 minutos. Debrief adicional fora da agenda. Primeiro domínio: ${variant.firstDomain}. Segundo domínio: ${variant.secondDomain}.` }) : null,
+      attempt ? renderDeepOperator(owner, attempt) : null,
+      reserved,
+    ]);
+  }
+
+  function renderDeepOperator(owner, attempt) {
+    const module = owner.deepDiveTraining;
+    const controls = [['pause', 'Pausar / coaching'], ['debrief', 'Abrir debrief'], ['retry', 'Refazer após debrief'], ['english', 'Usar textos em inglês'], ['next', 'Próxima fase'], ['instructor', 'Consultar instrutor'], ['resume', 'Retomar cronômetro'], ['portuguese', 'Usar textos em português']].map(([command, label]) => {
+      const control = button(label, `deep-${command}`, { disabled: command === 'retry' && attempt.status !== 'debrief' });
+      control.addEventListener('click', () => runDeepCommand(owner, command));
+      return control;
+    });
+    const remaining = node('input', { id: 'loop-deep-remaining', type: 'number', min: '0', step: '1', 'data-deep-remaining': '', value: attempt.remainingMinutes == null ? '' : attempt.remainingMinutes });
+    const time = button('Registrar tempo informado', 'deep-time');
+    time.addEventListener('click', () => runDeepCommand(owner, 'time', remaining.value.trim() === '' ? NaN : Number(remaining.value)));
+    const coaching = node('textarea', { id: 'loop-deep-coaching', rows: 3, value: attempt.coachingDraft, 'data-deep-coaching-note': '', placeholder: 'Registre a orientação ou ajuda oferecida, sem completar a resposta da candidata.' });
+    coaching.addEventListener('input', () => { attempt.coachingDraft = coaching.value; saveRecord(owner); });
+    const saveCoaching = button('Registrar orientação oferecida', 'deep-log-coaching');
+    saveCoaching.addEventListener('click', () => {
+      if (!coaching.value.trim()) { announce('Descreva a orientação oferecida para registrá-la.'); return; }
+      attempt.coachingLog.push({ at: new Date().toISOString(), note: coaching.value.trim() });
+      deepEvent(attempt, 'coaching', 'Orientação registrada pelo operador; não tratar como resposta espontânea.');
+      saveRecord(owner); refreshDeepSession('loop-deep-coaching'); announce('Orientação registrada nesta tentativa.');
+    });
+    const exposure = node('input', { id: 'loop-deep-exposure', type: 'checkbox', checked: attempt.exposed, 'data-deep-exposure': '' });
+    exposure.addEventListener('change', () => {
+      attempt.exposed = exposure.checked;
+      deepEvent(attempt, 'exposure', exposure.checked ? 'Operador confirmou exposição da candidata às orientações reservadas; independência afetada.' : 'Operador corrigiu o sinalizador de exposição; registro anterior permanece nos eventos.');
+      saveRecord(owner); refreshDeepSession('loop-deep-exposure');
+    });
+    const coverage = node('textarea', { id: 'loop-deep-coverage', rows: 3, value: attempt.coverageNotes, 'data-deep-coverage': '', placeholder: 'Anote os temas e as facetas efetivamente observados; avançar a fase não presume cobertura.' });
+    coverage.addEventListener('input', () => { attempt.coverageNotes = coverage.value; saveRecord(owner); });
+    const command = node('input', { id: 'loop-deep-command', type: 'text', autocomplete: 'off', 'data-deep-command': '', placeholder: '/pausa, /debrief, /refazer, /english, /tempo N, /proximo ou /instrutor' });
+    const execute = button('Executar comando manual', 'deep-command');
+    function executeCommand() {
+      const text = command.value.trim();
+      const timeMatch = /^\/tempo\s+(\d+)$/.exec(text);
+      const known = { '/pausa': 'pause', '/debrief': 'debrief', '/refazer': 'retry', '/english': 'english', '/proximo': 'next', '/instrutor': 'instructor' };
+      if (timeMatch) runDeepCommand(owner, 'time', Number(timeMatch[1]));
+      else if (known[text]) runDeepCommand(owner, known[text]);
+      else announce('Comando não reconhecido. Consulte os sete comandos manuais; não há chat ou geração de respostas.');
+    }
+    execute.addEventListener('click', executeCommand);
+    command.addEventListener('keydown', event => { if (event.key === 'Enter') { event.preventDefault(); executeCommand(); } });
+    return node('section', { className: 'loop-stack', 'data-deep-operator': '', 'aria-labelledby': 'loop-deep-operator-title' }, [
+      node('h4', { id: 'loop-deep-operator-title', tabindex: '-1', text: `Painel do operador · ${attempt.id}` }),
+      node('p', { className: 'loop-deep-status', 'data-deep-status': '', text: `${attempt.status === 'debrief' ? 'Debrief manual fora dos 60 minutos' : 'Prática com controles manuais'} · Idioma: ${attempt.language === 'en' ? 'inglês preparado' : 'português'} · Tempo restante informado: ${attempt.remainingMinutes == null ? 'não registrado' : `${attempt.remainingMinutes} min`}.` }),
+      node('div', { className: 'loop-deep-controls' }, controls),
+      node('div', { className: 'loop-deep-command-input' }, [node('div', { className: 'loop-field loop-deep-remaining' }, [node('label', { for: 'loop-deep-remaining', text: 'Minutos restantes informados pelo operador' }), remaining]), time]),
+      node('p', { className: 'loop-muted', text: '/tempo N registra a informação fornecida; não inventa tempo decorrido nem altera fases. /proximo muda somente a fase e deixa a cobertura para o registro manual.' }),
+      node('div', { className: 'loop-field' }, [node('label', { for: 'loop-deep-command', text: 'Comando manual local — sem chat ou GenAI' }), command]), execute,
+      details('Ajuda dos comandos', node('ul', {}, (module.commands || []).map(item => node('li', {}, [node('strong', { text: `${item.command} · ${item.label}` }), node('p', { text: item.help })])))),
+      node('div', { className: 'loop-field' }, [node('label', { for: 'loop-deep-coaching', text: 'Orientação ou ajuda oferecida — registro privado' }), coaching]), saveCoaching,
+      node('label', { className: 'loop-check', for: 'loop-deep-exposure' }, [exposure, node('span', { text: 'Confirmo que a candidata viu conteúdo reservado do instrutor nesta tentativa.' })]),
+      (attempt.exposed || attempt.coachingLog.length) ? node('p', { className: 'loop-deep-status', 'data-deep-independence': '', text: attempt.exposed ? 'Exposição à ficha confirmada: independência afetada. Diferencie a resposta inicial da evolução após acesso às orientações; isso não gera nota automática.' : 'Há pausa/coaching registrados. Descreva a ajuda efetivamente oferecida e seu efeito na independência, distinguindo a resposta inicial da evolução após apoio; isso não gera nota automática.' }) : null,
+      attempt.events.some(event => event.type === 'retry') ? node('p', { className: 'loop-deep-status', 'data-deep-retest': '', text: 'Reteste após debrief no mesmo cenário. Compare com a tentativa anterior; reconhecer o exemplo ou repetir uma orientação não comprova transferência independente. Após exposição ao gabarito, use outra variante para avaliar de forma independente.' }) : null,
+      node('div', { className: 'loop-field' }, [node('label', { for: 'loop-deep-coverage', text: 'Cobertura observada — anotar fatos, sem inferir competência' }), coverage]),
+      details('Histórico privado de comandos e apoio', [
+        node('h4', { text: 'Eventos da tentativa' }), node('ol', { className: 'loop-deep-command-log', 'data-deep-events': '' }, attempt.events.map(item => node('li', { text: `${item.at} · ${item.message}` }))),
+        node('h4', { text: 'Pausas e orientações oferecidas' }), node('ol', { className: 'loop-deep-command-log', 'data-deep-coaching-log': '' }, attempt.coachingLog.map(item => node('li', { text: `${item.at} · ${item.note}` }))),
+      ], { 'data-deep-local-history': '' }),
+    ]);
+  }
+
+  function renderDeepDebrief(owner, attempt) {
+    const module = owner.deepDiveTraining;
+    const draft = attempt.debrief;
+    const prefix = `loop-deep-${attempt.id}`;
+    function textField(field, label, object = draft, attributes = {}, placeholder = '') {
+      const id = `${prefix}-${field}-${Object.values(attributes).join('-') || 'debrief'}`;
+      const input = node('textarea', { id, rows: 3, value: object[field], placeholder, ...attributes });
+      input.addEventListener('input', () => { object[field] = input.value; saveRecord(owner); });
+      return node('div', { className: 'loop-field' }, [node('label', { for: id, text: label }), input]);
+    }
+    function topText(field, label, placeholder = '') { return textField(field, label, draft, { 'data-deep-debrief-field': field }, placeholder); }
+    function selectField(field, label, object, choices, attributes, emptyLabel) {
+      const id = `${prefix}-${field}-${Object.values(attributes).join('-')}`;
+      const select = node('select', { id, ...attributes }, [emptyLabel ? node('option', { value: '', text: emptyLabel }) : null, ...choices.map(item => node('option', { value: item.value, text: item.label }))]);
+      select.value = object[field];
+      select.addEventListener('change', () => {
+        object[field] = choices.some(item => item.value === select.value) ? select.value : (emptyLabel ? '' : 'nao-observado');
+        saveRecord(owner);
+      });
+      return node('div', { className: 'loop-field' }, [node('label', { for: id, text: label }), select]);
+    }
+    function observations(field, definitions, attribute) {
+      return node('div', { className: 'loop-deep-facets' }, definitions.map(definition => {
+        const observation = draft[field][definition.id];
+        const metadata = { 'data-deep-observation-id': `${field}-${definition.id}` };
+        return node('fieldset', { className: 'loop-deep-observation loop-stack', [attribute]: definition.id }, [
+          node('legend', { text: definition.label }),
+          textField('evidence', 'Evidência narrada ou observada', observation, { ...metadata, 'data-deep-observation-field': 'evidence' }),
+          node('div', { className: 'loop-deep-debrief-grid' }, [
+            selectField('quality', 'Qualidade observada nesta rodada', observation, module.qualityLevels || [], { ...metadata, 'data-deep-observation-field': 'quality' }),
+            selectField('support', 'Apoio observado', observation, module.supportLevels || [], { ...metadata, 'data-deep-observation-field': 'support' }, 'Não registrado'),
+          ]),
+          textField('concern', 'Dúvida, limite ou ponto a confirmar', observation, { ...metadata, 'data-deep-observation-field': 'concern' }),
+        ]);
+      }));
+    }
+    const star = node('div', { className: 'loop-deep-debrief-grid', 'data-deep-star': '', hidden: !draft.realStoryConfirmed }, [
+      ...[['situation', 'Situação real narrada'], ['task', 'Responsabilidade ou tarefa real'], ['action', 'Ações efetivamente realizadas'], ['result', 'Resultado e limites conhecidos']].map(([field, label]) => textField(field, label, draft.star, { 'data-deep-star-field': field }, '[PREENCHER]')),
+    ]);
+    const real = node('input', { id: `${prefix}-real-story`, type: 'checkbox', checked: draft.realStoryConfirmed, 'data-deep-debrief-field': 'realStoryConfirmed' });
+    real.addEventListener('change', () => { draft.realStoryConfirmed = real.checked; star.hidden = !real.checked; saveRecord(owner); });
+    const priorities = node('div', { className: 'loop-deep-priorities' }, draft.priorities.map((priority, index) => node('fieldset', { className: 'loop-deep-observation loop-stack', 'data-deep-priority': index }, [
+      node('legend', { text: `Prioridade ${index + 1}` }),
+      textField('practice', 'O que praticar', priority, { 'data-deep-priority-index': index, 'data-deep-priority-field': 'practice' }),
+      textField('criterion', 'Critério observável para a próxima tentativa', priority, { 'data-deep-priority-index': index, 'data-deep-priority-field': 'criterion' }),
+    ])));
+    const extraQuestions = node('div', { className: 'loop-stack' }, draft.extraQuestions.map((value, index) => {
+      const id = `${prefix}-extra-${index}`;
+      const input = node('textarea', { id, rows: 2, value, 'data-deep-extra-question': index, placeholder: 'Pergunta autoral a partir da conversa; não complete fatos ou experiências.' });
+      input.addEventListener('input', () => { draft.extraQuestions[index] = input.value; saveRecord(owner); });
+      return node('div', { className: 'loop-field' }, [node('label', { for: id, text: `Pergunta autoral adicional ${index + 1}` }), input]);
+    }));
+    const record = button('Registrar debrief desta tentativa', 'deep-save-debrief', { id: 'loop-deep-save-debrief' });
+    record.addEventListener('click', () => {
+      attempt.debriefRecordedAt = new Date().toISOString();
+      deepEvent(attempt, 'record-debrief', 'Debrief manual registrado pelo operador, sem nota, média ou parecer calculado.');
+      saveRecord(owner); refreshDeepSession('loop-deep-save-debrief'); announce('Debrief manual registrado nesta tentativa. Nenhuma avaliação foi calculada.');
+    });
+    return details('Debrief privado da tentativa — tempo adicional fora dos 60 minutos', [
+      node('h3', { id: 'loop-deep-debrief-title', tabindex: '-1', text: `Debrief manual · ${attempt.id}` }),
+      node('p', { className: 'loop-deep-status', text: 'Preencha somente com fatos narrados ou observados nesta tentativa. Esta é uma régua de preparação por resposta, sem média, nota de nível ou vínculo com avaliação oficial. Não observado não é zero; apoio não registrado não significa resposta espontânea.' }),
+      node('p', { className: 'loop-muted', text: 'Rascunhos e feedback ficam somente neste navegador e entram apenas no export privado da sessão. O cronômetro da rodada está parado; este debrief não soma tempo à agenda de 60 minutos.' }),
+      selectField('opinion', 'Parecer SIMULADO de preparação — decisão manual', draft, [
+        { value: 'inclined', label: 'Inclinado — justificar com as evidências da conversa' },
+        { value: 'not-inclined', label: 'Não inclinado — registrar as lacunas observadas' },
+        { value: 'inconclusivo', label: 'Inconclusivo' },
+      ], { 'data-deep-debrief-field': 'opinion' }, 'Sem parecer registrado'),
+      topText('justification', 'Justificativa do parecer — fatos e limites'),
+      topText('comparison', 'Comparação com a tentativa anterior — transferência ou repetição da orientação'),
+      details('Cinco facetas de Dive Deep', observations('facets', module.facets || [], 'data-deep-facet'), { 'data-deep-facets': '' }),
+      details('Sete dimensões técnicas', observations('technical', module.technicalDimensions || [], 'data-deep-technical'), { 'data-deep-technical-dimensions': '' }),
+      topText('ladderMap', 'Escada de aprofundamento — onde houve evidência e onde faltou observar'),
+      topText('corrections', 'Correções técnicas — inclua a fonte ou marque como pendente de confirmação'),
+      node('h4', { text: 'Três prioridades para a próxima prática' }), priorities,
+      node('label', { className: 'loop-check', for: `${prefix}-real-story` }, [real, node('span', { text: 'Confirmo que foi narrada uma experiência de trabalho real para organizar os campos STAR abaixo.' })]),
+      node('p', { className: 'loop-muted', text: 'STAR organiza somente fatos de trabalho real narrados. Cenários de treino, hipóteses e melhorias propostas não viram experiência pessoal.' }), star,
+      node('h4', { text: 'Perguntas autorais a partir do que foi narrado' }), extraQuestions,
+      node('section', { className: 'loop-stack', 'data-deep-english-feedback': '' }, [node('h4', { text: 'Feedback de inglês — separado do técnico' }), topText('englishFeedback', 'Observações de comunicação em inglês, somente se essa parte foi praticada')]),
+      selectField('nextVersion', 'Versão sugerida para o próximo treino — decisão manual', draft, [
+        { value: 'v1', label: 'V1 — raciocínio consultivo' }, { value: 'v2', label: 'V2 — investigação do incidente preparado' }, { value: 'v3', label: 'V3 — experiência real' },
+      ], { 'data-deep-debrief-field': 'nextVersion' }, 'Sem próxima versão definida'),
+      topText('nextReason', 'Motivo e objetivo do próximo treino'), record,
+      attempt.debriefRecordedAt ? node('p', { className: 'loop-muted', text: `Último registro manual deste debrief: ${new Date(attempt.debriefRecordedAt).toLocaleString('pt-BR')}.` }) : null,
+    ], { id: 'loop-deep-debrief', 'data-deep-debrief': '', 'data-deep-attempt-id': attempt.id, hidden: attempt.status !== 'debrief', open: attempt.status === 'debrief' });
+  }
+
   function allQuestions(session) {
     return [...(session.questions || []).map(question => ({ question, reserve: false })), ...(session.reserves || []).map(question => ({ question, reserve: true }))];
   }
@@ -326,24 +765,28 @@ function startApp() {
     const session = selectedSession();
     for (const control of sessionNav.querySelectorAll('[data-session-id]')) control.setAttribute('aria-pressed', String(control.dataset.sessionId === session.id));
     main.dataset.activeSessionId = session.id;
-    const state = sessionRuntime(session);
+    const practice = practiceSession(session);
+    const state = sessionRuntime(practice);
     const hypothesis = node('section', { className: 'loop-card loop-hypothesis', 'aria-labelledby': 'loop-hypothesis-title' }, [
       node('h3', { id: 'loop-hypothesis-title', text: 'Hipótese de preparação' }),
       textList(session.hypothesis),
       node('p', { className: 'loop-muted', 'data-hypothesis-disclaimer': '', text: 'Hipótese de treino, não confirmada: não representa atribuição oficial de LPs, roteiro oficial da entrevista ou critério de aprovação.' }),
     ]);
-    main.replaceChildren(
+    replaceContent(main,
       node('section', { className: 'loop-panel' }, [
         node('div', { className: 'loop-session-heading' }, [
           node('div', {}, [node('p', { className: 'loop-eyebrow', text: session.time }), node('h2', { id: 'loop-session-title', tabindex: '-1', text: session.name }), node('p', { className: 'loop-meta', text: session.role })]),
           node('p', { className: 'loop-muted', text: session.objective }),
         ]),
-        node('div', { className: 'loop-grid' }, [hypothesis, renderTimer(session, state)]),
+        session.deepDiveTraining ? renderDeepDiveModule(session) : null,
+        node('div', { className: 'loop-grid' }, [hypothesis, renderTimer(practice, state)]),
       ]),
       node('section', { id: 'loop-question-area', className: 'loop-panel', 'aria-label': 'Condução da pergunta' }),
+      currentDeepAttempt(session) ? renderDeepDebrief(session, currentDeepAttempt(session)) : null,
       renderRegistration(session),
     );
-    renderQuestion(session, state.questionIndex, false);
+    renderQuestion(practice, state.questionIndex, false);
+    refreshTimer();
     updateSaveStatus();
     if (focus) document.getElementById('loop-session-title')?.focus();
   }
@@ -362,7 +805,7 @@ function startApp() {
   }
 
   function refreshTimer() {
-    const session = selectedSession();
+    const session = activePracticeSession();
     const state = sessionRuntime(session);
     const duration = durationFor(session, state);
     const elapsed = elapsedFor(state);
@@ -380,7 +823,7 @@ function startApp() {
     const start = document.querySelector('[data-action="timer-start"]');
     const pause = document.querySelector('[data-action="timer-pause"]');
     const reset = document.querySelector('[data-action="timer-reset"]');
-    if (start) { start.disabled = state.running || duration <= 0 || elapsedFor(state) >= duration; start.textContent = state.elapsedMs > 0 ? 'Retomar' : 'Iniciar'; }
+    if (start) { start.disabled = deepContexts.get(session)?.attempt.status === 'debrief' || state.running || duration <= 0 || elapsedFor(state) >= duration; start.textContent = state.elapsedMs > 0 ? 'Retomar' : 'Iniciar'; }
     if (pause) pause.disabled = !state.running;
     if (reset) reset.disabled = !state.running && state.elapsedMs === 0;
     const status = document.getElementById('loop-timer-status');
@@ -390,18 +833,19 @@ function startApp() {
   function renderTimer(session, state) {
     const phases = Array.isArray(session.agenda) ? session.agenda : [];
     const phaseList = node('div', { className: 'loop-phase-list', 'aria-label': 'Escolher fase da agenda' }, phases.map((phase, index) => {
-      const control = button(`${phase.label} · ${phase.minutes} min`, 'select-phase', { className: 'loop-phase-button', 'data-phase-index': index, 'aria-pressed': String(index === state.phaseIndex) });
+      const control = button(`${phase.label} · ${phase.minutes} min`, 'select-phase', { className: 'loop-phase-button', 'data-phase-index': index, 'aria-pressed': String(index === state.phaseIndex), disabled: deepContexts.get(session)?.attempt.status === 'debrief' });
       control.addEventListener('click', () => {
         state.phaseIndex = index; state.running = false; state.startedAt = null; state.elapsedMs = 0;
         for (const phaseButton of phaseList.querySelectorAll('button')) phaseButton.setAttribute('aria-pressed', String(Number(phaseButton.dataset.phaseIndex) === index));
         document.getElementById('loop-phase-label').textContent = phase.label;
+        rememberDeepPosition(session, 'phase');
         refreshTimer();
         announce(`Fase selecionada: ${phase.label}. O cronômetro está parado.`);
       });
       return control;
     }));
     const start = button('Iniciar', 'timer-start', { className: 'loop-button loop-button-primary' });
-    start.addEventListener('click', () => { if (!state.running && elapsedFor(state) < durationFor(session, state)) { state.startedAt = Date.now(); state.running = true; refreshTimer(); } });
+    start.addEventListener('click', () => { if (deepContexts.get(session)?.attempt.status !== 'debrief' && !state.running && elapsedFor(state) < durationFor(session, state)) { state.startedAt = Date.now(); state.running = true; refreshTimer(); } });
     const pause = button('Pausar', 'timer-pause', { disabled: !state.running });
     pause.addEventListener('click', () => { if (state.running) { state.elapsedMs = elapsedFor(state); state.startedAt = null; state.running = false; refreshTimer(); } });
     const reset = button('Reiniciar fase', 'timer-reset');
@@ -423,6 +867,7 @@ function startApp() {
     if (!entry) { replaceContent(area, node('p', { text: 'Nenhuma pergunta disponível nesta sessão.' })); return; }
     const state = sessionRuntime(session);
     state.questionIndex = questions.indexOf(entry);
+    rememberDeepPosition(session, focus ? 'question' : null);
     const question = entry.question;
     questionSerial += 1;
     const serial = questionSerial;
@@ -457,9 +902,12 @@ function startApp() {
       ['Limites e cuidados', question.notes?.limits],
       ['Esclarecimentos possíveis', question.notes?.clarifications],
       ['Observações para condução', question.notes?.observations],
+      ['Próximo aprofundamento sugerido', question.notes?.nextFollowup],
+      ['Alternativas válidas e seus limites', question.notes?.alternatives],
     ].filter(([, value]) => Array.isArray(value) ? value.length : value);
     const notes = details(isPublic ? 'Notas do instrutor' : 'Notas privadas do instrutor', [
       ...notesSections.map(([title, value]) => node('section', { className: 'loop-stack' }, [node('h4', { text: title }), Array.isArray(value) ? textList(value) : node('p', { text: value })])),
+      question.notes?.ratingSignals ? node('section', { className: 'loop-stack', 'data-deep-rating-signals': '' }, [node('h4', { text: 'Sinais de qualidade desta resposta — régua de treino' }), ...['incompleta', 'regular', 'boa', 'excelente'].map(value => node('p', {}, [node('strong', { text: `${value.charAt(0).toUpperCase()}${value.slice(1)}: ` }), String(question.notes.ratingSignals[value] || '')]))]) : null,
       question.exercise?.premisesHtml ? node('section', { className: 'loop-stack', 'data-exercise-premises': '' }, [node('h4', { text: isPublic ? 'Premissas do exercício' : 'Premissas privadas do exercício' }), htmlBlock(question.exercise.premisesHtml)]) : null,
       question.exercise?.instructorHtml ? details(isPublic ? 'Orientações de condução do exercício' : 'Orientações privadas do exercício', htmlBlock(question.exercise.instructorHtml), { 'data-exercise-instructor': '' }) : null,
       question.source ? node('p', { className: 'loop-source', text: `Fonte: ${question.source.label || ''} · ${question.source.path || ''}${question.source.anchor ? `#${question.source.anchor.replace(/^#/, '')}` : ''}${question.source.line ? ` · linha ${question.source.line}` : ''}` }) : null,

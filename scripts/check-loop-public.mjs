@@ -34,6 +34,12 @@ const assessmentQualities = ['nao-observado', 'incompleta', 'regular', 'boa', 'e
 const assessmentSupports = ['espontanea', 'apos-aprofundamento', 'apos-explicacao'];
 const assessmentBases = ['fato-projeto', 'a-confirmar', 'hipotese', 'melhoria-hoje'];
 const assessmentActions = ['melhorar-explicacao', 'confirmar-evidencia', 'revisar-conceito', 'variar-cenario'];
+const deepDiveQuestionIds = {
+  'v1-a': ['DD-V1A-INTRO', 'DD-V1A-CASE', 'DD-V1A-CAP', 'DD-V1A-REAL', 'DD-V1A-END'],
+  'v1-b': ['DD-V1B-INTRO', 'DD-V1B-CASE', 'DD-V1B-CAP', 'DD-V1B-REAL', 'DD-V1B-END'],
+  v2: ['DD-V2-INTRO', 'DD-V2-CASE', 'DD-V2-PRESSURE', 'DD-V2-REAL', 'DD-V2-END'],
+  v3: ['DD-V3-INTRO', 'DD-V3-AI', 'DD-V3-MIGRATION', 'DD-V3-TRANSFER', 'DD-V3-END'],
+};
 const legacyPresentationIds = [
   ...[['01', 4], ['02', 5], ['03', 5], ['04', 4], ['05', 5]].flatMap(([group, count]) =>
     Array.from({ length: count }, (_, index) => `AP-${group}-${String(index + 1).padStart(2, '0')}`)),
@@ -138,6 +144,102 @@ function checkEvaluatorGuides(session, approved) {
   return { guides: 18, qualityOptions: assessmentQualities.length, supports: assessmentSupports.length, bases: assessmentBases.length, actions: assessmentActions.length };
 }
 
+function checkDeepDiveTraining(session, approved, sourceTexts) {
+  const training = session.deepDiveTraining;
+  const original = approved.deepDiveTraining;
+  assert.ok(training && original, 'A sessão Edu precisa das quatro alternativas de Deep Dive');
+  assert.deepEqual(without(training, ['variants']), without(original, ['variants']), 'Metadados do protocolo devem preservar a fonte aprovada');
+  assert.deepEqual(training.variants.map(variant => variant.id), Object.keys(deepDiveQuestionIds));
+  for (const [field, count] of [['qualityLevels', 5], ['supportLevels', 3], ['facets', 5], ['technicalDimensions', 7], ['ladder', 5], ['commands', 7]]) {
+    assert.equal(training[field]?.length, count, `Quantidade incorreta no protocolo Deep Dive: ${field}`);
+    assert.equal(new Set(training[field].map(item => JSON.stringify(item))).size, count, `Não duplicar entradas de ${field}`);
+  }
+  assert.deepEqual(training.qualityLevels.map(level => level.value), assessmentQualities);
+  assert.deepEqual(training.supportLevels.map(level => level.value), assessmentSupports);
+  assert.deepEqual(training.commands.map(command => command.command), ['/pausa', '/debrief', '/refazer', '/english', '/tempo N', '/proximo', '/instrutor']);
+  assert.ok(training.rules?.length && training.introductionPt && training.introductionEn);
+  const pix = folded(JSON.stringify(training.pixExtension));
+  for (const pattern of [/instituicao/, /ficha/, /vigente|atual/, /85/, /552.*2026/, /nao.*selecion|nao.*preparad/]) assert.match(pix, pattern, 'A extensão Pix exige preparação independente e documentação vigente');
+  let questions = 0;
+  let scenarios = 0;
+  let cards = 0;
+  for (const [index, variant] of training.variants.entries()) {
+    const recipe = original.variants[index];
+    assert.deepEqual(without(variant, ['questions']), without(recipe, ['questions']), 'Não alterar domínios, agenda ou condução de uma versão');
+    assert.deepEqual(variant.questions.map(question => question.id), deepDiveQuestionIds[variant.id]);
+    assert.deepEqual(variant.reserves, [], 'As versões não devem combinar reservas ou cenários legados');
+    assert.equal(variant.agenda.reduce((sum, phase) => sum + phase.minutes, 0), 60, 'Cada versão tem60 minutos de entrevista, com debrief fora dessa soma');
+    assert.ok(variant.agenda.every(phase => !/debrief|feedback/i.test(phase.label)), 'Debrief fica fora da entrevista de60 minutos');
+    for (const field of ['version', 'label', 'objective', 'instructorNotes', 'firstDomain', 'secondDomain']) assert.ok(typeof variant[field] === 'string' && normalized(variant[field]), `Versão sem ${field}`);
+    for (const [questionIndex, question] of variant.questions.entries()) {
+      const source = recipe.questions[questionIndex];
+      assert.equal(question.prompt, source.prompt || technical[source.scenario]?.prompt);
+      assert.equal(question.promptEn, source.promptEn);
+      assert.ok(typeof question.promptEn === 'string' && normalized(question.promptEn), 'O inglês vem da fonte, sem geração ou tradução por IA');
+      assert.deepEqual(question.followups, source.followups);
+      assert.deepEqual(question.followupsEn, source.followupsEn);
+      assert.ok(Array.isArray(question.followupsEn) && question.followupsEn.length && question.followupsEn.every(text => typeof text === 'string' && normalized(text)));
+      assert.equal(question.followupsEn.length, question.followups.length, 'Todo aprofundamento precisa de inglês preparado');
+      assert.deepEqual(question.notes, source.notes);
+      assert.ok(question.notes?.objective && question.notes.evidence?.length && question.notes.limits?.length);
+      assert.deepEqual(Object.keys(question.notes.ratingSignals || {}).sort(), [...assessmentQualities.slice(1)].sort());
+      assert.ok(Object.values(question.notes.ratingSignals).every(text => typeof text === 'string' && normalized(text)));
+      assert.ok(question.notes.nextFollowup && question.notes.alternatives?.length);
+      assert.match(question.source?.label || '', /autoral/i);
+      questions++;
+      if (question.exercise) {
+        assert.notEqual(variant.id, 'v3', 'V3 usa experiência real, sem injetar um projeto fictício');
+        assert.ok(question.id.endsWith('-CASE'));
+        const exercise = technical[source.scenario];
+        assert.ok(exercise, 'O CASE deve apontar para uma ficha fixa conhecida');
+        assert.equal(exercise.cards.length, 6);
+        assertProjection(question.exercise, exercise, sourceTexts.get(exercise.sourcePath));
+        scenarios++; cards += exercise.cards.length;
+      } else assert.ok(!source.scenario, 'Um cenário selecionado precisa ser resolvido integralmente pelo build');
+    }
+  }
+  assert.equal(questions, 20);
+  assert.equal(scenarios, 3);
+  assert.equal(cards, 18);
+  assert.ok(!/\b(?:FIAP|Ita[uú])\b/i.test(JSON.stringify(training)), 'Perfil pessoal não pertence aos prompts ou assets do protocolo');
+  const cases = [technical.deepDiveMigration, technical.deepDiveAssistant, technical.deepDivePool];
+  assert.deepEqual(cases.map(exercise => exercise.cards.map(card => card.id)), [['M1', 'M2', 'M3', 'M4', 'M5', 'M6'], ['A1', 'A2', 'A3', 'A4', 'A5', 'A6'], ['P1', 'P2', 'P3', 'P4', 'P5', 'P6']]);
+  assert.equal(cases[2].cards[5].conditional, true, 'Recuperação do pool exige proposta e critérios antes da liberação');
+  const compact = text => folded(text).replace(/\s/g, '').replace(/,/g, '.');
+  const requirePieces = (text, pieces) => { for (const piece of pieces) assert.ok(compact(text).includes(piece), `Premissa fixa ausente: ${piece}`); };
+  const [migration, assistant, pool] = cases;
+  requirePieces(migration.cards[3].studentMarkdown, ['900mb', '2mb/s', '5mb/s']);
+  const drainSeconds = 900 / (5 - 2);
+  assert.equal(drainSeconds, 300);
+  requirePieces(migration.cards[3].notesMarkdown, [`${drainSeconds}s`]);
+  requirePieces(migration.instructorMarkdown, ['6mb/s', '1mb/s']);
+  assert.equal(6 - 5, 1, 'Na variação anunciada a fila cresce, não existe catch-up');
+  requirePieces(migration.cards[1].studentMarkdown, ['300s', '600s']);
+  assert.match(folded(migration.cards[1].studentMarkdown), /meta|alvo|condicion|premissa/, 'Pausa de escrita e RTO são metas condicionais do exercício');
+  requirePieces(assistant.cards[2].studentMarkdown, ['1250.40', 'brl', '10:00:00', '10:00:15', '30s']);
+  requirePieces(assistant.cards[3].studentMarkdown, ['10:02:00', '120s', '30s']);
+  assert.ok(15 <= 30 && 120 > 30);
+  requirePieces(assistant.cards[4].studentMarkdown, ['30respostas/s', '0.2s']);
+  assert.match(folded(assistant.cards[4].studentMarkdown), /duas consultas|2\s*consultas/);
+  const toolCallsPerSecond = 30 * 2;
+  const meanConcurrentCalls = toolCallsPerSecond * 0.2;
+  requirePieces(assistant.cards[4].notesMarkdown, [`${toolCallsPerSecond}consultas/s`, `${meanConcurrentCalls}chamadas`]);
+  requirePieces(pool.cards[1].studentMarkdown, ['1800ms', '200ms', '2000ms']);
+  assert.equal(1800 + 200, 2000);
+  requirePieces(pool.cards[2].studentMarkdown, ['max=10', 'totalcount=10', 'idlecount=0', 'waitingcount>0', '25ms']);
+  assert.match(folded(pool.instructorMarkdown), /causa fixa/);
+  assert.match(folded(pool.cards[3].studentMarkdown), /nao inicia transacao|sem transacao/);
+  requirePieces(pool.cards[4].studentMarkdown, ['20confirmacoes/s', '10/s', '40/s']);
+  const redirectedRate = (20 + 20 + 10) / 2;
+  assert.ok(redirectedRate === 25 && redirectedRate < 40);
+  requirePieces(pool.cards[4].notesMarkdown, [`${redirectedRate}/s`]);
+  for (const exercise of cases) {
+    assert.ok(!/\b(?:FIAP|Ita[uú])\b/i.test(JSON.stringify(exercise)));
+    for (const evidence of exercise.cards) assert.ok(evidence.studentMarkdownEn && /synthetic|fictional/i.test(evidence.studentMarkdownEn), 'Todo cartão tem inglês preparado e sinalização sintética');
+  }
+  return { variants: 4, questions, scenarios, cards, minutesPerVariant: 60, debriefOutsideInterview: true, drainSeconds, growthMBPerSecond: 1, toolCallsPerSecond, meanConcurrentCalls, redirectedRate };
+}
+
 function checkPresentation(page, approvedPage) {
   const session = page.sessions.find(item => item.id === 'apresentacao');
   const approved = approvedPage.sessions.find(item => item.id === 'apresentacao');
@@ -223,6 +325,7 @@ function assertNoFilledRecords(value, location = 'payload') {
   for (const [key, item] of Object.entries(value)) {
     assert.notEqual(key, 'privateMarker', 'Marcador da antiga publicação privada não pertence ao material publicado');
     assert.notEqual(key, 'questionAssessments', 'Fichas e histórico preenchidos pertencem somente ao navegador, não ao build');
+    assert.notEqual(key, 'deepDiveRuns', 'Tentativas Deep Dive pertencem somente ao navegador, não ao build');
     if (['episodio', 'duvida', 'ajuda', 'proxima', 'updatedAt', 'releasedAt'].includes(key)) {
       assert.ok(item === '' || item === null || item === undefined, `Registro preenchido em ${location}.${key}`);
     }
@@ -259,17 +362,20 @@ function assertProjection(exercise, expected, source) {
   assert.equal(exercise.instructorHtml, markdown(expected.instructorMarkdown));
   for (const [index, card] of exercise.cards.entries()) {
     const approved = expected.cards[index];
-    assert.deepEqual(without(card, ['studentHtml', 'notesHtml']), approved, 'Cartão publicado diferente do cartão aprovado');
+    assert.deepEqual(without(card, ['studentHtml', 'studentHtmlEn', 'notesHtml']), approved, 'Cartão publicado diferente do cartão aprovado');
     assert.equal(card.studentHtml, markdown(approved.studentMarkdown), 'A projeção do aluno deve conter somente studentMarkdown');
+    if (approved.studentMarkdownEn) assert.equal(card.studentHtmlEn, markdown(approved.studentMarkdownEn), 'Inglês deve vir exclusivamente da tradução preparada');
     assert.equal(card.notesHtml, markdown(approved.notesMarkdown));
     assert.match(card.studentMarkdown, /sintétic/i, 'Toda observação deve identificar sua natureza sintética');
     assert.match(card.studentMarkdown, /não executad/i, 'Nenhum resultado narrado deve parecer um teste real');
     assert.ok(!/<(?:script|iframe|object|form|input|textarea)\b|\son\w+=/i.test(card.studentHtml), 'Projeção estudantil deve permanecer inerte');
     // Permit only the synthetic label and the E6 expectation label as added text.
     // Remaining nonempty lines must be excerpts of the existing exercise.
-    const excerpt = card.studentMarkdown.replace(/^\*\*Informação sintética[^\n]*\*\*[^\n]*(?:\n\n)?/, '').replace(/^\*\*Resultados esperados de testes narrados, não executados:\*\*\s*/, '');
-    for (const line of excerpt.split('\n').map(line => line.trim()).filter(Boolean)) {
-      assert.ok(source.includes(line), `Texto adicional no cartão ${card.id}: a evidência precisa vir do cenário existente`);
+    for (const projection of [card.studentMarkdown, ...(approved.studentMarkdownEn ? [approved.studentMarkdownEn] : [])]) {
+      const excerpt = projection.replace(/^\*\*Informação sintética[^\n]*\*\*[^\n]*(?:\n\n)?/, '').replace(/^\*\*Resultados esperados de testes narrados, não executados:\*\*\s*/, '');
+      for (const line of excerpt.split('\n').map(line => line.trim()).filter(Boolean)) {
+        assert.ok(source.includes(line), `Texto adicional no cartão ${card.id}: a evidência PT/EN precisa vir da fonte existente`);
+      }
     }
   }
 }
@@ -281,6 +387,8 @@ async function checkStatic() {
   assert.doesNotThrow(() => validatePublication(agenda));
   assert.throws(() => validatePublication({ questionAssessments: {} }), /questionAssessments/);
   assert.throws(() => validatePublication({ pages: [{ sessions: [{ questionAssessments: { FIXTURE_AP: { draft: { said: 'FIXTURE_NAO_PUBLICAVEL' }, observations: [] } } }] }] }), /questionAssessments/);
+  assert.throws(() => validatePublication({ deepDiveRuns: {} }), /deepDiveRuns/);
+  assert.throws(() => validatePublication({ pages: [{ sessions: [{ deepDiveRuns: { attempts: { 'run-1': { coverageNotes: 'FIXTURE_NAO_PUBLICAVEL' } } } }] }] }), /deepDiveRuns/);
   for (const source of [agenda, behavioral, technical]) assertNoFilledRecords(source, 'fonte aprovada');
   assert.deepEqual(agenda.pages.map(page => page.pageId), pageIds);
   assert.deepEqual(agenda.pages.flatMap(page => page.sessions.filter(session => session.id !== 'apresentacao').map(session => session.name)), ['Edu', 'Bru', 'Rica', 'Fer', 'Luca'], 'A publicação deve usar os cinco nomes abreviados aprovados');
@@ -356,7 +464,9 @@ async function checkStatic() {
       const recipe = approved.sessions[sessionIndex];
       const assessmentSession = page.pageId === 'dia-10' && session.id === 'apresentacao';
       assert.equal(Boolean(session.evaluationGuide), assessmentSession, 'Guia geral de avaliação pertence apenas à apresentação do Dia10');
-      assert.deepEqual(without(session, ['questions', 'reserves', 'notesHtml']), without(recipe, ['questions', 'reserves']), 'Cada rodada deve preservar sua agenda completa');
+      const deepDiveSession = page.pageId === 'dia-10' && session.id === 'eduardo';
+      assert.equal(Boolean(session.deepDiveTraining), deepDiveSession, 'O protocolo Deep Dive pertence somente à sessão Edu');
+      assert.deepEqual(without(session, ['questions', 'reserves', 'notesHtml', 'deepDiveTraining']), without(recipe, ['questions', 'reserves', 'deepDiveTraining']), 'Cada rodada deve preservar sua agenda legada completa');
       assert.equal(session.notesHtml, markdown(recipe.notesMarkdown));
       assert.equal(session.agenda.reduce((sum, phase) => sum + phase.minutes, 0), 60, 'O ensaio deve declarar seus 60 minutos, incluindo feedback');
       for (const collection of ['questions', 'reserves']) {
@@ -418,6 +528,8 @@ async function checkStatic() {
   for (const pattern of [/DMS\/snapshot/, /autoria/i, /novas escritas/i, /validação/i, /perda zero/i, /contingência/i, /Não escolher a versão verdadeira/]) assert.match(presentation.notesMarkdown, pattern);
   const presentationCheck = checkPresentation(pages.find(page => page.pageId === 'dia-10'), agenda.pages.find(page => page.pageId === 'dia-10'));
   assert.equal(questions, 59, 'As 18 perguntas de apresentação e as reservas legadas devem compor os 59 itens da agenda aprovada');
+  const deepDiveCheck = checkDeepDiveTraining(pages[0].sessions.find(session => session.id === 'eduardo'), agenda.pages[0].sessions.find(session => session.id === 'eduardo'), sourceTexts);
+  assert.equal(questions + deepDiveCheck.questions, 79, 'Os20 itens novos são adicionais aos59 legados');
   const scripts = new Set([...htmlPages.values()].flatMap(html => [...html.matchAll(/<script\b[^>]*src=["']([^"']+)["']/g)].map(match => match[1])));
   const appScripts = [];
   for (const url of scripts) {
@@ -431,7 +543,7 @@ async function checkStatic() {
   assert.match(appScripts[0], /(?:const|let) STORAGE_PREFIX\s*=\s*(?:isPublic\s*\?\s*)?['"]loop-practice:v1['"]/);
   const stack = await readJSON('site/aws-stack.json');
   publicPolicy = stack.Resources.ResponseHeaders.Properties.ResponseHeadersPolicyConfig.SecurityHeadersConfig.ContentSecurityPolicy.ContentSecurityPolicy;
-  report.static = { pages: pages.length, sessions: pages.map(page => page.sessions.length), questions, lpQuestions: seenLP.length, manifestDocuments: manifest.length, deliberateLinks, filledRecords: 0, fixedVariants: ['SIM02-B PostgreSQL 16', 'SIM03-B', 'CONSULTIVA-BASE C1–C5'], presentation: presentationCheck };
+  report.static = { pages: pages.length, sessions: pages.map(page => page.sessions.length), questions, lpQuestions: seenLP.length, manifestDocuments: manifest.length, deliberateLinks, filledRecords: 0, fixedVariants: ['SIM02-B PostgreSQL 16', 'SIM03-B', 'CONSULTIVA-BASE C1–C5'], presentation: presentationCheck, deepDive: deepDiveCheck };
   report.checks.push('Dois HTML completos, três JSON aprovados, 19 LP do banco, projeções fiéis, variantes fixas e pendências factuais preservadas.');
   report.checks.push('Apresentação: T1–T10/B1–B8 com aprofundamentos/notas específicos, seis prioridades primeiro e todos os IDs antigos preservados, incluindo 16 reservas sem alteração.');
   report.checks.push(`${manifest.length} documentos correspondem à seleção pública atual; roteiros fora da busca/progresso/sitemap; somente duas entradas em Praticar#instrutor; registros publicados em branco.`);
@@ -605,6 +717,7 @@ async function checkBrowser() {
     await present(page, () => page.locator('[data-action="present-prompt"]').click(), session.questions.find(question => question.id === presentationIds.T6).prompt, 'avaliador-popup-ficha-preenchida-sem-vazamento.png');
     const exported = await downloadRecord(page);
     assert.equal(exported.schemaVersion, 1, 'O formato legado permanece versão1');
+    assert.equal(exported.deepDiveRuns, undefined, 'As fichas AP não recebem tentativas do protocolo Edu');
     for (const field of ['pageId', 'sessionId', 'episodio', 'duvida', 'ajuda', 'proxima', 'dimensions', 'evidenceLog', 'exerciseDrafts']) assert.deepEqual(exported[field], legacy[field], 'Adicionar fichas não deve apagar o registro legado');
     assert.equal(exported.questionAssessments[presentationIds.T6].observations.length, 2);
     assert.equal(exported.questionAssessments[presentationIds.T7].observations.length, 0);
@@ -618,6 +731,194 @@ async function checkBrowser() {
     }
     report.browser.assessments = { guides: 18, observations: 2, draftAutosave: true, explicitAppend: true, historyDeepCloned: true, reloadAndExport: true, legacySchema: 1, perQuestionIsolation: true, safeText: true };
     report.checks.push('Ficha por APid: opções5/3/4/4, autosave separado do append explícito, dois snapshots imutáveis, reload/export, texto inerte e campos legados preservados.');
+  }
+  async function checkDeepDiveRun(page, width, theme, full) {
+    const owner = pages[0].sessions.find(session => session.id === 'eduardo');
+    const module = owner.deepDiveTraining;
+    const key = `${namespace}:dia-10:${owner.id}`;
+    await visit(page, 'dia-10');
+    await page.locator('#loop-theme').selectOption(theme);
+    const original = await page.evaluate(key => JSON.parse(localStorage.getItem(key) || 'null'), key);
+    assert.equal(await page.locator('[data-deep-dive-mode]').inputValue(), 'legacy');
+    const rawData = await page.locator('#loop-data').textContent();
+    const readRecord = () => page.evaluate(key => JSON.parse(localStorage.getItem(key)), key);
+    const currentId = () => page.locator('[data-deep-current-attempt]').getAttribute('data-deep-current-attempt');
+    const command = async text => { await page.locator('[data-deep-command]').fill(text); await page.locator('[data-action="deep-command"]').click(); };
+    const capture = async (element, name) => { await element.screenshot({ path: path.join(review, name) }); report.captures.push(name); };
+    const oldAttempts = [];
+    for (const variant of module.variants) {
+      await page.locator('[data-deep-dive-mode]').selectOption(variant.id);
+      const id = await currentId();
+      const getAttempt = async () => (await readRecord()).deepDiveRuns.attempts[id];
+      let attempt = await getAttempt();
+      assert.equal(attempt.variantId, variant.id);
+      assert.equal(attempt.language, 'pt'); assert.equal(attempt.status, 'practice');
+      assert.equal(attempt.exposed, false); assert.deepEqual(attempt.evidenceLog, []);
+      assert.deepEqual(await page.locator('#loop-question-select option').evaluateAll(options => options.map(option => option.dataset.questionId)), deepDiveQuestionIds[variant.id], 'Uma versão não deve misturar questões de outra versão ou do legado');
+      assert.equal(await page.locator('[data-action="deep-retry"]').isDisabled(), true);
+      await command('/refazer');
+      assert.equal(await currentId(), id, 'Refazer exige debrief antes de criar outra tentativa');
+      const question = variant.questions.find(question => question.exercise) || variant.questions.find(question => question.id.endsWith('-AI'));
+      await selectQuestion(page, question.id);
+      assert.equal(await page.locator('#loop-question-prompt').innerText(), question.prompt);
+      assert.equal(await page.locator('[data-deep-instructor]').evaluate(element => element.open), false);
+      await command('/instrutor');
+      assert.equal(await page.locator('[data-deep-instructor]').evaluate(element => element.open), true);
+      assert.equal((await getAttempt()).exposed, false, 'Abrir ficha reservada não presume exposição à participante');
+      assert.equal(await page.locator('[data-action="present-evidence"]:visible').count(), 0, 'Consultar instrutor não libera cartões');
+      await present(page, () => page.locator('[data-action="present-prompt"]').click(), question.prompt, `edu-${variant.id}-${width}-${theme}-pergunta.png`);
+      if (question.exercise) {
+        assert.equal(await page.locator('[data-evidence-card]').count(), 6);
+        const selectedCards = full ? question.exercise.cards : question.exercise.cards.filter((card, index) => index === 0 || card.conditional);
+        for (const evidence of selectedCards) {
+          const card = page.locator(`article[data-card-id="${evidence.id}"]`);
+          await card.locator(':scope > details > summary').click();
+          const release = card.locator('[data-action="release-evidence"]');
+          assert.equal(await release.isDisabled(), true);
+          await page.locator('[data-evidence-request]').fill(`FIXTURE_PEDIDO_${variant.id}_${evidence.id}`);
+          assert.equal(await release.isDisabled(), true);
+          await card.locator('[data-confirm-relevant]').check();
+          if (evidence.conditional) {
+            assert.equal(await release.isDisabled(), true);
+            await card.locator('[data-confirm-conditional]').check();
+          }
+          await card.locator('[data-card-preview] summary').click();
+          const text = await card.locator('[data-card-preview] .loop-markdown').innerText();
+          await release.click();
+          await present(page, () => card.locator('[data-action="present-evidence"]').click(), text);
+        }
+        await capture(page.locator('#loop-question-area'), `edu-${variant.id}-${width}-${theme}-cartoes.png`);
+      } else {
+        assert.equal(variant.id, 'v3');
+        assert.equal(await page.locator('[data-evidence-card], [data-exercise]').count(), 0, 'V3 usa exclusivamente perguntas sobre experiência real');
+        await capture(page.locator('#loop-question-area'), `edu-v3-${width}-${theme}-real.png`);
+      }
+      await command('/english');
+      assert.equal(await page.locator('#loop-question-prompt').innerText(), question.promptEn, 'Inglês deve ser o enunciado preparado');
+      for (const [index, followup] of question.followupsEn.entries()) assert.equal(await page.locator(`[data-followup-index="${index}"] p`).textContent(), followup);
+      await present(page, () => page.locator('[data-action="present-prompt"]').click(), question.promptEn, `edu-${variant.id}-${width}-${theme}-english-popup.png`);
+      if (question.exercise) {
+        const evidence = question.exercise.cards[0];
+        const card = page.locator(`article[data-card-id="${evidence.id}"]`);
+        await card.locator(':scope > details > summary').click();
+        await card.locator('[data-card-preview] summary').click();
+        const english = await card.locator('[data-card-preview] .loop-markdown').innerText();
+        const expected = await page.evaluate(html => new DOMParser().parseFromString(html, 'text/html').body.textContent, evidence.studentHtmlEn);
+        assert.equal(normalized(english), normalized(expected), 'Cartão em inglês não deve cair no texto PT nem incluir notas');
+        await present(page, () => card.locator('[data-action="present-evidence"]').click(), english, variant.id === 'v1-b' ? `edu-v1-b-${width}-${theme}-english-card.png` : undefined);
+        if (variant.id === 'v1-b') await capture(page.locator('#loop-question-area'), `edu-v1-b-${width}-${theme}-english.png`);
+      }
+      await page.locator('[data-action="deep-portuguese"]').click();
+      assert.equal(await page.locator('#loop-question-prompt').innerText(), question.prompt);
+      if (variant.id === 'v1-b') await command('/english');
+      const timerBefore = await page.locator('#loop-timer-display').innerText();
+      await command('/tempo 17');
+      assert.equal((await getAttempt()).remainingMinutes, 17);
+      assert.equal(await page.locator('#loop-timer-display').innerText(), timerBefore, 'Tempo informado não recalcula o relógio ou a agenda');
+      await page.locator('[data-deep-coaching-note]').fill(`FIXTURE_COACHING_${variant.id}`);
+      await command('/pausa');
+      assert.equal((await getAttempt()).coachingLog.at(-1).note, `FIXTURE_COACHING_${variant.id}`);
+      if (full && variant.id === 'v1-a') {
+        await page.locator('[data-action="deep-resume"]').click();
+        await page.waitForFunction(before => document.getElementById('loop-timer-display').textContent !== before, timerBefore, { timeout: 5000 });
+        await command('/pausa');
+        const stopped = await page.locator('#loop-timer-display').innerText();
+        await page.waitForTimeout(1100); assert.equal(await page.locator('#loop-timer-display').innerText(), stopped);
+      }
+      await page.locator('[data-deep-coverage]').fill(`FIXTURE_COBERTURA_${variant.id}`);
+      const phase = (await getAttempt()).phaseIndex;
+      const released = structuredClone((await getAttempt()).evidenceLog);
+      await command('/proximo');
+      assert.equal((await getAttempt()).phaseIndex, Math.min(phase + 1, variant.agenda.length - 1));
+      assert.deepEqual((await getAttempt()).evidenceLog, released, 'Avançar fase não libera evidência');
+      await page.locator('[data-deep-exposure]').check();
+      assert.equal((await getAttempt()).exposed, true);
+      await command('/debrief');
+      const debrief = page.locator('[data-deep-debrief]');
+      assert.equal(await debrief.isVisible(), true);
+      assert.equal(await debrief.evaluate(element => element.open), true);
+      assert.equal(await page.locator('[data-action="timer-start"]').isDisabled(), true);
+      assert.equal(await page.locator('[data-deep-facet]').count(), 5);
+      assert.equal(await page.locator('[data-deep-technical]').count(), 7);
+      for (const field of await debrief.locator('[data-deep-observation-field="quality"]').all()) assert.equal(await field.inputValue(), 'nao-observado');
+      for (const field of await debrief.locator('[data-deep-observation-field="evidence"], [data-deep-observation-field="concern"], [data-deep-observation-field="support"]').all()) assert.equal(await field.inputValue(), '');
+      assert.equal(await debrief.locator('[data-deep-star]').isHidden(), true);
+      await debrief.locator('[data-deep-debrief-field="realStoryConfirmed"]').check();
+      for (const field of await debrief.locator('[data-deep-star-field]').all()) {
+        assert.equal(await field.inputValue(), '', 'Confirmar uma experiência não gera uma STAR fictícia');
+        assert.equal(await field.getAttribute('placeholder'), '[PREENCHER]');
+      }
+      assert.equal(await debrief.locator('[data-deep-priority]').count(), 3);
+      if (full && variant.id === 'v1-a') {
+        await debrief.locator('[data-deep-facets] > summary').click();
+        await debrief.locator('[data-deep-technical-dimensions] > summary').click();
+        const facet = debrief.locator(`[data-deep-facet="${module.facets[0].id}"]`);
+        const technical = debrief.locator(`[data-deep-technical="${module.technicalDimensions[0].id}"]`);
+        await facet.locator('[data-deep-observation-field="evidence"]').fill('FIXTURE_FACETA <img src=x onerror="window.__deepXss=true">');
+        await facet.locator('[data-deep-observation-field="quality"]').selectOption('boa');
+        await facet.locator('[data-deep-observation-field="support"]').selectOption('apos-aprofundamento');
+        await technical.locator('[data-deep-observation-field="evidence"]').fill('FIXTURE_COMPETENCIA_TECNICA');
+        await technical.locator('[data-deep-observation-field="quality"]').selectOption('regular');
+        await technical.locator('[data-deep-observation-field="support"]').selectOption('espontanea');
+        for (let index = 0; index < 3; index++) {
+          await debrief.locator(`[data-deep-priority="${index}"] [data-deep-priority-field="practice"]`).fill(`FIXTURE_PRATICA_${index}`);
+          await debrief.locator(`[data-deep-priority="${index}"] [data-deep-priority-field="criterion"]`).fill(`FIXTURE_CRITERIO_${index}`);
+        }
+        await debrief.locator('[data-deep-debrief-field="opinion"]').selectOption('inconclusivo');
+        for (const field of ['justification', 'ladderMap', 'corrections', 'englishFeedback', 'nextReason', 'comparison']) await debrief.locator(`[data-deep-debrief-field="${field}"]`).fill(`FIXTURE_${field}`);
+        await debrief.locator('[data-deep-debrief-field="nextVersion"]').selectOption('v3');
+        await debrief.locator('[data-deep-extra-question="0"]').fill('FIXTURE_PERGUNTA_MANUAL');
+        assert.equal(await page.evaluate(() => window.__deepXss), undefined);
+        assert.equal(await debrief.locator('img').count(), 0);
+      }
+      await page.locator('[data-action="deep-save-debrief"]').click();
+      attempt = await getAttempt();
+      assert.equal(attempt.status, 'debrief');
+      assert.ok(Number.isFinite(Date.parse(attempt.debriefRecordedAt)));
+      assert.deepEqual(attempt.debrief.star, { situation: '', task: '', action: '', result: '' });
+      for (const key of ['score', 'average', 'lpScore', 'technicalScore']) assert.equal(attempt.debrief[key], undefined);
+      await capture(page.locator('[data-deep-debrief]'), `edu-${variant.id}-${width}-${theme}-debrief.png`);
+      oldAttempts.push({ id, evidenceLog: attempt.evidenceLog, debrief: attempt.debrief });
+      if (full || variant.id === 'v2') {
+        await command('/refazer');
+        const retryId = await currentId();
+        assert.notEqual(retryId, id);
+        const retry = (await readRecord()).deepDiveRuns.attempts[retryId];
+        assert.equal(retry.language, attempt.language, 'Comparar um reteste exige preservar o idioma escolhido');
+        assert.ok(retry.events.some(event => event.type === 'retry'), 'O histórico precisa identificar a criação explícita do reteste');
+        assert.equal(await page.locator('[data-deep-retest]').isVisible(), true);
+        assert.match(folded(await page.locator('[data-deep-retest]').innerText()), /mesmo cenario/);
+        assert.match(folded(await page.locator('[data-deep-retest]').innerText()), /independen/, 'O aviso deve distinguir repetir um exemplo de demonstrar transferência independente');
+        assert.deepEqual(retry.evidenceLog, []); assert.deepEqual(retry.exerciseDrafts, {});
+        assert.equal(retry.exposed, false); assert.deepEqual(retry.coachingLog, []);
+        assert.equal(retry.debrief.opinion, '');
+        assert.equal(await page.locator('#loop-question-area').getAttribute('data-question-id'), question.id, 'Retry preserva a pergunta relevante, inclusive AI em V3');
+        if (question.exercise) {
+          assert.equal(await page.locator('[data-action="present-evidence"]:visible').count(), 0);
+          for (const control of await page.locator('[data-action="release-evidence"]').all()) assert.equal(await control.isDisabled(), true);
+          if (variant.id === 'v2') await capture(page.locator('#loop-question-area'), `edu-v2-${width}-${theme}-retry-gates.png`);
+        } else assert.equal(await page.locator('[data-evidence-card]').count(), 0);
+      }
+      await noOverflow(page);
+    }
+    await page.reload(); await page.locator('#loop-question-prompt').waitFor();
+    assert.equal(await page.locator('[data-deep-dive-mode]').inputValue(), 'legacy', 'Reload não inicia ou retoma uma avaliação automaticamente');
+    await page.locator('[data-deep-attempt]').selectOption(oldAttempts[0].id);
+    const restored = await readRecord();
+    for (const snapshot of oldAttempts) {
+      assert.deepEqual(restored.deepDiveRuns.attempts[snapshot.id].evidenceLog, snapshot.evidenceLog);
+      assert.deepEqual(restored.deepDiveRuns.attempts[snapshot.id].debrief, snapshot.debrief);
+    }
+    const exported = await downloadRecord(page);
+    assert.equal(exported.schemaVersion, 1);
+    assert.deepEqual(exported.deepDiveRuns, restored.deepDiveRuns);
+    if (original) for (const field of ['episodio', 'duvida', 'ajuda', 'proxima', 'dimensions', 'evidenceLog', 'exerciseDrafts']) assert.deepEqual(exported[field], original[field], 'O protocolo novo preserva o registro Edu legado');
+    assert.equal(exported.questionAssessments, undefined);
+    assert.equal(await page.locator('#loop-data').textContent(), rawData, 'Comandos, acertos e retries não alteram a causa ou a ficha publicada');
+    await page.locator('[data-deep-dive-mode]').selectOption('legacy');
+    assert.equal(await page.locator('#loop-question-area').getAttribute('data-question-id'), owner.questions[0].id);
+    report.browser.deepDive ||= [];
+    report.browser.deepDive.push({ width, theme, variants: 4, completeEvidenceChecks: full, runs: exported.deepDiveRuns.order.length, manualDebrief: true, isolatedRetry: true, englishPreparedOnly: true, legacyPreserved: true });
   }
   try {
     for (const width of report.browser.widths) for (const preference of report.browser.themes) {
@@ -637,6 +938,12 @@ async function checkBrowser() {
           const evaluator = Boolean(session.evaluationGuide);
           assert.equal(await page.locator('details[data-evaluator-guide]').count(), evaluator ? 1 : 0);
           assert.equal(await page.locator('details[data-assessment]').count(), evaluator ? 1 : 0);
+          const deepDive = Boolean(session.deepDiveTraining);
+          assert.equal(await page.locator('[data-deep-dive-training]').count(), deepDive ? 1 : 0);
+          if (deepDive) {
+            assert.equal(await page.locator('[data-deep-dive-mode]').inputValue(), 'legacy', 'O roteiro legado continua sendo a seleção inicial');
+            assert.deepEqual(await page.locator('[data-deep-dive-mode] option').evaluateAll(options => options.map(option => option.value)), ['legacy', ...Object.keys(deepDiveQuestionIds)], 'Selecionar apenas uma versão/cenário; Pix não é alternativa do seletor');
+          }
           for (const field of await page.locator('[data-record-field], [data-dimension-field="note"]').all()) assert.equal(await field.inputValue(), '');
           for (const field of await page.locator('[data-dimension-field="status"]').all()) assert.equal(await field.inputValue(), 'nao-observado');
           await noOverflow(page);
@@ -801,6 +1108,7 @@ async function checkBrowser() {
     const exported = JSON.parse(await fs.readFile(await download.path(), 'utf8'));
     assert.equal(exported.episodio, fixture);
     assert.equal(exported.questionAssessments, undefined, 'A sessão Edu preserva o formato legado sem fichas AP');
+    assert.equal(exported.deepDiveRuns, undefined, 'Modo legado não deve criar tentativas Deep Dive antes de uma escolha explícita');
     assert.equal(exported.dimensions.aderencia.status, 'demonstrado');
     assert.equal(exported.pageId, pages[0].pageId); assert.equal(exported.sessionId, firstSession.id);
     for (const key of ['sessions', 'questions', 'reserves', 'agenda', 'notes', 'exercise']) assert.equal(exported[key], undefined, 'Exportação deve conter apenas o registro selecionado');
@@ -821,6 +1129,14 @@ async function checkBrowser() {
     assert.ok(Object.keys(storage).some(key => key === `${namespace}:${pages[0].pageId}:${firstSession.id}`), 'O registro usa o namespace de prática pública');
     report.checks.push('Cronômetro manual, texto inerte, persistência e isolamento por rodada/dia, exportação só do registro e storage público/privado preservado.');
     await checkAssessmentRecords(page);
+    await checkDeepDiveRun(page, 1440, 'light', true);
+    for (const [width, theme] of [[390, 'light'], [390, 'dark'], [1440, 'dark']]) {
+      const deepContext = await context({ viewport: { width, height: width === 390 ? 844 : 1000 }, colorScheme: theme, acceptDownloads: true });
+      const deepPage = await deepContext.newPage(); monitor(deepPage);
+      await checkDeepDiveRun(deepPage, width, theme, false);
+      await deepContext.close(); contexts.delete(deepContext);
+    }
+    report.checks.push('Edu: quatro versões exclusivas,18 cartões PT/EN, comandos manuais e pausa/coaching, debrief fora dos60min com facetas/técnica separadas, STAR vazia e retries isolados preservando legado.');
     for (const [key, value] of Object.entries(protectedStorage)) assert.equal(await page.evaluate(key => localStorage.getItem(key), key), value, 'Preencher fichas não altera namespaces privados ou do site');
     const blocked = await context();
     await blocked.addInitScript(() => Object.defineProperty(window, 'localStorage', { get() { throw new DOMException('Blocked', 'SecurityError'); } }));

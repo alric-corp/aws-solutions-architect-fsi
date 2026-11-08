@@ -134,7 +134,1340 @@
             }
           ],
           "candidateQuestion": "Pode compartilhar um exemplo de como o time decide que uma investigação técnica já tem evidência suficiente para recomendar uma mudança ao cliente?",
-          "notesMarkdown": "## Dinâmica do ensaio\n\nOrçamento de 60 minutos **incluindo 5 de feedback**; não é reprodução integral de uma entrevista real. Para ensaiar 60 minutos de entrevista, reserve feedback depois e redistribua o tempo de aprofundamento. Não use este relógio como exigência oficial.\n\nComece pela pergunta sem anunciar o LP. Peça uma resposta inicial e selecione aprofundamentos conforme a evidência que falta. Não complete a história. Registre ajuda oferecida.\n\n## Exercício fixo\n\nUse somente janela B do pedido, com PostgreSQL16/Multi-AZ DB instance e contrato definido no simulado. Premissas e cartões são sintéticos, no dia fictício D e UTC. A agenda desta página é real para treino; os horários dos logs não correspondem à agenda.\n\nA reserva de conectividade é outro incidente, variante B do banco privado. Se substituir o principal, passe a usar apenas seus cartões. Não transfira pagamentos, Multi-AZ ou versão do PostgreSQL entre exercícios.\n\nFontes: interview/simulations/04-troubleshooting/{guia-do-instrutor.md,rubrica.md}; leadership-principles/practice-guide.md e loop-focus.md. Os pares do loop-focus não são mapeamento oficial por entrevistador; a seleção principal desta agenda é a do pedido atual."
+          "notesMarkdown": "## Dinâmica do ensaio\n\nOrçamento de 60 minutos **incluindo 5 de feedback**; não é reprodução integral de uma entrevista real. Para ensaiar 60 minutos de entrevista, reserve feedback depois e redistribua o tempo de aprofundamento. Não use este relógio como exigência oficial.\n\nComece pela pergunta sem anunciar o LP. Peça uma resposta inicial e selecione aprofundamentos conforme a evidência que falta. Não complete a história. Registre ajuda oferecida.\n\n## Exercício fixo\n\nUse somente janela B do pedido, com PostgreSQL16/Multi-AZ DB instance e contrato definido no simulado. Premissas e cartões são sintéticos, no dia fictício D e UTC. A agenda desta página é real para treino; os horários dos logs não correspondem à agenda.\n\nA reserva de conectividade é outro incidente, variante B do banco privado. Se substituir o principal, passe a usar apenas seus cartões. Não transfira pagamentos, Multi-AZ ou versão do PostgreSQL entre exercícios.\n\nFontes: interview/simulations/04-troubleshooting/{guia-do-instrutor.md,rubrica.md}; leadership-principles/practice-guide.md e loop-focus.md. Os pares do loop-focus não são mapeamento oficial por entrevistador; a seleção principal desta agenda é a do pedido atual.\n\n## Novos ensaios Dive Deep\n\nO seletor preserva este roteiro anterior e oferece V1A/V1B, V2 e V3. Os novos modos têm60min de entrevista e debrief separado, não contado nessa hora. São ferramentas de condução manual, sem chat ou GenAI; o perfil declarado apenas orientou os domínios e não foi publicado. Cada nova tentativa mantém seus próprios registros e cartões; refazer não apaga o histórico.\n",
+          "deepDiveTraining": {
+            "title": "Dive Deep + competência técnica — entrevistador fictício",
+            "notice": "Ferramenta manual de preparação, sem chat ou GenAI. O instrutor conduz uma pergunta por vez, decide a pertinência dos pedidos e registra o observado. Não representa Edu, não conhece suas perguntas nem sua atribuição de LPs. Os modos novos têm60 min de entrevista; debrief depois, fora da hora. O roteiro anterior permanece disponível. Não usar durante entrevista real.",
+            "introductionPt": "Sou um entrevistador fictício em um exercício de preparação técnica. Vou explorar seu raciocínio e os limites das evidências, sem representar uma pessoa ou processo real.",
+            "introductionEn": "I am a fictional interviewer in a technical preparation exercise. I will explore your reasoning and the limits of the evidence, without representing any real person or hiring process.",
+            "rules": [
+              "Conduza em português por padrão, uma pergunta por vez. Espere a resposta. Mantenha intervenções geralmente abaixo de80palavras, exceto cenário, evidência solicitada ou debrief.",
+              "Seja cordial, direto e investigativo. Não tente fazer a pessoa falhar, não reduza a exigência para encorajar e não ofereça elogios, pistas ou aulas no modo avaliativo.",
+              "Escolha dois domínios centrais e uma variação útil. Não tente avaliar todos os serviços em uma hora nem prolongue até forçar um não sei.",
+              "Pare quando o entendimento estiver demonstrado, o limite claro, as respostas repetirem informação ou o orçamento exigir avançar. Registre o que não foi explorado.",
+              "Pode interromper: Vou te interromper para aprofundar um ponto. Se houver ambiguidade, esclareça; se travar, reformule uma vez sem dar a solução. Permita pensar, anotar ou desenhar, sem formato obrigatório.",
+              "Peça episódio real e delimitado nas histórias. Diferencie eu fiz, a equipe fez e faria hoje. No cenário hipotético, aceite premissas explícitas e não credite implementação no emprego.",
+              "Coordenação é contribuição válida quando se explica o que coordenou e como verificou ou utilizou trabalho de colegas. Não atribua autoria automática por atividades de terceiros.",
+              "Peça esclarecimento de inconsistências antes de suspeitar de invenção. Distinga correção espontânea, detalhe esquecido e contradição central persistente. Confirme possível erro de transcrição, inclusive commit, antes de avaliar.",
+              "Não penalize hesitação, sotaque ou falta de memória de número secundário. Delimitar desconhecimento é útil; eu pesquisaria sem dizer o que verificar não demonstra o mecanismo.",
+              "Não solicitar identificadores de clientes, credenciais, endpoints internos ou documentos restritos. Aceitar nomes fictícios e dados anonimizados identificados. Arredondar não autoriza divulgação.",
+              "Se aparecer possível informação sensível, interrompa brevemente, peça reformulação, não repita o dado e registre apenas a natureza da preocupação. Não declarar infração sem evidência nem penalizar confidencialidade.",
+              "Todos os cenários são sintéticos e estáveis; não mudar causa para contrariar a resposta, não exigir palavra secreta e não inventar evidência indisponível. Um pedido amplo pode ser recortado sem ensinar.",
+              "Se resolver rápido, aprofunde validação e limites. Nova causa exige nova variante anunciada. Se o instrutor produzir dado incompatível, corrija, registre e desconsidere o trecho contaminado.",
+              "Aceitar alternativas tecnicamente equivalentes. Muitos serviços ou um diagrama não comprovam integridade, capacidade ou conformidade.",
+              "Sem medição confiável, use proporções e tempo restante informado; não alegue minutos decorridos. O relógio do navegador mede apenas enquanto acionado. Uma pausa de coaching compromete a independência daquele trecho e deve permanecer registrada.",
+              "Ao verificar garantia de serviço, quota, replicação, isolamento, segurança ou norma, usar fonte primária atual. Sem conferência, marcar pendente, não usar como gabarito decisivo. Não exigir quota variável decorada.",
+              "A página não interpreta respostas, não pesquisa automaticamente e não gera STAR ou decisão de contratação. Campos de debrief são preenchidos por quem conduz com evidências reais da rodada.",
+              "A escada não corresponde a níveis L4/L5/L6/L7. Classifique a resposta demonstrada nesta rodada, não a pessoa; não calcule média ou percentual de aprovação nem use ameaças ou estatísticas de reprovação.",
+              "Uma resposta após aprofundamento neutro pode ser excelente. Após explicação ou pista, registrar apoio e retestar autonomia; fato ainda sem sustentação permanece a confirmar.",
+              "No debrief, amostra pequena ou domínio não explorado exige limite explícito e pode resultar em Inconclusivo; não presumir reprovação. As cinco facetas e sete dimensões ficam separadas.",
+              "Ao refazer no mesmo cenário depois de ensino ou exposição, comparar compreensão com repetição da orientação, sem declarar independência só porque os cartões foram recolhidos. Para nova avaliação independente após gabarito exposto, preparar outra variante.",
+              "Não empilhe cinco aprofundamentos nem repita por quê mecanicamente após cada frase. Uma confirmação neutra de entendimento não deve indicar que a resposta está correta.",
+              "Em V2, depois da contenção, pedir linha do tempo, impacto, gatilho, fatores contribuintes, evidências, lacunas de detecção e ações com responsáveis e critérios. Não obrigar cinco porquês nem encerrar a análise em erro humano.",
+              "A fase do cronômetro e a pergunta são escolhas manuais distintas: avançar o bloco não libera evidências nem prova que o assunto foi explorado. Selecionar a próxima pergunta conforme o objetivo e a cobertura da conversa."
+            ],
+            "facets": [
+              {
+                "id": "details",
+                "label": "Detalhes relevantes",
+                "prompts": [
+                  "Explicou operação, comportamento e evidência necessária à decisão?"
+                ]
+              },
+              {
+                "id": "contribution",
+                "label": "Autoria e participação",
+                "prompts": [
+                  "O que investigou, decidiu, implementou, revisou ou coordenou? Como usou o trabalho de outras pessoas?"
+                ]
+              },
+              {
+                "id": "audit",
+                "label": "Verificação e auditoria",
+                "prompts": [
+                  "Como conferiu premissas, dados, resultado e continuidade? O que efetivamente executou?"
+                ]
+              },
+              {
+                "id": "skepticism",
+                "label": "Ceticismo fundamentado",
+                "prompts": [
+                  "Como tratou divergências e que evidência mudou ou mudaria sua conclusão?"
+                ]
+              },
+              {
+                "id": "focus",
+                "label": "Foco",
+                "prompts": [
+                  "Aprofundou o que importa e voltou à conclusão sem detalhes irrelevantes?"
+                ]
+              }
+            ],
+            "technicalDimensions": [
+              {
+                "id": "correctness",
+                "label": "Correção"
+              },
+              {
+                "id": "mechanisms",
+                "label": "Mecanismos"
+              },
+              {
+                "id": "investigation",
+                "label": "Investigação"
+              },
+              {
+                "id": "integrity",
+                "label": "Integridade e recuperação"
+              },
+              {
+                "id": "tradeoffs",
+                "label": "Trade-offs"
+              },
+              {
+                "id": "validation",
+                "label": "Validação"
+              },
+              {
+                "id": "communication",
+                "label": "Comunicação"
+              }
+            ],
+            "ladder": [
+              {
+                "id": "what",
+                "label": "O quê?",
+                "prompt": "Qual problema, operação ou solução está descrevendo?"
+              },
+              {
+                "id": "how",
+                "label": "Como?",
+                "prompt": "Como investigou, executou ou propõe executar?"
+              },
+              {
+                "id": "why",
+                "label": "Por quê?",
+                "prompt": "Qual evidência sustenta a escolha e quais alternativas considerou?"
+              },
+              {
+                "id": "mechanism",
+                "label": "Mecanismo",
+                "prompt": "Como o componente explica o resultado? Quais garantias e limites?"
+              },
+              {
+                "id": "verification",
+                "label": "Verificação e continuidade",
+                "prompt": "Como verificou ou verificaria? Que acompanhamento, prevenção ou correção permaneceu?"
+              }
+            ],
+            "qualityLevels": [
+              {
+                "value": "nao-observado",
+                "label": "Não observado",
+                "description": "O ponto não foi explorado ou não houve oportunidade de demonstrá-lo. Não significa nota zero."
+              },
+              {
+                "value": "incompleta",
+                "label": "1 — Incompleta",
+                "description": "Não responde ao ponto central, apresenta confusão importante ou afirma algo sem conseguir explicar seu fundamento."
+              },
+              {
+                "value": "regular",
+                "label": "2 — Regular",
+                "description": "Segue uma direção adequada, mas permanece genérica: cita ferramentas, atividades ou resultados sem sustentar mecanismo, decisão ou evidência."
+              },
+              {
+                "value": "boa",
+                "label": "3 — Boa",
+                "description": "Responde diretamente, explica o que ocorreu, participação, motivo e evidência disponível. Distingue fatos de hipóteses e reconhece limites."
+              },
+              {
+                "value": "excelente",
+                "label": "4 — Excelente",
+                "description": "Além de uma resposta boa, sustenta aprofundamentos: compara alternativas, explica riscos e condições, relaciona técnica e negócio e identifica o que mudaria sua conclusão."
+              }
+            ],
+            "supportLevels": [
+              {
+                "value": "espontanea",
+                "label": "Espontânea",
+                "description": "Apresentou o raciocínio sem direcionamento."
+              },
+              {
+                "value": "apos-aprofundamento",
+                "label": "Após aprofundamento neutro",
+                "description": "O avaliador pediu esclarecimento sem fornecer a solução. A resposta pode continuar sendo excelente."
+              },
+              {
+                "value": "apos-explicacao",
+                "label": "Após explicação / direcionamento",
+                "description": "O avaliador ensinou ou entregou parte decisiva do raciocínio. Registrar aprendizado e realizar outro teste para verificar autonomia."
+              }
+            ],
+            "commands": [
+              {
+                "command": "/pausa",
+                "label": "Pausar e registrar coaching",
+                "help": "Interromper avaliação e relógio; oferecer orientação breve e registrar a ajuda antes de retomar."
+              },
+              {
+                "command": "/debrief",
+                "label": "Encerrar e abrir debrief",
+                "help": "Sair do papel e registrar avaliação manual com limites de cobertura, fora dos60 min."
+              },
+              {
+                "command": "/refazer",
+                "label": "Refazer depois do debrief",
+                "help": "Criar nova tentativa, sem cartões liberados, e comparar com a anterior. Não apagar observações anteriores."
+              },
+              {
+                "command": "/english",
+                "label": "Conduzir em inglês",
+                "help": "Usar enunciados e cartões traduzidos. Notas do instrutor continuam em português; ajustes de inglês ficam separados da avaliação técnica."
+              },
+              {
+                "command": "/tempo N",
+                "label": "Informar minutos restantes",
+                "help": "Registrar tempo restante informado por quem conduz, sem inventar tempo decorrido."
+              },
+              {
+                "command": "/proximo",
+                "label": "Encerrar bloco e avançar",
+                "help": "Avançar fase manualmente; registrar pontos não explorados e não criar nota para eles."
+              },
+              {
+                "command": "/instrutor",
+                "label": "Consultar ficha e cola",
+                "help": "Mostrar ficha, sinais da pergunta e evidências ainda não liberadas só na tela de condução. Não é controle de acesso; se exposta, registrar e usar nova tentativa/variante independente."
+              }
+            ],
+            "pixExtension": {
+              "notice": "Pix é extensão opcional, não selecionada nem preparada nestes cenários. Antes de criar uma rodada, definir tipo e papel da instituição, conferir o texto normativo vigente e fornecer o requisito relevante. BCB85/2021 tem alterações incluindo538/2025 e552/2026; CMN4.893/2021 tem alterações incluindo5.274/2025. Não avaliar memória do número nem declarar conformidade por um serviço isolado. Não há versãoPix selecionável enquanto faltar uma ficha própria estável.",
+              "references": [
+                {
+                  "title": "BCB85 — texto consolidado",
+                  "url": "https://www.bcb.gov.br/estabilidadefinanceira/exibenormativo?numero=85&tipo=Resolu%C3%A7%C3%A3o+BCB"
+                },
+                {
+                  "title": "CMN4.893 — texto consolidado",
+                  "url": "https://www.bcb.gov.br/estabilidadefinanceira/exibenormativo?numero=4893&tipo=Resolu%C3%A7%C3%A3o+CMN"
+                }
+              ]
+            },
+            "variants": [
+              {
+                "id": "v1-a",
+                "version": "V1",
+                "label": "V1 · A — migração hipotética",
+                "objective": "Construir ou evoluir uma arquitetura a partir de metas e aprofundar mecanismos.",
+                "agenda": [
+                  {
+                    "label": "Apresentação breve",
+                    "minutes": 5
+                  },
+                  {
+                    "label": "Arquitetura e mecanismos",
+                    "minutes": 30
+                  },
+                  {
+                    "label": "História real Dive Deep",
+                    "minutes": 20
+                  },
+                  {
+                    "label": "Perguntas da candidata",
+                    "minutes": 5
+                  }
+                ],
+                "questions": [
+                  {
+                    "id": "DD-V1A-INTRO",
+                    "category": "Abertura",
+                    "kind": "technical",
+                    "prompt": "Apresente brevemente sua atuação e escolha um domínio em que consiga explicar sua participação sem expor informações restritas.",
+                    "promptEn": "Briefly introduce your work and choose a domain where you can explain your contribution without exposing restricted information.",
+                    "source": {
+                      "label": "Autoral de preparação — cenário ou pergunta deste ensaio, sem atribuição à AWS",
+                      "path": "site/loop-training/agenda.json",
+                      "anchor": "",
+                      "line": null
+                    },
+                    "followups": [
+                      "O que você investigou, decidiu, implementou ou coordenou pessoalmente?"
+                    ],
+                    "followupsEn": [
+                      "What did you personally investigate, decide, implement or coordinate?"
+                    ],
+                    "notes": {
+                      "objective": "Delimitar experiência declarada e participação sem tomá-las como prova antecipada de competência.",
+                      "evidence": [
+                        "Identifica seu papel e limites do que pode relatar."
+                      ],
+                      "limits": [
+                        "Autoral de preparação, sem atribuição oficial de perguntas, LPs ou nível profissional.",
+                        "Não solicitar empregador, cliente, endpoint ou dado interno para conferir legitimidade."
+                      ],
+                      "clarifications": [
+                        "Uma pergunta por vez; aceitar pergunta semanticamente equivalente e premissas explícitas.",
+                        "Confirmar ambiguidade ou possível erro de transcrição antes de avaliar."
+                      ],
+                      "observations": [
+                        "Separar fatos narrados, hipóteses, propostas atuais e apoio oferecido. Não penalizar confidencialidade ou sotaque."
+                      ],
+                      "ratingSignals": {
+                        "incompleta": "Não delimita atuação ou contribuição mesmo após reformulação neutra; registre só o que foi observado, sem inferir ausência de competência.",
+                        "regular": "Lista tecnologias ou cargo, mas o escopo de participação permanece amplo.",
+                        "boa": "Apresenta atuação e domínio seguro, distinguindo implementação, desenho, acompanhamento e estudo.",
+                        "excelente": "Delimita contribuição e conhecimento com precisão e identifica um episódio aprofundável sem expor informação restrita."
+                      },
+                      "nextFollowup": "O que você investigou, decidiu, implementou ou coordenou pessoalmente?",
+                      "alternatives": [
+                        "Aceitar nomes fictícios e topologia simplificada identificada como tal."
+                      ]
+                    }
+                  },
+                  {
+                    "id": "DD-V1A-CASE",
+                    "category": "Cenário hipotético",
+                    "kind": "technical",
+                    "prompt": "Um cliente quer migrar uma plataforma de investimentos com perda mínima de dados e recuperação rápida. Como você esclareceria o objetivo e construiria um plano verificável?",
+                    "promptEn": "A customer wants to migrate an investment platform with minimal data loss and fast recovery. How would you clarify the goal and build a verifiable plan?",
+                    "source": {
+                      "label": "Autoral de preparação — cenário ou pergunta deste ensaio, sem atribuição à AWS",
+                      "path": "site/loop-training/edu-deep-dive.md",
+                      "anchor": "",
+                      "line": null
+                    },
+                    "followups": [
+                      "Quais metas mensuráveis e operações confirmadas precisamos preservar?",
+                      "Como coordenaria todos os escritores?",
+                      "Que verificação autorizaria a troca e como recuperaria depois de novas escritas?"
+                    ],
+                    "followupsEn": [
+                      "Which measurable goals and acknowledged operations must be preserved?",
+                      "How would you coordinate all writers?",
+                      "What checks would authorize cutover, and how would you recover after new writes?"
+                    ],
+                    "notes": {
+                      "objective": "Esclarecer a necessidade, reconstruir o fluxo e justificar decisões com garantias e limites.",
+                      "evidence": [
+                        "Pede evidência ligada a hipótese, não uma lista de ferramentas.",
+                        "Distingue componente saudável, operação confirmada, resultado conhecido e jornada recuperada."
+                      ],
+                      "limits": [
+                        "Autoral de preparação, sem atribuição oficial de perguntas, LPs ou nível profissional.",
+                        "Ficha sintética estável: não mudar causa para contrariar uma resposta.",
+                        "Revelar cartões por pertinência sem palavra secreta; informação não disponível deve ser marcada como tal."
+                      ],
+                      "clarifications": [
+                        "Uma pergunta por vez; aceitar pergunta semanticamente equivalente e premissas explícitas.",
+                        "Confirmar ambiguidade ou possível erro de transcrição antes de avaliar."
+                      ],
+                      "observations": [
+                        "Separar fatos narrados, hipóteses, propostas atuais e apoio oferecido. Não penalizar confidencialidade ou sotaque."
+                      ],
+                      "ratingSignals": {
+                        "incompleta": "Escolhe DMS, snapshot ou outro produto antes de delimitar perda aceitável, parada, escritores e estado confirmado.",
+                        "regular": "Cita réplica e validação, mas não explica preparação, coordenação das escritas ou o alcance da garantia.",
+                        "boa": "Traduz necessidade em metas, explica o fluxo e compara transferência, validação, corte e recuperação dentro das restrições.",
+                        "excelente": "Sustenta trade-offs, variação das taxas e retorno após novas escritas; identifica o que precisa medir e o que faria reconsiderar o plano."
+                      },
+                      "nextFollowup": "Quais metas mensuráveis e operações confirmadas precisamos preservar?",
+                      "alternatives": [
+                        "Aceitar soluções equivalentes que atendam restrições e tenham mecanismos e riscos explicados."
+                      ]
+                    },
+                    "scenario": "deepDiveMigration"
+                  },
+                  {
+                    "id": "DD-V1A-CAP",
+                    "category": "Variação anunciada · capacidade",
+                    "kind": "technical",
+                    "prompt": "Com fila de900 MB, geração de2 MB/s e aplicação de5 MB/s constantes, quanto levaria para drenar? Agora anuncie outra condição: geração de6 MB/s. O que muda?",
+                    "promptEn": "With a900 MB backlog, a constant2 MB/s generation rate and5 MB/s apply rate, how long does draining take? Now consider an announced variation: generation rises to6 MB/s. What changes?",
+                    "source": {
+                      "label": "Autoral de preparação — cenário ou pergunta deste ensaio, sem atribuição à AWS",
+                      "path": "site/loop-training/agenda.json",
+                      "anchor": "",
+                      "line": null
+                    },
+                    "followups": [
+                      "Qual unidade e qual hipótese sustentam sua conta?",
+                      "Esse tempo comprova janela de parada ou throughput medido?"
+                    ],
+                    "followupsEn": [
+                      "Which units and assumptions support your calculation?",
+                      "Does this time prove an outage window or measured throughput?"
+                    ],
+                    "notes": {
+                      "objective": "Comparar taxas de geração e aplicação, interpretar unidades e distinguir conta idealizada de teste.",
+                      "evidence": [
+                        "Obtém3 MB/s líquidos e300 s na hipótese base.",
+                        "Na variação, fila cresce1 MB/s; não promete drenagem.",
+                        "Não confunde MB pendentes com latência em segundos ou média de throughput medido."
+                      ],
+                      "limits": [
+                        "Autoral de preparação, sem atribuição oficial de perguntas, LPs ou nível profissional.",
+                        "Não exigir aritmética perfeita sem ferramenta. Aceitar estimativa justificada.",
+                        "A nova taxa é uma variação anunciada, não alteração silenciosa da ficha base."
+                      ],
+                      "clarifications": [
+                        "Uma pergunta por vez; aceitar pergunta semanticamente equivalente e premissas explícitas.",
+                        "Confirmar ambiguidade ou possível erro de transcrição antes de avaliar."
+                      ],
+                      "observations": [
+                        "Separar fatos narrados, hipóteses, propostas atuais e apoio oferecido. Não penalizar confidencialidade ou sotaque."
+                      ],
+                      "ratingSignals": {
+                        "incompleta": "Divide fila pela aplicação sem considerar geração, ou afirma drenagem quando a geração supera a aplicação.",
+                        "regular": "Percebe que há taxas concorrentes, mas não explicita unidades ou confunde o cálculo com janela de parada medida.",
+                        "boa": "Calcula redução líquida de3MB/s e300s no caso base e crescimento de1MB/s na variação, com premissas explícitas.",
+                        "excelente": "Explica por que a conta idealizada não demonstra throughput, parada ou recuperação real e propõe como validar taxas e gargalos."
+                      },
+                      "nextFollowup": "Qual unidade e qual hipótese sustentam sua conta?",
+                      "alternatives": [
+                        "Pode propor reduzir geração, aumentar aplicação ou mudar a janela, explicitando limites e como medir a eficácia."
+                      ]
+                    }
+                  },
+                  {
+                    "id": "DD-V1A-REAL",
+                    "category": "Experiência real",
+                    "kind": "behavioral",
+                    "prompt": "Conte uma investigação real e delimitada em que uma evidência mudou sua hipótese ou decisão.",
+                    "promptEn": "Describe a specific real investigation where evidence changed your hypothesis or decision.",
+                    "source": {
+                      "label": "Autoral de preparação — cenário ou pergunta deste ensaio, sem atribuição à AWS",
+                      "path": "site/loop-training/agenda.json",
+                      "anchor": "",
+                      "line": null
+                    },
+                    "followups": [
+                      "Qual era a hipótese inicial?",
+                      "Qual evidência enfraqueceu essa hipótese?",
+                      "Como verificou o resultado e qual foi sua contribuição?"
+                    ],
+                    "followupsEn": [
+                      "What was your initial hypothesis?",
+                      "What evidence weakened it?",
+                      "How did you verify the result, and what was your contribution?"
+                    ],
+                    "notes": {
+                      "objective": "Reconstruir um episódio real, autoria, evidência decisiva e limite da conclusão.",
+                      "evidence": [
+                        "Distingue eu fiz, equipe fez e faria hoje.",
+                        "Explica hipótese revisada, confiabilidade da evidência e verificação efetivamente realizada."
+                      ],
+                      "limits": [
+                        "Autoral de preparação, sem atribuição oficial de perguntas, LPs ou nível profissional.",
+                        "Não usar competência demonstrada no cenário hipotético como prova de implementação no emprego.",
+                        "Se não houver episódio suficientemente descrito, deixar STAR e domínio como não observados."
+                      ],
+                      "clarifications": [
+                        "Uma pergunta por vez; aceitar pergunta semanticamente equivalente e premissas explícitas.",
+                        "Confirmar ambiguidade ou possível erro de transcrição antes de avaliar."
+                      ],
+                      "observations": [
+                        "Separar fatos narrados, hipóteses, propostas atuais e apoio oferecido. Não penalizar confidencialidade ou sotaque."
+                      ],
+                      "ratingSignals": {
+                        "incompleta": "Responde só no hipotético ou reivindica conclusão/execução sem delimitar episódio, papel e fundamento.",
+                        "regular": "Descreve projeto ou atividades da equipe, mas autoria, mecanismo ou verificação continuam genéricos.",
+                        "boa": "Delimita episódio e contribuição, explica decisões e evidência efetivamente disponível, marcando o que ainda não consegue confirmar.",
+                        "excelente": "Aprofunda mecanismos, alternativas e validação, reconhece limites do histórico e responde a uma variação sem inventar ações passadas."
+                      },
+                      "nextFollowup": "Qual era a hipótese inicial?",
+                      "alternatives": [
+                        "Aceitar episódio de outro domínio ou coordenação, desde que sua contribuição e o uso do trabalho coletivo fiquem identificáveis."
+                      ]
+                    }
+                  },
+                  {
+                    "id": "DD-V1A-END",
+                    "category": "Perguntas da candidata",
+                    "kind": "technical",
+                    "prompt": "Que pergunta você gostaria de fazer sobre o papel de uma pessoa de arquitetura em uma situação como esta?",
+                    "promptEn": "What would you like to ask about the role of an architect in a situation like this?",
+                    "source": {
+                      "label": "Autoral de preparação — cenário ou pergunta deste ensaio, sem atribuição à AWS",
+                      "path": "site/loop-training/agenda.json",
+                      "anchor": "",
+                      "line": null
+                    },
+                    "followups": [
+                      "Que decisão do trabalho de arquitetura você gostaria de compreender melhor?"
+                    ],
+                    "followupsEn": [
+                      "Which architectural responsibility would you like to understand better?"
+                    ],
+                    "notes": {
+                      "objective": "Reservar espaço para uma conversa sobre o papel fictício, sem inventar fatos da equipe real.",
+                      "evidence": [
+                        "A pergunta se relaciona ao trabalho, escopo, colaboração ou aprendizado."
+                      ],
+                      "limits": [
+                        "Autoral de preparação, sem atribuição oficial de perguntas, LPs ou nível profissional.",
+                        "Responder como arquiteto fictício. Não inventar clientes, metas ou processos internos da equipe real da vaga."
+                      ],
+                      "clarifications": [
+                        "Uma pergunta por vez; aceitar pergunta semanticamente equivalente e premissas explícitas.",
+                        "Confirmar ambiguidade ou possível erro de transcrição antes de avaliar."
+                      ],
+                      "observations": [
+                        "Separar fatos narrados, hipóteses, propostas atuais e apoio oferecido. Não penalizar confidencialidade ou sotaque."
+                      ],
+                      "ratingSignals": {
+                        "incompleta": "Não inferir deficiência técnica pela ausência de pergunta; use Não observado se não houve material suficiente.",
+                        "regular": "Uma pergunta ampla pode abrir conversa; pedir esclarecimento do interesse sem exigir pergunta decorada.",
+                        "boa": "A pergunta permite discutir escopo, colaboração, decisão ou aprendizado no papel fictício.",
+                        "excelente": "Aprofunda uma necessidade profissional concreta com limites de confidencialidade e sem presumir fatos da equipe real."
+                      },
+                      "nextFollowup": "Que decisão do trabalho de arquitetura você gostaria de compreender melhor?",
+                      "alternatives": [
+                        "Aceitar uma ou duas perguntas conforme o tempo, sem exigir pergunta decorada."
+                      ]
+                    }
+                  }
+                ],
+                "reserves": [],
+                "instructorNotes": "Objetivo: migração planejada sem perder operações cujo commit foi confirmado. Janela máxima de suspensão de novas escritas: 300 s; essa é uma meta do exercício, não garantia AWS. Comparar preparação de origem/destino, captura das alterações, validação e controle do corte. Inventário de escritores inclui API e lote de expiração. Backlog inicial 900 MB decimais, geração constante 2 MB/s, aplicação estimada 5 MB/s: redução líquida 3 MB/s, tempo ideal 300 s enquanto continuam escritas. Não confundir esse tempo de drenagem com indisponibilidade ou com latência DMS em segundos. A variação anunciada de geração 6 MB/s faz a fila crescer 1 MB/s; não há catch-up nessas hipóteses. Depois de novas escritas no destino, voltar endpoint exige tratar diferenças. Aceitar outro mecanismo se justificar consistência, parada, recuperação e limite de operação. Não exigir DMS como palavra certa. A escolha de réplica, full load/CDC ou snapshot depende de requisitos e preparação, sem atribuir ao case real. Meta adicional de recuperação após falha do corte:600 s, sujeita a ensaio e confirmação; não confundir com pausa máxima de300 s nem com o cálculo de drenagem.",
+                "firstDomain": "Migração e integridade",
+                "secondDomain": "Validação e recuperação"
+              },
+              {
+                "id": "v1-b",
+                "version": "V1",
+                "label": "V1 · B — assistente financeiro hipotético",
+                "objective": "Justificar origem, autorização, atualidade e não resposta segura de valores financeiros.",
+                "agenda": [
+                  {
+                    "label": "Apresentação breve",
+                    "minutes": 5
+                  },
+                  {
+                    "label": "Arquitetura e mecanismos",
+                    "minutes": 30
+                  },
+                  {
+                    "label": "História real Dive Deep",
+                    "minutes": 20
+                  },
+                  {
+                    "label": "Perguntas da candidata",
+                    "minutes": 5
+                  }
+                ],
+                "questions": [
+                  {
+                    "id": "DD-V1B-INTRO",
+                    "category": "Abertura",
+                    "kind": "technical",
+                    "prompt": "Apresente brevemente sua atuação e escolha um domínio em que consiga explicar sua participação sem expor informações restritas.",
+                    "promptEn": "Briefly introduce your work and choose a domain where you can explain your contribution without exposing restricted information.",
+                    "source": {
+                      "label": "Autoral de preparação — cenário ou pergunta deste ensaio, sem atribuição à AWS",
+                      "path": "site/loop-training/agenda.json",
+                      "anchor": "",
+                      "line": null
+                    },
+                    "followups": [
+                      "O que você investigou, decidiu, implementou ou coordenou pessoalmente?"
+                    ],
+                    "followupsEn": [
+                      "What did you personally investigate, decide, implement or coordinate?"
+                    ],
+                    "notes": {
+                      "objective": "Delimitar experiência declarada e participação sem tomá-las como prova antecipada de competência.",
+                      "evidence": [
+                        "Identifica seu papel e limites do que pode relatar."
+                      ],
+                      "limits": [
+                        "Autoral de preparação, sem atribuição oficial de perguntas, LPs ou nível profissional.",
+                        "Não solicitar empregador, cliente, endpoint ou dado interno para conferir legitimidade."
+                      ],
+                      "clarifications": [
+                        "Uma pergunta por vez; aceitar pergunta semanticamente equivalente e premissas explícitas.",
+                        "Confirmar ambiguidade ou possível erro de transcrição antes de avaliar."
+                      ],
+                      "observations": [
+                        "Separar fatos narrados, hipóteses, propostas atuais e apoio oferecido. Não penalizar confidencialidade ou sotaque."
+                      ],
+                      "ratingSignals": {
+                        "incompleta": "Não delimita atuação ou contribuição mesmo após reformulação neutra; registre só o que foi observado, sem inferir ausência de competência.",
+                        "regular": "Lista tecnologias ou cargo, mas o escopo de participação permanece amplo.",
+                        "boa": "Apresenta atuação e domínio seguro, distinguindo implementação, desenho, acompanhamento e estudo.",
+                        "excelente": "Delimita contribuição e conhecimento com precisão e identifica um episódio aprofundável sem expor informação restrita."
+                      },
+                      "nextFollowup": "O que você investigou, decidiu, implementou ou coordenou pessoalmente?",
+                      "alternatives": [
+                        "Aceitar nomes fictícios e topologia simplificada identificada como tal."
+                      ]
+                    }
+                  },
+                  {
+                    "id": "DD-V1B-CASE",
+                    "category": "Cenário hipotético",
+                    "kind": "technical",
+                    "prompt": "Um cliente quer um assistente que informe saldos. O negócio não aceita um valor inventado nem de outra pessoa. Como você desenharia o fluxo, seus limites e a validação?",
+                    "promptEn": "A customer wants an assistant to report account balances. The business rejects fabricated amounts or amounts belonging to someone else. How would you design the flow, its limits and validation?",
+                    "source": {
+                      "label": "Autoral de preparação — cenário ou pergunta deste ensaio, sem atribuição à AWS",
+                      "path": "site/loop-training/edu-deep-dive.md",
+                      "anchor": "",
+                      "line": null
+                    },
+                    "followups": [
+                      "Qual é a fonte autorizada do valor e quem confere o acesso?",
+                      "Como preserva moeda, significado e atualidade até a resposta?",
+                      "Quando não deve responder com um número?"
+                    ],
+                    "followupsEn": [
+                      "What is the authorized source, and who checks access?",
+                      "How do you preserve currency, meaning and freshness through the response?",
+                      "When should it not answer with an amount?"
+                    ],
+                    "notes": {
+                      "objective": "Esclarecer a necessidade, reconstruir o fluxo e justificar decisões com garantias e limites.",
+                      "evidence": [
+                        "Pede evidência ligada a hipótese, não uma lista de ferramentas.",
+                        "Distingue componente saudável, operação confirmada, resultado conhecido e jornada recuperada."
+                      ],
+                      "limits": [
+                        "Autoral de preparação, sem atribuição oficial de perguntas, LPs ou nível profissional.",
+                        "Ficha sintética estável: não mudar causa para contrariar uma resposta.",
+                        "Revelar cartões por pertinência sem palavra secreta; informação não disponível deve ser marcada como tal."
+                      ],
+                      "clarifications": [
+                        "Uma pergunta por vez; aceitar pergunta semanticamente equivalente e premissas explícitas.",
+                        "Confirmar ambiguidade ou possível erro de transcrição antes de avaliar."
+                      ],
+                      "observations": [
+                        "Separar fatos narrados, hipóteses, propostas atuais e apoio oferecido. Não penalizar confidencialidade ou sotaque."
+                      ],
+                      "ratingSignals": {
+                        "incompleta": "Aceita valor gerado pelo modelo ou conta indicada no texto sem demonstrar origem autorizada, vínculo e atualidade.",
+                        "regular": "Cita RAG, guardrails ou autenticação, mas não explica quem autoriza a consulta e preserva o significado do saldo.",
+                        "boa": "Explica identidade confiável, checagem na ferramenta, origem do valor, moeda, instante e resposta segura quando não há dado válido.",
+                        "excelente": "Sustenta teste de outra conta, referência obsoleta e ferramenta indisponível, além de transformações e limites de capacidade e avaliação."
+                      },
+                      "nextFollowup": "Qual é a fonte autorizada do valor e quem confere o acesso?",
+                      "alternatives": [
+                        "Aceitar soluções equivalentes que atendam restrições e tenham mecanismos e riscos explicados."
+                      ]
+                    },
+                    "scenario": "deepDiveAssistant"
+                  },
+                  {
+                    "id": "DD-V1B-CAP",
+                    "category": "Capacidade e limites",
+                    "kind": "technical",
+                    "prompt": "Para30 respostas/s, duas consultas por resposta e duração média de0,2 s por consulta em regime estável, estime taxa de chamadas e concorrência média. O que essa conta não comprova?",
+                    "promptEn": "For30 answers/s, two calls per answer and0.2 seconds per call in steady state, estimate the call rate and average concurrency. What does this calculation not prove?",
+                    "source": {
+                      "label": "Autoral de preparação — cenário ou pergunta deste ensaio, sem atribuição à AWS",
+                      "path": "site/loop-training/agenda.json",
+                      "anchor": "",
+                      "line": null
+                    },
+                    "followups": [
+                      "Como retries ou filas mudariam as premissas?",
+                      "Que teste comprovaria qualidade, autorização e capacidade, além da conta?"
+                    ],
+                    "followupsEn": [
+                      "How would retries or queuing change the assumptions?",
+                      "Which tests would establish quality, authorization and capacity beyond this calculation?"
+                    ],
+                    "notes": {
+                      "objective": "Calcular taxa e concorrência com unidades e manter a validação funcional separada da capacidade.",
+                      "evidence": [
+                        "Obtém60 chamadas/s e12 chamadas simultâneas em média sob as hipóteses.",
+                        "Não apresenta a conta como quota, benchmark, latência total ou garantia de respostas corretas."
+                      ],
+                      "limits": [
+                        "Autoral de preparação, sem atribuição oficial de perguntas, LPs ou nível profissional.",
+                        "Médias de regime estável não demonstram percentis nem capacidade de pico.",
+                        "RAG ou guardrails não comprovam autorização e atualidade da fonte."
+                      ],
+                      "clarifications": [
+                        "Uma pergunta por vez; aceitar pergunta semanticamente equivalente e premissas explícitas.",
+                        "Confirmar ambiguidade ou possível erro de transcrição antes de avaliar."
+                      ],
+                      "observations": [
+                        "Separar fatos narrados, hipóteses, propostas atuais e apoio oferecido. Não penalizar confidencialidade ou sotaque."
+                      ],
+                      "ratingSignals": {
+                        "incompleta": "Mistura respostas por segundo, chamadas e duração ou transforma a estimativa em garantia de capacidade/correção.",
+                        "regular": "Chega à taxa ou à concorrência, mas não consegue explicar unidades, regime estável e condições omitidas.",
+                        "boa": "Explica60chamadas/s e12em andamento em média, distinguindo a conta de latência total, quota e teste.",
+                        "excelente": "Sustenta efeitos de retry, fila ou pico e propõe medição de capacidade junto de autorização e atualidade, sem prometer resultado não testado."
+                      },
+                      "nextFollowup": "Como retries ou filas mudariam as premissas?",
+                      "alternatives": [
+                        "Aceitar estimativa com ferramenta e proposta de medição, mantendo limites de custo, latência e segurança explícitos."
+                      ]
+                    }
+                  },
+                  {
+                    "id": "DD-V1B-REAL",
+                    "category": "Experiência real",
+                    "kind": "behavioral",
+                    "prompt": "Conte uma investigação real e delimitada em que uma evidência mudou sua hipótese ou decisão.",
+                    "promptEn": "Describe a specific real investigation where evidence changed your hypothesis or decision.",
+                    "source": {
+                      "label": "Autoral de preparação — cenário ou pergunta deste ensaio, sem atribuição à AWS",
+                      "path": "site/loop-training/agenda.json",
+                      "anchor": "",
+                      "line": null
+                    },
+                    "followups": [
+                      "Qual era a hipótese inicial?",
+                      "Qual evidência enfraqueceu essa hipótese?",
+                      "Como verificou o resultado e qual foi sua contribuição?"
+                    ],
+                    "followupsEn": [
+                      "What was your initial hypothesis?",
+                      "What evidence weakened it?",
+                      "How did you verify the result, and what was your contribution?"
+                    ],
+                    "notes": {
+                      "objective": "Reconstruir um episódio real, autoria, evidência decisiva e limite da conclusão.",
+                      "evidence": [
+                        "Distingue eu fiz, equipe fez e faria hoje.",
+                        "Explica hipótese revisada, confiabilidade da evidência e verificação efetivamente realizada."
+                      ],
+                      "limits": [
+                        "Autoral de preparação, sem atribuição oficial de perguntas, LPs ou nível profissional.",
+                        "Não usar competência demonstrada no cenário hipotético como prova de implementação no emprego.",
+                        "Se não houver episódio suficientemente descrito, deixar STAR e domínio como não observados."
+                      ],
+                      "clarifications": [
+                        "Uma pergunta por vez; aceitar pergunta semanticamente equivalente e premissas explícitas.",
+                        "Confirmar ambiguidade ou possível erro de transcrição antes de avaliar."
+                      ],
+                      "observations": [
+                        "Separar fatos narrados, hipóteses, propostas atuais e apoio oferecido. Não penalizar confidencialidade ou sotaque."
+                      ],
+                      "ratingSignals": {
+                        "incompleta": "Responde só no hipotético ou reivindica conclusão/execução sem delimitar episódio, papel e fundamento.",
+                        "regular": "Descreve projeto ou atividades da equipe, mas autoria, mecanismo ou verificação continuam genéricos.",
+                        "boa": "Delimita episódio e contribuição, explica decisões e evidência efetivamente disponível, marcando o que ainda não consegue confirmar.",
+                        "excelente": "Aprofunda mecanismos, alternativas e validação, reconhece limites do histórico e responde a uma variação sem inventar ações passadas."
+                      },
+                      "nextFollowup": "Qual era a hipótese inicial?",
+                      "alternatives": [
+                        "Aceitar episódio de outro domínio ou coordenação, desde que sua contribuição e o uso do trabalho coletivo fiquem identificáveis."
+                      ]
+                    }
+                  },
+                  {
+                    "id": "DD-V1B-END",
+                    "category": "Perguntas da candidata",
+                    "kind": "technical",
+                    "prompt": "Que pergunta você gostaria de fazer sobre o papel de uma pessoa de arquitetura em uma situação como esta?",
+                    "promptEn": "What would you like to ask about the role of an architect in a situation like this?",
+                    "source": {
+                      "label": "Autoral de preparação — cenário ou pergunta deste ensaio, sem atribuição à AWS",
+                      "path": "site/loop-training/agenda.json",
+                      "anchor": "",
+                      "line": null
+                    },
+                    "followups": [
+                      "Que decisão do trabalho de arquitetura você gostaria de compreender melhor?"
+                    ],
+                    "followupsEn": [
+                      "Which architectural responsibility would you like to understand better?"
+                    ],
+                    "notes": {
+                      "objective": "Reservar espaço para uma conversa sobre o papel fictício, sem inventar fatos da equipe real.",
+                      "evidence": [
+                        "A pergunta se relaciona ao trabalho, escopo, colaboração ou aprendizado."
+                      ],
+                      "limits": [
+                        "Autoral de preparação, sem atribuição oficial de perguntas, LPs ou nível profissional.",
+                        "Responder como arquiteto fictício. Não inventar clientes, metas ou processos internos da equipe real da vaga."
+                      ],
+                      "clarifications": [
+                        "Uma pergunta por vez; aceitar pergunta semanticamente equivalente e premissas explícitas.",
+                        "Confirmar ambiguidade ou possível erro de transcrição antes de avaliar."
+                      ],
+                      "observations": [
+                        "Separar fatos narrados, hipóteses, propostas atuais e apoio oferecido. Não penalizar confidencialidade ou sotaque."
+                      ],
+                      "ratingSignals": {
+                        "incompleta": "Não inferir deficiência técnica pela ausência de pergunta; use Não observado se não houve material suficiente.",
+                        "regular": "Uma pergunta ampla pode abrir conversa; pedir esclarecimento do interesse sem exigir pergunta decorada.",
+                        "boa": "A pergunta permite discutir escopo, colaboração, decisão ou aprendizado no papel fictício.",
+                        "excelente": "Aprofunda uma necessidade profissional concreta com limites de confidencialidade e sem presumir fatos da equipe real."
+                      },
+                      "nextFollowup": "Que decisão do trabalho de arquitetura você gostaria de compreender melhor?",
+                      "alternatives": [
+                        "Aceitar uma ou duas perguntas conforme o tempo, sem exigir pergunta decorada."
+                      ]
+                    }
+                  }
+                ],
+                "reserves": [],
+                "instructorNotes": "A ferramenta autorizada devolve saldo disponível, moeda, instante de referência e identificador de conta autorizado. O contexto de identidade vem da sessão confiável; a API deve verificar a autorização, não confiar em um accountId proposto pelo modelo. A referência sintética é BRL 1250,40 às 10:00:00 UTC. O requisito da tentativa é referência de no máximo30 s. Uma tentativa às 10:02:00 com a mesma referência é obsoleta e deve ser tratada como uma condição distinta anunciada. Falha de ferramenta não autoriza o modelo a completar números. RAG e guardrails podem ajudar em aspectos limitados, mas não demonstram autorização nem atualidade da referência. Conta idealizada:30 respostas/s ×2 consultas/resposta=60 consultas/s; com duração média0,2 s porconsulta, concorrência média de chamadas=12, sob regime estável e sem filas/caching/retries nesta conta. Isso não é quota nem benchmark. Aceitar fluxos equivalentes que garantam autorização, semântica, atualidade, transformações controladas e não resposta segura.",
+                "firstDomain": "Origem e autorização",
+                "secondDomain": "Atualidade e avaliação"
+              },
+              {
+                "id": "v2",
+                "version": "V2",
+                "label": "V2 — troubleshooting progressivo",
+                "objective": "Investigar uma operação afetada, conter com segurança e separar recuperação de confirmação.",
+                "agenda": [
+                  {
+                    "label": "Apresentação breve",
+                    "minutes": 5
+                  },
+                  {
+                    "label": "Incidente e evidências",
+                    "minutes": 35
+                  },
+                  {
+                    "label": "Investigação real",
+                    "minutes": 15
+                  },
+                  {
+                    "label": "Perguntas da candidata",
+                    "minutes": 5
+                  }
+                ],
+                "questions": [
+                  {
+                    "id": "DD-V2-INTRO",
+                    "category": "Abertura",
+                    "kind": "technical",
+                    "prompt": "Apresente brevemente sua atuação e escolha um domínio em que consiga explicar sua participação sem expor informações restritas.",
+                    "promptEn": "Briefly introduce your work and choose a domain where you can explain your contribution without exposing restricted information.",
+                    "source": {
+                      "label": "Autoral de preparação — cenário ou pergunta deste ensaio, sem atribuição à AWS",
+                      "path": "site/loop-training/agenda.json",
+                      "anchor": "",
+                      "line": null
+                    },
+                    "followups": [
+                      "O que você investigou, decidiu, implementou ou coordenou pessoalmente?"
+                    ],
+                    "followupsEn": [
+                      "What did you personally investigate, decide, implement or coordinate?"
+                    ],
+                    "notes": {
+                      "objective": "Delimitar experiência declarada e participação sem tomá-las como prova antecipada de competência.",
+                      "evidence": [
+                        "Identifica seu papel e limites do que pode relatar."
+                      ],
+                      "limits": [
+                        "Autoral de preparação, sem atribuição oficial de perguntas, LPs ou nível profissional.",
+                        "Não solicitar empregador, cliente, endpoint ou dado interno para conferir legitimidade."
+                      ],
+                      "clarifications": [
+                        "Uma pergunta por vez; aceitar pergunta semanticamente equivalente e premissas explícitas.",
+                        "Confirmar ambiguidade ou possível erro de transcrição antes de avaliar."
+                      ],
+                      "observations": [
+                        "Separar fatos narrados, hipóteses, propostas atuais e apoio oferecido. Não penalizar confidencialidade ou sotaque."
+                      ],
+                      "ratingSignals": {
+                        "incompleta": "Não delimita atuação ou contribuição mesmo após reformulação neutra; registre só o que foi observado, sem inferir ausência de competência.",
+                        "regular": "Lista tecnologias ou cargo, mas o escopo de participação permanece amplo.",
+                        "boa": "Apresenta atuação e domínio seguro, distinguindo implementação, desenho, acompanhamento e estudo.",
+                        "excelente": "Delimita contribuição e conhecimento com precisão e identifica um episódio aprofundável sem expor informação restrita."
+                      },
+                      "nextFollowup": "O que você investigou, decidiu, implementou ou coordenou pessoalmente?",
+                      "alternatives": [
+                        "Aceitar nomes fictícios e topologia simplificada identificada como tal."
+                      ]
+                    }
+                  },
+                  {
+                    "id": "DD-V2-CASE",
+                    "category": "Cenário hipotético",
+                    "kind": "technical",
+                    "prompt": "A página inicial abre e a CPU do banco parece normal, mas parte dos clientes recebe timeout ao confirmar uma operação. Como você delimita o impacto e escolhe a primeira evidência?",
+                    "promptEn": "The home page works and database CPU looks normal, but some customers get timeouts when confirming an operation. How would you scope the impact and choose the first evidence?",
+                    "source": {
+                      "label": "Autoral de preparação — cenário ou pergunta deste ensaio, sem atribuição à AWS",
+                      "path": "site/loop-training/edu-deep-dive.md",
+                      "anchor": "",
+                      "line": null
+                    },
+                    "followups": [
+                      "Onde a operação está esperando e qual amostra sustenta isso?",
+                      "Que evidência faria abandonar sua hipótese?",
+                      "Como conteria o impacto e validaria a recuperação sem presumir o estado de todas as intenções?"
+                    ],
+                    "followupsEn": [
+                      "Where is the operation waiting, and which sample supports that?",
+                      "What evidence would make you abandon your hypothesis?",
+                      "How would you mitigate and validate recovery without assuming every intent has the same state?"
+                    ],
+                    "notes": {
+                      "objective": "Esclarecer a necessidade, reconstruir o fluxo e justificar decisões com garantias e limites.",
+                      "evidence": [
+                        "Pede evidência ligada a hipótese, não uma lista de ferramentas.",
+                        "Distingue componente saudável, operação confirmada, resultado conhecido e jornada recuperada."
+                      ],
+                      "limits": [
+                        "Autoral de preparação, sem atribuição oficial de perguntas, LPs ou nível profissional.",
+                        "Ficha sintética estável: não mudar causa para contrariar uma resposta.",
+                        "Revelar cartões por pertinência sem palavra secreta; informação não disponível deve ser marcada como tal."
+                      ],
+                      "clarifications": [
+                        "Uma pergunta por vez; aceitar pergunta semanticamente equivalente e premissas explícitas.",
+                        "Confirmar ambiguidade ou possível erro de transcrição antes de avaliar."
+                      ],
+                      "observations": [
+                        "Separar fatos narrados, hipóteses, propostas atuais e apoio oferecido. Não penalizar confidencialidade ou sotaque."
+                      ],
+                      "ratingSignals": {
+                        "incompleta": "Conclui que a operação está saudável pela CPU normal ou recomenda mudança ampla sem investigar onde a tentativa parou.",
+                        "regular": "Lista métricas e ferramentas, mas não liga hipótese, recorte e evidência discriminante.",
+                        "boa": "Reconstrói a espera da amostra, distingue pool e estado no banco, testa a causa e propõe contenção e validação proporcionais.",
+                        "excelente": "Sustenta o mecanismo da falha, limita o alcance da amostra, preserva operações desconhecidas e separa mitigação, correção e confirmação da jornada."
+                      },
+                      "nextFollowup": "Onde a operação está esperando e qual amostra sustenta isso?",
+                      "alternatives": [
+                        "Aceitar soluções equivalentes que atendam restrições e tenham mecanismos e riscos explicados."
+                      ]
+                    },
+                    "scenario": "deepDivePool"
+                  },
+                  {
+                    "id": "DD-V2-PRESSURE",
+                    "category": "Pressão do cliente · ação segura",
+                    "kind": "technical",
+                    "prompt": "O cliente pede para reiniciar o banco agora. O que você esclarece antes de recomendar uma ação?",
+                    "promptEn": "The customer asks you to restart the database now. What would you clarify before recommending action?",
+                    "source": {
+                      "label": "Autoral de preparação — cenário ou pergunta deste ensaio, sem atribuição à AWS",
+                      "path": "site/loop-training/agenda.json",
+                      "anchor": "",
+                      "line": null
+                    },
+                    "followups": [
+                      "O que a ação pode melhorar e o que pode prejudicar?",
+                      "Que estado precisa ser preservado e quem autoriza?",
+                      "Como saberá se a jornada voltou e como confirmará a causa depois?"
+                    ],
+                    "followupsEn": [
+                      "What could the action improve or harm?",
+                      "What state must be preserved, and who authorizes it?",
+                      "How will you know the customer journey recovered and confirm the cause afterwards?"
+                    ],
+                    "notes": {
+                      "objective": "Propor contenção proporcional ao risco, preservando operações e separando alívio de correção.",
+                      "evidence": [
+                        "Explica hipótese, efeito esperado, riscos, autoridade e critério de validação.",
+                        "Distingue mitigação da causa e análise posterior com responsáveis.",
+                        "Não encerra em erro humano nem promete prevenção absoluta."
+                      ],
+                      "limits": [
+                        "Autoral de preparação, sem atribuição oficial de perguntas, LPs ou nível profissional.",
+                        "Reinício/failover não são sempre certos nem sempre errados; avaliar o contexto.",
+                        "Não afirmar que toda requisição foi desfeita porque R-17 não chegou aoSQL."
+                      ],
+                      "clarifications": [
+                        "Uma pergunta por vez; aceitar pergunta semanticamente equivalente e premissas explícitas.",
+                        "Confirmar ambiguidade ou possível erro de transcrição antes de avaliar."
+                      ],
+                      "observations": [
+                        "Separar fatos narrados, hipóteses, propostas atuais e apoio oferecido. Não penalizar confidencialidade ou sotaque."
+                      ],
+                      "ratingSignals": {
+                        "incompleta": "Executa a preferência por reinício ou a rejeita como regra universal sem hipótese, estado e riscos.",
+                        "regular": "Pede cuidado e aprovação, mas não explica o que a contenção melhoraria nem como verificar.",
+                        "boa": "Justifica ação proporcional, risco, autoridade, capacidade e tratamento das operações em andamento, com critério de recuperação.",
+                        "excelente": "Distingue alívio temporário de correção, confirma mecanismo e propõe análise posterior com responsáveis e verificação, sem culpar genericamente erro humano."
+                      },
+                      "nextFollowup": "O que a ação pode melhorar e o que pode prejudicar?",
+                      "alternatives": [
+                        "Aceitar retirada gradual de versão/instância com capacidade e operações verificadas, ou outra contenção justificada e autorizada."
+                      ]
+                    }
+                  },
+                  {
+                    "id": "DD-V2-REAL",
+                    "category": "Experiência real",
+                    "kind": "behavioral",
+                    "prompt": "Conte uma investigação real e delimitada em que uma evidência mudou sua hipótese ou decisão.",
+                    "promptEn": "Describe a specific real investigation where evidence changed your hypothesis or decision.",
+                    "source": {
+                      "label": "Autoral de preparação — cenário ou pergunta deste ensaio, sem atribuição à AWS",
+                      "path": "site/loop-training/agenda.json",
+                      "anchor": "",
+                      "line": null
+                    },
+                    "followups": [
+                      "Qual era a hipótese inicial?",
+                      "Qual evidência enfraqueceu essa hipótese?",
+                      "Como verificou o resultado e qual foi sua contribuição?"
+                    ],
+                    "followupsEn": [
+                      "What was your initial hypothesis?",
+                      "What evidence weakened it?",
+                      "How did you verify the result, and what was your contribution?"
+                    ],
+                    "notes": {
+                      "objective": "Reconstruir um episódio real, autoria, evidência decisiva e limite da conclusão.",
+                      "evidence": [
+                        "Distingue eu fiz, equipe fez e faria hoje.",
+                        "Explica hipótese revisada, confiabilidade da evidência e verificação efetivamente realizada."
+                      ],
+                      "limits": [
+                        "Autoral de preparação, sem atribuição oficial de perguntas, LPs ou nível profissional.",
+                        "Não usar competência demonstrada no cenário hipotético como prova de implementação no emprego.",
+                        "Se não houver episódio suficientemente descrito, deixar STAR e domínio como não observados."
+                      ],
+                      "clarifications": [
+                        "Uma pergunta por vez; aceitar pergunta semanticamente equivalente e premissas explícitas.",
+                        "Confirmar ambiguidade ou possível erro de transcrição antes de avaliar."
+                      ],
+                      "observations": [
+                        "Separar fatos narrados, hipóteses, propostas atuais e apoio oferecido. Não penalizar confidencialidade ou sotaque."
+                      ],
+                      "ratingSignals": {
+                        "incompleta": "Responde só no hipotético ou reivindica conclusão/execução sem delimitar episódio, papel e fundamento.",
+                        "regular": "Descreve projeto ou atividades da equipe, mas autoria, mecanismo ou verificação continuam genéricos.",
+                        "boa": "Delimita episódio e contribuição, explica decisões e evidência efetivamente disponível, marcando o que ainda não consegue confirmar.",
+                        "excelente": "Aprofunda mecanismos, alternativas e validação, reconhece limites do histórico e responde a uma variação sem inventar ações passadas."
+                      },
+                      "nextFollowup": "Qual era a hipótese inicial?",
+                      "alternatives": [
+                        "Aceitar episódio de outro domínio ou coordenação, desde que sua contribuição e o uso do trabalho coletivo fiquem identificáveis."
+                      ]
+                    }
+                  },
+                  {
+                    "id": "DD-V2-END",
+                    "category": "Perguntas da candidata",
+                    "kind": "technical",
+                    "prompt": "Que pergunta você gostaria de fazer sobre o papel de uma pessoa de arquitetura em uma situação como esta?",
+                    "promptEn": "What would you like to ask about the role of an architect in a situation like this?",
+                    "source": {
+                      "label": "Autoral de preparação — cenário ou pergunta deste ensaio, sem atribuição à AWS",
+                      "path": "site/loop-training/agenda.json",
+                      "anchor": "",
+                      "line": null
+                    },
+                    "followups": [
+                      "Que decisão do trabalho de arquitetura você gostaria de compreender melhor?"
+                    ],
+                    "followupsEn": [
+                      "Which architectural responsibility would you like to understand better?"
+                    ],
+                    "notes": {
+                      "objective": "Reservar espaço para uma conversa sobre o papel fictício, sem inventar fatos da equipe real.",
+                      "evidence": [
+                        "A pergunta se relaciona ao trabalho, escopo, colaboração ou aprendizado."
+                      ],
+                      "limits": [
+                        "Autoral de preparação, sem atribuição oficial de perguntas, LPs ou nível profissional.",
+                        "Responder como arquiteto fictício. Não inventar clientes, metas ou processos internos da equipe real da vaga."
+                      ],
+                      "clarifications": [
+                        "Uma pergunta por vez; aceitar pergunta semanticamente equivalente e premissas explícitas.",
+                        "Confirmar ambiguidade ou possível erro de transcrição antes de avaliar."
+                      ],
+                      "observations": [
+                        "Separar fatos narrados, hipóteses, propostas atuais e apoio oferecido. Não penalizar confidencialidade ou sotaque."
+                      ],
+                      "ratingSignals": {
+                        "incompleta": "Não inferir deficiência técnica pela ausência de pergunta; use Não observado se não houve material suficiente.",
+                        "regular": "Uma pergunta ampla pode abrir conversa; pedir esclarecimento do interesse sem exigir pergunta decorada.",
+                        "boa": "A pergunta permite discutir escopo, colaboração, decisão ou aprendizado no papel fictício.",
+                        "excelente": "Aprofunda uma necessidade profissional concreta com limites de confidencialidade e sem presumir fatos da equipe real."
+                      },
+                      "nextFollowup": "Que decisão do trabalho de arquitetura você gostaria de compreender melhor?",
+                      "alternatives": [
+                        "Aceitar uma ou duas perguntas conforme o tempo, sem exigir pergunta decorada."
+                      ]
+                    }
+                  }
+                ],
+                "reserves": [],
+                "instructorNotes": "Causa fixa: somente a instância C com a versão r17 toma clientes do pool em um caminho de validação e retorna sem liberá-los. Nenhuma transação é aberta nesse caminho. Após dez ocorrências, os dez clientes continuam emprestados ao aplicativo e aparecem idle no PostgreSQL. Não confundir idle do servidor com idleCount do pool. Pool max10, connectionTimeoutMillis1800. Na amostra R-17, pool espera1800 ms, não obtém cliente e não enviaSQL; mais200 ms de aplicação/intermediário levam aoHTTP504 em2000 ms. CPU média do banco18% porque há capacidade e outras instâncias continuam; o indicador não prova operação saudável. Página inicial não usa esse pool. A eB têm limite operacional fictício40 confirmações/s cada e atendem20/s; C recebia10/s. Redistribuir para25/s é conta sob premissas, não prova de capacidade medida. Propostas válidas: conter versão/rota com capacidade e operações em andamento verificadas; corrigir release em caminhos de saída; testar regressão. Reiniciar C pode aliviar, mas não prova correção. Reiniciar ou fazer failover do banco não corrige a devolução de clientes e pode criar risco adicional. Não rotular toda reinicialização como errada; exigir hipótese, autoridade, efeito e validação. Contrato da amostra R-17: aquisição falhou antes deSQL; não declarar isso sobre todas as tentativas sem evidência. Outra tentativa desconhecida deve ser investigada pelo identificador. Não mudar a causa se a candidata acertar rápido.",
+                "firstDomain": "Aplicação e pool",
+                "secondDomain": "Banco, estado e validação"
+              },
+              {
+                "id": "v3",
+                "version": "V3",
+                "label": "V3 — aprofundamento do trabalho real",
+                "objective": "Aprofundar dois episódios confirmados pela participante sem completar a experiência com ficção.",
+                "agenda": [
+                  {
+                    "label": "Apresentação e escolha",
+                    "minutes": 5
+                  },
+                  {
+                    "label": "Primeiro fluxo real",
+                    "minutes": 25
+                  },
+                  {
+                    "label": "Segundo episódio real",
+                    "minutes": 25
+                  },
+                  {
+                    "label": "Perguntas da candidata",
+                    "minutes": 5
+                  }
+                ],
+                "questions": [
+                  {
+                    "id": "DD-V3-INTRO",
+                    "category": "Abertura",
+                    "kind": "technical",
+                    "prompt": "Apresente brevemente sua atuação e escolha um domínio em que consiga explicar sua participação sem expor informações restritas.",
+                    "promptEn": "Briefly introduce your work and choose a domain where you can explain your contribution without exposing restricted information.",
+                    "source": {
+                      "label": "Autoral de preparação — cenário ou pergunta deste ensaio, sem atribuição à AWS",
+                      "path": "site/loop-training/agenda.json",
+                      "anchor": "",
+                      "line": null
+                    },
+                    "followups": [
+                      "O que você investigou, decidiu, implementou ou coordenou pessoalmente?"
+                    ],
+                    "followupsEn": [
+                      "What did you personally investigate, decide, implement or coordinate?"
+                    ],
+                    "notes": {
+                      "objective": "Delimitar experiência declarada e participação sem tomá-las como prova antecipada de competência.",
+                      "evidence": [
+                        "Identifica seu papel e limites do que pode relatar."
+                      ],
+                      "limits": [
+                        "Autoral de preparação, sem atribuição oficial de perguntas, LPs ou nível profissional.",
+                        "Não solicitar empregador, cliente, endpoint ou dado interno para conferir legitimidade."
+                      ],
+                      "clarifications": [
+                        "Uma pergunta por vez; aceitar pergunta semanticamente equivalente e premissas explícitas.",
+                        "Confirmar ambiguidade ou possível erro de transcrição antes de avaliar."
+                      ],
+                      "observations": [
+                        "Separar fatos narrados, hipóteses, propostas atuais e apoio oferecido. Não penalizar confidencialidade ou sotaque."
+                      ],
+                      "ratingSignals": {
+                        "incompleta": "Não delimita atuação ou contribuição mesmo após reformulação neutra; registre só o que foi observado, sem inferir ausência de competência.",
+                        "regular": "Lista tecnologias ou cargo, mas o escopo de participação permanece amplo.",
+                        "boa": "Apresenta atuação e domínio seguro, distinguindo implementação, desenho, acompanhamento e estudo.",
+                        "excelente": "Delimita contribuição e conhecimento com precisão e identifica um episódio aprofundável sem expor informação restrita."
+                      },
+                      "nextFollowup": "O que você investigou, decidiu, implementou ou coordenou pessoalmente?",
+                      "alternatives": [
+                        "Aceitar nomes fictícios e topologia simplificada identificada como tal."
+                      ]
+                    }
+                  },
+                  {
+                    "id": "DD-V3-AI",
+                    "category": "Trabalho real · fluxo de dados",
+                    "kind": "technical",
+                    "prompt": "Se puder descrever sem exposição indevida, explique um fluxo real de ponta a ponta de um assistente ou aplicação com dados financeiros em que participou.",
+                    "promptEn": "If you can describe it safely, explain an actual end-to-end flow of an assistant or application using financial data that you contributed to.",
+                    "source": {
+                      "label": "Autoral de preparação — cenário ou pergunta deste ensaio, sem atribuição à AWS",
+                      "path": "site/loop-training/agenda.json",
+                      "anchor": "",
+                      "line": null
+                    },
+                    "followups": [
+                      "Qual era a origem dos dados e como o acesso era delimitado?",
+                      "Que transformações levavam o valor até a resposta?",
+                      "Que avaliação ou erro existiu de fato e qual foi sua participação?"
+                    ],
+                    "followupsEn": [
+                      "Where did the data come from, and how was access scoped?",
+                      "Which transformations carried the value to the response?",
+                      "Which evaluations or failures actually existed, and what was your contribution?"
+                    ],
+                    "notes": {
+                      "objective": "Explicar fluxo, responsabilidade, autorização e evidência reais sem completar lacunas com ferramentas presumidas.",
+                      "evidence": [
+                        "Distingue implementou, desenhou, acompanhou e estudou.",
+                        "Delimita avaliações existentes e o que não consegue confirmar."
+                      ],
+                      "limits": [
+                        "Autoral de preparação, sem atribuição oficial de perguntas, LPs ou nível profissional.",
+                        "Se não houver episódio seguro ou experiência nesse domínio, aceitar outro.",
+                        "Não presumir agentes, bases de teste, guardrails, divergências ou sucesso."
+                      ],
+                      "clarifications": [
+                        "Uma pergunta por vez; aceitar pergunta semanticamente equivalente e premissas explícitas.",
+                        "Confirmar ambiguidade ou possível erro de transcrição antes de avaliar."
+                      ],
+                      "observations": [
+                        "Separar fatos narrados, hipóteses, propostas atuais e apoio oferecido. Não penalizar confidencialidade ou sotaque."
+                      ],
+                      "ratingSignals": {
+                        "incompleta": "Responde só no hipotético ou reivindica conclusão/execução sem delimitar episódio, papel e fundamento.",
+                        "regular": "Descreve projeto ou atividades da equipe, mas autoria, mecanismo ou verificação continuam genéricos.",
+                        "boa": "Delimita episódio e contribuição, explica decisões e evidência efetivamente disponível, marcando o que ainda não consegue confirmar.",
+                        "excelente": "Aprofunda mecanismos, alternativas e validação, reconhece limites do histórico e responde a uma variação sem inventar ações passadas."
+                      },
+                      "nextFollowup": "Qual era a origem dos dados e como o acesso era delimitado?",
+                      "alternatives": [
+                        "Aceitar outro fluxo real com participação explicável. Nunca preencher com o cenário fictício V1B."
+                      ]
+                    }
+                  },
+                  {
+                    "id": "DD-V3-MIGRATION",
+                    "category": "Trabalho real · decisões e verificação",
+                    "kind": "technical",
+                    "prompt": "Escolha uma recuperação ou migração real. Qual problema precisava resolver, por que escolheu aquele caminho e o que efetivamente verificou?",
+                    "promptEn": "Choose an actual recovery or migration. What problem needed solving, why did you choose that path, and what did you actually verify?",
+                    "source": {
+                      "label": "Autoral de preparação — cenário ou pergunta deste ensaio, sem atribuição à AWS",
+                      "path": "site/loop-training/agenda.json",
+                      "anchor": "",
+                      "line": null
+                    },
+                    "followups": [
+                      "Que evidência sustentou diagnóstico e capacidade?",
+                      "Como preparou a execução e quais escritas continuavam?",
+                      "Quem executou a troca, quais critérios passaram e como tratariam novas escritas numa recuperação?"
+                    ],
+                    "followupsEn": [
+                      "What evidence supported diagnosis and capacity?",
+                      "How did you prepare execution, and which writes continued?",
+                      "Who performed cutover, which criteria passed, and how would recovery handle new writes?"
+                    ],
+                    "notes": {
+                      "objective": "Sustentar diagnóstico, alternativas, autoria, execução e alcance da validação com fatos narrados.",
+                      "evidence": [
+                        "Distingue aconteceu, foi verificado, permaneceu incerto e faria hoje.",
+                        "Não reivindica trabalho de colegas e explica como utilizou contribuições."
+                      ],
+                      "limits": [
+                        "Autoral de preparação, sem atribuição oficial de perguntas, LPs ou nível profissional.",
+                        "Não presumir CDC, validação automatizada, comparação integral ou troca pela participante.",
+                        "Se escolher o caso de recomendações, as pendências DMS/snapshot/autoria continuam abertas nas fontes."
+                      ],
+                      "clarifications": [
+                        "Uma pergunta por vez; aceitar pergunta semanticamente equivalente e premissas explícitas.",
+                        "Confirmar ambiguidade ou possível erro de transcrição antes de avaliar."
+                      ],
+                      "observations": [
+                        "Separar fatos narrados, hipóteses, propostas atuais e apoio oferecido. Não penalizar confidencialidade ou sotaque."
+                      ],
+                      "ratingSignals": {
+                        "incompleta": "Responde só no hipotético ou reivindica conclusão/execução sem delimitar episódio, papel e fundamento.",
+                        "regular": "Descreve projeto ou atividades da equipe, mas autoria, mecanismo ou verificação continuam genéricos.",
+                        "boa": "Delimita episódio e contribuição, explica decisões e evidência efetivamente disponível, marcando o que ainda não consegue confirmar.",
+                        "excelente": "Aprofunda mecanismos, alternativas e validação, reconhece limites do histórico e responde a uma variação sem inventar ações passadas."
+                      },
+                      "nextFollowup": "Que evidência sustentou diagnóstico e capacidade?",
+                      "alternatives": [
+                        "Aceitar outra experiência real sem obrigar a história de recomendações."
+                      ]
+                    }
+                  },
+                  {
+                    "id": "DD-V3-TRANSFER",
+                    "category": "Variação de raciocínio",
+                    "kind": "technical",
+                    "prompt": "Qual informação nova faria você rever uma das decisões que acabou de explicar? Diferencie essa reflexão atual do que foi feito na época.",
+                    "promptEn": "What new information would make you revisit one of the decisions you just explained? Distinguish this current reflection from what happened then.",
+                    "source": {
+                      "label": "Autoral de preparação — cenário ou pergunta deste ensaio, sem atribuição à AWS",
+                      "path": "site/loop-training/agenda.json",
+                      "anchor": "",
+                      "line": null
+                    },
+                    "followups": [
+                      "Qual mecanismo deixa de atender nessa condição?",
+                      "Como verificaria a alternativa e que evidência faltaria?"
+                    ],
+                    "followupsEn": [
+                      "Which mechanism would no longer meet the need under that condition?",
+                      "How would you verify the alternative, and what evidence is missing?"
+                    ],
+                    "notes": {
+                      "objective": "Testar transferência de entendimento sem inventar outra experiência nem converter a escada em carreira.",
+                      "evidence": [
+                        "Revê uma condição ou hipótese com mecanismo e teste claros.",
+                        "Mantém reflexão atual separada das ações passadas."
+                      ],
+                      "limits": [
+                        "Autoral de preparação, sem atribuição oficial de perguntas, LPs ou nível profissional.",
+                        "A variação é reflexão anunciada, não novo fato do emprego.",
+                        "Não prolongar apenas para forçar um não sei."
+                      ],
+                      "clarifications": [
+                        "Uma pergunta por vez; aceitar pergunta semanticamente equivalente e premissas explícitas.",
+                        "Confirmar ambiguidade ou possível erro de transcrição antes de avaliar."
+                      ],
+                      "observations": [
+                        "Separar fatos narrados, hipóteses, propostas atuais e apoio oferecido. Não penalizar confidencialidade ou sotaque."
+                      ],
+                      "ratingSignals": {
+                        "incompleta": "Apresenta a reflexão atual como uma ação passada ou repete a primeira solução apesar da condição alterada.",
+                        "regular": "Reconhece que algo mudaria, mas não explica qual mecanismo ou evidência deixa de atender.",
+                        "boa": "Identifica condição nova, revisa a decisão com fundamento e mantém o histórico separado da proposta.",
+                        "excelente": "Compara alternativas sob a nova condição, define teste discriminante e reconhece o que permanece desconhecido."
+                      },
+                      "nextFollowup": "Qual mecanismo deixa de atender nessa condição?",
+                      "alternatives": [
+                        "Aceitar reconhecer limite claro e indicar verificação útil, sem exigir quota ou número de memória."
+                      ]
+                    }
+                  },
+                  {
+                    "id": "DD-V3-END",
+                    "category": "Perguntas da candidata",
+                    "kind": "technical",
+                    "prompt": "Que pergunta você gostaria de fazer sobre o papel de uma pessoa de arquitetura em uma situação como esta?",
+                    "promptEn": "What would you like to ask about the role of an architect in a situation like this?",
+                    "source": {
+                      "label": "Autoral de preparação — cenário ou pergunta deste ensaio, sem atribuição à AWS",
+                      "path": "site/loop-training/agenda.json",
+                      "anchor": "",
+                      "line": null
+                    },
+                    "followups": [
+                      "Que decisão do trabalho de arquitetura você gostaria de compreender melhor?"
+                    ],
+                    "followupsEn": [
+                      "Which architectural responsibility would you like to understand better?"
+                    ],
+                    "notes": {
+                      "objective": "Reservar espaço para uma conversa sobre o papel fictício, sem inventar fatos da equipe real.",
+                      "evidence": [
+                        "A pergunta se relaciona ao trabalho, escopo, colaboração ou aprendizado."
+                      ],
+                      "limits": [
+                        "Autoral de preparação, sem atribuição oficial de perguntas, LPs ou nível profissional.",
+                        "Responder como arquiteto fictício. Não inventar clientes, metas ou processos internos da equipe real da vaga."
+                      ],
+                      "clarifications": [
+                        "Uma pergunta por vez; aceitar pergunta semanticamente equivalente e premissas explícitas.",
+                        "Confirmar ambiguidade ou possível erro de transcrição antes de avaliar."
+                      ],
+                      "observations": [
+                        "Separar fatos narrados, hipóteses, propostas atuais e apoio oferecido. Não penalizar confidencialidade ou sotaque."
+                      ],
+                      "ratingSignals": {
+                        "incompleta": "Não inferir deficiência técnica pela ausência de pergunta; use Não observado se não houve material suficiente.",
+                        "regular": "Uma pergunta ampla pode abrir conversa; pedir esclarecimento do interesse sem exigir pergunta decorada.",
+                        "boa": "A pergunta permite discutir escopo, colaboração, decisão ou aprendizado no papel fictício.",
+                        "excelente": "Aprofunda uma necessidade profissional concreta com limites de confidencialidade e sem presumir fatos da equipe real."
+                      },
+                      "nextFollowup": "Que decisão do trabalho de arquitetura você gostaria de compreender melhor?",
+                      "alternatives": [
+                        "Aceitar uma ou duas perguntas conforme o tempo, sem exigir pergunta decorada."
+                      ]
+                    }
+                  }
+                ],
+                "reserves": [],
+                "instructorNotes": "Sem ficha de causa fictícia. Registrar apenas fatos narrados e verificações descritas. Se faltar episódio, pedir outro ou marcar não observado; não presumir chat, ferramentas, CDC, validação automatizada, integralidade ou autoria da troca. Separar o que aconteceu, foi verificado, permanece incerto e faria hoje. Os cenáriosV1/V2 não completam o histórico. Perfil declarado não é prova antecipada de competência.",
+                "firstDomain": "Fluxo real e contribuição",
+                "secondDomain": "Incidente real e verificação"
+              }
+            ]
+          }
         },
         {
           "id": "apresentacao",
