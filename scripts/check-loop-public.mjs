@@ -19,6 +19,41 @@ const routeRoot = '/praticar/loop/';
 const pageIds = ['dia-10', 'dia-11'];
 const routes = pageIds.map(id => `${routeRoot}${id}/index.html`);
 const namespace = 'loop-practice:v1';
+// The presentation contract preserves legacy IDs while surfacing the six
+// priority topics before the remaining twelve authorial questions.
+const presentationIds = {
+  T1: 'AP-02-01', T2: 'AP-02-06', T3: 'AP-02-03', T4: 'AP-03-06', T5: 'AP-03-07',
+  T6: 'AP-03-01', T7: 'AP-03-03', T8: 'AP-03-08', T9: 'AP-06-01', T10: 'AP-04-01',
+  B1: 'AP-01-01', B2: 'AP-01-05', B3: 'AP-01-06', B4: 'AP-02-04',
+  B5: 'AP-05-06', B6: 'AP-05-03', B7: 'AP-05-04', B8: 'AP-06-02',
+};
+const priorityCodes = ['T1', 'T3', 'T6', 'T7', 'B1', 'B6'];
+const presentationOrder = [...priorityCodes, 'T2', 'T4', 'T5', 'T8', 'T9', 'T10', 'B2', 'B3', 'B4', 'B5', 'B7', 'B8'];
+const legacyPresentationIds = [
+  ...[['01', 4], ['02', 5], ['03', 5], ['04', 4], ['05', 5]].flatMap(([group, count]) =>
+    Array.from({ length: count }, (_, index) => `AP-${group}-${String(index + 1).padStart(2, '0')}`)),
+  'AP-RES-01', 'AP-RES-02',
+];
+// Captured before the presentation expansion. Canonical object keys make this
+// content check independent of JSON formatting and property order.
+const unchangedReserveHashes = {
+  'AP-01-02': 'fedf03681e98773aa6d8716da3e88c6f6fdc78070c0cf073a72ce90695d8431f',
+  'AP-01-03': '915760b393d8b408424e734f2917ef824ca50247d015b8781c96a09cc18c3be8',
+  'AP-01-04': 'e909c6d65dae0ee3dd16831c77322828cd1b3589ced529f6c835587691ede7fe',
+  'AP-02-02': 'af0ec218a851cc4181621fcf30a8a2d1d1a5f49cac92f4099982c36cc10bd568',
+  'AP-02-05': '09387b2ce3b1119a396c147a252ba09bf9d432f7b3c51ca09325dc4e49ca6ce3',
+  'AP-03-02': '9ee107f425586be1f0d1ad8a4028f35529ee9a24a6ab52acee6d981ab3375e35',
+  'AP-03-04': '7e8befaa0750b6cd5b2a41a127abc56e1dbd08161c5762ba444105ce4c7e572d',
+  'AP-03-05': '6ada563dc26e03c3f6a225d45ebff97c7b07d02f14bb4ee6a3c37167948eac07',
+  'AP-04-02': '82e641d89941abee0fb06c76f4058dd9023166345ccee040157157e11646563f',
+  'AP-04-03': 'e15f79bdbeab4d45c065eebf26091e7a84278535f919976f91c17fbbe6e052eb',
+  'AP-04-04': 'ff3ebe2238c26629d4b0c4d4b74e7f378f685618704841232d748eea0b4b5175',
+  'AP-05-01': '2e7b17a0365b09ed8781d3b092641d4a9a68e03bb664cf4621377ea600d8df25',
+  'AP-05-02': 'c180846cbc20a834e7513f2fbca6d2ac91c8b68c57f2b42944b6b47c83dfe71e',
+  'AP-05-05': 'df253f33911e8045864d7b525cb38e399e20ba1c0abcd1f24a1a140c0f3cdf3c',
+  'AP-RES-01': '59aa6ea5825c907c6d3f240ca28cc0af34c9ba3a1827489474b83035930175f4',
+  'AP-RES-02': '79f710e3b8d14dbb75f314223c90b83573b20bd46198b11a0118163a5ac67012',
+};
 const args = process.argv.slice(2);
 assert.ok(args.every(arg => arg === '--browser'), 'Uso: node scripts/check-loop-public.mjs [--browser]');
 const browserRequested = args.includes('--browser');
@@ -32,6 +67,7 @@ md.renderer.rules.link_open = () => '<span>';
 md.renderer.rules.link_close = () => '</span>';
 const markdown = value => md.render(value || '');
 const normalized = value => String(value).replace(/\s+/g, ' ').trim();
+const folded = value => normalized(value).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
 const read = relative => fs.readFile(path.join(root, relative), 'utf8');
 const readJSON = async relative => JSON.parse(await read(relative));
 const digest = bytes => createHash('sha256').update(bytes).digest('hex');
@@ -41,6 +77,81 @@ let behavioral;
 let technical;
 let pages;
 let publicPolicy;
+
+function canonicalValue(value) {
+  if (Array.isArray(value)) return value.map(canonicalValue);
+  if (value && typeof value === 'object') return Object.fromEntries(Object.keys(value).sort().map(key => [key, canonicalValue(value[key])]));
+  return value;
+}
+
+function presentationCode(question) {
+  const match = /^(?:Prioridade\s+(\d+)\s*·\s*)?([TB]\d+)(?:\s*·\s*|$)/.exec(question.category || '');
+  assert.ok(match && presentationIds[match[2]], `Categoria precisa identificar o código de apresentação: ${question.id}`);
+  return { code: match[2], priority: match[1] ? Number(match[1]) : null };
+}
+
+function checkPresentation(page, approvedPage) {
+  const session = page.sessions.find(item => item.id === 'apresentacao');
+  const approved = approvedPage.sessions.find(item => item.id === 'apresentacao');
+  assert.ok(session && approved, 'Apresentação do Dia10 ausente');
+  assert.equal(session.questions.length, 18, 'A apresentação deve oferecer dez temas técnicos e oito de negócio');
+  assert.deepEqual(session.questions.map(question => presentationCode(question).code), presentationOrder, 'As seis prioridades devem preceder os outros doze temas na ordem acordada');
+  const all = [...session.questions, ...(session.reserves || [])];
+  const expectedIds = [...new Set([...legacyPresentationIds, ...Object.values(presentationIds)])];
+  assert.equal(all.length, 34, 'A expansão deve manter as perguntas legadas como reservas');
+  assert.deepEqual(all.map(question => question.id).sort(), expectedIds.sort(), 'Cada ID antigo e novo deve aparecer exatamente uma vez');
+  for (const [id, expectedHash] of Object.entries(unchangedReserveHashes)) {
+    const reserve = (approved.reserves || []).find(question => question.id === id);
+    assert.ok(reserve, `A pergunta legada precisa continuar disponível como reserva: ${id}`);
+    assert.equal(digest(JSON.stringify(canonicalValue(reserve))), expectedHash, `Conteúdo da reserva legada alterado: ${id}`);
+  }
+  const evidenceSignatures = new Set();
+  const followupSignatures = new Set();
+  const objectiveSignatures = new Set();
+  const priorityTopics = {
+    T1: /memoria|freeablememory|oom|paginacao/,
+    T3: /alternativa|snapshot|dms|viabilidade/,
+    T6: /validacao|chave|contage|comparacao/,
+    T7: /escrit|grava|delta|reconcilia|dados.*(?:produz|depois)/,
+    B1: /conversao|impacto|cliente|jornada/,
+    B6: /manutencao|metric|indicador/,
+  };
+  for (const [index, question] of session.questions.entries()) {
+    const { code, priority } = presentationCode(question);
+    assert.equal(question.id, presentationIds[code], 'O código precisa manter o ID definido no contrato');
+    assert.equal(question.kind, 'presentation');
+    assert.equal(priority, index < priorityCodes.length ? index + 1 : null, 'Somente as seis primeiras perguntas recebem uma prioridade numerada');
+    const source = approved.questions.find(item => item.id === question.id);
+    assert.ok(source);
+    assert.deepEqual(question.followups, source.followups, 'Publicação deve preservar todos os aprofundamentos específicos');
+    assert.deepEqual(question.notes, source.notes, 'Publicação deve preservar as notas específicas');
+    for (const [values, minimum, label] of [[question.followups, 4, 'aprofundamentos'], [question.notes?.evidence, 2, 'evidências'], [question.notes?.limits, 2, 'limites']]) {
+      assert.ok(Array.isArray(values) && values.length >= minimum, `${code} precisa de ${minimum} ${label}`);
+      assert.ok(values.every(value => typeof value === 'string' && normalized(value)), `${code} contém ${label} vazios`);
+      assert.ok(new Set(values.map(folded)).size >= minimum, `${code} não pode repetir itens para completar ${label}`);
+    }
+    assert.ok(typeof question.notes.objective === 'string' && normalized(question.notes.objective));
+    evidenceSignatures.add(JSON.stringify(question.notes.evidence.map(folded)));
+    followupSignatures.add(JSON.stringify(question.followups.map(folded)));
+    objectiveSignatures.add(folded(question.notes.objective));
+    if (priorityTopics[code]) assert.match(folded([question.prompt, ...question.followups, question.notes.objective, ...question.notes.evidence].join(' ')), priorityTopics[code], 'A prioridade deve aprofundar seu tema específico');
+  }
+  assert.equal(evidenceSignatures.size, 18, 'Os temas precisam de evidências específicas, além de notas comuns de condução');
+  assert.equal(followupSignatures.size, 18, 'Os aprofundamentos não podem ser um único bloco genérico repetido');
+  assert.equal(objectiveSignatures.size, 18, 'Cada tema deve explicar seu objetivo específico');
+  const notes = folded(session.notesMarkdown);
+  for (const pattern of [/(?:seis|6).{0,80}prioridad|prioridad.{0,80}(?:seis|6)/, /analise escrita/, /ambigu|penden|a confirmar/, /na epoca|naquele momento|decisao passada/, /verificad|verificacao|validacao/, /hoje|retrospect|reflexao/]) assert.match(notes, pattern, 'Notas gerais devem explicar escopo, prioridades e distinções da revisão');
+  for (const code of presentationOrder) assert.match(notes, new RegExp(`\\b${code.toLowerCase()}\\b`), 'O mapa das notas deve incluir os 18 temas');
+  const slideScope = session.notesMarkdown.split(/\n\s*\n/).find(paragraph => /slides?/i.test(paragraph));
+  assert.ok(slideScope, 'A revisão precisa delimitar acesso a slides e à fala');
+  const scope = folded(slideScope);
+  assert.match(scope, /analise/);
+  assert.match(scope, /somente|apenas|unica|so a analise/);
+  assert.match(scope, /fala|oral|gravacao|transcricao/);
+  assert.match(scope, /nao|sem/);
+  assert.match(scope, /consult|analis|receb|disponib|acess/);
+  return { primary: 18, technical: 10, business: 8, priorities: [...priorityCodes], totalWithReserves: all.length, unchangedReserves: Object.keys(unchangedReserveHashes).length };
+}
 
 async function filesIn(folder) {
   const files = [];
@@ -249,6 +360,8 @@ async function checkStatic() {
   const presentation = pages.flatMap(page => page.sessions).find(session => session.questions.some(question => question.kind === 'presentation'));
   assert.ok(presentation, 'Apresentação completa ausente');
   for (const pattern of [/DMS\/snapshot/, /autoria/i, /novas escritas/i, /validação/i, /perda zero/i, /contingência/i, /Não escolher a versão verdadeira/]) assert.match(presentation.notesMarkdown, pattern);
+  const presentationCheck = checkPresentation(pages.find(page => page.pageId === 'dia-10'), agenda.pages.find(page => page.pageId === 'dia-10'));
+  assert.equal(questions, 59, 'As 18 perguntas de apresentação e as reservas legadas devem compor os 59 itens da agenda aprovada');
   const scripts = new Set([...htmlPages.values()].flatMap(html => [...html.matchAll(/<script\b[^>]*src=["']([^"']+)["']/g)].map(match => match[1])));
   const appScripts = [];
   for (const url of scripts) {
@@ -262,8 +375,9 @@ async function checkStatic() {
   assert.match(appScripts[0], /(?:const|let) STORAGE_PREFIX\s*=\s*(?:isPublic\s*\?\s*)?['"]loop-practice:v1['"]/);
   const stack = await readJSON('site/aws-stack.json');
   publicPolicy = stack.Resources.ResponseHeaders.Properties.ResponseHeadersPolicyConfig.SecurityHeadersConfig.ContentSecurityPolicy.ContentSecurityPolicy;
-  report.static = { pages: pages.length, sessions: pages.map(page => page.sessions.length), questions, lpQuestions: seenLP.length, manifestDocuments: manifest.length, deliberateLinks, filledRecords: 0, fixedVariants: ['SIM02-B PostgreSQL 16', 'SIM03-B', 'CONSULTIVA-BASE C1–C5'] };
+  report.static = { pages: pages.length, sessions: pages.map(page => page.sessions.length), questions, lpQuestions: seenLP.length, manifestDocuments: manifest.length, deliberateLinks, filledRecords: 0, fixedVariants: ['SIM02-B PostgreSQL 16', 'SIM03-B', 'CONSULTIVA-BASE C1–C5'], presentation: presentationCheck };
   report.checks.push('Dois HTML completos, três JSON aprovados, 19 LP do banco, projeções fiéis, variantes fixas e pendências factuais preservadas.');
+  report.checks.push('Apresentação: T1–T10/B1–B8 com aprofundamentos/notas específicos, seis prioridades primeiro e todos os IDs antigos preservados, incluindo 16 reservas sem alteração.');
   report.checks.push(`${manifest.length} documentos correspondem à seleção pública atual; roteiros fora da busca/progresso/sitemap; somente duas entradas em Praticar#instrutor; registros publicados em branco.`);
 }
 
@@ -384,6 +498,48 @@ async function checkBrowser() {
     assert.equal(await page.locator('[data-followup-index="0"]').evaluate(element => element.open), true);
     if (await page.locator('[data-followup-index="1"]').count()) assert.equal(await page.locator('[data-followup-index="1"]').evaluate(element => element.open), false);
     await present(page, () => page.locator('[data-action="present-prompt"]').click(), prompt, 'somente-pergunta.png');
+    const presentationPage = pages.find(item => item.pageId === 'dia-10');
+    const presentation = presentationPage.sessions.find(item => item.id === 'apresentacao');
+    const presentationSubset = ['T6', 'T7', 'B2', 'B6'];
+    let presentationSelections = 0;
+    for (const width of [390, 1440]) for (const theme of ['light', 'dark']) {
+      const presentationContext = await context({ viewport: { width, height: width === 390 ? 844 : 1000 }, colorScheme: theme });
+      const presenter = await presentationContext.newPage(); monitor(presenter);
+      await visit(presenter, presentationPage.pageId);
+      await presenter.locator('#loop-theme').selectOption(theme);
+      await presenter.locator(`[data-session-id="${presentation.id}"]`).click();
+      for (const code of presentationSubset) {
+        const question = presentation.questions.find(item => item.id === presentationIds[code]);
+        await selectQuestion(presenter, question.id);
+        assert.equal(await presenter.locator('details[open]').count(), 0, 'Aprofundamentos e notas da apresentação devem começar recolhidos em cada seleção');
+        assert.equal(await presenter.locator('#loop-question-prompt').innerText(), question.prompt);
+        assert.equal(await presenter.locator('[data-followup-index]').count(), question.followups.length);
+        for (const [index, followup] of question.followups.entries()) assert.equal(await presenter.locator(`[data-followup-index="${index}"] p`).textContent(), followup);
+        await noOverflow(presenter);
+        if (code === 'T6') {
+          const capture = `apresentacao-recolhida-${width}-${theme}.png`;
+          await presenter.screenshot({ path: path.join(review, capture), fullPage: true }); report.captures.push(capture);
+        }
+        // Open actual instructor notes before presenting. Equality in present()
+        // proves that even visible notes/follow-ups are excluded from the popup.
+        const notes = presenter.locator('[data-instructor-notes]');
+        await notes.locator(':scope > summary').click();
+        assert.equal(await notes.evaluate(element => element.open), true);
+        assert.ok((await notes.innerText()).includes(question.notes.objective));
+        if (code === 'T6') {
+          const capture = `apresentacao-T6-nota-aberta-${width}-${theme}.png`;
+          await notes.scrollIntoViewIfNeeded();
+          await presenter.screenshot({ path: path.join(review, capture) }); report.captures.push(capture);
+        }
+        await presenter.locator('[data-followup-index="0"] summary').click();
+        assert.equal(await presenter.locator('[data-followup-index="0"]').evaluate(element => element.open), true);
+        await present(presenter, () => presenter.locator('[data-action="present-prompt"]').click(), question.prompt, `apresentacao-${code}-${width}-${theme}-somente-pergunta.png`);
+        presentationSelections++;
+      }
+      await presentationContext.close(); contexts.delete(presentationContext);
+    }
+    report.browser.presentation = { codes: presentationSubset, widths: [390, 1440], themes: ['light', 'dark'], selections: presentationSelections, notesInitiallyClosed: true, popupOnlyPrompt: true };
+    report.checks.push('Apresentação: T6/T7/B2/B6 em 390/1440px e claro/escuro; notas e aprofundamentos começam fechados, e popup contém só a pergunta mesmo após abrir as notas.');
     // Exercise every evidence card, including a reserve and the original consultative flow.
     for (const pageData of pages) for (const session of pageData.sessions) {
       const exercises = [...session.questions, ...(session.reserves || [])].filter(question => question.exercise);

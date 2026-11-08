@@ -167,40 +167,732 @@
           ],
           "questions": [
             {
-              "id": "AP-01-01",
-              "category": "Negócio",
+              "id": "AP-02-01",
+              "category": "Prioridade 1 · T1 · Diagnóstico de memória",
               "kind": "presentation",
-              "prompt": "O aplicativo continuava disponível. O que o cliente não conseguia mais fazer?",
+              "prompt": "Qual evidência permitiu concluir que o impedimento era memória insuficiente, e não uma consulta, configuração ou comportamento da carga?",
               "source": {
-                "label": "Autoral de treinamento — proposta fornecida neste pedido",
+                "label": "Autoral de treinamento — análise escrita fornecida pelo proprietário; slides e fala original não consultados nesta revisão",
                 "path": "",
                 "anchor": "",
                 "line": null
               },
               "followups": [
-                "Qual evidência sustenta essa afirmação?",
-                "Que limite ou incerteza ainda precisa ser informado?"
+                "Qual era a engine e a versão? Qual erro aparecia quando a carga falhava?",
+                "Como FreeableMemory, SwapUsage e FreeStorageSpace se comportavam antes, durante e depois? Quais valores você realmente observou?",
+                "Você investigou tamanho das transações, concorrência, consultas mais custosas ou competição com outras atividades?",
+                "O que mudou no destino além da quantidade de RAM?",
+                "Se faltava memória, por que as consultas continuavam funcionando? Como distinguiu essa hipótese de algo observado no caso?"
               ],
               "notes": {
-                "objective": "Defender uma afirmação do case com contexto, autoria, evidência e limite.",
+                "objective": "Reconstruir sintoma → hipótese → evidência → decisão, sem trocar diagnóstico por nome de métrica.",
                 "evidence": [
-                  "Explica o que ocorreu na época e distingue reflexão posterior.",
-                  "Identifica critério, fonte e escopo da validação, sem converter proposta em execução.",
-                  "Delimita contribuição individual e colaboração."
+                  "Relaciona falha, período e operação afetada com erro, métricas ou registros efetivamente disponíveis.",
+                  "Considera explicações alternativas e explica por que a evidência favorecia ou enfraquecia cada uma.",
+                  "Separa comportamento conceitualmente possível de comportamento observado e delimita a engine/configuração."
                 ],
                 "limits": [
-                  "A pergunta é autoral de preparação e não confirma fatos do projeto.",
-                  "Não preencher divergências DMS/snapshot, autoria, perda zero, validação ou rollback com práticas recomendadas."
+                  "Pergunta autoral de ensaio; não confirma fatos do projeto nem antecipa uma questão real da AWS.",
+                  "FreeableMemory baixa isoladamente não demonstra falta de memória como causa; configuração, cache e consultas exigem contexto.",
+                  "Não inventar valores, erro, plano de execução ou correlação que não tenham sido recuperados. CPU ou leitura saudável não descartam toda falha de carga."
                 ],
                 "clarifications": [
-                  "Consultar as pendências factuais da rodada antes de aceitar uma versão como confirmada.",
-                  "Para segurança, confirmar permissões/autorizações reais; não presumir que break glass foi usado, disponível ou apropriado."
+                  "Onde surge no insumo: slide 4 — Causa. A associação ao slide foi informada pelo proprietário e não conferida no PowerPoint.",
+                  "O que preparar: uma sequência factual do diagnóstico, com as lacunas que ainda precisam ser confirmadas."
                 ],
                 "observations": [
-                  "Proposta autoral de treinamento, não questão real/oficial ou roteiro de personalidade."
+                  "Aprofunde somente onde houver lacuna; não apresente as orientações do instrutor como resposta da participante.",
+                  "Ao registrar, distinga fato do projeto, explicação conceitual e proposta do que faria hoje. Não complete uma lacuna com uma prática recomendada."
                 ]
               }
             },
+            {
+              "id": "AP-02-03",
+              "category": "Prioridade 2 · T3 · Viabilidade das alternativas",
+              "kind": "presentation",
+              "prompt": "O que, concretamente, impedia recuperar a pipeline antiga ou utilizar o fluxo atualizado para modificar o recurso existente?",
+              "source": {
+                "label": "Autoral de treinamento — análise escrita fornecida pelo proprietário; slides e fala original não consultados nesta revisão",
+                "path": "",
+                "anchor": "",
+                "line": null
+              },
+              "followups": [
+                "Qual erro ou incompatibilidade bloqueava a alteração? Era uma limitação do serviço, da implementação ou do processo de acesso?",
+                "Quem avaliou o esforço e o prazo de recuperar esse caminho?",
+                "Por que o provisionamento de outra base tinha uma perspectiva de prazo mais confiável?",
+                "Snapshot era tecnicamente inadequado ou faltava um fluxo operacional preparado para restaurá-lo naquele ambiente?",
+                "Quem participou da decisão, quais alternativas foram avaliadas e quem aceitou os riscos?"
+              ],
+              "notes": {
+                "objective": "Ligar requisito, restrição real e decisão, distinguindo o que era possível do que estava operacionalmente disponível.",
+                "evidence": [
+                  "Identifica o bloqueio concreto e o compara com o caminho de criação de outra base.",
+                  "Explica prazo, esforço, autoridade e riscos com o nível de precisão que existia na época.",
+                  "Reconhece pendências documentais DMS/snapshot e autoria sem escolher uma versão por conveniência."
+                ],
+                "limits": [
+                  "Pergunta autoral de ensaio; não confirma fatos do projeto nem antecipa uma questão real da AWS.",
+                  "Não concluir que o serviço era incapaz de restaurar snapshot apenas porque não havia fluxo preparado naquele ambiente.",
+                  "Não voltar à justificativa genérica de dados desatualizados sem confirmar escritores e contexto. Uma boa justificativa descoberta hoje não vira decisão passada."
+                ],
+                "clarifications": [
+                  "Onde surge no insumo: slide 5 — Decisão. A associação ao slide foi informada pelo proprietário e não conferida no PowerPoint.",
+                  "O que preparar: o impedimento real, as alternativas descartadas e quem participou da escolha."
+                ],
+                "observations": [
+                  "Aprofunde somente onde houver lacuna; não apresente as orientações do instrutor como resposta da participante.",
+                  "Ao registrar, distinga fato do projeto, explicação conceitual e proposta do que faria hoje. Não complete uma lacuna com uma prática recomendada."
+                ]
+              }
+            },
+            {
+              "id": "AP-03-01",
+              "category": "Prioridade 3 · T6 · Alcance da validação",
+              "kind": "presentation",
+              "prompt": "Quais critérios precisavam passar para vocês considerarem os dados prontos para a troca? O que essa validação permitia afirmar e o que não comprovava?",
+              "source": {
+                "label": "Autoral de treinamento — análise escrita fornecida pelo proprietário; slides e fala original não consultados nesta revisão",
+                "path": "",
+                "anchor": "",
+                "line": null
+              },
+              "followups": [
+                "As contagens eram por tabela ou também por grupo, cliente ou vigência?",
+                "Vocês compararam valores de registros correspondentes por chave, além das quantidades?",
+                "Como verificaram vínculos, duplicidades e campos críticos?",
+                "Havia amostragem? Como foi escolhida e quais eram os limites?",
+                "O DMS estava com validação habilitada e concluída? Que evidência confirma isso?",
+                "Que divergência impediria a troca e quem decidiria o aceite?"
+              ],
+              "notes": {
+                "objective": "Delimitar a garantia sustentada pelas consultas e verificações efetivamente realizadas.",
+                "evidence": [
+                  "Explica escopo, método, critérios, responsáveis e aceite da validação.",
+                  "Distingue volume, amostragem, equivalência por chave/valor e regras de negócio.",
+                  "Reconhece lacunas sem atribuir ao DMS uma validação não demonstrada."
+                ],
+                "limits": [
+                  "Pergunta autoral de ensaio; não confirma fatos do projeto nem antecipa uma questão real da AWS.",
+                  "Contagens iguais podem coexistir com conteúdos diferentes; tamanho em disco é complementar. Aceite de risco não transforma conferência limitada em igualdade total.",
+                  "Validação do DMS depende de habilitação, compatibilidade e estado da tarefa. Usar DMS não prova que o recurso foi usado ou terminou."
+                ],
+                "clarifications": [
+                  "Onde surge no insumo: slide 6 — selo e afirmação de dados validados. A associação ao slide foi informada pelo proprietário e não conferida no PowerPoint.",
+                  "O que preparar: as consultas, tabelas/campos cobertos, critérios de bloqueio e o alcance exato do aceite."
+                ],
+                "observations": [
+                  "Aprofunde somente onde houver lacuna; não apresente as orientações do instrutor como resposta da participante.",
+                  "Ao registrar, distinga fato do projeto, explicação conceitual e proposta do que faria hoje. Não complete uma lacuna com uma prática recomendada."
+                ]
+              }
+            },
+            {
+              "id": "AP-03-03",
+              "category": "Prioridade 4 · T7 · Troca e recuperação",
+              "kind": "presentation",
+              "prompt": "Qual era a sequência da troca e quais condições autorizavam avançar, parar ou reverter? O que mudaria se o novo banco já tivesse recebido novas escritas?",
+              "source": {
+                "label": "Autoral de treinamento — análise escrita fornecida pelo proprietário; slides e fala original não consultados nesta revisão",
+                "path": "",
+                "anchor": "",
+                "line": null
+              },
+              "followups": [
+                "Além da API de grupos, quais cargas e consumidores precisavam mudar?",
+                "Havia conexões antigas abertas? Como evitar que parte da aplicação usasse cada base?",
+                "Quem executava a troca e quem tinha autoridade para interrompê-la?",
+                "Qual era a estratégia antes de novas escritas? E depois delas?",
+                "Se o destino já tivesse recomendações novas, bastaria voltar o apontamento para a origem? Como tratar os dados novos?",
+                "Como foi definido o encerramento da contingência e quais ciclos críticos foram cobertos?"
+              ],
+              "notes": {
+                "objective": "Defender a sequência real de cutover e recuperação, com fronteiras de dados e autoria explícitas.",
+                "evidence": [
+                  "Explica pré-condições, execução, verificação e critérios de parar ou reverter.",
+                  "Separa troca de tráfego e tratamento dos dados produzidos depois da troca.",
+                  "Distingue preparação/validação da participante da execução final pelos colegas, se esse histórico for confirmado."
+                ],
+                "limits": [
+                  "Pergunta autoral de ensaio; não confirma fatos do projeto nem antecipa uma questão real da AWS.",
+                  "Depois de novas transações, redirecionar conexões sozinho não reconcilia dados existentes apenas no destino.",
+                  "Não inventar replicação reversa, feature toggle ou dupla escrita. Preservar a pendência documental sobre autoria e não deduzir suficiência da contingência só pelo prazo."
+                ],
+                "clarifications": [
+                  "Onde surge no insumo: slide 6 — Migração e passagem de conhecimento. A associação ao slide foi informada pelo proprietário e não conferida no PowerPoint.",
+                  "O que preparar: o procedimento realmente disponível, as responsabilidades e o que seria necessário acrescentar hoje."
+                ],
+                "observations": [
+                  "Aprofunde somente onde houver lacuna; não apresente as orientações do instrutor como resposta da participante.",
+                  "Ao registrar, distinga fato do projeto, explicação conceitual e proposta do que faria hoje. Não complete uma lacuna com uma prática recomendada."
+                ]
+              }
+            },
+            {
+              "id": "AP-01-01",
+              "category": "Prioridade 5 · B1 · Impacto na jornada",
+              "kind": "presentation",
+              "prompt": "Esses clientes ficaram sem qualquer recomendação, sem a recomendação personalizada ou sem uma atualização prevista?",
+              "source": {
+                "label": "Autoral de treinamento — análise escrita fornecida pelo proprietário; slides e fala original não consultados nesta revisão",
+                "path": "",
+                "anchor": "",
+                "line": null
+              },
+              "followups": [
+                "O aplicativo abria, mas qual capacidade da jornada estava bloqueada?",
+                "Os 97 mil mencionados eram clientes previstos, elegíveis, pendentes ou efetivamente impactados? Já deveriam ter recebido recomendações?",
+                "As notificações chegaram a ser enviadas? Houve reclamações, perda de contratação ou atraso de campanha?",
+                "Alguma carteira realmente venceu durante o incidente ou esse era um risco futuro? O fallback para recomendações padrão chegou a ocorrer?",
+                "Como o negócio confirmou a recuperação e qual evidência sustenta o efeito descrito?",
+                "O ganho de conversão era contexto histórico ou resultado da recuperação? Se necessário, aprofundar B2."
+              ],
+              "notes": {
+                "objective": "Separar impacto ocorrido, entrega bloqueada e risco evitado sem confundir aplicativo acessível com jornada disponível.",
+                "evidence": [
+                  "Identifica público, capacidade indisponível, período e consequência real.",
+                  "Distingue risco projetado de efeito observado e explica como o negócio validou a retomada.",
+                  "Não mistura o valor histórico da personalização com o resultado da migração."
+                ],
+                "limits": [
+                  "Pergunta autoral de ensaio; não confirma fatos do projeto nem antecipa uma questão real da AWS.",
+                  "Não ampliar interrupção parcial para indisponibilidade total nem minimizar o impacto porque a página abria.",
+                  "População, reclamações, vencimentos e conversão ainda precisam de definição e confirmação. Não calcular receita preservada a partir de um percentual sem base."
+                ],
+                "clarifications": [
+                  "Onde surge no insumo: slide 3 — Impacto. A associação ao slide foi informada pelo proprietário e não conferida no PowerPoint.",
+                  "O que preparar: uma descrição precisa do efeito para o cliente e a classificação de cada número como contexto, impacto ou resultado."
+                ],
+                "observations": [
+                  "Aprofunde somente onde houver lacuna; não apresente as orientações do instrutor como resposta da participante.",
+                  "Ao registrar, distinga fato do projeto, explicação conceitual e proposta do que faria hoje. Não complete uma lacuna com uma prática recomendada."
+                ]
+              }
+            },
+            {
+              "id": "AP-05-03",
+              "category": "Prioridade 6 · B6 · Negociação da manutenção",
+              "kind": "presentation",
+              "prompt": "Qual argumento mudou a decisão da liderança e por que investir na manutenção foi considerado melhor que continuar entregando funcionalidades?",
+              "source": {
+                "label": "Autoral de treinamento — análise escrita fornecida pelo proprietário; slides e fala original não consultados nesta revisão",
+                "path": "",
+                "anchor": "",
+                "line": null
+              },
+              "followups": [
+                "Qual prioridade concorria com a manutenção? Que entregas foram adiadas?",
+                "Quem discordou e qual preocupação da outra parte era válida?",
+                "Que evidências você apresentou e quais alternativas de alocação discutiu?",
+                "Por que foram aprovados dois meses quando você havia pedido um?",
+                "Como foi definida a alocação mencionada de dois desenvolvedores na plataforma e um na operação? Foi essa a divisão realmente adotada?",
+                "Como acompanharam os compromissos e protegeram o atendimento da operação?",
+                "Como os resultados foram medidos e qual era sua contribuição? Se necessário, aprofundar os percentuais em B7."
+              ],
+              "notes": {
+                "objective": "Recuperar ações concretas de influência e priorização, separando o acordo obtido da forma de construí-lo.",
+                "evidence": [
+                  "Identifica prioridades concorrentes, argumentos, interlocutores e concessões reais.",
+                  "Explica ações individuais e decisão coletiva, com acompanhamento do acordo.",
+                  "Separa a recuperação emergencial do ciclo posterior de manutenção e seus resultados."
+                ],
+                "limits": [
+                  "Pergunta autoral de ensaio; não confirma fatos do projeto nem antecipa uma questão real da AWS.",
+                  "Conseguir dois meses é resultado da negociação, não explicação das ações. Não inventar resistência ou conflito entre equipes se foi uma priorização com a liderança.",
+                  "Os prazos e a alocação vieram da análise fornecida e precisam ser confirmados; não usar números posteriores como resultado imediato da migração."
+                ],
+                "clarifications": [
+                  "Onde surge no insumo: slide 9 — Evolução. A associação ao slide foi informada pelo proprietário e não conferida no PowerPoint.",
+                  "O que preparar: um episódio delimitado da negociação: responsabilidade, prioridades, evidências, ações e acordo."
+                ],
+                "observations": [
+                  "Aprofunde somente onde houver lacuna; não apresente as orientações do instrutor como resposta da participante.",
+                  "Ao registrar, distinga fato do projeto, explicação conceitual e proposta do que faria hoje. Não complete uma lacuna com uma prática recomendada."
+                ]
+              }
+            },
+            {
+              "id": "AP-02-06",
+              "category": "T2 · Capacidade e projeção",
+              "kind": "presentation",
+              "prompt": "Como você chegou à classe de oito GiB? Que volume e comportamento de carga essa escolha precisava suportar?",
+              "source": {
+                "label": "Autoral de treinamento — análise escrita fornecida pelo proprietário; slides e fala original não consultados nesta revisão",
+                "path": "",
+                "anchor": "",
+                "line": null
+              },
+              "followups": [
+                "Os quatro milhões mencionados eram registros, clientes elegíveis, acessos ou usuários simultâneos?",
+                "Como a personalização por grupos influenciava o volume armazenado e processado?",
+                "Qual era o tamanho da carga, sua duração e a concorrência?",
+                "Houve teste representativo ou foi uma escolha inicial para recuperar a operação, acompanhada depois?",
+                "Qual seria o gatilho para ampliar novamente? Que capacidade foi efetivamente validada?"
+              ],
+              "notes": {
+                "objective": "Distinguir capacidade escolhida, capacidade testada e crescimento projetado.",
+                "evidence": [
+                  "Explica requisito, premissas e restrições usados para escolher a capacidade.",
+                  "Declara qual carga executou e qual escala permaneceu apenas como projeção.",
+                  "Apresenta critério de acompanhamento ou reconhece que ele ainda precisa ser recuperado."
+                ],
+                "limits": [
+                  "Pergunta autoral de ensaio; não confirma fatos do projeto nem antecipa uma questão real da AWS.",
+                  "Dobrar RAM não comprova suporte à expansão futura. Não chamar uma escolha pragmática de benchmark.",
+                  "Os valores de oito GiB e quatro milhões vieram da análise fornecida; não foram verificados nesta revisão nem autorizam divulgar dados internos restritos."
+                ],
+                "clarifications": [
+                  "Onde surge no insumo: slides 2 e 5 — Contexto e decisão. A associação ao slide foi informada pelo proprietário e não conferida no PowerPoint.",
+                  "O que preparar: a base real do dimensionamento e o alcance dos testes, sem converter população futura em concorrência."
+                ],
+                "observations": [
+                  "Aprofunde somente onde houver lacuna; não apresente as orientações do instrutor como resposta da participante.",
+                  "Ao registrar, distinga fato do projeto, explicação conceitual e proposta do que faria hoje. Não complete uma lacuna com uma prática recomendada."
+                ]
+              }
+            },
+            {
+              "id": "AP-03-06",
+              "category": "T4 · Execução do DMS",
+              "kind": "presentation",
+              "prompt": "Foi uma carga completa única, uma carga com captura de alterações ou outro modo de migração? Por que esse modo atendia ao cenário?",
+              "source": {
+                "label": "Autoral de treinamento — análise escrita fornecida pelo proprietário; slides e fala original não consultados nesta revisão",
+                "path": "",
+                "anchor": "",
+                "line": null
+              },
+              "followups": [
+                "Origem e destino usavam a mesma engine e versão?",
+                "Quantas tabelas e qual volume foram transferidos? Quanto tempo levou?",
+                "Quem preparou índices, chaves, usuários e demais objetos necessários? O que os scripts dos DBAs faziam?",
+                "Como acompanhou erros, tabelas incompletas e o estado da tarefa?",
+                "Como controlou o impacto sobre a origem, que ainda atendia consultas?"
+              ],
+              "notes": {
+                "objective": "Explicar a execução real e a fronteira entre transferência de dados, preparação do destino e responsabilidade das pessoas.",
+                "evidence": [
+                  "Identifica modo de migração e por que ele correspondia à presença ou ausência de alterações na origem.",
+                  "Distingue objetos preparados separadamente, monitoramento da transferência e validação posterior.",
+                    "Delimita quem preparou objetos, migrou dados, validou e executou a troca, sem resolver divergências de autoria por suposição."
+                ],
+                "limits": [
+                  "Pergunta autoral de ensaio; não confirma fatos do projeto nem antecipa uma questão real da AWS.",
+                  "A replicação básica do DMS não cria automaticamente todos os índices secundários, chaves estrangeiras e usuários; recursos de conversão de esquema são distintos.",
+                  "Não inferir modo, engine, versão, volume ou captura de alterações pelo diagrama. O uso do DMS ainda precisa ser conciliado com a divergência da STAR-06."
+                ],
+                "clarifications": [
+                  "Onde surge no insumo: slide 6 — Migração. A associação ao slide foi informada pelo proprietário e não conferida no PowerPoint.",
+                  "O que preparar: uma ficha curta da execução com modo, versões, objetos, volume, duração e responsabilidades conhecidos."
+                ],
+                "observations": [
+                  "Aprofunde somente onde houver lacuna; não apresente as orientações do instrutor como resposta da participante.",
+                  "Ao registrar, distinga fato do projeto, explicação conceitual e proposta do que faria hoje. Não complete uma lacuna com uma prática recomendada."
+                ]
+              }
+            },
+            {
+              "id": "AP-03-07",
+              "category": "T5 · Escritas durante a migração",
+              "kind": "presentation",
+              "prompt": "Entre copiar, validar e trocar o apontamento, existia alguma rotina capaz de alterar a base de origem?",
+              "source": {
+                "label": "Autoral de treinamento — análise escrita fornecida pelo proprietário; slides e fala original não consultados nesta revisão",
+                "path": "",
+                "anchor": "",
+                "line": null
+              },
+              "followups": [
+                "O processo de expiração continuava ativo quando a carga de novas recomendações foi suspensa?",
+                "Havia alterações de vínculos, manutenção ou outros consumidores com escrita?",
+                "Como confirmaram quais processos gravavam e o tratamento aplicado a cada um?",
+                "Se um registro mudasse depois da validação, como o destino receberia essa alteração?",
+                "Houve uma nova conferência imediatamente antes da troca? Quem verificou essa janela?"
+              ],
+              "notes": {
+                "objective": "Examinar a janela entre cópia, validação e troca sem confundir uma carga suspensa com ausência total de escrita.",
+                "evidence": [
+                  "Mapeia fontes de escrita e explicita o que foi suspenso, mantido ou reconciliado.",
+                  "Explica o tratamento de mudanças posteriores à validação e o critério de prontidão para a troca."
+                ],
+                "limits": [
+                  "Pergunta autoral de ensaio; não confirma fatos do projeto nem antecipa uma questão real da AWS.",
+                  "A pergunta não afirma divergência ou perda de dados. A ausência de uma carga não prova ausência de qualquer delta.",
+                  "Não inventar captura de alterações, congelamento completo ou nova validação; registrar como pendente se não houver evidência."
+                ],
+                "clarifications": [
+                  "Onde surge no insumo: ligação entre slides 3 e 6. A associação ao slide foi informada pelo proprietário e não conferida no PowerPoint.",
+                    "O que preparar: a lista de escritores, a sequência real entre validação e execução da troca e seus responsáveis."
+                ],
+                "observations": [
+                  "Aprofunde somente onde houver lacuna; não apresente as orientações do instrutor como resposta da participante.",
+                  "Ao registrar, distinga fato do projeto, explicação conceitual e proposta do que faria hoje. Não complete uma lacuna com uma prática recomendada."
+                ]
+              }
+            },
+            {
+              "id": "AP-03-08",
+              "category": "T8 · Carga parcial e reexecução",
+              "kind": "presentation",
+              "prompt": "Quando uma carga era interrompida, como vocês identificavam o que já tinha sido processado e o que precisava ser reexecutado?",
+              "source": {
+                "label": "Autoral de treinamento — análise escrita fornecida pelo proprietário; slides e fala original não consultados nesta revisão",
+                "path": "",
+                "anchor": "",
+                "line": null
+              },
+              "followups": [
+                "Era uma transação única ou processamento em lotes?",
+                "Existia identificação da carga ou da versão da recomendação?",
+                "Como evitavam duplicar vínculos ou publicar dados incompletos?",
+                "Uma nova execução substituía dados ou acrescentava registros?",
+                "Como a renovação interagia com a expiração e como verificavam o estado final?"
+              ],
+              "notes": {
+                "objective": "Conectar comportamento transacional, repetição segura e publicação de dados à recuperação da jornada.",
+                "evidence": [
+                  "Explica o comportamento de uma falha parcial e como identificar efeitos já confirmados.",
+                  "Distingue atomicidade, idempotência e concorrência no fluxo, sem usar uma como sinônimo das outras.",
+                  "Delimita o que sabe da aplicação e o que pertencia a outra equipe."
+                ],
+                "limits": [
+                  "Pergunta autoral de ensaio; não confirma fatos do projeto nem antecipa uma questão real da AWS.",
+                  "Não afirmar que esses mecanismos foram implementados pela participante apenas porque seriam apropriados.",
+                  "Não transportar a arquitetura fictícia do simulado do pedido para o case real; registrar perguntas à equipe responsável quando necessário."
+                ],
+                "clarifications": [
+                  "Onde surge no insumo: slides 3, 6 e 7 — Interrupção e retomada das cargas. A associação ao slide foi informada pelo proprietário e não conferida no PowerPoint.",
+                  "O que preparar: o contrato real de carga, falha e reexecução, com um exemplo pequeno que não exponha dados internos."
+                ],
+                "observations": [
+                  "Aprofunde somente onde houver lacuna; não apresente as orientações do instrutor como resposta da participante.",
+                  "Ao registrar, distinga fato do projeto, explicação conceitual e proposta do que faria hoje. Não complete uma lacuna com uma prática recomendada."
+                ]
+              }
+            },
+            {
+              "id": "AP-06-01",
+              "category": "T9 · Alarmes acionáveis",
+              "kind": "presentation",
+              "prompt": "Como você escolheu os valores e janelas dos alarmes? Que tempo de reação pretendia oferecer ao time?",
+              "source": {
+                "label": "Autoral de treinamento — análise escrita fornecida pelo proprietário; slides e fala original não consultados nesta revisão",
+                "path": "",
+                "anchor": "",
+                "line": null
+              },
+              "followups": [
+                "Qual era o comportamento normal durante as cargas?",
+                "Por que os limites mencionados de memória abaixo de 2 GiB por 15 minutos e disco abaixo de 20 GiB por 5 minutos? Eram os valores realmente configurados?",
+                "Uma carga poderia falhar antes de completar os quinze minutos?",
+                "Como diferenciava uso esperado de pressão problemática?",
+                "Como testou entrega, acionamento e resposta? Que ação o responsável deveria executar?",
+                "Os limites foram revistos depois de acompanhar a operação?"
+              ],
+              "notes": {
+                "objective": "Explicar por que o alarme era acionável naquele contexto e como seria acompanhado e ajustado.",
+                "evidence": [
+                  "Relaciona limite, janela, padrão de carga, tempo de reação e responsável.",
+                  "Distingue criar uma regra, verificar a notificação e demonstrar uma resposta operacional.",
+                  "Recupera resultado observado ou declara a falta dessa confirmação."
+                ],
+                "limits": [
+                  "Pergunta autoral de ensaio; não confirma fatos do projeto nem antecipa uma questão real da AWS.",
+                  "Os limites do insumo não são recomendações universais nem garantia de antecipar falhas. Dependem da instância, armazenamento, carga e histórico.",
+                  "Não alegar teste de alarme, acionamento ou resposta que não tenha ocorrido; configuração não comprova eficácia operacional."
+                ],
+                "clarifications": [
+                  "Onde surge no insumo: slide 8 — Observabilidade. A associação ao slide foi informada pelo proprietário e não conferida no PowerPoint.",
+                  "O que preparar: origem dos limites, avaliação de períodos, procedimento e algum acionamento observado, se existir."
+                ],
+                "observations": [
+                  "Aprofunde somente onde houver lacuna; não apresente as orientações do instrutor como resposta da participante.",
+                  "Ao registrar, distinga fato do projeto, explicação conceitual e proposta do que faria hoje. Não complete uma lacuna com uma prática recomendada."
+                ]
+              }
+            },
+            {
+              "id": "AP-04-01",
+              "category": "T10 · Segurança da transição",
+              "kind": "presentation",
+              "prompt": "Qual era a diferença concreta de escopo entre o acesso emergencial discutido e o acesso temporário? Quais controles permitiram executar a migração?",
+              "source": {
+                "label": "Autoral de treinamento — análise escrita fornecida pelo proprietário; slides e fala original não consultados nesta revisão",
+                "path": "",
+                "anchor": "",
+                "line": null
+              },
+              "followups": [
+                "O insumo menciona acesso de uma semana limitado a consultas: quem o aprovou, qual era o prazo real e quais operações eram permitidas?",
+                "Como o acesso expirava ou era revogado?",
+                "Como eram protegidas as credenciais e as conexões do DMS?",
+                "Quais configurações de segurança e recuperação foram conferidas no novo RDS?",
+                "Quem podia consultar a segunda cópia dos dados durante a transição?"
+              ],
+              "notes": {
+                "objective": "Definir o escopo real das permissões e os controles preservados, sem atribuir segurança ao nome de um procedimento.",
+                "evidence": [
+                  "Explica autorização, menor escopo necessário, duração e revogação conhecidos.",
+                  "Separa controles do acesso humano, da migração e do destino.",
+                  "Identifica responsáveis e os detalhes que não pode divulgar."
+                ],
+                "limits": [
+                  "Pergunta autoral de ensaio; não confirma fatos do projeto nem antecipa uma questão real da AWS.",
+                  "Não ensinar que break glass é sempre superpermissivo nem inferir recusa ou uso pelo nome. O escopo e o procedimento reais precisam ser confirmados.",
+                  "Uma base nova não herda automaticamente a segurança da anterior. Não expor credenciais, permissões sensíveis ou dados internos para demonstrar precisão."
+                ],
+                "clarifications": [
+                  "Onde surge no insumo: slides 5 e 6 — Decisão e migração. A associação ao slide foi informada pelo proprietário e não conferida no PowerPoint.",
+                  "O que preparar: o fluxo realmente autorizado e as verificações de segurança, sem ampliar retrospectivamente a análise de risco."
+                ],
+                "observations": [
+                  "Aprofunde somente onde houver lacuna; não apresente as orientações do instrutor como resposta da participante.",
+                  "Ao registrar, distinga fato do projeto, explicação conceitual e proposta do que faria hoje. Não complete uma lacuna com uma prática recomendada."
+                ]
+              }
+            },
+            {
+              "id": "AP-01-05",
+              "category": "B2 · Definição da conversão",
+              "kind": "presentation",
+              "prompt": "O que significa conversão 9,3% maior: aumento relativo ou pontos percentuais? Qual era a definição de conversão?",
+              "source": {
+                "label": "Autoral de treinamento — análise escrita fornecida pelo proprietário; slides e fala original não consultados nesta revisão",
+                "path": "",
+                "anchor": "",
+                "line": null
+              },
+              "followups": [
+                "Qual era o denominador: acesso à jornada, clientes elegíveis ou clientes notificados?",
+                "Os públicos com recomendação individual e padrão eram comparáveis?",
+                "Esse era um indicador histórico ou um efeito medido da personalização?",
+                "Quem produziu o dado e em qual período? Como os cerca de 210 mil clientes por mês se relacionavam com a métrica?",
+                "Que parte da comparação é observada, estimada ou ainda não confirmada?"
+              ],
+              "notes": {
+                "objective": "Explicar a métrica sem confundir variação relativa, pontos percentuais e causalidade.",
+                "evidence": [
+                  "Define numerador, denominador, população, período e origem do indicador.",
+                  "Distingue contexto histórico da jornada de resultado da intervenção.",
+                  "Sinaliza aproximação, fatores de comparação e limites de divulgação."
+                ],
+                "limits": [
+                  "Pergunta autoral de ensaio; não confirma fatos do projeto nem antecipa uma questão real da AWS.",
+                  "O insumo não fornece as bases para auditar 9,3% ou 210 mil; esses números não são certificados por este roteiro.",
+                  "Não atribuir esse ganho à migração nem multiplicar automaticamente 97 mil por esse percentual para calcular receita preservada."
+                ],
+                "clarifications": [
+                  "Onde surge no insumo: slide 2 — Contexto do negócio. A associação ao slide foi informada pelo proprietário e não conferida no PowerPoint.",
+                  "O que preparar: a definição da métrica, sua fonte e o que a comparação realmente permite concluir."
+                ],
+                "observations": [
+                  "Aprofunde somente onde houver lacuna; não apresente as orientações do instrutor como resposta da participante.",
+                  "Ao registrar, distinga fato do projeto, explicação conceitual e proposta do que faria hoje. Não complete uma lacuna com uma prática recomendada."
+                ]
+              }
+            },
+            {
+              "id": "AP-01-06",
+              "category": "B3 · Prazo e caminho crítico",
+              "kind": "presentation",
+              "prompt": "Como você transformou os prazos da campanha e dos vencimentos em uma prioridade e um plano de recuperação?",
+              "source": {
+                "label": "Autoral de treinamento — análise escrita fornecida pelo proprietário; slides e fala original não consultados nesta revisão",
+                "path": "",
+                "anchor": "",
+                "line": null
+              },
+              "followups": [
+                "Qual acontecimento fixava o prazo mais restritivo e como a informação da planilha foi verificada?",
+                "Por que recuperar em uma semana diante de vencimentos mencionados em aproximadamente duas semanas?",
+                "Qual era o plano se não terminassem no prazo?",
+                "Quem aceitou a priorização e como era informado sobre o avanço?",
+                "Que parte da semana foi diagnóstico, autorização, execução e validação?"
+              ],
+              "notes": {
+                "objective": "Justificar prazo, margem e acompanhamento do risco a partir da necessidade do negócio.",
+                "evidence": [
+                  "Reconstrói uma linha do tempo aproximada e identifica dependências do caminho crítico.",
+                  "Explica prioridade, autoridade e alternativa em caso de atraso."
+                ],
+                "limits": [
+                  "Pergunta autoral de ensaio; não confirma fatos do projeto nem antecipa uma questão real da AWS.",
+                  "Não inventar datas precisas nem tratar o prazo de uma semana como duração medida nesta revisão.",
+                  "O objetivo não é impor recuperação em minutos; é explicar por que o prazo era adequado e como o risco foi acompanhado."
+                ],
+                "clarifications": [
+                  "Onde surge no insumo: slides 2, 3 e 7 — Contexto, impacto e retomada. A associação ao slide foi informada pelo proprietário e não conferida no PowerPoint.",
+                  "O que preparar: uma linha do tempo factual, com folgas, responsáveis e pontos de decisão conhecidos."
+                ],
+                "observations": [
+                  "Aprofunde somente onde houver lacuna; não apresente as orientações do instrutor como resposta da participante.",
+                  "Ao registrar, distinga fato do projeto, explicação conceitual e proposta do que faria hoje. Não complete uma lacuna com uma prática recomendada."
+                ]
+              }
+            },
+            {
+              "id": "AP-02-04",
+              "category": "B4 · Custo e risco da escolha",
+              "kind": "presentation",
+              "prompt": "Como você comparou o custo e o risco da migração com o custo de continuar esperando por uma mudança menor?",
+              "source": {
+                "label": "Autoral de treinamento — análise escrita fornecida pelo proprietário; slides e fala original não consultados nesta revisão",
+                "path": "",
+                "anchor": "",
+                "line": null
+              },
+              "followups": [
+                "Havia uma estimativa de custo ou apenas avaliação qualitativa? Quem aprovou o gasto adicional?",
+                "Por quanto tempo duas bases e recursos de migração seriam necessários?",
+                "Quem ficou responsável por encerrar recursos temporários?",
+                "O que faria a alternativa deixar de ser aceitável?",
+                "Por que concordou ou discordou da negativa do acesso emergencial? Em que condição pediria reavaliação?"
+              ],
+              "notes": {
+                "objective": "Mostrar julgamento sobre prazo, custo, risco e controles, sem fabricar retorno financeiro.",
+                "evidence": [
+                  "Explica os custos temporários e a consequência de esperar dentro das restrições reais.",
+                  "Identifica autoridade, critérios de aceitabilidade e responsabilidade pelo encerramento.",
+                  "Demonstra ponderação da restrição de acesso em vez de obediência ou oposição automáticas."
+                ],
+                "limits": [
+                  "Pergunta autoral de ensaio; não confirma fatos do projeto nem antecipa uma questão real da AWS.",
+                  "Não inventar ROI ou orçamento para dar aparência de precisão a uma avaliação qualitativa.",
+                  "Não incorporar como opinião da época uma nova justificativa construída durante a mentoria."
+                ],
+                "clarifications": [
+                  "Onde surge no insumo: slide 5 — Decisão. A associação ao slide foi informada pelo proprietário e não conferida no PowerPoint.",
+                  "O que preparar: o nível de análise que realmente existiu e as condições para manter ou rever a decisão."
+                ],
+                "observations": [
+                  "Aprofunde somente onde houver lacuna; não apresente as orientações do instrutor como resposta da participante.",
+                  "Ao registrar, distinga fato do projeto, explicação conceitual e proposta do que faria hoje. Não complete uma lacuna com uma prática recomendada."
+                ]
+              }
+            },
+            {
+              "id": "AP-05-06",
+              "category": "B5 · Continuidade e transferência",
+              "kind": "presentation",
+              "prompt": "O que permitiu que o time concluísse a mudança sem depender da sua presença?",
+              "source": {
+                "label": "Autoral de treinamento — análise escrita fornecida pelo proprietário; slides e fala original não consultados nesta revisão",
+                "path": "",
+                "anchor": "",
+                "line": null
+              },
+              "followups": [
+                "Quem assumiu a responsabilidade pela execução e pelo aceite?",
+                "O que o colega demonstrou no ensaio em homologação e ao explicar a sequência de volta?",
+                "Quais decisões podia tomar sozinho?",
+                "O que deveria fazer se uma verificação falhasse?",
+                "Como você recebeu a confirmação do resultado depois?"
+              ],
+              "notes": {
+                "objective": "Diferenciar envio de documentação de transferência de capacidade para executar e decidir.",
+                "evidence": [
+                  "Explica preparação, ensaio, responsáveis e condições para interromper ou pedir ajuda.",
+                    "Identifica quem preparou, validou e executou a troca segundo os fatos confirmados; não atribui a si o trabalho de colegas nem escolhe uma versão ainda pendente.",
+                  "Identifica como o resultado foi confirmado depois ou reconhece o que ainda precisa ser recuperado."
+                ],
+                "limits": [
+                  "Pergunta autoral de ensaio; não confirma fatos do projeto nem antecipa uma questão real da AWS.",
+                  "Férias não exigem justificativa defensiva; o foco é continuidade organizada e precisão da autoria.",
+                  "O ensaio e a divisão de tarefas foram relatados no insumo, mas devem ser conciliados com a divergência da STAR-06; não resolver por suposição."
+                ],
+                "clarifications": [
+                  "Onde surge no insumo: slide 6 — Migração e transferência de conhecimento. A associação ao slide foi informada pelo proprietário e não conferida no PowerPoint.",
+                  "O que preparar: o conteúdo do procedimento, o que foi demonstrado no ensaio e as responsabilidades de execução e aceite."
+                ],
+                "observations": [
+                  "Aprofunde somente onde houver lacuna; não apresente as orientações do instrutor como resposta da participante.",
+                  "Ao registrar, distinga fato do projeto, explicação conceitual e proposta do que faria hoje. Não complete uma lacuna com uma prática recomendada."
+                ]
+              }
+            },
+            {
+              "id": "AP-05-04",
+              "category": "B7 · Resultados e atribuição",
+              "kind": "presentation",
+              "prompt": "Quais períodos e quais recursos vocês compararam para chegar a 45% menos incidentes e 30% menos custos?",
+              "source": {
+                "label": "Autoral de treinamento — análise escrita fornecida pelo proprietário; slides e fala original não consultados nesta revisão",
+                "path": "",
+                "anchor": "",
+                "line": null
+              },
+              "followups": [
+                "O que entrava na contagem de incidentes? A severidade ou o volume de uso mudaram?",
+                "Qual era a fórmula, o período e a fonte de cada percentual?",
+                "Qual parcela da economia veio da retirada de recursos ociosos?",
+                "Existiam outras iniciativas no mesmo período e a redução se manteve depois?",
+                "Como distingue sua contribuição do trabalho coletivo?"
+              ],
+              "notes": {
+                "objective": "Sustentar resultado observado, escopo e atribuição sem transformar contexto em causalidade exclusiva.",
+                "evidence": [
+                  "Define o que foi comparado, período, fonte e aproximações dos percentuais.",
+                  "Relaciona os números ao ciclo de manutenção e identifica outras iniciativas relevantes.",
+                  "Explica sua contribuição sem reivindicar sozinha todo o resultado."
+                ],
+                "limits": [
+                  "Pergunta autoral de ensaio; não confirma fatos do projeto nem antecipa uma questão real da AWS.",
+                  "Os percentuais do insumo não foram auditados e não pertencem automaticamente à migração. Se não puder confirmar, qualificar ou retirar a afirmação.",
+                  "Precisão não autoriza divulgação: dados internos restritos não se tornam públicos apenas por arredondamento."
+                ],
+                "clarifications": [
+                  "Onde surge no insumo: slide 9 — Resultados posteriores. A associação ao slide foi informada pelo proprietário e não conferida no PowerPoint.",
+                  "O que preparar: fórmula, recorte de recursos, período e origem; separar medido, estimado e ainda não confirmado."
+                ],
+                "observations": [
+                  "Aprofunde somente onde houver lacuna; não apresente as orientações do instrutor como resposta da participante.",
+                  "Ao registrar, distinga fato do projeto, explicação conceitual e proposta do que faria hoje. Não complete uma lacuna com uma prática recomendada."
+                ]
+              }
+            },
+            {
+              "id": "AP-06-02",
+              "category": "B8 · Sustentação após a recuperação",
+              "kind": "presentation",
+              "prompt": "O que mudou no funcionamento do time, além da correção dos componentes, para reduzir a chance de voltar à mesma situação?",
+              "source": {
+                "label": "Autoral de treinamento — análise escrita fornecida pelo proprietário; slides e fala original não consultados nesta revisão",
+                "path": "",
+                "anchor": "",
+                "line": null
+              },
+              "followups": [
+                "Quais riscos foram tratados imediatamente e quais aguardaram a manutenção posterior?",
+                "Como conciliar o incidente mencionado em agosto de 2024 com a manutenção indicada para a primeira release de 2025?",
+                "Que controles intermediários existiam e quem assumiu a revisão mensal?",
+                "Existe um exemplo posterior de mudança na pipeline executada com menos dificuldade?",
+                "Quem usava o painel de QuickSight construído com Analytics, com qual antecedência e que decisão passava a tomar? Confirmar ferramenta e uso relatados no insumo.",
+                "Que evidência de uso existe, além da criação de alarmes, procedimentos e painel?"
+              ],
+              "notes": {
+                "objective": "Explicar mecanismos adotados, sua utilização e o intervalo entre recuperação e melhorias posteriores.",
+                "evidence": [
+                  "Distingue cronologia da retomada, observabilidade posterior e manutenção mais ampla.",
+                  "Identifica responsável, periodicidade, ação provocada e evidência de uso.",
+                  "Mantém a cadeia risco de negócio → indicador → decisão → resultado observado."
+                ],
+                "limits": [
+                  "Pergunta autoral de ensaio; não confirma fatos do projeto nem antecipa uma questão real da AWS.",
+                  "Criar painel, alarme ou procedimento não comprova adoção nem garante ausência de recorrência.",
+                  "As datas vieram do insumo e precisam ser conciliadas. Não afirmar que todos os controles já existiam na recuperação nem que não houve manutenção alguma por 33 meses."
+                ],
+                "clarifications": [
+                  "Onde surge no insumo: slides 8, 9 e 10 — Observabilidade, evolução e fechamento. A associação ao slide foi informada pelo proprietário e não conferida no PowerPoint.",
+                  "O que preparar: uma cronologia consistente e um exemplo de utilização de cada mecanismo que decidir destacar."
+                ],
+                "observations": [
+                  "Aprofunde somente onde houver lacuna; não apresente as orientações do instrutor como resposta da participante.",
+                  "Ao registrar, distinga fato do projeto, explicação conceitual e proposta do que faria hoje. Não complete uma lacuna com uma prática recomendada."
+                ]
+              }
+            }
+          ],
+          "reserves": [
             {
               "id": "AP-01-02",
               "category": "Negócio",
@@ -307,115 +999,10 @@
               }
             },
             {
-              "id": "AP-02-01",
-              "category": "Arquitetura",
-              "kind": "presentation",
-              "prompt": "Por que a solução inicial deixou de atender à necessidade?",
-              "source": {
-                "label": "Autoral de treinamento — proposta fornecida neste pedido",
-                "path": "",
-                "anchor": "",
-                "line": null
-              },
-              "followups": [
-                "Qual evidência sustenta essa afirmação?",
-                "Que limite ou incerteza ainda precisa ser informado?"
-              ],
-              "notes": {
-                "objective": "Defender uma afirmação do case com contexto, autoria, evidência e limite.",
-                "evidence": [
-                  "Explica o que ocorreu na época e distingue reflexão posterior.",
-                  "Identifica critério, fonte e escopo da validação, sem converter proposta em execução.",
-                  "Delimita contribuição individual e colaboração."
-                ],
-                "limits": [
-                  "A pergunta é autoral de preparação e não confirma fatos do projeto.",
-                  "Não preencher divergências DMS/snapshot, autoria, perda zero, validação ou rollback com práticas recomendadas."
-                ],
-                "clarifications": [
-                  "Consultar as pendências factuais da rodada antes de aceitar uma versão como confirmada.",
-                  "Para segurança, confirmar permissões/autorizações reais; não presumir que break glass foi usado, disponível ou apropriado."
-                ],
-                "observations": [
-                  "Proposta autoral de treinamento, não questão real/oficial ou roteiro de personalidade."
-                ]
-              }
-            },
-            {
               "id": "AP-02-02",
               "category": "Arquitetura",
               "kind": "presentation",
               "prompt": "Quais alternativas foram avaliadas?",
-              "source": {
-                "label": "Autoral de treinamento — proposta fornecida neste pedido",
-                "path": "",
-                "anchor": "",
-                "line": null
-              },
-              "followups": [
-                "Qual evidência sustenta essa afirmação?",
-                "Que limite ou incerteza ainda precisa ser informado?"
-              ],
-              "notes": {
-                "objective": "Defender uma afirmação do case com contexto, autoria, evidência e limite.",
-                "evidence": [
-                  "Explica o que ocorreu na época e distingue reflexão posterior.",
-                  "Identifica critério, fonte e escopo da validação, sem converter proposta em execução.",
-                  "Delimita contribuição individual e colaboração."
-                ],
-                "limits": [
-                  "A pergunta é autoral de preparação e não confirma fatos do projeto.",
-                  "Não preencher divergências DMS/snapshot, autoria, perda zero, validação ou rollback com práticas recomendadas."
-                ],
-                "clarifications": [
-                  "Consultar as pendências factuais da rodada antes de aceitar uma versão como confirmada.",
-                  "Para segurança, confirmar permissões/autorizações reais; não presumir que break glass foi usado, disponível ou apropriado."
-                ],
-                "observations": [
-                  "Proposta autoral de treinamento, não questão real/oficial ou roteiro de personalidade."
-                ]
-              }
-            },
-            {
-              "id": "AP-02-03",
-              "category": "Arquitetura",
-              "kind": "presentation",
-              "prompt": "Por que a migração foi escolhida?",
-              "source": {
-                "label": "Autoral de treinamento — proposta fornecida neste pedido",
-                "path": "",
-                "anchor": "",
-                "line": null
-              },
-              "followups": [
-                "Qual evidência sustenta essa afirmação?",
-                "Que limite ou incerteza ainda precisa ser informado?"
-              ],
-              "notes": {
-                "objective": "Defender uma afirmação do case com contexto, autoria, evidência e limite.",
-                "evidence": [
-                  "Explica o que ocorreu na época e distingue reflexão posterior.",
-                  "Identifica critério, fonte e escopo da validação, sem converter proposta em execução.",
-                  "Delimita contribuição individual e colaboração."
-                ],
-                "limits": [
-                  "A pergunta é autoral de preparação e não confirma fatos do projeto.",
-                  "Não preencher divergências DMS/snapshot, autoria, perda zero, validação ou rollback com práticas recomendadas."
-                ],
-                "clarifications": [
-                  "Consultar as pendências factuais da rodada antes de aceitar uma versão como confirmada.",
-                  "Para segurança, confirmar permissões/autorizações reais; não presumir que break glass foi usado, disponível ou apropriado."
-                ],
-                "observations": [
-                  "Proposta autoral de treinamento, não questão real/oficial ou roteiro de personalidade."
-                ]
-              }
-            },
-            {
-              "id": "AP-02-04",
-              "category": "Arquitetura",
-              "kind": "presentation",
-              "prompt": "Quais trade-offs foram aceitos?",
               "source": {
                 "label": "Autoral de treinamento — proposta fornecida neste pedido",
                 "path": "",
@@ -482,80 +1069,10 @@
               }
             },
             {
-              "id": "AP-03-01",
-              "category": "Migração e validação",
-              "kind": "presentation",
-              "prompt": "Quais dados foram comparados?",
-              "source": {
-                "label": "Autoral de treinamento — proposta fornecida neste pedido",
-                "path": "",
-                "anchor": "",
-                "line": null
-              },
-              "followups": [
-                "Qual evidência sustenta essa afirmação?",
-                "Que limite ou incerteza ainda precisa ser informado?"
-              ],
-              "notes": {
-                "objective": "Defender uma afirmação do case com contexto, autoria, evidência e limite.",
-                "evidence": [
-                  "Explica o que ocorreu na época e distingue reflexão posterior.",
-                  "Identifica critério, fonte e escopo da validação, sem converter proposta em execução.",
-                  "Delimita contribuição individual e colaboração."
-                ],
-                "limits": [
-                  "A pergunta é autoral de preparação e não confirma fatos do projeto.",
-                  "Não preencher divergências DMS/snapshot, autoria, perda zero, validação ou rollback com práticas recomendadas."
-                ],
-                "clarifications": [
-                  "Consultar as pendências factuais da rodada antes de aceitar uma versão como confirmada.",
-                  "Para segurança, confirmar permissões/autorizações reais; não presumir que break glass foi usado, disponível ou apropriado."
-                ],
-                "observations": [
-                  "Proposta autoral de treinamento, não questão real/oficial ou roteiro de personalidade."
-                ]
-              }
-            },
-            {
               "id": "AP-03-02",
               "category": "Migração e validação",
               "kind": "presentation",
               "prompt": "Contagem de linhas prova equivalência dos dados?",
-              "source": {
-                "label": "Autoral de treinamento — proposta fornecida neste pedido",
-                "path": "",
-                "anchor": "",
-                "line": null
-              },
-              "followups": [
-                "Qual evidência sustenta essa afirmação?",
-                "Que limite ou incerteza ainda precisa ser informado?"
-              ],
-              "notes": {
-                "objective": "Defender uma afirmação do case com contexto, autoria, evidência e limite.",
-                "evidence": [
-                  "Explica o que ocorreu na época e distingue reflexão posterior.",
-                  "Identifica critério, fonte e escopo da validação, sem converter proposta em execução.",
-                  "Delimita contribuição individual e colaboração."
-                ],
-                "limits": [
-                  "A pergunta é autoral de preparação e não confirma fatos do projeto.",
-                  "Não preencher divergências DMS/snapshot, autoria, perda zero, validação ou rollback com práticas recomendadas."
-                ],
-                "clarifications": [
-                  "Consultar as pendências factuais da rodada antes de aceitar uma versão como confirmada.",
-                  "Para segurança, confirmar permissões/autorizações reais; não presumir que break glass foi usado, disponível ou apropriado."
-                ],
-                "observations": [
-                  "Proposta autoral de treinamento, não questão real/oficial ou roteiro de personalidade."
-                ]
-              }
-            },
-            {
-              "id": "AP-03-03",
-              "category": "Migração e validação",
-              "kind": "presentation",
-              "prompt": "Como foi feito o cutover?",
               "source": {
                 "label": "Autoral de treinamento — proposta fornecida neste pedido",
                 "path": "",
@@ -626,41 +1143,6 @@
               "category": "Migração e validação",
               "kind": "presentation",
               "prompt": "Como foi definido o encerramento da contingência?",
-              "source": {
-                "label": "Autoral de treinamento — proposta fornecida neste pedido",
-                "path": "",
-                "anchor": "",
-                "line": null
-              },
-              "followups": [
-                "Qual evidência sustenta essa afirmação?",
-                "Que limite ou incerteza ainda precisa ser informado?"
-              ],
-              "notes": {
-                "objective": "Defender uma afirmação do case com contexto, autoria, evidência e limite.",
-                "evidence": [
-                  "Explica o que ocorreu na época e distingue reflexão posterior.",
-                  "Identifica critério, fonte e escopo da validação, sem converter proposta em execução.",
-                  "Delimita contribuição individual e colaboração."
-                ],
-                "limits": [
-                  "A pergunta é autoral de preparação e não confirma fatos do projeto.",
-                  "Não preencher divergências DMS/snapshot, autoria, perda zero, validação ou rollback com práticas recomendadas."
-                ],
-                "clarifications": [
-                  "Consultar as pendências factuais da rodada antes de aceitar uma versão como confirmada.",
-                  "Para segurança, confirmar permissões/autorizações reais; não presumir que break glass foi usado, disponível ou apropriado."
-                ],
-                "observations": [
-                  "Proposta autoral de treinamento, não questão real/oficial ou roteiro de personalidade."
-                ]
-              }
-            },
-            {
-              "id": "AP-04-01",
-              "category": "Segurança e risco",
-              "kind": "presentation",
-              "prompt": "Quais permissões foram necessárias?",
               "source": {
                 "label": "Autoral de treinamento — proposta fornecida neste pedido",
                 "path": "",
@@ -867,76 +1349,6 @@
               }
             },
             {
-              "id": "AP-05-03",
-              "category": "Liderança e resultado",
-              "kind": "presentation",
-              "prompt": "Como negociou a priorização da manutenção?",
-              "source": {
-                "label": "Autoral de treinamento — proposta fornecida neste pedido",
-                "path": "",
-                "anchor": "",
-                "line": null
-              },
-              "followups": [
-                "Qual evidência sustenta essa afirmação?",
-                "Que limite ou incerteza ainda precisa ser informado?"
-              ],
-              "notes": {
-                "objective": "Defender uma afirmação do case com contexto, autoria, evidência e limite.",
-                "evidence": [
-                  "Explica o que ocorreu na época e distingue reflexão posterior.",
-                  "Identifica critério, fonte e escopo da validação, sem converter proposta em execução.",
-                  "Delimita contribuição individual e colaboração."
-                ],
-                "limits": [
-                  "A pergunta é autoral de preparação e não confirma fatos do projeto.",
-                  "Não preencher divergências DMS/snapshot, autoria, perda zero, validação ou rollback com práticas recomendadas."
-                ],
-                "clarifications": [
-                  "Consultar as pendências factuais da rodada antes de aceitar uma versão como confirmada.",
-                  "Para segurança, confirmar permissões/autorizações reais; não presumir que break glass foi usado, disponível ou apropriado."
-                ],
-                "observations": [
-                  "Proposta autoral de treinamento, não questão real/oficial ou roteiro de personalidade."
-                ]
-              }
-            },
-            {
-              "id": "AP-05-04",
-              "category": "Liderança e resultado",
-              "kind": "presentation",
-              "prompt": "Qual resultado foi observado e medido?",
-              "source": {
-                "label": "Autoral de treinamento — proposta fornecida neste pedido",
-                "path": "",
-                "anchor": "",
-                "line": null
-              },
-              "followups": [
-                "Qual evidência sustenta essa afirmação?",
-                "Que limite ou incerteza ainda precisa ser informado?"
-              ],
-              "notes": {
-                "objective": "Defender uma afirmação do case com contexto, autoria, evidência e limite.",
-                "evidence": [
-                  "Explica o que ocorreu na época e distingue reflexão posterior.",
-                  "Identifica critério, fonte e escopo da validação, sem converter proposta em execução.",
-                  "Delimita contribuição individual e colaboração."
-                ],
-                "limits": [
-                  "A pergunta é autoral de preparação e não confirma fatos do projeto.",
-                  "Não preencher divergências DMS/snapshot, autoria, perda zero, validação ou rollback com práticas recomendadas."
-                ],
-                "clarifications": [
-                  "Consultar as pendências factuais da rodada antes de aceitar uma versão como confirmada.",
-                  "Para segurança, confirmar permissões/autorizações reais; não presumir que break glass foi usado, disponível ou apropriado."
-                ],
-                "observations": [
-                  "Proposta autoral de treinamento, não questão real/oficial ou roteiro de personalidade."
-                ]
-              }
-            },
-            {
               "id": "AP-05-05",
               "category": "Liderança e resultado",
               "kind": "presentation",
@@ -970,9 +1382,7 @@
                   "Proposta autoral de treinamento, não questão real/oficial ou roteiro de personalidade."
                 ]
               }
-            }
-          ],
-          "reserves": [
+            },
             {
               "id": "AP-RES-01",
               "category": "Reserva",
@@ -1037,7 +1447,7 @@
             }
           ],
           "candidateQuestion": "Que parte da decisão ainda precisa de evidência para ficar suficientemente clara para vocês?",
-          "notesMarkdown": "## Perguntas, não respostas confirmadas\n\nTreine a recuperação da jornada de recomendações de investimentos usando somente fatos que a participante possa sustentar. As perguntas de negócio, arquitetura, migração, segurança e liderança foram propostas neste pedido. Não constituem descrição confirmada do projeto nem perguntas reais da AWS.\n\n## Pendências factuais obrigatórias\n\n- **DMS/snapshot e autoria:** leadership-principles/stories/star-06-emergency-db-migration.md:7 registra que a apresentação descreve DMS e troca por colegas, enquanto STAR-06 descreve snapshot e troca pela candidata. O arquivo não resolve a divergência. Não escolher a versão verdadeira.\n- **Rollback após novas escritas:** STAR-06:165–167 fala em voltar ao endpoint anterior. A revisão Cleber (interview/simulations/05-mentoria-transacoes/candidato.md, seção de migração) pede esclarecer os dados gravados apenas no destino. Redirecionar tráfego não prova reconciliação.\n- **Validação:** termos como integridade, contagens ou tamanho não documentam equivalência por chave/valores. Confirmar método, amostragem, critérios e aceite. Uso de DMS não demonstra recurso de validação habilitado/concluído.\n- **Snapshot e perda zero:** confirmar todos os escritores e a janela entre cópia e troca. Ausência de escrita contínua não prova ausência de qualquer delta.\n- **Encerramento da contingência:** confirmar processos e ciclos críticos cobertos e autoridade do aceite. Não deduzir suficiência só pelo prazo de observação.\n- **Segurança:** confirmar uso, solicitação e autorização de permissões/break glass. Não transformar uma pergunta em confirmação de uso ou de recusa.\n\nNão usar o cenário fictício do simulado06 de troubleshooting para completar o histórico da STAR-06. STAR-03 trata migração de contrato/identificador, outra história. Sugestões da conversa com Cleber não são automaticamente análises realizadas na época.\n\n## Feedback\n\nRegistrar o que o ouvinte entendeu: problema, responsabilidade, decisão, ações, resultado/evidência e dúvida. Priorizar até duas práticas. Não fornecer nota L5/L6 nem probabilidade de contratação."
+          "notesMarkdown": "## Perguntas, não respostas confirmadas\n\nTreine a recuperação da jornada de recomendações de investimentos usando somente fatos que a participante possa sustentar. As perguntas de negócio, arquitetura, migração, segurança e liderança foram propostas neste pedido. Não constituem descrição confirmada do projeto nem perguntas reais da AWS.\n\n## Pendências factuais obrigatórias\n\n- **DMS/snapshot e autoria:** leadership-principles/stories/star-06-emergency-db-migration.md:7 registra que a apresentação descreve DMS e troca por colegas, enquanto STAR-06 descreve snapshot e troca pela candidata. O arquivo não resolve a divergência. Não escolher a versão verdadeira.\n- **Rollback após novas escritas:** STAR-06:165–167 fala em voltar ao endpoint anterior. A revisão Cleber (interview/simulations/05-mentoria-transacoes/candidato.md, seção de migração) pede esclarecer os dados gravados apenas no destino. Redirecionar tráfego não prova reconciliação.\n- **Validação:** termos como integridade, contagens ou tamanho não documentam equivalência por chave/valores. Confirmar método, amostragem, critérios e aceite. Uso de DMS não demonstra recurso de validação habilitado/concluído.\n- **Snapshot e perda zero:** confirmar todos os escritores e a janela entre cópia e troca. Ausência de escrita contínua não prova ausência de qualquer delta.\n- **Encerramento da contingência:** confirmar processos e ciclos críticos cobertos e autoridade do aceite. Não deduzir suficiência só pelo prazo de observação.\n- **Segurança:** confirmar uso, solicitação e autorização de permissões/break glass. Não transformar uma pergunta em confirmação de uso ou de recusa.\n\nNão usar o cenário fictício do simulado06 de troubleshooting para completar o histórico da STAR-06. STAR-03 trata migração de contrato/identificador, outra história. Sugestões da conversa com Cleber não são automaticamente análises realizadas na época.\n\n## Feedback\n\nRegistrar o que o ouvinte entendeu: problema, responsabilidade, decisão, ações, resultado/evidência e dúvida. Priorizar até duas práticas. Não fornecer nota L5/L6 nem probabilidade de contratação.\n\n## Ampliação a partir da análise escrita da apresentação\n\nEsta ampliação usa somente a análise fornecida pelo proprietário. **Os dez slides e a fala original não foram consultados nesta revisão.** A numeração abaixo é a do PowerPoint indicada no insumo; a fala foi descrita como tendo um Slide 4 repetido. Perguntas autorais, não previsão de perguntas de entrevistadores. Referências técnicas explicam limites gerais; não verificam o histórico do projeto.\n\n## Seis prioridades para um ensaio\n\nNão percorrer todo o banco em quinze minutos. As seis prioridades aparecem primeiro no seletor. Comece por uma pergunta e aprofunde somente onde houver lacuna; se faltar tempo, continue em outro ensaio sem retirar o feedback.\n\n1. **T1 — Diagnóstico de memória:** qual evidência sustentou a causa, em vez de apenas citar métricas?\n2. **T3 — Viabilidade:** por que o caminho escolhido era executável quando as alternativas não eram?\n3. **T6 — Validação:** o que as verificações permitiam afirmar e o que não comprovavam?\n4. **T7 — Recuperação:** como voltar depois de novas gravações sem ignorar dados no destino?\n5. **B1 — Impacto:** quem foi realmente prejudicado? Aprofundar definição e contexto da conversão em **B2**, se necessário.\n6. **B6 — Manutenção:** quais ações obtiveram a priorização? Aprofundar medição e atribuição dos resultados em **B7**, se necessário.\n\nAs perguntas anteriores continuam nas reservas quando o tema passou a ter uma abertura mais específica. Os identificadores antigos permanecem disponíveis; não é preciso repetir todas as versões de uma pergunta.\n\n## Mapa dos aprofundamentos técnicos\n\n- **T1, slide 4:** erro, engine, métricas, consultas e carga na sustentação do diagnóstico de memória.\n- **T2, slides 2 e 5:** oito GiB, capacidade escolhida/testada e quatro milhões como projeção a confirmar.\n- **T3, slide 5:** pipeline, acessos e alternativas; limitação do ambiente não é limitação universal do serviço.\n- **T4, slide 6:** modo DMS, objetos preparados separadamente, impacto na origem e autoria.\n- **T5, slides 3 e 6:** todos os escritores e a janela entre cópia, validação e troca.\n- **T6, slide 6:** contagens, chaves/valores, amostragem, regras, critérios e aceite.\n- **T7, slide 6:** sequência da troca, conexões, autoridade, novas escritas e fim da contingência.\n- **T8, slides 3, 6 e 7:** falha parcial, lotes, repetição segura e interação com expiração.\n- **T9, slide 8:** limites e janelas dos alarmes, padrão normal, notificação e ação.\n- **T10, slides 5 e 6:** escopo do acesso, aprovação, revogação e controles da segunda cópia.\n\n## Mapa das perguntas de negócio\n\n- **B1, slide 3:** impacto ocorrido, entrega bloqueada e risco futuro; consultas disponíveis não provam jornada completa.\n- **B2, slide 2:** definição, população, origem e período da conversão; variação relativa versus pontos percentuais.\n- **B3, slides 2, 3 e 7:** prazo, caminho crítico, margem e plano em caso de atraso.\n- **B4, slide 5:** custo temporário, risco de esperar, autorização e encerramento de recursos.\n- **B5, slide 6:** continuidade, ensaio, responsabilidade e confirmação após a ausência.\n- **B6, slide 9:** prioridades concorrentes, argumentos, concessões e acordo da manutenção.\n- **B7, slide 9:** definição, fórmula e escopo dos incidentes e custos; contribuição individual e trabalho coletivo.\n- **B8, slides 8 a 10:** cronologia, responsabilidades, uso dos mecanismos e observabilidade de negócio.\n\n## Revisão de precisão antes do ensaio\n\n| Expressão ou visual relatado | Pergunta de conferência | Limite da afirmação |\n| --- | --- | --- |\n| Curva de queda e recuperação na capa | Representa qual métrica e qual fonte? | Se ilustrativa, dizer isso; não apresentar como telemetria medida. |\n| Novos clientes ficaram sem recomendação | Sem nenhuma, sem personalização ou sem atualização? | Delimitar efeito observado e público, sem generalizar indisponibilidade. |\n| Dados validados | Quais critérios e qual cobertura? | Contagem e tamanho não demonstram equivalência integral. |\n| Quatro milhões considerados no dimensionamento | Qual carga foi testada? | Separar projeção, capacidade escolhida e teste executado. |\n| Jornada recuperada; controles em operação | Os controles já existiam naquele momento? | Distinguir retomada, melhorias após férias e manutenção posterior. |\n| 33 meses sem critério de revisão | Qual lacuna foi identificada? | Não converter ausência de critério em ausência de qualquer manutenção. |\n\nResolver anotações editoriais sobre break glass antes de tratá-las como posição da época. Não assumir que o nome do procedimento define permissões. Valores, datas e relações causais do insumo ainda precisam de definição, fonte e confirmação, inclusive autorização de divulgação; não são resultados auditados por este material.\n\n## Registro após cada resposta\n\nUse o registro da sessão já existente, sem nova chave de armazenamento. No campo de evidência da dimensão pertinente, identifique o tipo da afirmação e o que o ouvinte conseguiu compreender:\n\n- **Fato do projeto:** “Na época fizemos…” — quem, quando e com qual evidência?\n- **Alcance da verificação:** “A verificação demonstrava…” e “Ela não comprovava…” — qual conclusão e qual limite?\n- **Proposta atual:** “Hoje eu acrescentaria…” — melhoria, sem incorporá-la retroativamente à execução.\n\nReconstruir problema → restrições → escolha → contribuição individual → verificação → limite. Resultado observado, autoria coletiva e melhorias posteriores ficam distintos. Encerrar com até duas próximas práticas, sem nota de carreira ou previsão de aprovação.\n\n## Conferência técnica complementar\n\nFontes primárias consultadas em 08/11/2026; leitura documental, sem acesso ao ambiente, PowerPoint ou telemetria do projeto.\n\n- **Memória em RDS:** FreeableMemory exige contexto; correlacionar erro, memória, swap, configuração, consultas e efeito na aplicação antes de concluir pela classe. A documentação não diagnostica este case. https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/CHAP_Troubleshooting.html\n- **Exemplo específico PostgreSQL:** baixa memória disponível pode refletir cache; a interpretação depende da engine. Confirmar engine e versão antes de aplicar exemplos PostgreSQL ou Aurora ao histórico. https://aws.amazon.com/blogs/database/understand-memory-management-in-amazon-rds-for-postgresql-to-avoid-out-of-memory/\n- **Preparação do destino DMS:** replicação básica não cria automaticamente todos os índices secundários, chaves estrangeiras e usuários. Não confundir transferência com conversão de esquema nem supor o conteúdo dos scripts dos DBAs. https://docs.aws.amazon.com/dms/latest/userguide/CHAP_BestPractices.html\n- **Validação DMS:** quando habilitada e compatível, compara registros correspondentes e informa estados/divergências; há requisitos, limitações e consumo adicional. Uso do DMS não comprova uso ou conclusão da validação. https://docs.aws.amazon.com/dms/latest/userguide/CHAP_Validating.html\n- **Rollback após troca:** distinguir retorno sem dados novos de retorno após novas transações, que exige tratamento dos dados produzidos no destino. Não atribuir replicação reversa ou dupla escrita à experiência sem confirmação. https://docs.aws.amazon.com/prescriptive-guidance/latest/best-practices-migration-cutover/cutover-stage.html\n- **Alarmes RDS no CloudWatch:** os limites dependem de carga, classe, armazenamento e histórico; períodos e pontos de avaliação também importam. Os números do insumo são configurações a justificar, não garantias universais de reação. https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Best_Practice_Recommended_Alarms_AWS_Services.html\n"
         }
       ],
       "publication": "public",
