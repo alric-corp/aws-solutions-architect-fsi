@@ -12,6 +12,7 @@ import { layout, tocFor, articleBody, homeBody, collectionBody, hubs, standalone
 import { siteName, firstLesson, sections, publicRoots, allowedAssetExtensions, sectionFor } from '../site/content.mjs';
 import { coverAssetPath } from './lib/project-paths.mjs';
 import { focusTitle, focusHeading, focusHub } from '../site/focus-policy.mjs';
+import { compilePublishedLoop, loopPageUrl, renderPublishedLoop } from '../site/loop-publication.mjs';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 const output = path.join(root, 'dist');
@@ -151,6 +152,8 @@ for (const directory of directories) {
 await write('index.html', layout({ title: 'Sua biblioteca de arquitetura', description: 'Trilhas de arquitetura AWS, fundamentos e prática de entrevista.', body: homeBody(documents), isHome: true, docs: documents }));
 await write('404.html', layout({ title: 'Página não encontrada', description: 'Volte à biblioteca para continuar seu estudo.', body: '<section class="not-found"><h1>Vamos voltar ao percurso.</h1><p>Esta página não está disponível. Explore a biblioteca ou use a busca.</p><a href="/index.html">Voltar ao início →</a></section>', docs: documents }));
 for(const hub of hubs(documents)) await write(hub.url.slice(1), layout({ title:hub.title,description:hub.title,body:hub.body,global:hub.url,docs:documents }));
+for (const page of await compilePublishedLoop()) await write(loopPageUrl(page.pageId).slice(1), renderPublishedLoop(page));
+for (const [source, target] of [['app.js','loop-app.js'],['app.css','loop-app.css']]) await write(`assets/${target}`, await fs.readFile(path.join(root, 'scripts/loop-private', source)));
 await write('search-index.json', JSON.stringify(searchIndex));
 await write('content-manifest.json', JSON.stringify([...documents.values()].map(({id,sourcePath,title,url:canonicalUrl,type,audience,publication,collection,standalone,progress,search,existingAnchors,topics,tracks,prerequisites,relatedPractice,contentVersion}) => ({id,sourcePath,title,canonicalUrl,type,audience,publication,collection,standalone,progress,search,existingAnchors,topics,tracks,prerequisites,relatedPractice,contentVersion})),null,2));
 

@@ -1,6 +1,4 @@
-/* Private, local interview practice. No analytics, remote calls, TTS, or shared site state. */
-const STORAGE_PREFIX = 'loop-private:v1';
-const THEME_KEY = `${STORAGE_PREFIX}:theme`;
+/* Interview practice with browser-only records. No analytics, remote calls, TTS, or shared site state. */
 const DIMENSIONS = [
   ['aderencia', 'Aderência à pergunta'],
   ['responsabilidade', 'Responsabilidade individual'],
@@ -94,17 +92,21 @@ const app = document.getElementById('app');
 let data;
 try {
   data = JSON.parse(document.getElementById('loop-data')?.textContent || '{}');
-  if (data.schemaVersion !== 1 || !Array.isArray(data.sessions) || !data.sessions.length) throw new Error('Invalid private data');
+  if (data.schemaVersion !== 1 || !Array.isArray(data.sessions) || !data.sessions.length) throw new Error('Invalid practice data');
 } catch {
   if (app) app.replaceChildren(node('main', { className: 'loop-panel' }, [
-    node('h1', { text: 'Não foi possível abrir o roteiro privado' }),
-    node('p', { text: 'Confira a geração local do material. Conduza a conversa oralmente; não compartilhe esta tela.' }),
+    node('h1', { text: 'Não foi possível abrir o roteiro' }),
+    node('p', { text: 'Confira o material do roteiro. Conduza a conversa oralmente; não compartilhe esta tela.' }),
   ]));
 }
 
 if (data?.schemaVersion === 1 && Array.isArray(data.sessions) && data.sessions.length && app) startApp();
 
 function startApp() {
+  const isPublic = data.publication === 'public';
+  const STORAGE_PREFIX = isPublic ? 'loop-practice:v1' : 'loop-private:v1';
+  const THEME_KEY = `${STORAGE_PREFIX}:theme`;
+  document.body.dataset.loopPublication = isPublic ? 'public' : 'private';
   let storageBlocked = false;
   const recordCache = new Map();
   const runtime = new Map();
@@ -206,7 +208,7 @@ function startApp() {
   applyTheme();
   media?.addEventListener?.('change', () => { if (themePreference === 'system') applyTheme(); });
 
-  const themeSelect = node('select', { id: 'loop-theme', 'data-action': 'theme', 'aria-label': 'Tema da página privada' }, [
+  const themeSelect = node('select', { id: 'loop-theme', 'data-action': 'theme', 'aria-label': isPublic ? 'Tema do roteiro público' : 'Tema da página privada' }, [
     node('option', { value: 'system', text: 'Sistema' }), node('option', { value: 'light', text: 'Claro' }), node('option', { value: 'dark', text: 'Escuro' }),
   ]);
   themeSelect.value = themePreference;
@@ -218,11 +220,12 @@ function startApp() {
 
   const header = node('header', { className: 'loop-header' }, [
     node('div', { className: 'loop-brand' }, [
-      node('span', { className: 'loop-eyebrow', text: 'Roteiro privado · instrutor' }),
+      node('span', { className: 'loop-eyebrow', text: isPublic ? 'Roteiro público · instrutor' : 'Roteiro privado · instrutor' }),
       node('h1', { text: data.title }),
       node('p', { className: 'loop-muted', text: data.dateLabel }),
     ]),
-    node('nav', { className: 'loop-nav', 'aria-label': 'Páginas do roteiro privado', 'data-private-pages': '' }, [
+    ...(isPublic ? [node('a', { id: 'loop-return-practice', className: 'loop-page-link', 'data-action': 'return-practice', href: safeLocalUrl(data.returnUrl || '/praticar/index.html#instrutor'), text: '← Voltar a Praticar' })] : []),
+    node('nav', { className: 'loop-nav', 'aria-label': isPublic ? 'Páginas do roteiro público' : 'Páginas do roteiro privado', 'data-loop-pages': '', 'data-private-pages': '', 'data-public-pages': isPublic ? '' : null }, [
       node('a', { className: 'loop-page-link', href: `${location.pathname}${location.search}`, 'aria-current': 'page', text: data.title }),
       node('a', { className: 'loop-page-link', href: safeLocalUrl(data.otherPage?.url), text: data.otherPage?.title || 'Outra agenda' }),
     ]),
@@ -246,13 +249,13 @@ function startApp() {
     node('a', { className: 'loop-skip', href: '#loop-session-title', text: 'Ir para a sessão ativa' }),
     header,
     node('div', { className: 'loop-private-notice', 'data-private-notice': '' }, [
-      node('strong', { text: 'Tela exclusiva de quem conduz. Não compartilhe esta página inteira.' }),
-      node('p', { text: data.privacyNotice || 'Apresente somente a pergunta ou a evidência escolhida usando o botão de apresentação. O restante contém notas privadas.' }),
+      node('strong', { text: isPublic ? 'Painel de condução público. Não compartilhe esta página inteira.' : 'Tela exclusiva de quem conduz. Não compartilhe esta página inteira.' }),
+      node('p', { text: data.privacyNotice || (isPublic ? 'Roteiro, agenda e notas são públicos, sem autenticação. Os registros preenchidos permanecem apenas neste navegador. Apresente somente a pergunta ou a evidência selecionada.' : 'Apresente somente a pergunta ou a evidência escolhida usando o botão de apresentação. O restante contém notas privadas.') }),
     ]),
     node('p', { className: 'loop-intro', text: data.intro }), warning,
     node('p', { id: 'loop-status', className: 'loop-status', role: 'status', 'aria-live': 'polite', 'aria-atomic': 'true' }),
     node('div', { className: 'loop-layout' }, [sessionNav, main]),
-    node('footer', { className: 'loop-footer', text: 'Material local de preparação. Hipóteses, tempos e dimensões de observação não são critérios oficiais nem previsão de resultado.' }),
+    node('footer', { className: 'loop-footer', text: `${isPublic ? 'Material público' : 'Material local'} de preparação. Hipóteses, tempos e dimensões de observação não são critérios oficiais nem previsão de resultado.` }),
   );
 
   function sessionRuntime(session) {
@@ -403,10 +406,10 @@ function startApp() {
       ['Esclarecimentos possíveis', question.notes?.clarifications],
       ['Observações para condução', question.notes?.observations],
     ].filter(([, value]) => Array.isArray(value) ? value.length : value);
-    const notes = details('Notas privadas do instrutor', [
+    const notes = details(isPublic ? 'Notas do instrutor' : 'Notas privadas do instrutor', [
       ...notesSections.map(([title, value]) => node('section', { className: 'loop-stack' }, [node('h4', { text: title }), Array.isArray(value) ? textList(value) : node('p', { text: value })])),
-      question.exercise?.premisesHtml ? node('section', { className: 'loop-stack', 'data-exercise-premises': '' }, [node('h4', { text: 'Premissas privadas do exercício' }), htmlBlock(question.exercise.premisesHtml)]) : null,
-      question.exercise?.instructorHtml ? details('Orientações privadas do exercício', htmlBlock(question.exercise.instructorHtml), { 'data-exercise-instructor': '' }) : null,
+      question.exercise?.premisesHtml ? node('section', { className: 'loop-stack', 'data-exercise-premises': '' }, [node('h4', { text: isPublic ? 'Premissas do exercício' : 'Premissas privadas do exercício' }), htmlBlock(question.exercise.premisesHtml)]) : null,
+      question.exercise?.instructorHtml ? details(isPublic ? 'Orientações de condução do exercício' : 'Orientações privadas do exercício', htmlBlock(question.exercise.instructorHtml), { 'data-exercise-instructor': '' }) : null,
       question.source ? node('p', { className: 'loop-source', text: `Fonte: ${question.source.label || ''} · ${question.source.path || ''}${question.source.anchor ? `#${question.source.anchor.replace(/^#/, '')}` : ''}${question.source.line ? ` · linha ${question.source.line}` : ''}` }) : null,
     ], { 'data-instructor-notes': '' });
     const kindLabel = KIND_LABELS[question.kind] || 'Pergunta';
@@ -418,7 +421,7 @@ function startApp() {
       node('h3', { id: 'loop-question-heading', tabindex: '-1', text: question.kind === 'presentation' ? 'Contexto e tarefa de apresentação' : 'Pergunta para a candidata' }),
       node('p', { id: 'loop-question-prompt', className: 'loop-prompt', 'data-prompt': '', text: question.prompt }),
       node('div', { className: 'loop-question-actions' }, [readButton, present]), readout,
-      node('section', { className: 'loop-stack', 'aria-label': 'Aprofundamentos privados' }, (question.followups || []).map((followup, followupIndex) => details(`Aprofundamento ${followupIndex + 1}`, node('p', { text: followup }), { className: 'loop-details loop-followup', 'data-followup-index': followupIndex }))),
+      node('section', { className: 'loop-stack', 'aria-label': isPublic ? 'Aprofundamentos para condução' : 'Aprofundamentos privados' }, (question.followups || []).map((followup, followupIndex) => details(`Aprofundamento ${followupIndex + 1}`, node('p', { text: followup }), { className: 'loop-details loop-followup', 'data-followup-index': followupIndex }))),
       notes,
       question.exercise ? renderExercise(session, question, serial) : null,
       session.candidateQuestion ? details('Pergunta de encerramento da candidata', node('p', { text: session.candidateQuestion }), { 'data-candidate-question': '' }) : null,
@@ -483,11 +486,11 @@ function startApp() {
       const status = node('p', { className: 'loop-released', 'data-evidence-released': '', hidden: true, text: 'Liberada. Use “Apresentar evidência” para abrir somente este conteúdo.' });
       const wrapper = node('article', { className: 'loop-evidence-card', 'data-card-id': card.id, 'data-conditional': String(Boolean(card.conditional)) }, [
         details(card.label || `Cartão ${cardIndex + 1}`, [
-          card.conditional ? node('p', { className: 'loop-condition', 'data-release-condition': '', text: `Condição privada de liberação: ${card.condition || 'A candidata precisa propor a recuperação e definir os critérios de sucesso e de interrupção antes de receber esta evidência.'}` }) : null,
+          card.conditional ? node('p', { className: 'loop-condition', 'data-release-condition': '', text: `${isPublic ? 'Condição de liberação' : 'Condição privada de liberação'}: ${card.condition || 'A candidata precisa propor a recuperação e definir os critérios de sucesso e de interrupção antes de receber esta evidência.'}` }) : null,
           node('p', { className: 'loop-muted', text: card.request || 'Libere somente quando houver um pedido relevante.' }),
-          card.notesHtml ? details('Orientação privada deste cartão', htmlBlock(card.notesHtml), { 'data-card-notes': '' }) : null,
+          card.notesHtml ? details(isPublic ? 'Orientação de condução deste cartão' : 'Orientação privada deste cartão', htmlBlock(card.notesHtml), { 'data-card-notes': '' }) : null,
           node('label', { className: 'loop-check', for: relevantId }, [relevant, node('span', { text: 'Confirmo que a candidata fez um pedido relevante para esta evidência.' })]),
-          details('Consultar informação deste cartão — somente instrutor', htmlBlock(card.studentHtml), { 'data-card-preview': '' }),
+          details(isPublic ? 'Consultar informação deste cartão — apoio à condução' : 'Consultar informação deste cartão — somente instrutor', htmlBlock(card.studentHtml), { 'data-card-preview': '' }),
           conditional ? node('label', { className: 'loop-check', for: conditionalId }, [conditional, node('span', { text: card.confirmation || 'Confirmo que a candidata propôs a recuperação e definiu critérios de sucesso e de interrupção.' })]) : null,
           node('div', { className: 'loop-question-actions' }, [release, present]), status,
         ], { 'data-evidence-card': '', id: cardId }),
@@ -503,7 +506,7 @@ function startApp() {
       cardsArea.append(wrapper);
     }
     updateControls(); updateLog();
-    return node('section', { className: 'loop-card loop-stack', 'data-exercise': '', 'aria-label': 'Controle privado do exercício' }, [
+    return node('section', { className: 'loop-card loop-stack', 'data-exercise': '', 'aria-label': isPublic ? 'Controle de condução do exercício' : 'Controle privado do exercício' }, [
       node('h4', { text: `Exercício · ${exercise.variantLabel || 'evidências sob solicitação'}` }),
       node('p', { className: 'loop-muted', text: 'Registre o pedido e confirme sua pertinência. A liberação registra a decisão; a apresentação exige outro clique. Não antecipe os próximos cartões.' }),
       node('div', { className: 'loop-field' }, [node('label', { for: requestId, text: 'Solicitação feita pela candidata — campo privado' }), requestInput]),
@@ -554,7 +557,7 @@ function startApp() {
     let popup;
     try { popup = window.open('about:blank', '_blank', 'popup,width=1100,height=780'); }
     catch { popup = null; }
-    if (!popup) { announce('A janela de apresentação foi bloqueada. Conduza oralmente usando apenas a pergunta ou a evidência selecionada; não compartilhe esta tela privada.'); return; }
+    if (!popup) { announce(`A janela de apresentação foi bloqueada. Conduza oralmente usando apenas a pergunta ou a evidência selecionada; não compartilhe esta ${isPublic ? 'tela de condução' : 'tela privada'}.`); return; }
     try {
       popup.opener = null;
       const content = inertHtml(selectedHtml);
@@ -566,7 +569,7 @@ function startApp() {
       announce('Janela aberta somente com o conteúdo selecionado. Confira essa janela antes de compartilhar.');
     } catch {
       try { popup.close(); } catch { /* The oral fallback remains available. */ }
-      announce('Não foi possível abrir a apresentação isolada. Conduza oralmente sem compartilhar esta tela privada.');
+      announce(`Não foi possível abrir a apresentação isolada. Conduza oralmente sem compartilhar esta ${isPublic ? 'tela de condução' : 'tela privada'}.`);
     }
   }
 

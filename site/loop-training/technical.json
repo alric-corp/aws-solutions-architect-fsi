@@ -1,0 +1,183 @@
+{
+  "pedido": {
+    "id": "SIM02-B",
+    "label": "Pedido durante falha do banco",
+    "sourcePath": "interview/simulations/04-troubleshooting/02-pedido-durante-falha-do-banco/instrutor.md",
+    "variantLabel": "Janela B fixa · PostgreSQL 16 · Multi-AZ DB instance, um standby síncrono",
+    "prompt": "Um cliente enviou uma compra, a API retornou timeout e ele tentou novamente. Como descobrir se a operação foi perdida, concluída ou duplicada?\n\nArquitetura conhecida: navegador → ALB → API em ECS/Fargate → RDS PostgreSQL; pagamento externo por HTTPS. A aplicação permite criar pedidos e consultar seu estado. Não executar cobrança, apagar dados ou acessar serviços reais.",
+    "premisesMarkdown": "API em Fargate grava pedido e itens em uma transação PostgreSQL 16, com durabilidade habilitada, em RDS Multi-AZ DB instance com um standby síncrono. Não há read replica no caminho de consulta usado aqui. A consulta diagnóstica ocorre no escritor recuperado, por uma identidade autorizada.\n\n**Implementação atual, deliberadamente insuficiente:** navegador mantém `client_request_id` estável ao repetir a mesma intenção; a API registra esse campo, mas sempre insere novo pedido e não impõe unicidade. O identificador é distinto do token de login. A API retorna `201` depois do commit. O disparo de pagamento é agendado apenas na memória do processo depois disso; não há outbox. O disparador verifica pendências a cada 30 s, nos segundos 00 e 30. Na janela B, a contenção suspende esse disparador às 10:01:02.300, antes do próximo ciclo, às 10:01:30; por isso os dois pedidos ainda não foram enviados ao provedor.\n\n**Contrato fictício atual:** “pedido confirmado” significa registro durável de pedido e itens; pagamento tem estado separado e começa `pendente`. Isso não autoriza apresentar “compra paga”. A documentação comercial precisa tornar essa distinção clara. O exercício permite propor outro contrato coerente, incluindo confirmação final somente depois do pagamento, desde que os estados intermediários sejam explícitos.\n\nA abertura corresponde à **janela B**: houve commit, a resposta se perdeu e o retry criou outro pedido para a mesma intenção. Os pagamentos desses dois pedidos ainda não foram disparados no momento da contenção. Janelas A e C são contrafactuais de aprofundamento com seus próprios cartões. Não é possível inferir qualquer janela somente do timeout.\n\nHipóteses iniciais válidas incluem persistência abortada, commit com resposta perdida, repetição da mesma intenção ou duas compras distintas. A correlação E1 distingue a intenção; E2/E3 distinguem o resultado. Token de sessão expirado poderia explicar outro tipo de falha, mas não explica os commits observados neste caso.",
+    "instructorMarkdown": "Começar distinguindo resultado desconhecido de fracasso confirmado. Correlacionar intenção, tentativas e estado durável; conter retries que criam novos efeitos até saber o resultado. Na abertura, há duplicidade local comprovada. Não eliminar registros sem procedimento de reconciliação e aprovação.\n\nUm desenho válido registra, no responsável pelo estado, a chave da intenção, o conteúdo relevante e o resultado de forma durável, junto ao efeito local e com exclusão de concorrentes. Por exemplo, restrição única por comprador + intenção e uma transação curta que cria pedido, itens e resultado. Ao disputar a chave, o segundo chamador espera a resolução ou recebe estado consultável; não cria outro pedido. Se o primeiro abortar, uma nova tentativa pode executar o efeito. Se confirmar, retorna o resultado já registrado. Uma consulta seguida de inserção é aceitável somente com proteção real contra a corrida.\n\nAceitar outras primitivas transacionais ou condicionais que preservem os mesmos invariantes. Não exigir DynamoDB, PostgreSQL ou biblioteca específica. A retenção da chave deve cobrir o período de retries e reconciliação acordado; não inventar um TTL universal. A autorização da consulta de estado deve impedir acesso a pedido de outro cliente.\n\nImediato: sinalizar estado em verificação ao atendimento, conter novos disparos para a intenção afetada e reconciliar P201/P202 com responsáveis de pedidos e pagamento. No recorte não houve cobrança, mas a ação deve verificar isso antes de alterar estado. Preservar trilha de auditoria; não apagar uma duplicata para esconder o problema.\n\nReconectar ao endpoint correto recupera acesso; repetição de mutação só é segura com contrato e proteção adequados. Usar tentativas limitadas, backoff com variação aleatória e orçamento de tempo; parar se o estado não puder ser determinado ou a dependência continuar indisponível. Não renovar a chave a cada tentativa.\n\nValidação: E6, autorização da consulta, recuperação após reinício e conciliação das pendências de pagamento. Impedir que um evento repetido cobre duas vezes. Alerta sobre intenções com múltiplos pedidos e pendências sem progresso. Alterações em dados e contrato exigem aplicação, dados, pagamentos e negócio.\n\nVariante fixa B. Não liberar E4 nem trazer dados das operações A/C. E3 abaixo foi projetado para conter somente a linha B da tabela original. Nenhum registro representa execução real.",
+    "cards": [
+      {
+        "id": "P0",
+        "label": "Premissas disponíveis",
+        "request": "Pede engine, disponibilidade, arquitetura, leitura diagnóstica ou fluxo de persistência.",
+        "studentMarkdown": "**Informação sintética para treinamento, não executada.** Horários, quando presentes, são UTC no dia fictício D.\n\nAPI em Fargate grava pedido e itens em uma transação PostgreSQL 16, com durabilidade habilitada, em RDS Multi-AZ DB instance com um standby síncrono. Não há read replica no caminho de consulta usado aqui. A consulta diagnóstica ocorre no escritor recuperado, por uma identidade autorizada.",
+        "notesMarkdown": "Projeção das premissas do cenário. A configuração não comprova o estado desta intenção; não antecipar E2/E3.",
+        "conditional": false,
+        "condition": ""
+      },
+      {
+        "id": "P1",
+        "label": "Fluxo de implementação informado",
+        "request": "Pede como a API registra a intenção, confirma a persistência e agenda o trabalho de pagamento.",
+        "studentMarkdown": "**Informação sintética para treinamento, não executada.** Horários, quando presentes, são UTC no dia fictício D.\n\nnavegador mantém `client_request_id` estável ao repetir a mesma intenção; a API registra esse campo, mas sempre insere novo pedido e não impõe unicidade. O identificador é distinto do token de login. A API retorna `201` depois do commit. O disparo de pagamento é agendado apenas na memória do processo depois disso; não há outbox.",
+        "notesMarkdown": "Projeção da implementação atual definida na seção2 da fonte. Não é recomendação de arquitetura. Distinguir gravação local e efeito externo; não exigir outbox como palavra mágica e aceitar alternativas que preservem o contrato.",
+        "conditional": false,
+        "condition": ""
+      },
+      {
+        "id": "E1",
+        "label": "Identificação e contrato",
+        "request": "Pede correlação das tentativas, intenção, contrato ou diferença entre sessão e operação.",
+        "studentMarkdown": "**Informação sintética para treinamento, não executada.** Horários, quando presentes, são UTC no dia fictício D.\n\nTentativas da abertura: mesmo comprador fictício, `client_request_id=intencao-B`, mesmo carrinho e total, IDs de transporte diferentes `req-B1` e `req-B2`. A API não faz deduplicação durável. Há um token de autenticação válido, cujo conteúdo não é fornecido. O token autentica o sujeito; não identifica sozinho a intenção de compra.\n\nA API retorna `201` depois do commit.\n\n**Contrato fictício atual:** “pedido confirmado” significa registro durável de pedido e itens; pagamento tem estado separado e começa `pendente`. Isso não autoriza apresentar “compra paga”. A documentação comercial precisa tornar essa distinção clara.",
+        "notesMarkdown": "O token autentica o sujeito; a intenção é distinta. Não conclui sozinho o estado confirmado. Aceite perguntas semanticamente equivalentes.",
+        "conditional": false,
+        "condition": ""
+      },
+      {
+        "id": "E2",
+        "label": "Registros das tentativas",
+        "request": "Pede evidência de persistência, commit e entrega da resposta.",
+        "studentMarkdown": "**Informação sintética para treinamento, não executada.** Horários, quando presentes, são UTC no dia fictício D.\n\nRecorte de aplicação instrumentada; “commit retornou” é observação dessa chamada, não leitura de WAL bruto:\n\n```text\n10:01:00.090 req=req-B1 intent=intencao-B order=P201 db_commit=returned_ok\n10:01:00.110 req=req-B1 response_attempted=true client_delivery=unconfirmed\n10:01:02.250 req=req-B2 intent=intencao-B order=P202 db_commit=returned_ok\n```",
+        "notesMarkdown": "São logs da aplicação instrumentada, não captura de rede nem WAL bruto. Não generalizar para todo timeout.",
+        "conditional": false,
+        "condition": ""
+      },
+      {
+        "id": "E3",
+        "label": "Estado após estabilização",
+        "request": "Pede estado no escritor recuperado, transações resolvidas e situação do pagamento.",
+        "studentMarkdown": "**Informação sintética para treinamento, não executada.** Horários, quando presentes, são UTC no dia fictício D.\n\nLeitura no escritor às 10:03, com transações em andamento já resolvidas:\n\n| Intenção | Pedidos e itens | Resultado local | Pagamento no provedor |\n|---|---|---|---|\n| intencao-B | P201 e P202, ambos com os mesmos itens | Duplicou o registro comercial | Nenhum envio até a contenção |",
+        "notesMarkdown": "Somente a linha B do cartão E3 original. Duplicidade local comprovada, nenhum envio até contenção. Suspensão do disparador às 10:01:02.300 antes do ciclo 10:01:30. Não autoriza apagar pedido nem cobrar automaticamente.",
+        "conditional": false,
+        "condition": ""
+      },
+      {
+        "id": "E5",
+        "label": "Variação de concorrência",
+        "request": "Propõe consultar a chave e depois inserir, sem proteção contra concorrência.",
+        "studentMarkdown": "**Informação sintética para treinamento, não executada.** Horários, quando presentes, são UTC no dia fictício D.\n\nX consulta a chave K e não encontra; Y consulta K e não encontra; X insere; Y insere; ambos fazem commit.",
+        "notesMarkdown": "Qual mecanismo impede essa execução? Não desqualificar SELECT quando existe proteção transacional adequada; aceite alternativas que preservem a regra.",
+        "conditional": false,
+        "condition": ""
+      },
+      {
+        "id": "E6",
+        "label": "Validação do desenho",
+        "request": "Depois de explicar proteção atômica/concorrente e pedir como validar quedas e repetição.",
+        "studentMarkdown": "**Informação sintética para treinamento, não executada.** Horários, quando presentes, são UTC no dia fictício D.\n\n**Resultados esperados de testes narrados, não executados:**\n\nduas solicitações simultâneas com mesma chave e conteúdo resultam em um único pedido e no mesmo resultado durável; mesma chave com conteúdo diferente é rejeitada; queda antes do commit não deixa efeito parcial; queda depois do commit permite recuperar resultado pela chave.",
+        "notesMarkdown": "Pedir também teste de duplicação do evento de pagamento e de resposta perdida do provedor. Não representa recuperação já observada nem exactly-once ponta a ponta.",
+        "conditional": true,
+        "condition": "Somente depois de uma proposta com proteção atômica e concorrente e critérios de validação explicitados.",
+        "confirmation": "Confirmo que a proposta explica proteção atômica e concorrente e define como validar falhas e repetição."
+      }
+    ],
+    "expectedSourceSha": "3c583baff3a2fc455f43846e9db69746c1d12d5a0a82e42126ee95df7e249be0"
+  },
+  "conectividade": {
+    "id": "SIM03-B",
+    "label": "Conectividade privada",
+    "sourcePath": "interview/simulations/04-troubleshooting/03-conectividade-privada/instrutor.md",
+    "variantLabel": "B fixa — banco interno, incidente independente",
+    "prompt": "Uma aplicação em subnet privada deixou de acessar o banco privado usado para gravar pedidos; parte das requisições falha e as tasks continuam em execução.\n\nArquitetura conhecida: API em ECS/Fargate → RDS PostgreSQL privado, TCP5432, em outra subnet da mesma VPC IPv4. Não há peering, TGW, proxy ou equipamento intermediário neste caminho. O banco está marcado como disponível. Investigue antes de propor a mudança.",
+    "premisesMarkdown": "**Contexto e impacto inicial:** “Uma aplicação em subnet privada deixou de acessar uma dependência. As tasks continuam em execução.” A dependência é o banco privado usado para gravar pedidos; parte das requisições falha.\n\n**Arquitetura mínima:** API em ECS/Fargate conecta ao RDS PostgreSQL privado, porta TCP 5432, em outra subnet da mesma VPC IPv4. Não há peering, Transit Gateway, proxy ou equipamento intermediário no caminho declarado.\n\n**Informações inicialmente disponíveis:** o banco está marcado como disponível e há tasks em execução. Existem inventário de rede e registros de erros. Peça os recortes necessários ao instrutor.\n\nNa mesma VPC, task `10.20.12.18` tenta `db.pedidos.interno.example → 10.20.22.40:5432`, em outra subnet. A rota local atende ambos os sentidos e não há rota mais específica ou inspeção. SGs permitem o fluxo. Uma alteração na NACL da subnet da aplicação permite saída para 5432, mas não o retorno para a porta efêmera do cliente. A causa é o bloqueio de retorno, não NAT. Banco atende conexões de uma subnet de controle.",
+    "instructorMarkdown": "Variante B somente: aplicação e PostgreSQL privado em subnets da mesma VPC; versão do PostgreSQL não especificada neste incidente. Não importar configuração de outro exercício.\n\nRaciocínio: reconstruir origem, destino, famíliaIP, porta de ida e de resposta. A rota local foi declarada sem desvios e SGs permitem; a evidência B3 identifica a regra de retorno incompatível da NACL da aplicação. Separar ICMP, TCP, TLS, autenticação e operação.\n\nAceitar inventário, FlowLogs já disponíveis ou coleta equivalente autorizada no contexto da aplicação; não exigir shell do Fargate ouRDS. Análise estática não comprova saúde da aplicação.\n\nMitigação B: corrigir somente a regra de retorno necessária, com origem, protocolo, faixa validada e precedência; rede aprova e acompanha. Não liberar tudo, publicar banco ou remover controles. Parar se houver acesso indevido, regressão de fluxo antes funcional ou falta de relação com as evidências.\n\nB4 é condicional a proposta restrita e critérios. Aplicação valida novas conexões e operação autorizada com dados fictícios; origem não autorizada continua negada. O recorte não confirma todos os fluxos ou operações anteriores. Toda execução é narrada, não real.",
+    "cards": [
+      {
+        "id": "B1",
+        "label": "Cartão B1",
+        "request": "Pede origem/destino, recorte, erro, resolução do nome e etapa da falha.",
+        "studentMarkdown": "**Informação sintética para treinamento, não executada.** Horários, quando presentes, são UTC no dia fictício D.\n\nNovas conexões da subnet da task expiram em três segundos; uma subnet de controle conecta ao banco. Resolução vista pela aplicação e por coleta autorizada retorna `10.20.22.40`. Não há erro de senha, SQLSTATE de autenticação ou mensagem TLS nas tentativas afetadas.",
+        "notesMarkdown": "Disponibilidade do banco ou tasks RUNNING não comprova o caminho. Não importar a versão PostgreSQL16 do exercício anterior.",
+        "conditional": false,
+        "condition": ""
+      },
+      {
+        "id": "B2",
+        "label": "Cartão B2",
+        "request": "Pede rotas efetivamente associadas, SGs e caminho entre as subnets.",
+        "studentMarkdown": "**Informação sintética para treinamento, não executada.** Horários, quando presentes, são UTC no dia fictício D.\n\nTabelas das duas subnets têm `10.20.0.0/16 → local`, sem desvios. SG da task permite saída TCP 5432 ao SG do banco; SG do banco permite entrada TCP 5432 do SG das tasks. Não há NAT, Internet Gateway ou endpoint público no fluxo. No recorte inspecionado, não há outro SG associado que altere a análise.",
+        "notesMarkdown": "Não há NAT/IGW neste fluxo. Não converter subnet privada em diagnóstico automático de NAT.",
+        "conditional": false,
+        "condition": ""
+      },
+      {
+        "id": "B3",
+        "label": "Cartão B3",
+        "request": "Pede portas de ida/resposta, NACL, Flow Logs ou mudança de configuração.",
+        "studentMarkdown": "**Informação sintética para treinamento, não executada.** Horários, quando presentes, são UTC no dia fictício D.\n\nUma tentativa foi instrumentada como `10.20.12.18:40000 → 10.20.22.40:5432`. Retorno esperado: `10.20.22.40:5432 → 10.20.12.18:40000`. Premissa do cliente neste exercício: novas conexões usam portas efêmeras de 32768 a 60999; isso não é uma faixa universal.\n\n| Controle inspecionado | Regras relevantes, em ordem |\n|---|---|\n| NACL da subnet da aplicação, saída | 100: permitir TCP, destino `10.20.22.0/24`, porta de destino 5432 |\n| NACL da subnet da aplicação, entrada | 100: permitir TCP, origem `10.20.22.0/24`, porta de destino 5432; nenhum Allow posterior cobre retorno para 32768–60999 |\n| NACL da subnet do banco, entrada | Permite da subnet da aplicação para destino 5432 |\n| NACL da subnet do banco, saída | Permite à subnet da aplicação para destinos 32768–60999 |\n\nO padrão final das NACLs é negar; outras regras preservam os fluxos de atendimento da API e não correspondem ao retorno do banco. Recorte normalizado de Flow Logs já disponíveis: saída de SYN pela ENI da aplicação `ACCEPT`; retorno do banco de 5432 para 40000 na ENI da aplicação `REJECT`. O inventário da NACL identifica a regra incompatível. O registro `REJECT` isolado não informa automaticamente qual SG ou NACL foi responsável.",
+        "notesMarkdown": "Porta40000 e faixa32768–60999 pertencem à premissa deste cliente. REJECT isolado não identifica o controle; o inventário permite localizar a regra. Não sugerir liberar tudo.",
+        "conditional": false,
+        "condition": ""
+      },
+      {
+        "id": "B4",
+        "label": "Cartão B4",
+        "request": "Propõe correção restrita coerente e define critérios de novas conexões, jornada e origem não autorizada.",
+        "studentMarkdown": "**Informação sintética para treinamento, não executada.** Horários, quando presentes, são UTC no dia fictício D.\n\nApós substituir a regra de entrada equivocada por permissão de retorno, restrita à subnet do banco e à faixa validada, com aprovação da rede: novas conexões estabelecem TCP; negociação PostgreSQL/TLS com validação do servidor passa; autenticação e operação canário autorizadas passam. Cinco minutos sem novos connect timeouts nas subnets afetadas. Teste de origem não autorizada continua negado.",
+        "notesMarkdown": "Exige correção proporcional e critério de validação. Os resultados são sintéticos e limitados ao recorte, não comprovam todos os fluxos ou dados.",
+        "conditional": true,
+        "condition": "Após proposta de correção restrita e critérios de validação, com aprovação de rede."
+      }
+    ],
+    "expectedSourceSha": "b54b80d49798bfc3d5f8bc62a6ad129f4748b4a6334d26cf205bde5e068bf314"
+  },
+  "consultiva": {
+    "id": "CONSULTIVA-BASE",
+    "label": "Conversa consultiva",
+    "sourcePath": "interview/simulations/06-conversa-consultiva/instrutor.md",
+    "variantLabel": "Recorte original — flexibilidade ainda não discutida, capacidade não validada",
+    "prompt": "Um cliente quer disponibilizar rapidamente uma funcionalidade para uma campanha, mas a dependência técnica ainda não foi validada. Como conduzir a conversa e definir o próximo passo?\n\nContexto conhecido do exercício existente: a Loja Horizonte quer uma nova consulta de disponibilidade de produtos. A aplicação existente dependerá de uma API de estoque cujo contrato e capacidade ainda não foram validados para esse uso. A pessoa arquiteta participa com cliente, comercial e equipe técnica. Ainda não há acordo documentado sobre sucesso, limites de risco, operação ou liberação.",
+    "premisesMarkdown": "A Loja Horizonte quer disponibilizar rapidamente uma nova consulta de disponibilidade de produtos para uma campanha. A equipe comercial considera a oportunidade importante. A aplicação existente dependerá de uma API de estoque cujo contrato e capacidade ainda não foram validados para esse uso.\n\nVocê participa como pessoa arquiteta na conversa com cliente, comercial e equipe técnica. Eles perguntam: **“Como avançamos?”** Ainda não há um acordo documentado sobre sucesso, limites de risco, operação ou critério de liberação. Solicite as informações que considerar necessárias.\n\nEste é um recorte fictício próprio do exercício; não representa cliente real nem uma arquitetura pronta para produção. Dados adicionais serão fornecidos por quem conduz conforme as perguntas.",
+    "instructorMarkdown": "Peça que conecte necessidade, opções, restrições, risco, decisor e validação. Encaminhamentos diferentes podem ser defensáveis: negociar o pedido, reduzir escopo, validar uma hipótese antes de liberar ou explicar por que ainda não há base para determinada promessa. Nenhum desses caminhos é a solução automática.\n\nSe citar uma validação, pergunte qual hipótese será examinada, que observação sustenta seguir e que resultado exige rever a proposta. Uma validação não executada permanece proposta; não libere depois um cartão de sucesso só para premiar a escolha.\n\n**Variação explícita:** depois da primeira recomendação, informe que o patrocinador confirmou uma restrição que antes estava em aberto — por exemplo, a data não pode mudar. Peça que reavalie as opções. Não reescreva o cartão original como se a informação já fosse conhecida nem obrigue a pessoa a manter uma decisão cuja premissa mudou.\n\nNão inventar teste bem-sucedido, defeito da API, orçamento ou prazo inegociável no recorte original. A pergunta de Ricardo é outra variação autoral com prazo fixo declarado; não misturar os fatos.",
+    "cards": [
+      {
+        "id": "C1",
+        "label": "Necessidade do cliente e sucesso",
+        "request": "Pergunta equivalente ao tema do cartão: necessidade do cliente e sucesso.",
+        "studentMarkdown": "**Informação sintética para treinamento, não executada.**\n\nO cliente quer ajudar as pessoas a consultar disponibilidade durante uma campanha. Não quer exibir como certa uma disponibilidade que a aplicação não consegue sustentar. O recorte não inclui confirmar compra, reservar estoque ou cobrar. A equipe ainda precisa acordar o que a consulta pode prometer e como comunicar indisponibilidade ou informação incerta.",
+        "notesMarkdown": "Isso delimita a necessidade; não demonstra capacidade da API ou autoriza um lançamento.",
+        "conditional": false,
+        "condition": ""
+      },
+      {
+        "id": "C2",
+        "label": "Dependência e informação técnica disponível",
+        "request": "Pergunta equivalente ao tema do cartão: dependência e informação técnica disponível.",
+        "studentMarkdown": "**Informação sintética para treinamento, não executada.**\n\nA API de estoque já existe, mas compatibilidade do contrato, limites de consumo, latência e comportamento de falha para este uso ainda não foram validados. A equipe responsável pode acompanhar uma avaliação em homologação com dados fictícios. Não há um resultado de teste para mostrar neste cartão.",
+        "notesMarkdown": "Não tratar a existência da API como prova de adequação. Tampouco inventar um defeito ou uma causa de falha já conhecida.",
+        "conditional": false,
+        "condition": ""
+      },
+      {
+        "id": "C3",
+        "label": "Prazo, orçamento e flexibilidade",
+        "request": "Pergunta equivalente ao tema do cartão: prazo, orçamento e flexibilidade.",
+        "studentMarkdown": "**Informação sintética para treinamento, não executada.**\n\nA data desejada veio da campanha comercial, mas a possibilidade de negociar escopo ou data ainda não foi discutida com o patrocinador. Não há estimativa aprovada de custo para a nova consulta.",
+        "notesMarkdown": "Esses fatos pedem uma conversa de decisão. Não significam que prazo e custo sejam irrelevantes, nem que seja aceitável inventar limites para concluir a proposta.",
+        "conditional": false,
+        "condition": ""
+      },
+      {
+        "id": "C4",
+        "label": "Operação e responsabilidade",
+        "request": "Pergunta equivalente ao tema do cartão: operação e responsabilidade.",
+        "studentMarkdown": "**Informação sintética para treinamento, não executada.**\n\nA equipe técnica mantém a aplicação atual, mas não assumiu responsabilidade adicional por esta consulta. Alertas, suporte, critérios de interrupção e recuperação precisam ser acordados. A capacidade de uma equipe operar o novo fluxo não foi demonstrada.",
+        "notesMarkdown": "Uma arquitetura desenhada ou um teste isolado não resolvem essas responsabilidades automaticamente.",
+        "conditional": false,
+        "condition": ""
+      },
+      {
+        "id": "C5",
+        "label": "Quem participa da decisão",
+        "request": "Pergunta equivalente ao tema do cartão: quem participa da decisão.",
+        "studentMarkdown": "**Informação sintética para treinamento, não executada.**\n\nO patrocinador do cliente valida objetivo, escopo e impacto. A pessoa responsável pela aplicação e a equipe da API avaliam condições técnicas e operacionais. Comercial ajuda a alinhar oportunidade e expectativas. Nenhuma dessas perspectivas deve ser retratada como adversária por princípio.",
+        "notesMarkdown": "O exercício não concede autoridade para aprovar risco em nome de outra pessoa. A recomendação deve identificar quem precisa decidir e o que falta para essa decisão.",
+        "conditional": false,
+        "condition": ""
+      }
+    ],
+    "expectedSourceSha": "924ccb779315bf88139f279b5d9506045a8defa334cc9c789ab004fd9eaae2cf"
+  }
+}

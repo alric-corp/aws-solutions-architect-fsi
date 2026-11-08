@@ -10,7 +10,6 @@ const agenda = JSON.parse(await fs.readFile(path.join(privateRoot, 'source/agend
 const expectations = JSON.parse(await fs.readFile(path.join(privateRoot, 'source/check-expectations.json'), 'utf8'));
 assert.equal(expectations.schemaVersion, 1, 'Versão inválida das expectativas privadas');
 const mapping = JSON.parse(await fs.readFile(path.join(review, 'source-map.json'), 'utf8'));
-const before = JSON.parse(await fs.readFile(path.join(review, 'public-artifact-before.json'), 'utf8'));
 const pageFields = ['pageId','title','date','dateLabel','otherPage','intro','privacyNotice','privateMarker'];
 const sessionFields = ['id','name','role','time','objective','agenda','candidateQuestion','hypothesis'];
 const pick = (record, fields) => Object.fromEntries(fields.filter(field => field in record).map(field => [field, record[field]]));
@@ -116,13 +115,18 @@ for (const expected of expectations.sessionChecks) {
 for (const [source, hash] of Object.entries(mapping.sourceHashes)) assert.equal(createHash('sha256').update(await fs.readFile(path.join(root, source))).digest('hex'), hash);
 const after = {};
 const publicText = [];
+// Verify the effect of the private generator itself, rather than freezing the
+// entire public site at the date this local exercise was first created.
+const before = {};
+for (const file of await filesIn(path.join(root, 'dist'))) before[path.relative(path.join(root, 'dist'), file)] = createHash('sha256').update(await fs.readFile(file)).digest('hex');
+execFileSync(process.execPath, ['scripts/loop-private/build.mjs'], { cwd: root, stdio: 'pipe' });
 for (const file of await filesIn(path.join(root, 'dist'))) {
   const bytes = await fs.readFile(file);
   const relative = path.relative(path.join(root, 'dist'), file);
   after[relative] = createHash('sha256').update(bytes).digest('hex');
   if (/\.(html|json|xml|js|css|txt)$/.test(file)) publicText.push(bytes.toString('utf8'));
 }
-assert.deepEqual(after, before, 'O artefato público deve ser idêntico ao baseline, inclusive busca, sitemap e assets');
+assert.deepEqual(after, before, 'A geração privada não pode alterar o artefato público, incluindo busca e assets');
 const combined = publicText.join('\n');
 for (const text of expectations.publicForbiddenText) assert.ok(!combined.includes(text), 'Dado personalizado no artefato público');
 let rejected = false;

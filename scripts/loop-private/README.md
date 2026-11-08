@@ -1,8 +1,10 @@
 # Condução local e privada
 
+A interface também atende os dois roteiros públicos aprovados em `site/loop-training/`. `npm run build` gera seus acessos completos em Praticar → Instrutor, com identificação abreviada dos entrevistadores. Os roteiros e as notas são públicos sem autenticação; somente os registros preenchidos permanecem no navegador, em namespace separado. O build público não lê a configuração local descrita abaixo.
+
 O gerador lê exclusivamente `.site/loop-privado/source/agenda.json`, `behavioral.json` e `technical.json`. As configurações personalizadas, a saída e os relatórios ficam sob `.site/`, ignorada pelo Git e fora da seleção pública. Não copie esses arquivos para conteúdo, assets, issues ou commits do repositório público.
 
-O código desta pasta é reutilizável e não contém a agenda pessoal. Preserve os arquivos privados em `.site/loop-privado/` no checkout principal; eles não são recuperados de um checkout limpo do Git. Trabalhe diretamente em `main`, sem criar worktrees para este projeto.
+O código desta pasta é reutilizável. A publicação aprovada usa somente os três JSON versionados em `site/loop-training/`. Preserve os demais arquivos privados em `.site/loop-privado/` no checkout principal; eles não são recuperados de um checkout limpo do Git. Trabalhe diretamente em `main`, sem criar worktrees para este projeto.
 
 Depois de um build público local para disponibilizar a fonte existente:
 

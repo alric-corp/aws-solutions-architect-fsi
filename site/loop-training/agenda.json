@@ -1,0 +1,1430 @@
+{
+  "pages": [
+    {
+      "pageId": "dia-10",
+      "title": "Dia 10 — Entrevista técnica e apresentação",
+      "date": "2026-11-10",
+      "dateLabel": "Terça-feira, 10/11/2026",
+      "otherPage": {
+        "title": "Dia 11 — Entrevistas comportamentais e funcionais",
+        "url": "/praticar/loop/dia-11/index.html"
+      },
+      "intro": "Agenda fornecida para organizar ensaios. Horários de referência em America/Sao_Paulo. A distribuição de Leadership Principles por pessoa é somente hipótese de preparação; não foi confirmada pela AWS. Perguntas autorais, sem reprodução de personalidade ou questões reais/vazadas.",
+      "privacyNotice": "Roteiro completo do instrutor publicado sem autenticação: nomes, agenda, perguntas e notas podem ser consultados por qualquer pessoa. Compartilhe somente a janela da seleção durante o treino. Registros preenchidos e avaliações ficam apenas neste navegador; a ferramenta não os envia ao site. Não use GenAI durante a entrevista real.",
+      "sessions": [
+        {
+          "id": "eduardo",
+          "name": "Edu",
+          "role": "Principal Solutions Architect",
+          "time": "10h–11h",
+          "hypothesis": [
+            "Dive Deep",
+            "Investigação técnica",
+            "Troubleshooting",
+            "Arquitetura e decisões técnicas"
+          ],
+          "objective": "Sustentar uma investigação, atualizar hipóteses e explicar mecanismo, risco e evidência.",
+          "agenda": [
+            {
+              "label": "Abertura",
+              "minutes": 5
+            },
+            {
+              "label": "Dive Deep comportamental",
+              "minutes": 12
+            },
+            {
+              "label": "Troubleshooting técnico",
+              "minutes": 25
+            },
+            {
+              "label": "Aprofundamento ou mudança de cenário",
+              "minutes": 8
+            },
+            {
+              "label": "Perguntas da candidata",
+              "minutes": 5
+            },
+            {
+              "label": "Feedback do ensaio",
+              "minutes": 5
+            }
+          ],
+          "questions": [
+            {
+              "lpId": "LP12-Q03"
+            },
+            {
+              "id": "SIM02-B",
+              "category": "Troubleshooting principal",
+              "kind": "technical",
+              "scenario": "pedido",
+              "followups": [
+                "Timeout significa rollback?",
+                "Como distinguir uma falha de resposta de uma falha no commit?",
+                "Multi-AZ resolve o resultado desconhecido da compra?",
+                "Como funciona a idempotência?",
+                "Qual diferença entre identidade do usuário e identidade da operação?",
+                "O que acontece com duas tentativas concorrentes?",
+                "Como verificar o estado confirmado do pedido?",
+                "O que você validaria depois da recuperação?",
+                "Como evitar que o problema volte a ocorrer?"
+              ],
+              "notes": {
+                "objective": "Investigar a mesma intenção e seu estado confirmado antes de orientar repetição ou cobrança.",
+                "evidence": [
+                  "Correlaciona intenção, tentativas, commit/resposta e estado no escritor.",
+                  "Explica proteção durável/concorrente do efeito local e delimita pagamento externo.",
+                  "Mitiga com segurança, preserva auditoria e propõe validação."
+                ],
+                "limits": [
+                  "Cenário sintético fixo B, PostgreSQL16; não usar A/C como resultados da mesma compra.",
+                  "Aceitar primitivas alternativas válidas, não exigir serviço/SQL/biblioteca.",
+                  "E6 contém expectativas narradas, não resultados executados."
+                ],
+                "clarifications": [
+                  "Qual contrato confirma o pedido e qual estado confirma pagamento?",
+                  "Que informação permanece desconhecida sem a coleta autorizada?"
+                ],
+                "observations": [
+                  "Proposta autoral de treinamento, não questão real/oficial ou roteiro de personalidade."
+                ]
+              }
+            }
+          ],
+          "reserves": [
+            {
+              "lpId": "LP12-Q01"
+            },
+            {
+              "lpId": "LP12-Q12"
+            },
+            {
+              "id": "SIM03-B",
+              "category": "Troubleshooting reserva · substitui o principal",
+              "kind": "technical",
+              "scenario": "conectividade",
+              "followups": [
+                "Quem inicia a conexão, de onde e para qual destino/porta?",
+                "O nome resolveu no contexto da aplicação?",
+                "Qual caminho atende ida e resposta?",
+                "TCP conclui? TLS começa? Há resposta da aplicação?",
+                "Que evidência faria abandonar sua hipótese?",
+                "Como validar novas conexões e uma origem não autorizada?"
+              ],
+              "notes": {
+                "objective": "Separar nome, rotas, controles, porta/processo, TLS e operação no fluxo privado.",
+                "evidence": [
+                  "Reconstrói origem/destino e retorno à porta do cliente.",
+                  "Compara inventário e registros e escolhe mudança restrita.",
+                  "Valida novas conexões, TLS, autenticação e operação canário."
+                ],
+                "limits": [
+                  "Variante B banco interno somente. Não importar NAT da A nem versão/contrato do caso02.",
+                  "Não executar comandos, liberar tudo ou publicar o banco.",
+                  "Se trocar para esta reserva, substitua a investigação inteira; não misture os cartões."
+                ],
+                "clarifications": [
+                  "Distinguir fato, hipótese e proposta; pedir o alcance de cada conclusão."
+                ],
+                "observations": [
+                  "Proposta autoral de treinamento, não questão real/oficial ou roteiro de personalidade."
+                ]
+              }
+            }
+          ],
+          "candidateQuestion": "Pode compartilhar um exemplo de como o time decide que uma investigação técnica já tem evidência suficiente para recomendar uma mudança ao cliente?",
+          "notesMarkdown": "## Dinâmica do ensaio\n\nOrçamento de 60 minutos **incluindo 5 de feedback**; não é reprodução integral de uma entrevista real. Para ensaiar 60 minutos de entrevista, reserve feedback depois e redistribua o tempo de aprofundamento. Não use este relógio como exigência oficial.\n\nComece pela pergunta sem anunciar o LP. Peça uma resposta inicial e selecione aprofundamentos conforme a evidência que falta. Não complete a história. Registre ajuda oferecida.\n\n## Exercício fixo\n\nUse somente janela B do pedido, com PostgreSQL16/Multi-AZ DB instance e contrato definido no simulado. Premissas e cartões são sintéticos, no dia fictício D e UTC. A agenda desta página é real para treino; os horários dos logs não correspondem à agenda.\n\nA reserva de conectividade é outro incidente, variante B do banco privado. Se substituir o principal, passe a usar apenas seus cartões. Não transfira pagamentos, Multi-AZ ou versão do PostgreSQL entre exercícios.\n\nFontes: interview/simulations/04-troubleshooting/{guia-do-instrutor.md,rubrica.md}; leadership-principles/practice-guide.md e loop-focus.md. Os pares do loop-focus não são mapeamento oficial por entrevistador; a seleção principal desta agenda é a do pedido atual."
+        },
+        {
+          "id": "apresentacao",
+          "name": "Apresentação do case",
+          "role": "Recuperação da jornada de recomendações de investimentos",
+          "time": "16h–17h",
+          "hypothesis": [
+            "Perguntas de negócio",
+            "Arquitetura e defesa técnica",
+            "Validação, risco e autoria"
+          ],
+          "objective": "Apresentar o case e defender suas decisões sem ampliar o histórico ou omitir incertezas.",
+          "agenda": [
+            {
+              "label": "Contexto e objetivo",
+              "minutes": 5
+            },
+            {
+              "label": "Apresentação",
+              "minutes": 35
+            },
+            {
+              "label": "Perguntas e aprofundamentos",
+              "minutes": 15
+            },
+            {
+              "label": "Feedback do ensaio",
+              "minutes": 5
+            }
+          ],
+          "questions": [
+            {
+              "id": "AP-01-01",
+              "category": "Negócio",
+              "kind": "presentation",
+              "prompt": "O aplicativo continuava disponível. O que o cliente não conseguia mais fazer?",
+              "source": {
+                "label": "Autoral de treinamento — proposta fornecida neste pedido",
+                "path": "",
+                "anchor": "",
+                "line": null
+              },
+              "followups": [
+                "Qual evidência sustenta essa afirmação?",
+                "Que limite ou incerteza ainda precisa ser informado?"
+              ],
+              "notes": {
+                "objective": "Defender uma afirmação do case com contexto, autoria, evidência e limite.",
+                "evidence": [
+                  "Explica o que ocorreu na época e distingue reflexão posterior.",
+                  "Identifica critério, fonte e escopo da validação, sem converter proposta em execução.",
+                  "Delimita contribuição individual e colaboração."
+                ],
+                "limits": [
+                  "A pergunta é autoral de preparação e não confirma fatos do projeto.",
+                  "Não preencher divergências DMS/snapshot, autoria, perda zero, validação ou rollback com práticas recomendadas."
+                ],
+                "clarifications": [
+                  "Consultar as pendências factuais da rodada antes de aceitar uma versão como confirmada.",
+                  "Para segurança, confirmar permissões/autorizações reais; não presumir que break glass foi usado, disponível ou apropriado."
+                ],
+                "observations": [
+                  "Proposta autoral de treinamento, não questão real/oficial ou roteiro de personalidade."
+                ]
+              }
+            },
+            {
+              "id": "AP-01-02",
+              "category": "Negócio",
+              "kind": "presentation",
+              "prompt": "Qual era o impacto para a jornada?",
+              "source": {
+                "label": "Autoral de treinamento — proposta fornecida neste pedido",
+                "path": "",
+                "anchor": "",
+                "line": null
+              },
+              "followups": [
+                "Qual evidência sustenta essa afirmação?",
+                "Que limite ou incerteza ainda precisa ser informado?"
+              ],
+              "notes": {
+                "objective": "Defender uma afirmação do case com contexto, autoria, evidência e limite.",
+                "evidence": [
+                  "Explica o que ocorreu na época e distingue reflexão posterior.",
+                  "Identifica critério, fonte e escopo da validação, sem converter proposta em execução.",
+                  "Delimita contribuição individual e colaboração."
+                ],
+                "limits": [
+                  "A pergunta é autoral de preparação e não confirma fatos do projeto.",
+                  "Não preencher divergências DMS/snapshot, autoria, perda zero, validação ou rollback com práticas recomendadas."
+                ],
+                "clarifications": [
+                  "Consultar as pendências factuais da rodada antes de aceitar uma versão como confirmada.",
+                  "Para segurança, confirmar permissões/autorizações reais; não presumir que break glass foi usado, disponível ou apropriado."
+                ],
+                "observations": [
+                  "Proposta autoral de treinamento, não questão real/oficial ou roteiro de personalidade."
+                ]
+              }
+            },
+            {
+              "id": "AP-01-03",
+              "category": "Negócio",
+              "kind": "presentation",
+              "prompt": "Como a área de negócio confirmou a recuperação?",
+              "source": {
+                "label": "Autoral de treinamento — proposta fornecida neste pedido",
+                "path": "",
+                "anchor": "",
+                "line": null
+              },
+              "followups": [
+                "Qual evidência sustenta essa afirmação?",
+                "Que limite ou incerteza ainda precisa ser informado?"
+              ],
+              "notes": {
+                "objective": "Defender uma afirmação do case com contexto, autoria, evidência e limite.",
+                "evidence": [
+                  "Explica o que ocorreu na época e distingue reflexão posterior.",
+                  "Identifica critério, fonte e escopo da validação, sem converter proposta em execução.",
+                  "Delimita contribuição individual e colaboração."
+                ],
+                "limits": [
+                  "A pergunta é autoral de preparação e não confirma fatos do projeto.",
+                  "Não preencher divergências DMS/snapshot, autoria, perda zero, validação ou rollback com práticas recomendadas."
+                ],
+                "clarifications": [
+                  "Consultar as pendências factuais da rodada antes de aceitar uma versão como confirmada.",
+                  "Para segurança, confirmar permissões/autorizações reais; não presumir que break glass foi usado, disponível ou apropriado."
+                ],
+                "observations": [
+                  "Proposta autoral de treinamento, não questão real/oficial ou roteiro de personalidade."
+                ]
+              }
+            },
+            {
+              "id": "AP-01-04",
+              "category": "Negócio",
+              "kind": "presentation",
+              "prompt": "Qual indicador demonstrou que o problema foi resolvido?",
+              "source": {
+                "label": "Autoral de treinamento — proposta fornecida neste pedido",
+                "path": "",
+                "anchor": "",
+                "line": null
+              },
+              "followups": [
+                "Qual evidência sustenta essa afirmação?",
+                "Que limite ou incerteza ainda precisa ser informado?"
+              ],
+              "notes": {
+                "objective": "Defender uma afirmação do case com contexto, autoria, evidência e limite.",
+                "evidence": [
+                  "Explica o que ocorreu na época e distingue reflexão posterior.",
+                  "Identifica critério, fonte e escopo da validação, sem converter proposta em execução.",
+                  "Delimita contribuição individual e colaboração."
+                ],
+                "limits": [
+                  "A pergunta é autoral de preparação e não confirma fatos do projeto.",
+                  "Não preencher divergências DMS/snapshot, autoria, perda zero, validação ou rollback com práticas recomendadas."
+                ],
+                "clarifications": [
+                  "Consultar as pendências factuais da rodada antes de aceitar uma versão como confirmada.",
+                  "Para segurança, confirmar permissões/autorizações reais; não presumir que break glass foi usado, disponível ou apropriado."
+                ],
+                "observations": [
+                  "Proposta autoral de treinamento, não questão real/oficial ou roteiro de personalidade."
+                ]
+              }
+            },
+            {
+              "id": "AP-02-01",
+              "category": "Arquitetura",
+              "kind": "presentation",
+              "prompt": "Por que a solução inicial deixou de atender à necessidade?",
+              "source": {
+                "label": "Autoral de treinamento — proposta fornecida neste pedido",
+                "path": "",
+                "anchor": "",
+                "line": null
+              },
+              "followups": [
+                "Qual evidência sustenta essa afirmação?",
+                "Que limite ou incerteza ainda precisa ser informado?"
+              ],
+              "notes": {
+                "objective": "Defender uma afirmação do case com contexto, autoria, evidência e limite.",
+                "evidence": [
+                  "Explica o que ocorreu na época e distingue reflexão posterior.",
+                  "Identifica critério, fonte e escopo da validação, sem converter proposta em execução.",
+                  "Delimita contribuição individual e colaboração."
+                ],
+                "limits": [
+                  "A pergunta é autoral de preparação e não confirma fatos do projeto.",
+                  "Não preencher divergências DMS/snapshot, autoria, perda zero, validação ou rollback com práticas recomendadas."
+                ],
+                "clarifications": [
+                  "Consultar as pendências factuais da rodada antes de aceitar uma versão como confirmada.",
+                  "Para segurança, confirmar permissões/autorizações reais; não presumir que break glass foi usado, disponível ou apropriado."
+                ],
+                "observations": [
+                  "Proposta autoral de treinamento, não questão real/oficial ou roteiro de personalidade."
+                ]
+              }
+            },
+            {
+              "id": "AP-02-02",
+              "category": "Arquitetura",
+              "kind": "presentation",
+              "prompt": "Quais alternativas foram avaliadas?",
+              "source": {
+                "label": "Autoral de treinamento — proposta fornecida neste pedido",
+                "path": "",
+                "anchor": "",
+                "line": null
+              },
+              "followups": [
+                "Qual evidência sustenta essa afirmação?",
+                "Que limite ou incerteza ainda precisa ser informado?"
+              ],
+              "notes": {
+                "objective": "Defender uma afirmação do case com contexto, autoria, evidência e limite.",
+                "evidence": [
+                  "Explica o que ocorreu na época e distingue reflexão posterior.",
+                  "Identifica critério, fonte e escopo da validação, sem converter proposta em execução.",
+                  "Delimita contribuição individual e colaboração."
+                ],
+                "limits": [
+                  "A pergunta é autoral de preparação e não confirma fatos do projeto.",
+                  "Não preencher divergências DMS/snapshot, autoria, perda zero, validação ou rollback com práticas recomendadas."
+                ],
+                "clarifications": [
+                  "Consultar as pendências factuais da rodada antes de aceitar uma versão como confirmada.",
+                  "Para segurança, confirmar permissões/autorizações reais; não presumir que break glass foi usado, disponível ou apropriado."
+                ],
+                "observations": [
+                  "Proposta autoral de treinamento, não questão real/oficial ou roteiro de personalidade."
+                ]
+              }
+            },
+            {
+              "id": "AP-02-03",
+              "category": "Arquitetura",
+              "kind": "presentation",
+              "prompt": "Por que a migração foi escolhida?",
+              "source": {
+                "label": "Autoral de treinamento — proposta fornecida neste pedido",
+                "path": "",
+                "anchor": "",
+                "line": null
+              },
+              "followups": [
+                "Qual evidência sustenta essa afirmação?",
+                "Que limite ou incerteza ainda precisa ser informado?"
+              ],
+              "notes": {
+                "objective": "Defender uma afirmação do case com contexto, autoria, evidência e limite.",
+                "evidence": [
+                  "Explica o que ocorreu na época e distingue reflexão posterior.",
+                  "Identifica critério, fonte e escopo da validação, sem converter proposta em execução.",
+                  "Delimita contribuição individual e colaboração."
+                ],
+                "limits": [
+                  "A pergunta é autoral de preparação e não confirma fatos do projeto.",
+                  "Não preencher divergências DMS/snapshot, autoria, perda zero, validação ou rollback com práticas recomendadas."
+                ],
+                "clarifications": [
+                  "Consultar as pendências factuais da rodada antes de aceitar uma versão como confirmada.",
+                  "Para segurança, confirmar permissões/autorizações reais; não presumir que break glass foi usado, disponível ou apropriado."
+                ],
+                "observations": [
+                  "Proposta autoral de treinamento, não questão real/oficial ou roteiro de personalidade."
+                ]
+              }
+            },
+            {
+              "id": "AP-02-04",
+              "category": "Arquitetura",
+              "kind": "presentation",
+              "prompt": "Quais trade-offs foram aceitos?",
+              "source": {
+                "label": "Autoral de treinamento — proposta fornecida neste pedido",
+                "path": "",
+                "anchor": "",
+                "line": null
+              },
+              "followups": [
+                "Qual evidência sustenta essa afirmação?",
+                "Que limite ou incerteza ainda precisa ser informado?"
+              ],
+              "notes": {
+                "objective": "Defender uma afirmação do case com contexto, autoria, evidência e limite.",
+                "evidence": [
+                  "Explica o que ocorreu na época e distingue reflexão posterior.",
+                  "Identifica critério, fonte e escopo da validação, sem converter proposta em execução.",
+                  "Delimita contribuição individual e colaboração."
+                ],
+                "limits": [
+                  "A pergunta é autoral de preparação e não confirma fatos do projeto.",
+                  "Não preencher divergências DMS/snapshot, autoria, perda zero, validação ou rollback com práticas recomendadas."
+                ],
+                "clarifications": [
+                  "Consultar as pendências factuais da rodada antes de aceitar uma versão como confirmada.",
+                  "Para segurança, confirmar permissões/autorizações reais; não presumir que break glass foi usado, disponível ou apropriado."
+                ],
+                "observations": [
+                  "Proposta autoral de treinamento, não questão real/oficial ou roteiro de personalidade."
+                ]
+              }
+            },
+            {
+              "id": "AP-02-05",
+              "category": "Arquitetura",
+              "kind": "presentation",
+              "prompt": "Por que não utilizar snapshot ou outra abordagem?",
+              "source": {
+                "label": "Autoral de treinamento — proposta fornecida neste pedido",
+                "path": "",
+                "anchor": "",
+                "line": null
+              },
+              "followups": [
+                "Qual evidência sustenta essa afirmação?",
+                "Que limite ou incerteza ainda precisa ser informado?"
+              ],
+              "notes": {
+                "objective": "Defender uma afirmação do case com contexto, autoria, evidência e limite.",
+                "evidence": [
+                  "Explica o que ocorreu na época e distingue reflexão posterior.",
+                  "Identifica critério, fonte e escopo da validação, sem converter proposta em execução.",
+                  "Delimita contribuição individual e colaboração."
+                ],
+                "limits": [
+                  "A pergunta é autoral de preparação e não confirma fatos do projeto.",
+                  "Não preencher divergências DMS/snapshot, autoria, perda zero, validação ou rollback com práticas recomendadas."
+                ],
+                "clarifications": [
+                  "Consultar as pendências factuais da rodada antes de aceitar uma versão como confirmada.",
+                  "Para segurança, confirmar permissões/autorizações reais; não presumir que break glass foi usado, disponível ou apropriado."
+                ],
+                "observations": [
+                  "Proposta autoral de treinamento, não questão real/oficial ou roteiro de personalidade."
+                ]
+              }
+            },
+            {
+              "id": "AP-03-01",
+              "category": "Migração e validação",
+              "kind": "presentation",
+              "prompt": "Quais dados foram comparados?",
+              "source": {
+                "label": "Autoral de treinamento — proposta fornecida neste pedido",
+                "path": "",
+                "anchor": "",
+                "line": null
+              },
+              "followups": [
+                "Qual evidência sustenta essa afirmação?",
+                "Que limite ou incerteza ainda precisa ser informado?"
+              ],
+              "notes": {
+                "objective": "Defender uma afirmação do case com contexto, autoria, evidência e limite.",
+                "evidence": [
+                  "Explica o que ocorreu na época e distingue reflexão posterior.",
+                  "Identifica critério, fonte e escopo da validação, sem converter proposta em execução.",
+                  "Delimita contribuição individual e colaboração."
+                ],
+                "limits": [
+                  "A pergunta é autoral de preparação e não confirma fatos do projeto.",
+                  "Não preencher divergências DMS/snapshot, autoria, perda zero, validação ou rollback com práticas recomendadas."
+                ],
+                "clarifications": [
+                  "Consultar as pendências factuais da rodada antes de aceitar uma versão como confirmada.",
+                  "Para segurança, confirmar permissões/autorizações reais; não presumir que break glass foi usado, disponível ou apropriado."
+                ],
+                "observations": [
+                  "Proposta autoral de treinamento, não questão real/oficial ou roteiro de personalidade."
+                ]
+              }
+            },
+            {
+              "id": "AP-03-02",
+              "category": "Migração e validação",
+              "kind": "presentation",
+              "prompt": "Contagem de linhas prova equivalência dos dados?",
+              "source": {
+                "label": "Autoral de treinamento — proposta fornecida neste pedido",
+                "path": "",
+                "anchor": "",
+                "line": null
+              },
+              "followups": [
+                "Qual evidência sustenta essa afirmação?",
+                "Que limite ou incerteza ainda precisa ser informado?"
+              ],
+              "notes": {
+                "objective": "Defender uma afirmação do case com contexto, autoria, evidência e limite.",
+                "evidence": [
+                  "Explica o que ocorreu na época e distingue reflexão posterior.",
+                  "Identifica critério, fonte e escopo da validação, sem converter proposta em execução.",
+                  "Delimita contribuição individual e colaboração."
+                ],
+                "limits": [
+                  "A pergunta é autoral de preparação e não confirma fatos do projeto.",
+                  "Não preencher divergências DMS/snapshot, autoria, perda zero, validação ou rollback com práticas recomendadas."
+                ],
+                "clarifications": [
+                  "Consultar as pendências factuais da rodada antes de aceitar uma versão como confirmada.",
+                  "Para segurança, confirmar permissões/autorizações reais; não presumir que break glass foi usado, disponível ou apropriado."
+                ],
+                "observations": [
+                  "Proposta autoral de treinamento, não questão real/oficial ou roteiro de personalidade."
+                ]
+              }
+            },
+            {
+              "id": "AP-03-03",
+              "category": "Migração e validação",
+              "kind": "presentation",
+              "prompt": "Como foi feito o cutover?",
+              "source": {
+                "label": "Autoral de treinamento — proposta fornecida neste pedido",
+                "path": "",
+                "anchor": "",
+                "line": null
+              },
+              "followups": [
+                "Qual evidência sustenta essa afirmação?",
+                "Que limite ou incerteza ainda precisa ser informado?"
+              ],
+              "notes": {
+                "objective": "Defender uma afirmação do case com contexto, autoria, evidência e limite.",
+                "evidence": [
+                  "Explica o que ocorreu na época e distingue reflexão posterior.",
+                  "Identifica critério, fonte e escopo da validação, sem converter proposta em execução.",
+                  "Delimita contribuição individual e colaboração."
+                ],
+                "limits": [
+                  "A pergunta é autoral de preparação e não confirma fatos do projeto.",
+                  "Não preencher divergências DMS/snapshot, autoria, perda zero, validação ou rollback com práticas recomendadas."
+                ],
+                "clarifications": [
+                  "Consultar as pendências factuais da rodada antes de aceitar uma versão como confirmada.",
+                  "Para segurança, confirmar permissões/autorizações reais; não presumir que break glass foi usado, disponível ou apropriado."
+                ],
+                "observations": [
+                  "Proposta autoral de treinamento, não questão real/oficial ou roteiro de personalidade."
+                ]
+              }
+            },
+            {
+              "id": "AP-03-04",
+              "category": "Migração e validação",
+              "kind": "presentation",
+              "prompt": "O que aconteceria com novas escritas em caso de rollback?",
+              "source": {
+                "label": "Autoral de treinamento — proposta fornecida neste pedido",
+                "path": "",
+                "anchor": "",
+                "line": null
+              },
+              "followups": [
+                "Qual evidência sustenta essa afirmação?",
+                "Que limite ou incerteza ainda precisa ser informado?"
+              ],
+              "notes": {
+                "objective": "Defender uma afirmação do case com contexto, autoria, evidência e limite.",
+                "evidence": [
+                  "Explica o que ocorreu na época e distingue reflexão posterior.",
+                  "Identifica critério, fonte e escopo da validação, sem converter proposta em execução.",
+                  "Delimita contribuição individual e colaboração."
+                ],
+                "limits": [
+                  "A pergunta é autoral de preparação e não confirma fatos do projeto.",
+                  "Não preencher divergências DMS/snapshot, autoria, perda zero, validação ou rollback com práticas recomendadas."
+                ],
+                "clarifications": [
+                  "Consultar as pendências factuais da rodada antes de aceitar uma versão como confirmada.",
+                  "Para segurança, confirmar permissões/autorizações reais; não presumir que break glass foi usado, disponível ou apropriado."
+                ],
+                "observations": [
+                  "Proposta autoral de treinamento, não questão real/oficial ou roteiro de personalidade."
+                ]
+              }
+            },
+            {
+              "id": "AP-03-05",
+              "category": "Migração e validação",
+              "kind": "presentation",
+              "prompt": "Como foi definido o encerramento da contingência?",
+              "source": {
+                "label": "Autoral de treinamento — proposta fornecida neste pedido",
+                "path": "",
+                "anchor": "",
+                "line": null
+              },
+              "followups": [
+                "Qual evidência sustenta essa afirmação?",
+                "Que limite ou incerteza ainda precisa ser informado?"
+              ],
+              "notes": {
+                "objective": "Defender uma afirmação do case com contexto, autoria, evidência e limite.",
+                "evidence": [
+                  "Explica o que ocorreu na época e distingue reflexão posterior.",
+                  "Identifica critério, fonte e escopo da validação, sem converter proposta em execução.",
+                  "Delimita contribuição individual e colaboração."
+                ],
+                "limits": [
+                  "A pergunta é autoral de preparação e não confirma fatos do projeto.",
+                  "Não preencher divergências DMS/snapshot, autoria, perda zero, validação ou rollback com práticas recomendadas."
+                ],
+                "clarifications": [
+                  "Consultar as pendências factuais da rodada antes de aceitar uma versão como confirmada.",
+                  "Para segurança, confirmar permissões/autorizações reais; não presumir que break glass foi usado, disponível ou apropriado."
+                ],
+                "observations": [
+                  "Proposta autoral de treinamento, não questão real/oficial ou roteiro de personalidade."
+                ]
+              }
+            },
+            {
+              "id": "AP-04-01",
+              "category": "Segurança e risco",
+              "kind": "presentation",
+              "prompt": "Quais permissões foram necessárias?",
+              "source": {
+                "label": "Autoral de treinamento — proposta fornecida neste pedido",
+                "path": "",
+                "anchor": "",
+                "line": null
+              },
+              "followups": [
+                "Qual evidência sustenta essa afirmação?",
+                "Que limite ou incerteza ainda precisa ser informado?"
+              ],
+              "notes": {
+                "objective": "Defender uma afirmação do case com contexto, autoria, evidência e limite.",
+                "evidence": [
+                  "Explica o que ocorreu na época e distingue reflexão posterior.",
+                  "Identifica critério, fonte e escopo da validação, sem converter proposta em execução.",
+                  "Delimita contribuição individual e colaboração."
+                ],
+                "limits": [
+                  "A pergunta é autoral de preparação e não confirma fatos do projeto.",
+                  "Não preencher divergências DMS/snapshot, autoria, perda zero, validação ou rollback com práticas recomendadas."
+                ],
+                "clarifications": [
+                  "Consultar as pendências factuais da rodada antes de aceitar uma versão como confirmada.",
+                  "Para segurança, confirmar permissões/autorizações reais; não presumir que break glass foi usado, disponível ou apropriado."
+                ],
+                "observations": [
+                  "Proposta autoral de treinamento, não questão real/oficial ou roteiro de personalidade."
+                ]
+              }
+            },
+            {
+              "id": "AP-04-02",
+              "category": "Segurança e risco",
+              "kind": "presentation",
+              "prompt": "Por que não utilizar break glass?",
+              "source": {
+                "label": "Autoral de treinamento — proposta fornecida neste pedido",
+                "path": "",
+                "anchor": "",
+                "line": null
+              },
+              "followups": [
+                "Qual evidência sustenta essa afirmação?",
+                "Que limite ou incerteza ainda precisa ser informado?"
+              ],
+              "notes": {
+                "objective": "Defender uma afirmação do case com contexto, autoria, evidência e limite.",
+                "evidence": [
+                  "Explica o que ocorreu na época e distingue reflexão posterior.",
+                  "Identifica critério, fonte e escopo da validação, sem converter proposta em execução.",
+                  "Delimita contribuição individual e colaboração."
+                ],
+                "limits": [
+                  "A pergunta é autoral de preparação e não confirma fatos do projeto.",
+                  "Não preencher divergências DMS/snapshot, autoria, perda zero, validação ou rollback com práticas recomendadas."
+                ],
+                "clarifications": [
+                  "Consultar as pendências factuais da rodada antes de aceitar uma versão como confirmada.",
+                  "Para segurança, confirmar permissões/autorizações reais; não presumir que break glass foi usado, disponível ou apropriado."
+                ],
+                "observations": [
+                  "Proposta autoral de treinamento, não questão real/oficial ou roteiro de personalidade."
+                ]
+              }
+            },
+            {
+              "id": "AP-04-03",
+              "category": "Segurança e risco",
+              "kind": "presentation",
+              "prompt": "Como foi avaliado o risco?",
+              "source": {
+                "label": "Autoral de treinamento — proposta fornecida neste pedido",
+                "path": "",
+                "anchor": "",
+                "line": null
+              },
+              "followups": [
+                "Qual evidência sustenta essa afirmação?",
+                "Que limite ou incerteza ainda precisa ser informado?"
+              ],
+              "notes": {
+                "objective": "Defender uma afirmação do case com contexto, autoria, evidência e limite.",
+                "evidence": [
+                  "Explica o que ocorreu na época e distingue reflexão posterior.",
+                  "Identifica critério, fonte e escopo da validação, sem converter proposta em execução.",
+                  "Delimita contribuição individual e colaboração."
+                ],
+                "limits": [
+                  "A pergunta é autoral de preparação e não confirma fatos do projeto.",
+                  "Não preencher divergências DMS/snapshot, autoria, perda zero, validação ou rollback com práticas recomendadas."
+                ],
+                "clarifications": [
+                  "Consultar as pendências factuais da rodada antes de aceitar uma versão como confirmada.",
+                  "Para segurança, confirmar permissões/autorizações reais; não presumir que break glass foi usado, disponível ou apropriado."
+                ],
+                "observations": [
+                  "Proposta autoral de treinamento, não questão real/oficial ou roteiro de personalidade."
+                ]
+              }
+            },
+            {
+              "id": "AP-04-04",
+              "category": "Segurança e risco",
+              "kind": "presentation",
+              "prompt": "Quais controles foram preservados?",
+              "source": {
+                "label": "Autoral de treinamento — proposta fornecida neste pedido",
+                "path": "",
+                "anchor": "",
+                "line": null
+              },
+              "followups": [
+                "Qual evidência sustenta essa afirmação?",
+                "Que limite ou incerteza ainda precisa ser informado?"
+              ],
+              "notes": {
+                "objective": "Defender uma afirmação do case com contexto, autoria, evidência e limite.",
+                "evidence": [
+                  "Explica o que ocorreu na época e distingue reflexão posterior.",
+                  "Identifica critério, fonte e escopo da validação, sem converter proposta em execução.",
+                  "Delimita contribuição individual e colaboração."
+                ],
+                "limits": [
+                  "A pergunta é autoral de preparação e não confirma fatos do projeto.",
+                  "Não preencher divergências DMS/snapshot, autoria, perda zero, validação ou rollback com práticas recomendadas."
+                ],
+                "clarifications": [
+                  "Consultar as pendências factuais da rodada antes de aceitar uma versão como confirmada.",
+                  "Para segurança, confirmar permissões/autorizações reais; não presumir que break glass foi usado, disponível ou apropriado."
+                ],
+                "observations": [
+                  "Proposta autoral de treinamento, não questão real/oficial ou roteiro de personalidade."
+                ]
+              }
+            },
+            {
+              "id": "AP-05-01",
+              "category": "Liderança e resultado",
+              "kind": "presentation",
+              "prompt": "Qual foi a contribuição individual da Vitória?",
+              "source": {
+                "label": "Autoral de treinamento — proposta fornecida neste pedido",
+                "path": "",
+                "anchor": "",
+                "line": null
+              },
+              "followups": [
+                "Qual evidência sustenta essa afirmação?",
+                "Que limite ou incerteza ainda precisa ser informado?"
+              ],
+              "notes": {
+                "objective": "Defender uma afirmação do case com contexto, autoria, evidência e limite.",
+                "evidence": [
+                  "Explica o que ocorreu na época e distingue reflexão posterior.",
+                  "Identifica critério, fonte e escopo da validação, sem converter proposta em execução.",
+                  "Delimita contribuição individual e colaboração."
+                ],
+                "limits": [
+                  "A pergunta é autoral de preparação e não confirma fatos do projeto.",
+                  "Não preencher divergências DMS/snapshot, autoria, perda zero, validação ou rollback com práticas recomendadas."
+                ],
+                "clarifications": [
+                  "Consultar as pendências factuais da rodada antes de aceitar uma versão como confirmada.",
+                  "Para segurança, confirmar permissões/autorizações reais; não presumir que break glass foi usado, disponível ou apropriado."
+                ],
+                "observations": [
+                  "Proposta autoral de treinamento, não questão real/oficial ou roteiro de personalidade."
+                ]
+              }
+            },
+            {
+              "id": "AP-05-02",
+              "category": "Liderança e resultado",
+              "kind": "presentation",
+              "prompt": "Como envolveu outras equipes?",
+              "source": {
+                "label": "Autoral de treinamento — proposta fornecida neste pedido",
+                "path": "",
+                "anchor": "",
+                "line": null
+              },
+              "followups": [
+                "Qual evidência sustenta essa afirmação?",
+                "Que limite ou incerteza ainda precisa ser informado?"
+              ],
+              "notes": {
+                "objective": "Defender uma afirmação do case com contexto, autoria, evidência e limite.",
+                "evidence": [
+                  "Explica o que ocorreu na época e distingue reflexão posterior.",
+                  "Identifica critério, fonte e escopo da validação, sem converter proposta em execução.",
+                  "Delimita contribuição individual e colaboração."
+                ],
+                "limits": [
+                  "A pergunta é autoral de preparação e não confirma fatos do projeto.",
+                  "Não preencher divergências DMS/snapshot, autoria, perda zero, validação ou rollback com práticas recomendadas."
+                ],
+                "clarifications": [
+                  "Consultar as pendências factuais da rodada antes de aceitar uma versão como confirmada.",
+                  "Para segurança, confirmar permissões/autorizações reais; não presumir que break glass foi usado, disponível ou apropriado."
+                ],
+                "observations": [
+                  "Proposta autoral de treinamento, não questão real/oficial ou roteiro de personalidade."
+                ]
+              }
+            },
+            {
+              "id": "AP-05-03",
+              "category": "Liderança e resultado",
+              "kind": "presentation",
+              "prompt": "Como negociou a priorização da manutenção?",
+              "source": {
+                "label": "Autoral de treinamento — proposta fornecida neste pedido",
+                "path": "",
+                "anchor": "",
+                "line": null
+              },
+              "followups": [
+                "Qual evidência sustenta essa afirmação?",
+                "Que limite ou incerteza ainda precisa ser informado?"
+              ],
+              "notes": {
+                "objective": "Defender uma afirmação do case com contexto, autoria, evidência e limite.",
+                "evidence": [
+                  "Explica o que ocorreu na época e distingue reflexão posterior.",
+                  "Identifica critério, fonte e escopo da validação, sem converter proposta em execução.",
+                  "Delimita contribuição individual e colaboração."
+                ],
+                "limits": [
+                  "A pergunta é autoral de preparação e não confirma fatos do projeto.",
+                  "Não preencher divergências DMS/snapshot, autoria, perda zero, validação ou rollback com práticas recomendadas."
+                ],
+                "clarifications": [
+                  "Consultar as pendências factuais da rodada antes de aceitar uma versão como confirmada.",
+                  "Para segurança, confirmar permissões/autorizações reais; não presumir que break glass foi usado, disponível ou apropriado."
+                ],
+                "observations": [
+                  "Proposta autoral de treinamento, não questão real/oficial ou roteiro de personalidade."
+                ]
+              }
+            },
+            {
+              "id": "AP-05-04",
+              "category": "Liderança e resultado",
+              "kind": "presentation",
+              "prompt": "Qual resultado foi observado e medido?",
+              "source": {
+                "label": "Autoral de treinamento — proposta fornecida neste pedido",
+                "path": "",
+                "anchor": "",
+                "line": null
+              },
+              "followups": [
+                "Qual evidência sustenta essa afirmação?",
+                "Que limite ou incerteza ainda precisa ser informado?"
+              ],
+              "notes": {
+                "objective": "Defender uma afirmação do case com contexto, autoria, evidência e limite.",
+                "evidence": [
+                  "Explica o que ocorreu na época e distingue reflexão posterior.",
+                  "Identifica critério, fonte e escopo da validação, sem converter proposta em execução.",
+                  "Delimita contribuição individual e colaboração."
+                ],
+                "limits": [
+                  "A pergunta é autoral de preparação e não confirma fatos do projeto.",
+                  "Não preencher divergências DMS/snapshot, autoria, perda zero, validação ou rollback com práticas recomendadas."
+                ],
+                "clarifications": [
+                  "Consultar as pendências factuais da rodada antes de aceitar uma versão como confirmada.",
+                  "Para segurança, confirmar permissões/autorizações reais; não presumir que break glass foi usado, disponível ou apropriado."
+                ],
+                "observations": [
+                  "Proposta autoral de treinamento, não questão real/oficial ou roteiro de personalidade."
+                ]
+              }
+            },
+            {
+              "id": "AP-05-05",
+              "category": "Liderança e resultado",
+              "kind": "presentation",
+              "prompt": "O que faria diferente hoje?",
+              "source": {
+                "label": "Autoral de treinamento — proposta fornecida neste pedido",
+                "path": "",
+                "anchor": "",
+                "line": null
+              },
+              "followups": [
+                "Qual evidência sustenta essa afirmação?",
+                "Que limite ou incerteza ainda precisa ser informado?"
+              ],
+              "notes": {
+                "objective": "Defender uma afirmação do case com contexto, autoria, evidência e limite.",
+                "evidence": [
+                  "Explica o que ocorreu na época e distingue reflexão posterior.",
+                  "Identifica critério, fonte e escopo da validação, sem converter proposta em execução.",
+                  "Delimita contribuição individual e colaboração."
+                ],
+                "limits": [
+                  "A pergunta é autoral de preparação e não confirma fatos do projeto.",
+                  "Não preencher divergências DMS/snapshot, autoria, perda zero, validação ou rollback com práticas recomendadas."
+                ],
+                "clarifications": [
+                  "Consultar as pendências factuais da rodada antes de aceitar uma versão como confirmada.",
+                  "Para segurança, confirmar permissões/autorizações reais; não presumir que break glass foi usado, disponível ou apropriado."
+                ],
+                "observations": [
+                  "Proposta autoral de treinamento, não questão real/oficial ou roteiro de personalidade."
+                ]
+              }
+            }
+          ],
+          "reserves": [
+            {
+              "id": "AP-RES-01",
+              "category": "Reserva",
+              "kind": "presentation",
+              "prompt": "Que informação disponível na época poderia ter feito você escolher outra alternativa?",
+              "source": {
+                "label": "Autoral de treinamento — proposta fornecida neste pedido",
+                "path": "",
+                "anchor": "",
+                "line": null
+              },
+              "followups": [
+                "Qual evidência sustenta essa afirmação?",
+                "Que limite ou incerteza ainda precisa ser informado?"
+              ],
+              "notes": {
+                "objective": "Testar julgamento nas condições originais.",
+                "evidence": [
+                  "Separa o que sabia do que descobriu depois."
+                ],
+                "limits": [
+                  "Não completar a experiência nem prometer aprovação. Aceitar alternativas coerentes com premissas e evidências."
+                ],
+                "clarifications": [
+                  "Distinguir fato, hipótese e proposta; pedir o alcance de cada conclusão."
+                ],
+                "observations": [
+                  "Proposta autoral de treinamento, não questão real/oficial ou roteiro de personalidade."
+                ]
+              }
+            },
+            {
+              "id": "AP-RES-02",
+              "category": "Reserva",
+              "kind": "presentation",
+              "prompt": "Explique a mesma decisão para negócio e, em seguida, para quem precisaria operá-la.",
+              "source": {
+                "label": "Autoral de treinamento — proposta fornecida neste pedido",
+                "path": "",
+                "anchor": "",
+                "line": null
+              },
+              "followups": [
+                "Qual evidência sustenta essa afirmação?",
+                "Que limite ou incerteza ainda precisa ser informado?"
+              ],
+              "notes": {
+                "objective": "Adaptar linguagem preservando fatos.",
+                "evidence": [
+                  "Mantém problema, mecanismo, responsabilidade e limites."
+                ],
+                "limits": [
+                  "Não completar a experiência nem prometer aprovação. Aceitar alternativas coerentes com premissas e evidências."
+                ],
+                "clarifications": [
+                  "Distinguir fato, hipótese e proposta; pedir o alcance de cada conclusão."
+                ],
+                "observations": [
+                  "Proposta autoral de treinamento, não questão real/oficial ou roteiro de personalidade."
+                ]
+              }
+            }
+          ],
+          "candidateQuestion": "Que parte da decisão ainda precisa de evidência para ficar suficientemente clara para vocês?",
+          "notesMarkdown": "## Perguntas, não respostas confirmadas\n\nTreine a recuperação da jornada de recomendações de investimentos usando somente fatos que a participante possa sustentar. As perguntas de negócio, arquitetura, migração, segurança e liderança foram propostas neste pedido. Não constituem descrição confirmada do projeto nem perguntas reais da AWS.\n\n## Pendências factuais obrigatórias\n\n- **DMS/snapshot e autoria:** leadership-principles/stories/star-06-emergency-db-migration.md:7 registra que a apresentação descreve DMS e troca por colegas, enquanto STAR-06 descreve snapshot e troca pela candidata. O arquivo não resolve a divergência. Não escolher a versão verdadeira.\n- **Rollback após novas escritas:** STAR-06:165–167 fala em voltar ao endpoint anterior. A revisão Cleber (interview/simulations/05-mentoria-transacoes/candidato.md, seção de migração) pede esclarecer os dados gravados apenas no destino. Redirecionar tráfego não prova reconciliação.\n- **Validação:** termos como integridade, contagens ou tamanho não documentam equivalência por chave/valores. Confirmar método, amostragem, critérios e aceite. Uso de DMS não demonstra recurso de validação habilitado/concluído.\n- **Snapshot e perda zero:** confirmar todos os escritores e a janela entre cópia e troca. Ausência de escrita contínua não prova ausência de qualquer delta.\n- **Encerramento da contingência:** confirmar processos e ciclos críticos cobertos e autoridade do aceite. Não deduzir suficiência só pelo prazo de observação.\n- **Segurança:** confirmar uso, solicitação e autorização de permissões/break glass. Não transformar uma pergunta em confirmação de uso ou de recusa.\n\nNão usar o cenário fictício do simulado06 de troubleshooting para completar o histórico da STAR-06. STAR-03 trata migração de contrato/identificador, outra história. Sugestões da conversa com Cleber não são automaticamente análises realizadas na época.\n\n## Feedback\n\nRegistrar o que o ouvinte entendeu: problema, responsabilidade, decisão, ações, resultado/evidência e dúvida. Priorizar até duas práticas. Não fornecer nota L5/L6 nem probabilidade de contratação."
+        }
+      ],
+      "publication": "public",
+      "returnUrl": "/praticar/index.html#instrutor"
+    },
+    {
+      "pageId": "dia-11",
+      "title": "Dia 11 — Entrevistas comportamentais e funcionais",
+      "date": "2026-11-11",
+      "dateLabel": "Quarta-feira, 11/11/2026",
+      "otherPage": {
+        "title": "Dia 10 — Entrevista técnica e apresentação",
+        "url": "/praticar/loop/dia-10/index.html"
+      },
+      "intro": "Agenda fornecida para organizar ensaios. Horários de referência em America/Sao_Paulo. A distribuição de Leadership Principles por pessoa é somente hipótese de preparação; não foi confirmada pela AWS. Perguntas autorais, sem reprodução de personalidade ou questões reais/vazadas.",
+      "privacyNotice": "Roteiro completo do instrutor publicado sem autenticação: nomes, agenda, perguntas e notas podem ser consultados por qualquer pessoa. Compartilhe somente a janela da seleção durante o treino. Registros preenchidos e avaliações ficam apenas neste navegador; a ferramenta não os envia ao site. Não use GenAI durante a entrevista real.",
+      "sessions": [
+        {
+          "id": "bruna",
+          "name": "Bru",
+          "role": "Enterprise Account Manager",
+          "time": "10h30–11h30",
+          "hypothesis": [
+            "Customer Obsession",
+            "Earn Trust"
+          ],
+          "objective": "Compreender a necessidade do cliente, explicar restrições com confiança e demonstrar mudança concreta depois de feedback.",
+          "agenda": [
+            {
+              "label": "Abertura",
+              "minutes": 3
+            },
+            {
+              "label": "Primeiro episódio",
+              "minutes": 15
+            },
+            {
+              "label": "Segundo episódio",
+              "minutes": 15
+            },
+            {
+              "label": "Exercício funcional/consultivo",
+              "minutes": 12
+            },
+            {
+              "label": "Pergunta da candidata",
+              "minutes": 5
+            },
+            {
+              "label": "Feedback",
+              "minutes": 5
+            },
+            {
+              "label": "Reformulação e próxima prática",
+              "minutes": 5
+            }
+          ],
+          "questions": [
+            {
+              "lpId": "LP01-Q09"
+            },
+            {
+              "lpId": "LP11-Q08"
+            },
+            {
+              "id": "FUNC-BRUNA",
+              "kind": "consultative",
+              "category": "Exercício consultivo autoral",
+              "scenario": "consultiva",
+              "followups": [
+                "Qual é a necessidade e como saber que foi atendida?",
+                "Que informação precisa da equipe responsável pela dependência?",
+                "Qual promessa pode fazer agora e o que precisa validar?",
+                "Quem decide escopo, prazo e risco?"
+              ],
+              "notes": {
+                "objective": "Conduzir uma conversa com cliente e equipe técnica antes de prometer uma entrega.",
+                "evidence": [
+                  "Esclarece necessidade, contrato/capacidade, operação e responsáveis.",
+                  "Compara alternativas sem dizer sim/não/piloto como resposta obrigatória."
+                ],
+                "limits": [
+                  "Usa o recorte original da conversa consultiva. Nenhum teste foi executado; não inventar sucesso, defeito, orçamento ou prazo fixo."
+                ],
+                "clarifications": [
+                  "Distinguir fato, hipótese e proposta; pedir o alcance de cada conclusão."
+                ],
+                "observations": [
+                  "Proposta autoral de treinamento, não questão real/oficial ou roteiro de personalidade."
+                ]
+              }
+            }
+          ],
+          "reserves": [
+            {
+              "lpId": "LP11-Q02"
+            },
+            {
+              "lpId": "LP01-Q07"
+            }
+          ],
+          "candidateQuestion": "Pode compartilhar um exemplo de como o time conciliou uma necessidade importante do cliente com uma restrição que exigiu rever a proposta?",
+          "notesMarkdown": "## Condução\n\nEnsaio de 60 minutos incluindo feedback e reformulação. Pergunte antes de orientar. A primeira resposta organiza o episódio; aprofunde autoria, mecanismo, decisão, resultado e aprendizado sem recomeçar todo o STAR. Registre a ajuda. Os LPs desta agenda são hipóteses de preparação, não atribuições conhecidas do entrevistador.\n\nAs reservas substituem a principal; não é necessário completar o banco inteiro. O exercício funcional é hipotético e autoral, não experiência passada. Uma resposta plausível precisa declarar premissas, comparar caminhos, identificar decisor e validação. Não exigir a marca de um serviço nem um encaminhamento único.\n\nFontes de condução: leadership-principles/practice-guide.md; leadership-principles/loop-focus.md; interview/simulations/01-behavioral/mock-script.md; interview/simulations/06-conversa-consultiva/instrutor.md. Não simular personalidade do interlocutor nem tratar estas perguntas como reais, oficiais ou vazadas."
+        },
+        {
+          "id": "ricardo",
+          "name": "Rica",
+          "role": "FSI Account Manager",
+          "time": "13h–14h",
+          "hypothesis": [
+            "Have Backbone; Disagree and Commit",
+            "Bias for Action"
+          ],
+          "objective": "Sustentar discordância respeitosa, apoiar a decisão final e explicar ação sob incerteza com risco e responsabilidade delimitados.",
+          "agenda": [
+            {
+              "label": "Abertura",
+              "minutes": 3
+            },
+            {
+              "label": "Primeiro episódio",
+              "minutes": 15
+            },
+            {
+              "label": "Segundo episódio",
+              "minutes": 15
+            },
+            {
+              "label": "Exercício funcional/consultivo",
+              "minutes": 12
+            },
+            {
+              "label": "Pergunta da candidata",
+              "minutes": 5
+            },
+            {
+              "label": "Feedback",
+              "minutes": 5
+            },
+            {
+              "label": "Reformulação e próxima prática",
+              "minutes": 5
+            }
+          ],
+          "questions": [
+            {
+              "lpId": "LP13-Q02"
+            },
+            {
+              "lpId": "LP09-Q01"
+            },
+            {
+              "id": "FUNC-RICARDO",
+              "category": "Exercício consultivo autoral",
+              "kind": "consultative",
+              "prompt": "Uma campanha tem prazo inegociável, mas a equipe técnica identifica risco relevante na implantação. Como equilibrar velocidade, risco e responsabilidade?",
+              "source": {
+                "label": "Autoral de treinamento — proposta fornecida neste pedido",
+                "path": "",
+                "anchor": "",
+                "line": null
+              },
+              "followups": [
+                "Qual risco precisa ser entendido antes de agir?",
+                "O que pode mudar se a data não pode?",
+                "Quem aprova a decisão e como validaria o resultado?"
+              ],
+              "notes": {
+                "objective": "Administrar restrição declarada e risco sem decidir pela autoridade alheia.",
+                "evidence": [
+                  "Esclarece impacto, reversibilidade e verificações indispensáveis.",
+                  "Compara escopo/contingência e envolve quem aceita o risco.",
+                  "Propõe critério verificável para avançar ou rever a decisão."
+                ],
+                "limits": [
+                  "Variação autoral com prazo fixo declarado neste enunciado. Não transportar os cartões da conversa consultiva original como se prazo fixo já fosse seu fato.",
+                  "Não há evidência de teste ou aprovação a liberar; discutir proposta e incerteza."
+                ],
+                "clarifications": [
+                  "Distinguir fato, hipótese e proposta; pedir o alcance de cada conclusão."
+                ],
+                "observations": [
+                  "Proposta autoral de treinamento, não questão real/oficial ou roteiro de personalidade."
+                ]
+              }
+            }
+          ],
+          "reserves": [
+            {
+              "lpId": "LP13-Q07"
+            },
+            {
+              "lpId": "LP09-Q10"
+            }
+          ],
+          "candidateQuestion": "Como vocês constroem a decisão quando prazo comercial e risco técnico apontam para caminhos diferentes?",
+          "notesMarkdown": "## Condução\n\nEnsaio de 60 minutos incluindo feedback e reformulação. Pergunte antes de orientar. A primeira resposta organiza o episódio; aprofunde autoria, mecanismo, decisão, resultado e aprendizado sem recomeçar todo o STAR. Registre a ajuda. Os LPs desta agenda são hipóteses de preparação, não atribuições conhecidas do entrevistador.\n\nAs reservas substituem a principal; não é necessário completar o banco inteiro. O exercício funcional é hipotético e autoral, não experiência passada. Uma resposta plausível precisa declarar premissas, comparar caminhos, identificar decisor e validação. Não exigir a marca de um serviço nem um encaminhamento único.\n\nFontes de condução: leadership-principles/practice-guide.md; leadership-principles/loop-focus.md; interview/simulations/01-behavioral/mock-script.md; interview/simulations/06-conversa-consultiva/instrutor.md. Não simular personalidade do interlocutor nem tratar estas perguntas como reais, oficiais ou vazadas."
+        },
+        {
+          "id": "fernanda",
+          "name": "Fer",
+          "role": "Brazil Customer Success Manager Leader",
+          "time": "14h–15h",
+          "hypothesis": [
+            "Ownership",
+            "Deliver Results"
+          ],
+          "objective": "Coordenar compromissos sem autoridade formal, superar obstáculos e demonstrar resultado para a necessidade do cliente.",
+          "agenda": [
+            {
+              "label": "Abertura",
+              "minutes": 3
+            },
+            {
+              "label": "Primeiro episódio",
+              "minutes": 15
+            },
+            {
+              "label": "Segundo episódio",
+              "minutes": 15
+            },
+            {
+              "label": "Exercício funcional/consultivo",
+              "minutes": 12
+            },
+            {
+              "label": "Pergunta da candidata",
+              "minutes": 5
+            },
+            {
+              "label": "Feedback",
+              "minutes": 5
+            },
+            {
+              "label": "Reformulação e próxima prática",
+              "minutes": 5
+            }
+          ],
+          "questions": [
+            {
+              "lpId": "LP02-Q08"
+            },
+            {
+              "lpId": "LP14-Q01"
+            },
+            {
+              "id": "FUNC-FERNANDA",
+              "category": "Exercício funcional autoral",
+              "kind": "consultative",
+              "prompt": "Uma solução já foi implantada e os componentes estão saudáveis, mas não há evidência de adoção ou impacto positivo. Como demonstrar que resolveu a necessidade do cliente?",
+              "source": {
+                "label": "Autoral de treinamento — proposta fornecida neste pedido",
+                "path": "",
+                "anchor": "",
+                "line": null
+              },
+              "followups": [
+                "Qual necessidade foi acordada?",
+                "Que observação distingue implantação de adoção?",
+                "Como escolher indicador, período e fonte?"
+              ],
+              "notes": {
+                "objective": "Distinguir saúde técnica de atendimento da necessidade.",
+                "evidence": [
+                  "Retoma necessidade, população, adoção, resultado e comparação possível.",
+                  "Define indicador, fonte, período e responsável sem inventar dados.",
+                  "Propõe validação com usuário/negócio e ajuste quando a evidência não confirma impacto."
+                ],
+                "limits": [
+                  "Enunciado hipotético: não há números, testes nem prova de resultado. Não converter componentes saudáveis em sucesso de negócio."
+                ],
+                "clarifications": [
+                  "Distinguir fato, hipótese e proposta; pedir o alcance de cada conclusão."
+                ],
+                "observations": [
+                  "Proposta autoral de treinamento, não questão real/oficial ou roteiro de personalidade."
+                ]
+              }
+            }
+          ],
+          "reserves": [
+            {
+              "lpId": "LP02-Q01"
+            },
+            {
+              "lpId": "LP14-Q05"
+            }
+          ],
+          "candidateQuestion": "Que exemplo recente representa um resultado bem-sucedido para o cliente depois da implantação, e como o time o acompanhou?",
+          "notesMarkdown": "## Condução\n\nEnsaio de 60 minutos incluindo feedback e reformulação. Pergunte antes de orientar. A primeira resposta organiza o episódio; aprofunde autoria, mecanismo, decisão, resultado e aprendizado sem recomeçar todo o STAR. Registre a ajuda. Os LPs desta agenda são hipóteses de preparação, não atribuições conhecidas do entrevistador.\n\nAs reservas substituem a principal; não é necessário completar o banco inteiro. O exercício funcional é hipotético e autoral, não experiência passada. Uma resposta plausível precisa declarar premissas, comparar caminhos, identificar decisor e validação. Não exigir a marca de um serviço nem um encaminhamento único.\n\nFontes de condução: leadership-principles/practice-guide.md; leadership-principles/loop-focus.md; interview/simulations/01-behavioral/mock-script.md; interview/simulations/06-conversa-consultiva/instrutor.md. Não simular personalidade do interlocutor nem tratar estas perguntas como reais, oficiais ou vazadas."
+        },
+        {
+          "id": "lucas",
+          "name": "Luca",
+          "role": "Sr. Manager, Solutions Architecture",
+          "time": "15h30–16h30",
+          "hypothesis": [
+            "Think Big",
+            "Learn and Be Curious"
+          ],
+          "objective": "Distinguir visão ampliada de adoção real e demonstrar como uma lacuna de conhecimento foi identificada, aprendida e aplicada.",
+          "agenda": [
+            {
+              "label": "Abertura",
+              "minutes": 3
+            },
+            {
+              "label": "Primeiro episódio",
+              "minutes": 15
+            },
+            {
+              "label": "Segundo episódio",
+              "minutes": 15
+            },
+            {
+              "label": "Exercício funcional/consultivo",
+              "minutes": 12
+            },
+            {
+              "label": "Pergunta da candidata",
+              "minutes": 5
+            },
+            {
+              "label": "Feedback",
+              "minutes": 5
+            },
+            {
+              "label": "Reformulação e próxima prática",
+              "minutes": 5
+            }
+          ],
+          "questions": [
+            {
+              "lpId": "LP08-Q01"
+            },
+            {
+              "lpId": "LP05-Q01"
+            },
+            {
+              "id": "FUNC-LUCAS",
+              "category": "Exercício funcional autoral",
+              "kind": "consultative",
+              "prompt": "Uma arquitetura que funciona para uma equipe será considerada para outras equipes, com volumes e capacidades operacionais diferentes. O que reutilizar, o que precisa mudar e quais premissas precisam de validação?",
+              "source": {
+                "label": "Autoral de treinamento — proposta fornecida neste pedido",
+                "path": "",
+                "anchor": "",
+                "line": null
+              },
+              "followups": [
+                "Quais premissas da primeira equipe podem deixar de valer?",
+                "Que validação antecede a reutilização?",
+                "O que ainda é possibilidade, não adoção?"
+              ],
+              "notes": {
+                "objective": "Explorar ampliação sem presumir que repetição do desenho é suficiente.",
+                "evidence": [
+                  "Distingue invariantes e diferenças de carga, isolamento, custo e operação.",
+                  "Valida demanda e capacidade do time antes de generalizar.",
+                  "Separa primeira entrega, adoção efetiva e possibilidade futura."
+                ],
+                "limits": [
+                  "Não há escala ou arquitetura detalhada informada. Declarar hipóteses; não inventar dimensionamento ou resultado de teste."
+                ],
+                "clarifications": [
+                  "Distinguir fato, hipótese e proposta; pedir o alcance de cada conclusão."
+                ],
+                "observations": [
+                  "Proposta autoral de treinamento, não questão real/oficial ou roteiro de personalidade."
+                ]
+              }
+            }
+          ],
+          "reserves": [
+            {
+              "lpId": "LP05-Q11"
+            },
+            {
+              "lpId": "LP08-Q02"
+            }
+          ],
+          "candidateQuestion": "Como o time ajuda uma pessoa nova a ganhar autonomia com clientes sem deixar de revisar premissas e limites técnicos?",
+          "notesMarkdown": "## Condução\n\nEnsaio de 60 minutos incluindo feedback e reformulação. Pergunte antes de orientar. A primeira resposta organiza o episódio; aprofunde autoria, mecanismo, decisão, resultado e aprendizado sem recomeçar todo o STAR. Registre a ajuda. Os LPs desta agenda são hipóteses de preparação, não atribuições conhecidas do entrevistador.\n\nAs reservas substituem a principal; não é necessário completar o banco inteiro. O exercício funcional é hipotético e autoral, não experiência passada. Uma resposta plausível precisa declarar premissas, comparar caminhos, identificar decisor e validação. Não exigir a marca de um serviço nem um encaminhamento único.\n\nFontes de condução: leadership-principles/practice-guide.md; leadership-principles/loop-focus.md; interview/simulations/01-behavioral/mock-script.md; interview/simulations/06-conversa-consultiva/instrutor.md. Não simular personalidade do interlocutor nem tratar estas perguntas como reais, oficiais ou vazadas."
+        }
+      ],
+      "publication": "public",
+      "returnUrl": "/praticar/index.html#instrutor"
+    }
+  ]
+}

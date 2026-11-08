@@ -1,0 +1,581 @@
+{
+  "LP12-Q03": {
+    "followups": [
+      "Qual era sua hipótese inicial?",
+      "Quais outras possibilidades você considerou?",
+      "Que evidência fez você mudar de opinião?",
+      "Como verificou a confiabilidade dos dados?",
+      "O que você fez pessoalmente?",
+      "Como confirmou que havia encontrado a causa?",
+      "Qual foi o resultado?",
+      "Que parte da sua conclusão ainda tinha alguma incerteza?"
+    ],
+    "notes": {
+      "objective": "Reconstruir como um detalhe observado mudou a hipótese de uma investigação e a decisão tomada.",
+      "evidence": [
+        "Hipótese inicial e alternativas plausíveis consideradas na época.",
+        "Origem, período, definição e completude dos dados utilizados.",
+        "Detalhe que alterou o raciocínio, ação individual e decisão decorrente.",
+        "Verificação da explicação e resultado observado, com limites de certeza."
+      ],
+      "limits": [
+        "Não transformar uma mitigação ou uma correlação em causa confirmada.",
+        "Não fornecer dados, testes, métricas ou hipóteses que a pessoa não relatou.",
+        "Uma conclusão incompleta pode ser apresentada com a incerteza explícita."
+      ],
+      "clarifications": [
+        "Quando diz que o dado era confiável, que verificação foi realizada?",
+        "Que observação permite distinguir a causa proposta das alternativas?"
+      ],
+      "observations": [
+        "Observar se a mudança de hipótese decorre de evidência identificável.",
+        "Distinguir o que a pessoa investigou diretamente do que recebeu de outras pessoas.",
+        "Verificar se o aprofundamento recebe uma resposta direta, sem reiniciar toda a história."
+      ]
+    }
+  },
+  "LP01-Q09": {
+    "followups": [
+      "Qual era a necessidade real?",
+      "O que o cliente estava pedindo?",
+      "Por que você não concordou com o caminho solicitado?",
+      "Qual alternativa apresentou?",
+      "Como comunicou a restrição?",
+      "Como acompanhou o resultado?"
+    ],
+    "notes": {
+      "objective": "Entender como a pessoa explicou um limite ao cliente e continuou acompanhando a necessidade dele.",
+      "evidence": [
+        "Cliente identificado, que pode ser interno, e necessidade distinta do pedido literal.",
+        "Restrição real, alternativas consideradas e motivo da recomendação.",
+        "Comunicação realizada, participação de outras pessoas e acompanhamento posterior.",
+        "Resultado ou necessidade ainda sem atendimento, conforme o que foi observado."
+      ],
+      "limits": [
+        "Não exigir um conflito intenso nem atribuir uma reação negativa ao cliente sem relato.",
+        "Não tratar dizer não, negociar ou propor um piloto como resposta automaticamente correta.",
+        "Não preencher uma lacuna com uma interação difícil que não ocorreu."
+      ],
+      "clarifications": [
+        "Quem precisava de quê e qual parte do pedido não podia ser atendida naquele momento?",
+        "O que aconteceu depois da conversa, além da apresentação da alternativa?"
+      ],
+      "observations": [
+        "Observar se a explicação conecta a restrição à necessidade do cliente.",
+        "Identificar a contribuição individual sem apagar suporte, produto, operação ou outras pessoas.",
+        "Distinguir a alternativa proposta da alternativa efetivamente executada."
+      ]
+    }
+  },
+  "LP11-Q08": {
+    "followups": [
+      "O que precisava mudar?",
+      "Qual foi sua reação?",
+      "Que fatos você procurou compreender?",
+      "O que alterou em seu comportamento?",
+      "Em que situação posterior demonstrou essa mudança?"
+    ],
+    "notes": {
+      "objective": "Reconstruir um feedback recebido, o entendimento da mensagem e as ações realizadas em resposta.",
+      "evidence": [
+        "Mensagem recebida e comportamento específico a que ela se referia.",
+        "Reação inicial e modo de verificar o entendimento da preocupação da outra pessoa.",
+        "Ação de mudança realizada e situação posterior que permita observá-la.",
+        "Limite ou aspecto ainda em desenvolvimento, quando existir."
+      ],
+      "limits": [
+        "Não selecionar um defeito conveniente nem inventar uma crítica para a pessoa.",
+        "Não converter a intenção de mudar em mudança já demonstrada.",
+        "Uma falha comunicada pela própria pessoa não substitui automaticamente um feedback recebido."
+      ],
+      "clarifications": [
+        "Que parte do feedback você confirmou com a outra pessoa?",
+        "Qual ação posterior permite observar a mudança que descreveu?"
+      ],
+      "observations": [
+        "Observar escuta, responsabilidade e resposta por meio de ações.",
+        "Separar a interpretação inicial do entendimento confirmado.",
+        "Não exigir uma transformação completa quando o desenvolvimento ainda está em andamento."
+      ]
+    }
+  },
+  "LP13-Q02": {
+    "followups": [
+      "Qual era a discordância?",
+      "Que argumentos você apresentou?",
+      "O que a outra parte considerava importante?",
+      "Quem tomou a decisão?",
+      "Como você apoiou a execução?",
+      "Qual foi o resultado?"
+    ],
+    "notes": {
+      "objective": "Entender uma discordância real e o apoio concreto à execução de uma decisão diferente da preferência inicial.",
+      "evidence": [
+        "Alternativas em disputa, consequências relevantes e motivo do contraponto.",
+        "Argumentos apresentados e preocupação legítima ou evidência trazida pela outra parte.",
+        "Responsável pela decisão e modo de encerrar a discussão.",
+        "Ações de apoio à execução e resultado observado."
+      ],
+      "limits": [
+        "Não inventar resistência, tensão ou discordância para aproveitar uma história técnica.",
+        "Apoiar uma decisão não exige afirmar que passou a preferi-la.",
+        "Não confundir insistência na preferência anterior com reabertura motivada por um fato novo."
+      ],
+      "clarifications": [
+        "O que você fez depois que a decisão foi tomada?",
+        "Que consideração da outra parte você compreendeu, mesmo mantendo uma preferência diferente?"
+      ],
+      "observations": [
+        "Observar se a pessoa distingue apresentar um contraponto de ter sua proposta escolhida.",
+        "Procurar apoio observável após a decisão, além de uma afirmação genérica de compromisso.",
+        "Distinguir resultado favorável da qualidade do julgamento com as informações disponíveis na época."
+      ]
+    }
+  },
+  "LP09-Q01": {
+    "followups": [
+      "Qual era o prazo?",
+      "Que informações estavam disponíveis?",
+      "Que riscos foram aceitos?",
+      "O que era reversível?",
+      "Quem precisava participar?",
+      "Como validou a decisão?"
+    ],
+    "notes": {
+      "objective": "Reconstruir por que agir com informação incompleta era defensável naquele momento e como o risco foi limitado.",
+      "evidence": [
+        "Prazo, custo de esperar e informação que ainda faltava.",
+        "Alternativas consideradas, risco aceito e raio de impacto.",
+        "Reversibilidade real, responsabilidade pela decisão e pessoas informadas.",
+        "Sinais acompanhados e resultado observado após a ação."
+      ],
+      "limits": [
+        "Não tratar rapidez ou um desfecho favorável como prova suficiente de bom julgamento.",
+        "Não assumir que uma ação era reversível sem explicar tempo, custo e consequência da reversão.",
+        "Não inventar limites, autorizações ou critérios de interrupção que não existiam."
+      ],
+      "clarifications": [
+        "O que você sabia ao decidir e o que descobriu somente depois?",
+        "Qual sinal faria você interromper, reverter ou escalar a ação?"
+      ],
+      "observations": [
+        "Observar a comparação entre agir e esperar, com as restrições da época.",
+        "Distinguir risco calculado de informação simplesmente ignorada.",
+        "Separar a decisão individual das aprovações e ações de outras pessoas."
+      ]
+    }
+  },
+  "LP02-Q08": {
+    "followups": [
+      "Quais eram as prioridades conflitantes?",
+      "Qual era sua responsabilidade?",
+      "Como envolveu as equipes?",
+      "Que resistência encontrou?",
+      "Qual decisão foi tomada?",
+      "Como acompanhou os compromissos?",
+      "Qual foi o resultado?"
+    ],
+    "notes": {
+      "objective": "Entender como a pessoa coordenou um problema entre equipes sem autoridade formal sobre os envolvidos.",
+      "evidence": [
+        "Problema compartilhado, responsabilidade individual e prioridades das equipes.",
+        "Ações de escuta, alinhamento ou negociação realizadas pela pessoa.",
+        "Acordo ou decisão alcançada, responsáveis e acompanhamento dos compromissos.",
+        "Resultado observado e responsabilidade pela continuidade."
+      ],
+      "limits": [
+        "Não pressupor resistência ou interesses conflitantes quando isso não ocorreu.",
+        "Não tratar participação em reuniões como evidência suficiente de influência.",
+        "Não atribuir à pessoa toda a execução ou o resultado coletivo."
+      ],
+      "clarifications": [
+        "O que estava desalinhado e qual ação sua alterou o encaminhamento?",
+        "Quem ficou responsável por cada compromisso e como você verificou o andamento?"
+      ],
+      "observations": [
+        "Observar se as prioridades das outras equipes são descritas com respeito e precisão.",
+        "Procurar uma mudança observável decorrente da coordenação.",
+        "Identificar como o trabalho continuou sem depender permanentemente da pessoa."
+      ]
+    }
+  },
+  "LP14-Q01": {
+    "followups": [
+      "Qual era o objetivo?",
+      "Que obstáculo surgiu?",
+      "O que precisou ser repriorizado?",
+      "Qual foi sua decisão?",
+      "Que resultado conseguiu demonstrar?",
+      "O que permaneceu pendente?"
+    ],
+    "notes": {
+      "objective": "Reconstruir como a pessoa ajustou a execução diante de obstáculos e qual resultado importante efetivamente entregou.",
+      "evidence": [
+        "Meta inicial, prazo e critério de qualidade ou sucesso.",
+        "Obstáculo inesperado, prioridades alteradas e motivo da escolha.",
+        "Decisões e ações individuais, coordenação e eventuais acordos de escopo ou prazo.",
+        "Entrega realizada, resultado observado e pendências."
+      ],
+      "limits": [
+        "Não confundir lançamento com adoção ou impacto demonstrado.",
+        "Não atribuir benefícios futuros ou resultados do time integralmente à pessoa.",
+        "Não esconder trabalho incompleto para produzir uma conclusão totalmente positiva."
+      ],
+      "clarifications": [
+        "Qual critério permite afirmar que a entrega atingiu o objetivo?",
+        "O que foi renegociado, com quem e com qual consequência?"
+      ],
+      "observations": [
+        "Observar se a execução conecta o obstáculo à decisão e ao resultado.",
+        "Distinguir meta original, meta renegociada e resultado observado.",
+        "Aceitar evidência qualitativa concreta quando não houver uma métrica confiável."
+      ]
+    }
+  },
+  "LP08-Q01": {
+    "followups": [
+      "Qual era o objetivo original?",
+      "Que oportunidade adicional identificou?",
+      "Como validou sua hipótese?",
+      "Quem precisou ser convencido?",
+      "O que foi efetivamente implementado?",
+      "O que permaneceu apenas como possibilidade futura?"
+    ],
+    "notes": {
+      "objective": "Entender a oportunidade percebida além da demanda inicial e distinguir a visão proposta do alcance já realizado.",
+      "evidence": [
+        "Pedido original e oportunidade adicional relevante para o cliente.",
+        "Sinais ou observações que sustentavam a hipótese.",
+        "Forma de comunicar a proposta e contribuição de outras pessoas.",
+        "Primeira entrega, adoção ou resultado observado, separados do potencial futuro."
+      ],
+      "limits": [
+        "Não transformar proposta em expansão implementada ou adotada.",
+        "Não pressupor que alguém precisou ser convencido ou que houve resistência.",
+        "Não aumentar o alcance de uma história para preencher uma lacuna de Think Big."
+      ],
+      "clarifications": [
+        "Qual evidência sustentava ampliar o objetivo naquele momento?",
+        "Que parte foi realizada e que parte continuou sendo uma possibilidade?"
+      ],
+      "observations": [
+        "Observar se a oportunidade é explicada pelo benefício para o cliente.",
+        "Distinguir direção e alcance da visão dos detalhes de implementação.",
+        "Registrar uma proposta como proposta quando não houver expansão realizada."
+      ]
+    }
+  },
+  "LP05-Q01": {
+    "followups": [
+      "O que você ainda não sabia?",
+      "Como identificou a lacuna?",
+      "Quais fontes ou pessoas utilizou?",
+      "Como validou seu aprendizado?",
+      "Como aplicou esse conhecimento?",
+      "O que passou a fazer diferente?"
+    ],
+    "notes": {
+      "objective": "Reconstruir como a pessoa definiu uma lacuna de conhecimento, aprendeu e aplicou o aprendizado em uma tarefa.",
+      "evidence": [
+        "Tarefa concreta e lacuna específica identificada.",
+        "Escolha de fontes, prática e pessoas de apoio.",
+        "Teste ou aplicação que permita observar o aprendizado.",
+        "Mudança no trabalho ou na decisão, com limites do que ainda não sabia."
+      ],
+      "limits": [
+        "Não tratar consumo de conteúdo, por si só, como domínio ou aplicação demonstrada.",
+        "Não converter estudo ou acompanhamento em implementação direta.",
+        "Não inventar uma aplicação posterior para tornar o aprendizado mais completo."
+      ],
+      "clarifications": [
+        "Que observação mostrou que o conhecimento inicial era insuficiente?",
+        "Qual decisão ou ação mudou depois do aprendizado?"
+      ],
+      "observations": [
+        "Observar a relação entre a lacuna, o método escolhido e a aplicação.",
+        "Distinguir conhecimento adquirido, prática realizada e resultado observado.",
+        "Valorizar a explicitação de um limite sem completar a experiência pela pessoa."
+      ]
+    }
+  },
+  "LP12-Q01": {
+    "followups": [
+      "Que evidência fez a explicação inicial deixar de ser suficiente?",
+      "Como você comparou as alternativas e descartou as menos prováveis?",
+      "Qual parte da investigação foi sua e o que permaneceu incerto?"
+    ],
+    "notes": {
+      "objective": "Reconstruir a revisão de uma explicação inicial incorreta por meio de investigação de alternativas.",
+      "evidence": [
+        "Explicação inicial e observação que a colocou em dúvida.",
+        "Hipóteses alternativas e verificações realizadas.",
+        "Contribuição individual, conclusão e grau de certeza."
+      ],
+      "limits": [
+        "Não exigir uma causa totalmente confirmada quando a evidência só permite uma hipótese.",
+        "Não fornecer uma alternativa técnica que a pessoa não investigou.",
+        "Não atribuir conhecimento posterior ao momento da decisão inicial."
+      ],
+      "clarifications": [
+        "O que você sabia antes de testar as alternativas?",
+        "Como a verificação diferenciou a hipótese escolhida das demais?"
+      ],
+      "observations": [
+        "Observar se a revisão de posição é sustentada por dados identificáveis.",
+        "Separar investigação, mitigação e confirmação da causa."
+      ]
+    }
+  },
+  "LP12-Q12": {
+    "followups": [
+      "Como você acompanhou a transação ou o dado entre os serviços?",
+      "Que evidência localizou a divergência e como verificou sua consistência?",
+      "O que a investigação permitiu concluir e qual limite permaneceu?"
+    ],
+    "notes": {
+      "objective": "Entender como a pessoa rastreou um fluxo entre serviços para localizar uma divergência.",
+      "evidence": [
+        "Fluxo investigado e comportamento esperado em cada ponto relevante.",
+        "Dados correlacionados, origem, período e critérios de comparação.",
+        "Ponto da divergência, ação individual e conclusão sustentada."
+      ],
+      "limits": [
+        "Não inventar identificadores, logs, ferramentas ou medições utilizados.",
+        "Localizar a divergência não comprova automaticamente sua causa.",
+        "Não confundir um desenho hipotético do fluxo com uma investigação realizada."
+      ],
+      "clarifications": [
+        "O que permitiu afirmar que os registros pertenciam ao mesmo fluxo?",
+        "Que comparação mostrou onde o comportamento se afastava do esperado?"
+      ],
+      "observations": [
+        "Observar a ligação entre pontos do fluxo e a qualidade das evidências.",
+        "Distinguir a localização da divergência de uma correção ou validação posterior."
+      ]
+    }
+  },
+  "LP11-Q02": {
+    "followups": [
+      "Quando você percebeu o problema e quando o comunicou?",
+      "O que assumiu como sua responsabilidade e que incertezas deixou explícitas?",
+      "Que compromisso cumpriu depois e como acompanhou o efeito da comunicação?"
+    ],
+    "notes": {
+      "objective": "Reconstruir a comunicação de uma falha ou atraso de responsabilidade da pessoa.",
+      "evidence": [
+        "Falha ou atraso, consequência e responsabilidade individual.",
+        "Momento, destinatários e conteúdo da comunicação.",
+        "Compromissos posteriores, ações realizadas e retorno observado."
+      ],
+      "limits": [
+        "Não ampliar o impacto nem inventar uma reação dos envolvidos.",
+        "Não apresentar intenção de corrigir como correção concluída.",
+        "Ausência de reclamação, sozinha, não demonstra confiança reconstruída."
+      ],
+      "clarifications": [
+        "Que fatos estavam confirmados no momento da comunicação?",
+        "Qual ação posterior demonstra o cumprimento do compromisso?"
+      ],
+      "observations": [
+        "Observar franqueza, responsabilidade e tratamento explícito da incerteza.",
+        "Distinguir a comunicação realizada do resultado posterior."
+      ]
+    }
+  },
+  "LP01-Q07": {
+    "followups": [
+      "Em que ponto os interesses do patrocinador e as necessidades dos usuários diferiam?",
+      "Como você ouviu as duas perspectivas e encaminhou uma alternativa?",
+      "Que decisão ou mudança observável resultou da conversa?"
+    ],
+    "notes": {
+      "objective": "Entender a condução de uma conversa em que patrocinador e usuários tinham necessidades ou interesses diferentes.",
+      "evidence": [
+        "Patrocinador e usuários identificados, com suas necessidades específicas.",
+        "Diferença real de interesses e informações procuradas.",
+        "Ação de escuta, alternativa discutida e encaminhamento observado."
+      ],
+      "limits": [
+        "Não retratar uma das partes como adversária por princípio.",
+        "Não inventar tensão quando havia apenas perspectivas complementares.",
+        "Não presumir que a preferência de uma parte é automaticamente a solução correta."
+      ],
+      "clarifications": [
+        "Como você confirmou a necessidade de cada parte?",
+        "O que mudou depois da sua participação na conversa?"
+      ],
+      "observations": [
+        "Observar se a pessoa distingue patrocinador, usuário e equipe interna.",
+        "Procurar um encaminhamento sustentado pelas necessidades e restrições relatadas."
+      ]
+    }
+  },
+  "LP13-Q07": {
+    "followups": [
+      "Qual era a questão técnica e por que a diferença de posição importava?",
+      "Que evidências você apresentou e que argumento contrário ouviu?",
+      "Como a decisão foi tomada e o que você fez depois?"
+    ],
+    "notes": {
+      "objective": "Reconstruir uma discordância técnica com cliente ou pessoa mais sênior, preservando evidências e respeito.",
+      "evidence": [
+        "Questão técnica, alternativas e consequência relevante para o cliente.",
+        "Evidências apresentadas e argumentos contrários considerados.",
+        "Responsável pela decisão e ação posterior da pessoa."
+      ],
+      "limits": [
+        "Não inventar oposição, pressão ou diferença de autoridade.",
+        "Não tratar ter a proposta escolhida como condição para uma boa resposta.",
+        "Não substituir a discordância real por uma preferência hipotética."
+      ],
+      "clarifications": [
+        "Que argumento da outra parte era válido ou precisava ser respondido?",
+        "Qual ação sua ajudou a encaminhar a decisão?"
+      ],
+      "observations": [
+        "Observar se o contraponto é específico e sustentado por evidência.",
+        "Distinguir discordância respeitosa, decisão final e apoio à execução."
+      ]
+    }
+  },
+  "LP09-Q10": {
+    "followups": [
+      "Que impacto precisava ser reduzido antes de terminar o diagnóstico?",
+      "Por que escolheu essa mitigação e como limitou seu risco?",
+      "Que sinais acompanhou para manter, reverter ou ajustar a ação?"
+    ],
+    "notes": {
+      "objective": "Entender a escolha de uma mitigação durante um incidente e o acompanhamento do seu efeito.",
+      "evidence": [
+        "Impacto observado, informação disponível e diagnóstico ainda incompleto.",
+        "Alternativas de mitigação, risco e autoridade para agir.",
+        "Sinais acompanhados e efeito observado após a ação."
+      ],
+      "limits": [
+        "Não apresentar a mitigação como causa raiz confirmada.",
+        "Não inventar critérios de reversão, autorizações ou medições.",
+        "Não concluir que a rapidez foi adequada apenas porque o desfecho foi favorável."
+      ],
+      "clarifications": [
+        "O que a ação reduzia e o que ela ainda não explicava?",
+        "Qual observação mostrou o efeito da mitigação?"
+      ],
+      "observations": [
+        "Observar a comparação entre o custo de esperar e o risco de agir.",
+        "Separar contenção do impacto, diagnóstico e solução posterior."
+      ]
+    }
+  },
+  "LP02-Q01": {
+    "followups": [
+      "Por que o problema não tinha um responsável claro e o que você decidiu assumir?",
+      "Que prioridades ou responsabilidades precisou combinar com outras pessoas?",
+      "Como verificou a conclusão e quem ficou responsável pela continuidade?"
+    ],
+    "notes": {
+      "objective": "Reconstruir a iniciativa diante de um problema sem dono claro e o acompanhamento até a conclusão.",
+      "evidence": [
+        "Problema importante, escopo formal e motivo para assumir a iniciativa.",
+        "Responsabilidades combinadas e ações executadas ou coordenadas.",
+        "Verificação de encerramento e continuidade após a entrega."
+      ],
+      "limits": [
+        "Não equiparar assumir responsabilidade a executar tudo sem colaboração.",
+        "Não presumir autonomia para alterar prioridades ou responsabilidades de terceiros.",
+        "Não declarar o problema encerrado sem uma observação que sustente isso."
+      ],
+      "clarifications": [
+        "O que você resolveu diretamente e o que coordenou?",
+        "Qual mecanismo permitiu que o trabalho continuasse sem depender de você?"
+      ],
+      "observations": [
+        "Observar a relação entre iniciativa, responsabilidade e benefício para a organização.",
+        "Procurar conclusão e continuidade, além do início da solução."
+      ]
+    }
+  },
+  "LP14-Q05": {
+    "followups": [
+      "Qual era o prazo combinado e o que impediu seu cumprimento?",
+      "Qual parte foi de sua responsabilidade e como comunicou o desvio?",
+      "O que mudou no acompanhamento e que evidência posterior mostra essa mudança?"
+    ],
+    "notes": {
+      "objective": "Reconstruir um prazo perdido, a responsabilidade da pessoa e a mudança posterior no acompanhamento.",
+      "evidence": [
+        "Prazo acordado, consequência real e fatores relevantes para o atraso.",
+        "Decisão ou omissão individual e comunicação do desvio.",
+        "Ação de recuperação, mudança de acompanhamento e aplicação posterior."
+      ],
+      "limits": [
+        "Não ampliar o dano nem atribuir toda a causa a terceiros.",
+        "Não converter o que faria diferente em prática já adotada sem evidência.",
+        "Uma falha não precisa ser reescrita como uma vitória completa."
+      ],
+      "clarifications": [
+        "Quando o risco de atraso ficou visível e o que foi feito naquele momento?",
+        "Que consequência permaneceu mesmo após a recuperação?"
+      ],
+      "observations": [
+        "Observar responsabilidade, consequência e mudança concreta de comportamento.",
+        "Distinguir recuperação do prazo perdido de prevenção em uma situação posterior."
+      ]
+    }
+  },
+  "LP05-Q11": {
+    "followups": [
+      "Que possibilidade ou dúvida a prova de conceito precisava investigar?",
+      "Como você definiu o teste e o que observou?",
+      "O que o resultado permitia propor e o que ainda precisava ser validado?"
+    ],
+    "notes": {
+      "objective": "Entender como uma prova de conceito foi usada para aprender antes de propor uma possibilidade para produção.",
+      "evidence": [
+        "Lacuna de conhecimento e hipótese examinada.",
+        "Teste realizado, contribuição individual e observações obtidas.",
+        "Mudança de entendimento e limites da recomendação posterior."
+      ],
+      "limits": [
+        "Uma prova de conceito não demonstra automaticamente adequação ou prontidão para produção.",
+        "Não inventar um teste, um resultado favorável ou uma implantação posterior.",
+        "Separar aprendizado realizado, proposta de uso e adoção efetiva."
+      ],
+      "clarifications": [
+        "Que observação poderia levar a rejeitar ou rever a hipótese?",
+        "Qual condição de produção não foi examinada no teste?"
+      ],
+      "observations": [
+        "Observar se a escolha do teste responde à dúvida de aprendizado.",
+        "Verificar se a recomendação respeita o alcance das observações obtidas."
+      ]
+    }
+  },
+  "LP08-Q02": {
+    "followups": [
+      "Qual era a visão e que necessidade do cliente justificava seu alcance?",
+      "Como escolheu a primeira entrega e o que deixou fora dela?",
+      "O que foi efetivamente observado e como isso influenciou as etapas seguintes?"
+    ],
+    "notes": {
+      "objective": "Reconstruir a passagem de uma visão ambiciosa para uma primeira entrega concreta.",
+      "evidence": [
+        "Oportunidade para o cliente e direção pretendida.",
+        "Recorte da primeira entrega, alternativas e exclusões deliberadas.",
+        "Entrega realizada, observações obtidas e revisão das etapas seguintes."
+      ],
+      "limits": [
+        "Não transformar intenção, desenho ou proposta em entrega realizada.",
+        "Não presumir adoção, replicação ou benefício futuro sem evidência.",
+        "Uma primeira entrega pode ter alcance limitado sem comprovar toda a visão."
+      ],
+      "clarifications": [
+        "Por que esse recorte era um primeiro passo útil?",
+        "Que parte da visão continuava sendo potencial após a primeira entrega?"
+      ],
+      "observations": [
+        "Observar a ligação entre visão, necessidade do cliente e primeira entrega.",
+        "Separar o resultado observado da oportunidade ainda não realizada."
+      ]
+    }
+  }
+}

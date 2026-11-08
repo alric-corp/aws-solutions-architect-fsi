@@ -7,9 +7,10 @@
   "engines": { "node": ">=22" },
   "scripts": {
     "build": "node scripts/build-site.mjs",
-    "check": "node scripts/check-site.mjs",
+    "check": "node scripts/check-site.mjs && node scripts/check-loop-public.mjs",
     "preview": "node scripts/preview-site.mjs",
     "test:browser": "node scripts/check-browser.mjs",
+    "test:loop": "node scripts/check-loop-public.mjs --browser",
     "setup:aws": "bash scripts/setup_site.sh",
     "deploy": "bash scripts/deploy_frontend.sh"
   },

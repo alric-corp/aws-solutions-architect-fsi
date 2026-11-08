@@ -8,6 +8,10 @@ import { publicRoots } from '../site/content.mjs';
 import { metadataFor, studentSearchMarkdown, retiredDocuments, isRetiredSource, isRetiredUrl } from '../site/content-policy.mjs';
 import { rankSearch } from '../site/search.mjs';
 import { continuityScopeFor } from '../site/collection-policy.mjs';
+import { compilePublishedLoop, isLoopPublicRoute, isApprovedLoopData } from '../site/loop-publication.mjs';
+import { serializeLoopData } from './loop-private/build.mjs';
+
+const publishedLoop = await compilePublishedLoop();
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 const directory = path.join(root, 'dist');
@@ -44,7 +48,10 @@ const namedMentorshipPages = new Set([
 ]);
 function hasUnexpectedPersonalData(file, content) {
   if (/\/Users\/tomasalric/.test(content)) return true;
-  let checked = content
+  // Only the exact owner-approved payload on its two explicit routes is
+  // exempt. Names elsewhere and local filesystem paths remain disallowed.
+  const scoped = content.replace(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi, (tag, attributes, raw) => isApprovedLoopData(file, attributes, raw, publishedLoop) ? '' : tag);
+  let checked = scoped
     .replaceAll('Conversa técnica — Vitória e Cleber', 'Conversa técnica')
     .replaceAll('Conversa técnica — Vitória e Adassa', 'Conversa técnica')
     .replaceAll('Mentoria técnica — Vitória e Cleber', 'Mentoria técnica');
@@ -58,6 +65,14 @@ assert.equal(hasUnexpectedPersonalData('praticar/index.html', 'Conversa técnica
 assert.equal(hasUnexpectedPersonalData('interview/simulations/07-mentoria-redes/candidato.html', 'Vitória precisa melhorar'), true, 'O título não autoriza publicar avaliação pessoal na nova revisão');
 assert.equal(hasUnexpectedPersonalData('interview/simulations/05-mentoria-transacoes/candidato.html', 'Vitória explica primeiro'), false, 'Nomes solicitados no roteiro autorizado');
 assert.equal(hasUnexpectedPersonalData('interview/simulations/05-mentoria-transacoes/instrutor.html', '/Users/tomasalric/privado'), true, 'Caminhos locais continuam vedados também na mentoria');
+const loopDataAttributes = ' id="loop-data" type="application/json"';
+const firstLoopRoute = `/praticar/loop/${publishedLoop[0].pageId}/index.html`;
+const firstLoopJson = serializeLoopData(publishedLoop[0]);
+assert.equal(isApprovedLoopData(firstLoopRoute, loopDataAttributes, firstLoopJson, publishedLoop), true, 'Dados inertes aprovados são permitidos só na rota autorizada');
+assert.equal(isApprovedLoopData('index.html', loopDataAttributes, firstLoopJson, publishedLoop), false, 'A exceção não se estende a outras páginas');
+assert.equal(isApprovedLoopData(firstLoopRoute, ' id="loop-data" type="text/javascript"', firstLoopJson, publishedLoop), false, 'Script executável não recebe exceção');
+assert.equal(isApprovedLoopData(firstLoopRoute, loopDataAttributes, firstLoopJson.replace('"schemaVersion":1', '"schemaVersion":2'), publishedLoop), false, 'Payload diferente do aprovado deve ser rejeitado');
+assert.equal(isApprovedLoopData(firstLoopRoute, loopDataAttributes, '{"unsafe":"<script>"}', publishedLoop), false, 'HTML não escapado deve ser rejeitado');
 for (const [file, content] of html) {
   for (const match of content.matchAll(/\b(?:href|src)=["']([^"']+)["']/g)) {
     const value = decode(match[1]);
@@ -534,7 +549,13 @@ if (baseline) {
   }
 }
 for (const [file, content] of html) {
-  if (/<script\b(?![^>]*\bsrc=)[^>]*>[\s\S]*?\S[\s\S]*?<\/script>/i.test(content)) errors.push(`Script inline incompatível com CSP: ${file}`);
+  let approvedPayloads = 0;
+  for (const [, attributes, raw] of content.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)) {
+    if (/(?:^|\s)src\s*=/i.test(attributes) || !raw.trim()) continue;
+    if (isApprovedLoopData(file, attributes, raw, publishedLoop)) approvedPayloads++;
+    else errors.push(`Script inline incompatível com CSP: ${file}`);
+  }
+  if (isLoopPublicRoute(file) && approvedPayloads !== 1) errors.push(`Roteiro público deve ter um único payload aprovado: ${file}`);
   if (file.includes('/candidato.html') && /href=["'][^"']*(?:instrutor\.html|guia-do-instrutor\.html|diagnostico-inicial\.html)/.test(content)) errors.push(`Atalho para gabarito na página da candidata: ${file}`);
   if (hasUnexpectedPersonalData(file, content)) errors.push(`Dado pessoal ou caminho local no HTML: ${file}`);
 }
