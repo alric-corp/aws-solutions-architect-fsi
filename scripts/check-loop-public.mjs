@@ -40,6 +40,8 @@ const deepDiveQuestionIds = {
   v2: ['DD-V2-INTRO', 'DD-V2-CASE', 'DD-V2-PRESSURE', 'DD-V2-REAL', 'DD-V2-END'],
   v3: ['DD-V3-INTRO', 'DD-V3-AI', 'DD-V3-MIGRATION', 'DD-V3-TRANSFER', 'DD-V3-END'],
 };
+const removedPublicEduIds = ['LP12-Q03', 'LP12-Q01', 'LP12-Q12', 'SIM02-B', 'SIM03-B'];
+const remainingLPIds = ['LP01-Q09', 'LP11-Q08', 'LP11-Q02', 'LP01-Q07', 'LP13-Q02', 'LP09-Q01', 'LP13-Q07', 'LP09-Q10', 'LP02-Q08', 'LP14-Q01', 'LP02-Q01', 'LP14-Q05', 'LP08-Q01', 'LP05-Q01', 'LP05-Q11', 'LP08-Q02'];
 const legacyPresentationIds = [
   ...[['01', 4], ['02', 5], ['03', 5], ['04', 4], ['05', 5]].flatMap(([group, count]) =>
     Array.from({ length: count }, (_, index) => `AP-${group}-${String(index + 1).padStart(2, '0')}`)),
@@ -468,7 +470,10 @@ async function checkStatic() {
       assert.equal(Boolean(session.deepDiveTraining), deepDiveSession, 'O protocolo Deep Dive pertence somente à sessão Edu');
       assert.deepEqual(without(session, ['questions', 'reserves', 'notesHtml', 'deepDiveTraining']), without(recipe, ['questions', 'reserves', 'deepDiveTraining']), 'Cada rodada deve preservar sua agenda legada completa');
       assert.equal(session.notesHtml, markdown(recipe.notesMarkdown));
-      assert.equal(session.agenda.reduce((sum, phase) => sum + phase.minutes, 0), 60, 'O ensaio deve declarar seus 60 minutos, incluindo feedback');
+      if (deepDiveSession) {
+        assert.deepEqual(session.questions, []); assert.deepEqual(session.reserves, []); assert.deepEqual(session.agenda, []);
+        assert.equal(session.candidateQuestion, '', 'Edu não deve sugerir um roteiro antes da escolha de versão');
+      } else assert.equal(session.agenda.reduce((sum, phase) => sum + phase.minutes, 0), 60, 'As demais sessões preservam seus60 minutos');
       for (const collection of ['questions', 'reserves']) {
         assert.equal((session[collection] || []).length, (recipe[collection] || []).length);
         for (const [index, question] of (session[collection] || []).entries()) {
@@ -498,7 +503,10 @@ async function checkStatic() {
       }
     }
   }
-  assert.equal(seenLP.length, 19, 'As 19 perguntas LP principais e reservas precisam estar completas');
+  assert.deepEqual(seenLP, remainingLPIds, 'Preservar todas as16LP do Dia11; remover somente as três LP de Edu');
+  const topLevelIds = pages.flatMap(page => page.sessions.flatMap(session => [...session.questions, ...(session.reserves || [])].map(question => question.id)));
+  for (const id of removedPublicEduIds) assert.ok(!topLevelIds.includes(id), `O roteiro Edu retirado não pode reaparecer no catálogo: ${id}`);
+  assert.equal(seenLP.length, 19 - removedPublicEduIds.filter(id => id.startsWith('LP')).length);
   const pedido = technical.pedido;
   assert.deepEqual(pedido.cards.map(card => card.id), ['P0', 'P1', 'E1', 'E2', 'E3', 'E5', 'E6']);
   assert.match(pedido.variantLabel, /B/);
@@ -527,9 +535,9 @@ async function checkStatic() {
   assert.ok(presentation, 'Apresentação completa ausente');
   for (const pattern of [/DMS\/snapshot/, /autoria/i, /novas escritas/i, /validação/i, /perda zero/i, /contingência/i, /Não escolher a versão verdadeira/]) assert.match(presentation.notesMarkdown, pattern);
   const presentationCheck = checkPresentation(pages.find(page => page.pageId === 'dia-10'), agenda.pages.find(page => page.pageId === 'dia-10'));
-  assert.equal(questions, 59, 'As 18 perguntas de apresentação e as reservas legadas devem compor os 59 itens da agenda aprovada');
+  assert.equal(questions, 59 - removedPublicEduIds.length, 'Remover exatamente os cinco itens antigos de Edu, preservando AP e Dia11');
   const deepDiveCheck = checkDeepDiveTraining(pages[0].sessions.find(session => session.id === 'eduardo'), agenda.pages[0].sessions.find(session => session.id === 'eduardo'), sourceTexts);
-  assert.equal(questions + deepDiveCheck.questions, 79, 'Os20 itens novos são adicionais aos59 legados');
+  assert.equal(questions + deepDiveCheck.questions, 79 - removedPublicEduIds.length, 'Os20 itens Deep Dive continuam adicionais aos54 itens preservados');
   const scripts = new Set([...htmlPages.values()].flatMap(html => [...html.matchAll(/<script\b[^>]*src=["']([^"']+)["']/g)].map(match => match[1])));
   const appScripts = [];
   for (const url of scripts) {
@@ -543,8 +551,8 @@ async function checkStatic() {
   assert.match(appScripts[0], /(?:const|let) STORAGE_PREFIX\s*=\s*(?:isPublic\s*\?\s*)?['"]loop-practice:v1['"]/);
   const stack = await readJSON('site/aws-stack.json');
   publicPolicy = stack.Resources.ResponseHeaders.Properties.ResponseHeadersPolicyConfig.SecurityHeadersConfig.ContentSecurityPolicy.ContentSecurityPolicy;
-  report.static = { pages: pages.length, sessions: pages.map(page => page.sessions.length), questions, lpQuestions: seenLP.length, manifestDocuments: manifest.length, deliberateLinks, filledRecords: 0, fixedVariants: ['SIM02-B PostgreSQL 16', 'SIM03-B', 'CONSULTIVA-BASE C1–C5'], presentation: presentationCheck, deepDive: deepDiveCheck };
-  report.checks.push('Dois HTML completos, três JSON aprovados, 19 LP do banco, projeções fiéis, variantes fixas e pendências factuais preservadas.');
+  report.static = { pages: pages.length, sessions: pages.map(page => page.sessions.length), questions, lpQuestions: seenLP.length, totalQuestionsWithDeepDive: questions + deepDiveCheck.questions, removedPublicEduQuestions: removedPublicEduIds, manifestDocuments: manifest.length, deliberateLinks, filledRecords: 0, originalScenarioSourceChecks: ['SIM02-B PostgreSQL 16', 'SIM03-B', 'CONSULTIVA-BASE C1–C5'], presentation: presentationCheck, deepDive: deepDiveCheck };
+  report.checks.push('Dois HTML completos, três JSON aprovados,16LP do Dia11 e54 itens preservados; somente os cinco itens antigos de Edu foram retirados;20 Deep Dive separados.');
   report.checks.push('Apresentação: T1–T10/B1–B8 com aprofundamentos/notas específicos, seis prioridades primeiro e todos os IDs antigos preservados, incluindo 16 reservas sem alteração.');
   report.checks.push(`${manifest.length} documentos correspondem à seleção pública atual; roteiros fora da busca/progresso/sitemap; somente duas entradas em Praticar#instrutor; registros publicados em branco.`);
 }
@@ -580,11 +588,27 @@ async function checkBrowser() {
     });
     page.on('requestfailed', request => { if (!request.failure()?.errorText.includes('ERR_ABORTED')) errors.push(`${request.url()}: ${request.failure()?.errorText}`); });
   }
+  async function ready(page) {
+    await page.locator('#loop-session-title').waitFor();
+    if (await page.locator('[data-deep-dive-mode]').count()) await page.locator('[data-deep-dive-mode]').waitFor();
+    else await page.locator('#loop-question-prompt').waitFor();
+  }
+  async function generalRecord(page) {
+    const details = page.locator('details[data-deep-general-record]');
+    if (await details.count() && !await details.evaluate(element => element.open)) await details.locator(':scope > summary').click();
+  }
+  async function assertEduIdle(page) {
+    assert.equal(await page.locator('[data-deep-dive-mode]').inputValue(), '');
+    assert.deepEqual(await page.locator('[data-deep-dive-mode] option').evaluateAll(options => options.map(option => option.value)), ['', ...Object.keys(deepDiveQuestionIds)]);
+    assert.match(await page.locator('[data-deep-dive-mode] option[value=""]').innerText(), /Escolha V1, V2 ou V3/);
+    assert.equal(await page.locator('#loop-timer-display, #loop-question-area, #loop-question-prompt, #loop-hypothesis-title').count(), 0, 'Edu não inicia relógio ou pergunta antes da escolha explícita');
+    assert.equal(await page.locator('[data-deep-general-record]').evaluate(element => element.open), false, 'O registro geral começa recolhido');
+  }
   async function visit(page, id) {
     const response = await page.goto(`${base}${routeRoot}${id}/index.html`);
     assert.equal(response.status(), 200);
     assert.equal(response.headers()['content-security-policy'], publicPolicy, 'Preview deve aplicar exatamente a CSP pública, sem relaxamento para o loop');
-    await page.locator('#loop-question-prompt').waitFor();
+    await ready(page);
     await page.evaluate(() => document.fonts.ready);
   }
   async function noOverflow(page) { assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), `Overflow na largura ${page.viewportSize().width}`); }
@@ -701,7 +725,7 @@ async function checkBrowser() {
     form = await assessmentForm(page, true);
     await form.locator('[data-assessment-field="said"]').fill('FIXTURE_T7_ISOLADA');
     await form.locator('[data-assessment-field="quality"]').selectOption('regular');
-    await page.reload(); await page.locator('#loop-question-prompt').waitFor(); await select('T7');
+    await page.reload(); await ready(page); await select('T7');
     form = await assessmentForm(page);
     assert.equal(await form.locator('[data-assessment-field="said"]').inputValue(), 'FIXTURE_T7_ISOLADA');
     assert.equal(await form.locator('[data-assessment-field="quality"]').inputValue(), 'regular');
@@ -739,7 +763,7 @@ async function checkBrowser() {
     await visit(page, 'dia-10');
     await page.locator('#loop-theme').selectOption(theme);
     const original = await page.evaluate(key => JSON.parse(localStorage.getItem(key) || 'null'), key);
-    assert.equal(await page.locator('[data-deep-dive-mode]').inputValue(), 'legacy');
+    await assertEduIdle(page);
     const rawData = await page.locator('#loop-data').textContent();
     const readRecord = () => page.evaluate(key => JSON.parse(localStorage.getItem(key)), key);
     const currentId = () => page.locator('[data-deep-current-attempt]').getAttribute('data-deep-current-attempt');
@@ -901,8 +925,8 @@ async function checkBrowser() {
       }
       await noOverflow(page);
     }
-    await page.reload(); await page.locator('#loop-question-prompt').waitFor();
-    assert.equal(await page.locator('[data-deep-dive-mode]').inputValue(), 'legacy', 'Reload não inicia ou retoma uma avaliação automaticamente');
+    await page.reload(); await ready(page);
+    await assertEduIdle(page);
     await page.locator('[data-deep-attempt]').selectOption(oldAttempts[0].id);
     const restored = await readRecord();
     for (const snapshot of oldAttempts) {
@@ -915,8 +939,8 @@ async function checkBrowser() {
     if (original) for (const field of ['episodio', 'duvida', 'ajuda', 'proxima', 'dimensions', 'evidenceLog', 'exerciseDrafts']) assert.deepEqual(exported[field], original[field], 'O protocolo novo preserva o registro Edu legado');
     assert.equal(exported.questionAssessments, undefined);
     assert.equal(await page.locator('#loop-data').textContent(), rawData, 'Comandos, acertos e retries não alteram a causa ou a ficha publicada');
-    await page.locator('[data-deep-dive-mode]').selectOption('legacy');
-    assert.equal(await page.locator('#loop-question-area').getAttribute('data-question-id'), owner.questions[0].id);
+    await page.locator('[data-deep-dive-mode]').selectOption('');
+    await assertEduIdle(page);
     report.browser.deepDive ||= [];
     report.browser.deepDive.push({ width, theme, variants: 4, completeEvidenceChecks: full, runs: exported.deepDiveRuns.order.length, manualDebrief: true, isolatedRetry: true, englishPreparedOnly: true, legacyPreserved: true });
   }
@@ -941,8 +965,7 @@ async function checkBrowser() {
           const deepDive = Boolean(session.deepDiveTraining);
           assert.equal(await page.locator('[data-deep-dive-training]').count(), deepDive ? 1 : 0);
           if (deepDive) {
-            assert.equal(await page.locator('[data-deep-dive-mode]').inputValue(), 'legacy', 'O roteiro legado continua sendo a seleção inicial');
-            assert.deepEqual(await page.locator('[data-deep-dive-mode] option').evaluateAll(options => options.map(option => option.value)), ['legacy', ...Object.keys(deepDiveQuestionIds)], 'Selecionar apenas uma versão/cenário; Pix não é alternativa do seletor');
+            await assertEduIdle(page);
           }
           for (const field of await page.locator('[data-record-field], [data-dimension-field="note"]').all()) assert.equal(await field.inputValue(), '');
           for (const field of await page.locator('[data-dimension-field="status"]').all()) assert.equal(await field.inputValue(), 'nao-observado');
@@ -953,6 +976,10 @@ async function checkBrowser() {
         const capture = `${expected.pageId}-${width}-${preference}.png`;
         await page.screenshot({ path: path.join(review, capture), fullPage: true });
         report.captures.push(capture);
+        if (expected.pageId === 'dia-10' && [390, 1440].includes(width) && preference !== 'system') {
+          const initial = `edu-no-legacy-inicial-${width}-${preference}.png`;
+          await page.screenshot({ path: path.join(review, initial), fullPage: true }); report.captures.push(initial);
+        }
         await page.evaluate(() => document.documentElement.style.fontSize = '200%');
         await noOverflow(page);
         await page.close();
@@ -974,6 +1001,8 @@ async function checkBrowser() {
     const page = await ctx.newPage(); monitor(page);
     await visit(page, pages[0].pageId);
     const firstSession = pages[0].sessions[0];
+    await assertEduIdle(page);
+    await visit(page, pages[1].pageId);
     const prompt = await page.locator('#loop-question-prompt').innerText();
     await page.locator('[data-action="read-aloud"]').focus(); await page.keyboard.press('Enter');
     assert.equal(await page.locator('#loop-readout').innerText(), prompt);
@@ -1079,8 +1108,8 @@ async function checkBrowser() {
         }
       }
     }
-    report.checks.push('Todos os cartões requerem pedido e pertinência; E6/B4 exigem condição; liberar e apresentar são ações separadas; aluno recebe somente a seleção.');
-    await visit(page, pages[0].pageId);
+    report.checks.push('Cartões C1–C5 da conversa consultiva preservados; pedido/pertinência e apresentação separada da liberação. Os cartões condicionais ativos são verificados na suíte Deep Dive.');
+    await visit(page, pages[1].pageId);
     const timer = page.locator('#loop-timer-display');
     const initial = await timer.innerText();
     await page.waitForTimeout(1100); assert.equal(await timer.innerText(), initial);
@@ -1093,22 +1122,35 @@ async function checkBrowser() {
     await page.locator('[data-action="timer-pause"]').click();
     const paused = await timer.innerText();
     await page.waitForTimeout(1100); assert.equal(await timer.innerText(), paused);
+    const archivedEvidence = [
+      { questionId: 'SIM02-B', cardId: 'E1', releasedAt: '2026-11-08T12:00:00.000Z', request: 'FIXTURE_PEDIDO_ARQUIVADO_BANCO', conditionalConfirmed: false },
+      { questionId: 'SIM03-B', cardId: 'B4', releasedAt: '2026-11-08T12:01:00.000Z', request: 'FIXTURE_PEDIDO_ARQUIVADO_REDE', conditionalConfirmed: true },
+    ];
+    const archivedDrafts = { 'SIM02-B': { request: 'FIXTURE_RASCUNHO_BANCO_RETIRADO' }, 'SIM03-B': { request: 'FIXTURE_RASCUNHO_REDE_RETIRADA' } };
+    const eduKey = `${namespace}:${pages[0].pageId}:${firstSession.id}`;
+    await page.evaluate(({ key, pageId, sessionId, evidenceLog, exerciseDrafts }) => localStorage.setItem(key, JSON.stringify({ schemaVersion: 1, pageId, sessionId, episodio: '', duvida: '', ajuda: '', proxima: '', dimensions: {}, evidenceLog, exerciseDrafts })), { key: eduKey, pageId: pages[0].pageId, sessionId: firstSession.id, evidenceLog: archivedEvidence, exerciseDrafts: archivedDrafts });
+    await visit(page, pages[0].pageId);
+    await assertEduIdle(page);
+    await generalRecord(page);
     const fixture = 'TESTE_REGISTRO_PUBLICO_ <img src=x onerror="alert(1)">';
     await page.locator('[data-record-field="episodio"]').fill(fixture);
     await page.locator('[data-dimension="aderencia"][data-dimension-field="status"]').selectOption('demonstrado');
-    await page.reload(); await page.locator('#loop-question-prompt').waitFor();
+    await page.reload(); await ready(page); await generalRecord(page);
     assert.equal(await page.locator('[data-record-field="episodio"]').inputValue(), fixture);
     assert.equal(await page.locator('[data-session-record] img').count(), 0, 'Registro deve ser texto inerte');
     await page.locator(`[data-session-id="${pages[0].sessions[1].id}"]`).click();
     assert.equal(await page.locator('[data-record-field="episodio"]').inputValue(), '');
     await page.locator(`[data-session-id="${firstSession.id}"]`).click();
+    await generalRecord(page);
     const downloadPending = page.waitForEvent('download');
     await page.locator('[data-action="export-record"]').click();
     const download = await downloadPending;
     const exported = JSON.parse(await fs.readFile(await download.path(), 'utf8'));
     assert.equal(exported.episodio, fixture);
     assert.equal(exported.questionAssessments, undefined, 'A sessão Edu preserva o formato legado sem fichas AP');
-    assert.equal(exported.deepDiveRuns, undefined, 'Modo legado não deve criar tentativas Deep Dive antes de uma escolha explícita');
+    assert.equal(exported.deepDiveRuns, undefined, 'Não criar tentativas Deep Dive antes de uma escolha explícita');
+    assert.deepEqual(exported.evidenceLog, archivedEvidence, 'Preservar os logs históricos dos cenários removidos do catálogo');
+    assert.deepEqual(exported.exerciseDrafts, archivedDrafts, 'Preservar rascunhos históricos mesmo quando o ID não está mais no catálogo');
     assert.equal(exported.dimensions.aderencia.status, 'demonstrado');
     assert.equal(exported.pageId, pages[0].pageId); assert.equal(exported.sessionId, firstSession.id);
     for (const key of ['sessions', 'questions', 'reserves', 'agenda', 'notes', 'exercise']) assert.equal(exported[key], undefined, 'Exportação deve conter apenas o registro selecionado');
@@ -1148,7 +1190,7 @@ async function checkBrowser() {
     assert.equal(await blockedPage.locator('[data-record-field="episodio"]').inputValue(), 'FIXTURE_APENAS_MEMORIA');
     const popupBlocked = await context();
     await popupBlocked.addInitScript(() => { window.open = () => null; });
-    const popupPage = await popupBlocked.newPage(); monitor(popupPage); await visit(popupPage, pages[0].pageId);
+    const popupPage = await popupBlocked.newPage(); monitor(popupPage); await visit(popupPage, pages[1].pageId);
     await popupPage.locator('[data-action="present-prompt"]').click();
     assert.match(await popupPage.locator('#loop-status').innerText(), /oralmente/);
     const nojs = await context({ javaScriptEnabled: false });

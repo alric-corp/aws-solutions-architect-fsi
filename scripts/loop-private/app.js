@@ -147,6 +147,10 @@ function startApp() {
 
   function deepVariants(session) { return session.deepDiveTraining?.variants || []; }
 
+  function moduleOnlySession(session) {
+    return isPublic && Boolean(session.deepDiveTraining) && !(session.questions?.length || session.reserves?.length || session.agenda?.length);
+  }
+
   function isoDate(value) {
     return typeof value === 'string' && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/.test(value) && Number.isFinite(Date.parse(value));
   }
@@ -283,10 +287,17 @@ function startApp() {
             request: typeof entry.request === 'string' ? entry.request : '', conditionalConfirmed: entry.conditionalConfirmed === true,
           })) : [];
           if (saved.exerciseDrafts && typeof saved.exerciseDrafts === 'object' && !Array.isArray(saved.exerciseDrafts)) {
-            for (const question of [...(session.questions || []), ...(session.reserves || [])]) {
-              const draft = saved.exerciseDrafts[question.id];
-              if (draft && typeof draft.request === 'string') {
-                record.exerciseDrafts[question.id] = { request: draft.request };
+            if (moduleOnlySession(session)) {
+              // Retired questions are no longer rendered, but their private drafts remain exportable.
+              record.exerciseDrafts = Object.fromEntries(Object.entries(saved.exerciseDrafts)
+                .filter(([, draft]) => draft && typeof draft.request === 'string')
+                .map(([id, draft]) => [id, { request: draft.request }]));
+            } else {
+              for (const question of [...(session.questions || []), ...(session.reserves || [])]) {
+                const draft = saved.exerciseDrafts[question.id];
+                if (draft && typeof draft.request === 'string') {
+                  record.exerciseDrafts[question.id] = { request: draft.request };
+                }
               }
             }
           }
@@ -401,14 +412,14 @@ function startApp() {
   function selectedSession() { return data.sessions[activeSessionIndex]; }
 
   function deepState(session) {
-    if (!deepRuntime.has(session.id)) deepRuntime.set(session.id, { mode: 'legacy', attemptId: null });
+    if (!deepRuntime.has(session.id)) deepRuntime.set(session.id, { mode: moduleOnlySession(session) ? '' : 'legacy', attemptId: null });
     return deepRuntime.get(session.id);
   }
 
   function currentDeepAttempt(session) {
     if (!session.deepDiveTraining) return null;
     const state = deepState(session);
-    return state.mode === 'legacy' ? null : recordFor(session).deepDiveRuns?.attempts[state.attemptId] || null;
+    return !state.mode || state.mode === 'legacy' ? null : recordFor(session).deepDiveRuns?.attempts[state.attemptId] || null;
   }
 
   function deepEvent(attempt, type, message) {
@@ -550,17 +561,19 @@ function startApp() {
 
   function renderDeepDiveModule(owner) {
     const module = owner.deepDiveTraining;
+    const moduleOnly = moduleOnlySession(owner);
+    const emptyMode = moduleOnly ? '' : 'legacy';
     const attempt = currentDeepAttempt(owner);
     const variant = attempt && deepVariants(owner).find(item => item.id === attempt.variantId);
     const mode = node('select', { id: 'loop-deep-mode', 'data-deep-dive-mode': '' }, [
-      node('option', { value: 'legacy', text: 'Roteiro legado — preservado' }),
+      node('option', { value: emptyMode, text: moduleOnly ? 'Escolha V1, V2 ou V3' : 'Roteiro legado — preservado' }),
       ...deepVariants(owner).map(item => node('option', { value: item.id, text: item.label })),
     ]);
-    mode.value = attempt ? attempt.variantId : 'legacy';
+    mode.value = attempt ? attempt.variantId : emptyMode;
     mode.addEventListener('change', () => {
-      if (mode.value === 'legacy') {
+      if (mode.value === emptyMode) {
         pausePractice(practiceSession(owner));
-        Object.assign(deepState(owner), { mode: 'legacy', attemptId: null });
+        Object.assign(deepState(owner), { mode: emptyMode, attemptId: null });
       } else createDeepAttempt(owner, mode.value);
       refreshDeepSession();
     });
@@ -597,9 +610,9 @@ function startApp() {
       details('Escada de aprofundamento', node('ol', {}, (module.ladder || []).map(item => node('li', {}, [node('strong', { text: item.label }), node('p', { text: item.prompt })])))),
       module.pixExtension ? details('Extensão Pix — somente quando preparada', [node('p', { text: module.pixExtension.notice }), textList((module.pixExtension.references || []).map(reference => `${reference.title} · ${reference.url}`))]) : null,
     ], { 'data-deep-instructor': '' });
-    return node('section', { className: 'loop-card loop-stack loop-deep-module', 'data-deep-dive-training': '', 'data-deep-current-attempt': attempt?.id || '', 'data-deep-current-variant': attempt?.variantId || 'legacy', 'aria-labelledby': 'loop-deep-title' }, [
+    return node('section', { className: 'loop-card loop-stack loop-deep-module', 'data-deep-dive-training': '', 'data-deep-current-attempt': attempt?.id || '', 'data-deep-current-variant': attempt?.variantId || emptyMode, 'aria-labelledby': 'loop-deep-title' }, [
       node('h3', { id: 'loop-deep-title', text: module.title }), node('p', { className: 'loop-muted', text: module.notice }),
-      node('p', { className: 'loop-deep-status', text: 'Qual versão vamos praticar: V1, V2 ou V3? O roteiro legado permanece disponível. Cada escolha de versão inicia uma tentativa separada.' }),
+      node('p', { className: 'loop-deep-status', text: moduleOnly ? 'Escolha V1, V2 ou V3 para iniciar uma tentativa, ou retome uma tentativa salva. Nenhuma versão começa automaticamente.' : 'Qual versão vamos praticar: V1, V2 ou V3? O roteiro legado permanece disponível. Cada escolha de versão inicia uma tentativa separada.' }),
       node('div', { className: 'loop-deep-debrief-grid' }, [
         node('div', { className: 'loop-field' }, [node('label', { for: 'loop-deep-mode', text: 'Versão e cenário da prática' }), mode]),
         runs?.order.length ? node('div', { className: 'loop-field' }, [node('label', { for: 'loop-deep-attempt', text: 'Retomar tentativa e debrief local' }), historySelect]) : null,
@@ -767,6 +780,9 @@ function startApp() {
     main.dataset.activeSessionId = session.id;
     const practice = practiceSession(session);
     const state = sessionRuntime(practice);
+    const moduleOnly = moduleOnlySession(session);
+    const attempt = currentDeepAttempt(session);
+    const ready = !moduleOnly || Boolean(attempt);
     const hypothesis = node('section', { className: 'loop-card loop-hypothesis', 'aria-labelledby': 'loop-hypothesis-title' }, [
       node('h3', { id: 'loop-hypothesis-title', text: 'Hipótese de preparação' }),
       textList(session.hypothesis),
@@ -779,13 +795,13 @@ function startApp() {
           node('p', { className: 'loop-muted', text: session.objective }),
         ]),
         session.deepDiveTraining ? renderDeepDiveModule(session) : null,
-        node('div', { className: 'loop-grid' }, [hypothesis, renderTimer(practice, state)]),
+        ready ? (moduleOnly ? renderTimer(practice, state) : node('div', { className: 'loop-grid' }, [hypothesis, renderTimer(practice, state)])) : null,
       ]),
-      node('section', { id: 'loop-question-area', className: 'loop-panel', 'aria-label': 'Condução da pergunta' }),
-      currentDeepAttempt(session) ? renderDeepDebrief(session, currentDeepAttempt(session)) : null,
-      renderRegistration(session),
+      ready ? node('section', { id: 'loop-question-area', className: 'loop-panel', 'aria-label': 'Condução da pergunta' }) : null,
+      attempt ? renderDeepDebrief(session, attempt) : null,
+      ready ? renderRegistration(session) : details('Registro geral privado da sessão e exportação', renderRegistration(session), { 'data-deep-general-record': '' }),
     );
-    renderQuestion(practice, state.questionIndex, false);
+    if (ready) renderQuestion(practice, state.questionIndex, false);
     refreshTimer();
     updateSaveStatus();
     if (focus) document.getElementById('loop-session-title')?.focus();
@@ -805,6 +821,7 @@ function startApp() {
   }
 
   function refreshTimer() {
+    if (moduleOnlySession(selectedSession()) && !currentDeepAttempt(selectedSession())) return;
     const session = activePracticeSession();
     const state = sessionRuntime(session);
     const duration = durationFor(session, state);

@@ -24,120 +24,14 @@
             "Arquitetura e decisões técnicas"
           ],
           "objective": "Sustentar uma investigação, atualizar hipóteses e explicar mecanismo, risco e evidência.",
-          "agenda": [
-            {
-              "label": "Abertura",
-              "minutes": 5
-            },
-            {
-              "label": "Dive Deep comportamental",
-              "minutes": 12
-            },
-            {
-              "label": "Troubleshooting técnico",
-              "minutes": 25
-            },
-            {
-              "label": "Aprofundamento ou mudança de cenário",
-              "minutes": 8
-            },
-            {
-              "label": "Perguntas da candidata",
-              "minutes": 5
-            },
-            {
-              "label": "Feedback do ensaio",
-              "minutes": 5
-            }
-          ],
-          "questions": [
-            {
-              "lpId": "LP12-Q03"
-            },
-            {
-              "id": "SIM02-B",
-              "category": "Troubleshooting principal",
-              "kind": "technical",
-              "scenario": "pedido",
-              "followups": [
-                "Timeout significa rollback?",
-                "Como distinguir uma falha de resposta de uma falha no commit?",
-                "Multi-AZ resolve o resultado desconhecido da compra?",
-                "Como funciona a idempotência?",
-                "Qual diferença entre identidade do usuário e identidade da operação?",
-                "O que acontece com duas tentativas concorrentes?",
-                "Como verificar o estado confirmado do pedido?",
-                "O que você validaria depois da recuperação?",
-                "Como evitar que o problema volte a ocorrer?"
-              ],
-              "notes": {
-                "objective": "Investigar a mesma intenção e seu estado confirmado antes de orientar repetição ou cobrança.",
-                "evidence": [
-                  "Correlaciona intenção, tentativas, commit/resposta e estado no escritor.",
-                  "Explica proteção durável/concorrente do efeito local e delimita pagamento externo.",
-                  "Mitiga com segurança, preserva auditoria e propõe validação."
-                ],
-                "limits": [
-                  "Cenário sintético fixo B, PostgreSQL16; não usar A/C como resultados da mesma compra.",
-                  "Aceitar primitivas alternativas válidas, não exigir serviço/SQL/biblioteca.",
-                  "E6 contém expectativas narradas, não resultados executados."
-                ],
-                "clarifications": [
-                  "Qual contrato confirma o pedido e qual estado confirma pagamento?",
-                  "Que informação permanece desconhecida sem a coleta autorizada?"
-                ],
-                "observations": [
-                  "Proposta autoral de treinamento, não questão real/oficial ou roteiro de personalidade."
-                ]
-              }
-            }
-          ],
-          "reserves": [
-            {
-              "lpId": "LP12-Q01"
-            },
-            {
-              "lpId": "LP12-Q12"
-            },
-            {
-              "id": "SIM03-B",
-              "category": "Troubleshooting reserva · substitui o principal",
-              "kind": "technical",
-              "scenario": "conectividade",
-              "followups": [
-                "Quem inicia a conexão, de onde e para qual destino/porta?",
-                "O nome resolveu no contexto da aplicação?",
-                "Qual caminho atende ida e resposta?",
-                "TCP conclui? TLS começa? Há resposta da aplicação?",
-                "Que evidência faria abandonar sua hipótese?",
-                "Como validar novas conexões e uma origem não autorizada?"
-              ],
-              "notes": {
-                "objective": "Separar nome, rotas, controles, porta/processo, TLS e operação no fluxo privado.",
-                "evidence": [
-                  "Reconstrói origem/destino e retorno à porta do cliente.",
-                  "Compara inventário e registros e escolhe mudança restrita.",
-                  "Valida novas conexões, TLS, autenticação e operação canário."
-                ],
-                "limits": [
-                  "Variante B banco interno somente. Não importar NAT da A nem versão/contrato do caso02.",
-                  "Não executar comandos, liberar tudo ou publicar o banco.",
-                  "Se trocar para esta reserva, substitua a investigação inteira; não misture os cartões."
-                ],
-                "clarifications": [
-                  "Distinguir fato, hipótese e proposta; pedir o alcance de cada conclusão."
-                ],
-                "observations": [
-                  "Proposta autoral de treinamento, não questão real/oficial ou roteiro de personalidade."
-                ]
-              }
-            }
-          ],
-          "candidateQuestion": "Pode compartilhar um exemplo de como o time decide que uma investigação técnica já tem evidência suficiente para recomendar uma mudança ao cliente?",
-          "notesMarkdown": "## Dinâmica do ensaio\n\nOrçamento de 60 minutos **incluindo 5 de feedback**; não é reprodução integral de uma entrevista real. Para ensaiar 60 minutos de entrevista, reserve feedback depois e redistribua o tempo de aprofundamento. Não use este relógio como exigência oficial.\n\nComece pela pergunta sem anunciar o LP. Peça uma resposta inicial e selecione aprofundamentos conforme a evidência que falta. Não complete a história. Registre ajuda oferecida.\n\n## Exercício fixo\n\nUse somente janela B do pedido, com PostgreSQL16/Multi-AZ DB instance e contrato definido no simulado. Premissas e cartões são sintéticos, no dia fictício D e UTC. A agenda desta página é real para treino; os horários dos logs não correspondem à agenda.\n\nA reserva de conectividade é outro incidente, variante B do banco privado. Se substituir o principal, passe a usar apenas seus cartões. Não transfira pagamentos, Multi-AZ ou versão do PostgreSQL entre exercícios.\n\nFontes: interview/simulations/04-troubleshooting/{guia-do-instrutor.md,rubrica.md}; leadership-principles/practice-guide.md e loop-focus.md. Os pares do loop-focus não são mapeamento oficial por entrevistador; a seleção principal desta agenda é a do pedido atual.\n\n## Novos ensaios Dive Deep\n\nO seletor preserva este roteiro anterior e oferece V1A/V1B, V2 e V3. Os novos modos têm60min de entrevista e debrief separado, não contado nessa hora. São ferramentas de condução manual, sem chat ou GenAI; o perfil declarado apenas orientou os domínios e não foi publicado. Cada nova tentativa mantém seus próprios registros e cartões; refazer não apaga o histórico.\n",
+          "agenda": [],
+          "questions": [],
+          "reserves": [],
+          "candidateQuestion": "",
+          "notesMarkdown": "## Escolha a versão do ensaio\n\nEscolha V1A ou V1B para arquitetura hipotética, V2 para troubleshooting ou V3 para experiências reais. Cada opção tem 60 minutos de entrevista e debrief adicional fora da hora. Antes de escolher, não há pergunta ou cronômetro ativo. As tentativas e os registros já salvos continuam disponíveis para retomada e exportação.\n",
           "deepDiveTraining": {
             "title": "Dive Deep + competência técnica — entrevistador fictício",
-            "notice": "Ferramenta manual de preparação, sem chat ou GenAI. O instrutor conduz uma pergunta por vez, decide a pertinência dos pedidos e registra o observado. Não representa Edu, não conhece suas perguntas nem sua atribuição de LPs. Os modos novos têm60 min de entrevista; debrief depois, fora da hora. O roteiro anterior permanece disponível. Não usar durante entrevista real.",
+            "notice": "Ferramenta manual de preparação, sem chat ou GenAI. O instrutor conduz uma pergunta por vez, decide a pertinência dos pedidos e registra o observado. Não representa Edu, não conhece suas perguntas nem sua atribuição de LPs. As versões têm 60 minutos de entrevista; debrief depois, fora da hora. Não usar durante entrevista real.",
             "introductionPt": "Sou um entrevistador fictício em um exercício de preparação técnica. Vou explorar seu raciocínio e os limites das evidências, sem representar uma pessoa ou processo real.",
             "introductionEn": "I am a fictional interviewer in a technical preparation exercise. I will explore your reasoning and the limits of the evidence, without representing any real person or hiring process.",
             "rules": [
