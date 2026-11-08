@@ -26,7 +26,7 @@ Uma implementação curta pode transferir complexidade para operação ou segura
 
 ## Perguntas para prática
 
-São 12 perguntas comportamentais, em português e inglês. Cada par PT/EN representa uma pergunta. Para o contexto de SA/FSI, use uma experiência equivalente se você ainda não atuou nesse setor.
+São 12 perguntas comportamentais, em português e inglês. Cada par PT/EN representa uma pergunta. Para o contexto de SA/FSI, use uma experiência equivalente se você ainda não atuou nesse setor. Use o controle PT-BR / EN-US de cada pergunta ou aprofundamento; uma escolha não altera as demais.
 
 ### Decisões e execução
 
@@ -86,12 +86,29 @@ São 12 perguntas comportamentais, em português e inglês. Cada par PT/EN repre
 
 ## Aprofundamentos
 
-1. Qual problema tornava a solução anterior difícil para quem usava ou operava?
-2. Qual ideia era nova naquele contexto e de onde ela veio?
-3. Que etapas ou componentes desapareceram e quais controles precisaram permanecer?
-4. Como você testou a proposta antes de ampliá-la?
-5. O esforço total diminuiu ou só mudou de equipe? Como você verificou isso?
-6. A solução continuou simples depois da adoção e do crescimento? O que precisou ajustar?
+1. <a id="lp03-f01"></a> Qual problema tornava a solução anterior difícil para quem usava ou operava?
+
+   **EN:** What problem made the previous solution difficult for the people using or operating it?
+
+2. <a id="lp03-f02"></a> Qual ideia era nova naquele contexto e de onde ela veio?
+
+   **EN:** What idea was new in that context, and where did it come from?
+
+3. <a id="lp03-f03"></a> Que etapas ou componentes desapareceram e quais controles precisaram permanecer?
+
+   **EN:** Which steps or components were removed, and which controls had to remain?
+
+4. <a id="lp03-f04"></a> Como você testou a proposta antes de ampliá-la?
+
+   **EN:** How did you test the proposal before expanding it?
+
+5. <a id="lp03-f05"></a> O esforço total diminuiu ou só mudou de equipe? Como você verificou isso?
+
+   **EN:** Did the total effort decrease, or did it simply move to another team? How did you verify that?
+
+6. <a id="lp03-f06"></a> A solução continuou simples depois da adoção e do crescimento? O que precisou ajustar?
+
+   **EN:** Did the solution remain simple after adoption and growth? What did you need to adjust?
 
 ## Evidências e revisão da resposta
 

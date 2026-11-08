@@ -26,7 +26,7 @@ Esperar certeza absoluta pode paralisar; decidir rápido sem ouvir pode produzir
 
 ## Perguntas para prática
 
-São 12 perguntas comportamentais, em português e inglês. Cada par PT/EN representa uma pergunta. Para o contexto de SA/FSI, use uma experiência equivalente se você ainda não atuou nesse setor.
+São 12 perguntas comportamentais, em português e inglês. Cada par PT/EN representa uma pergunta. Para o contexto de SA/FSI, use uma experiência equivalente se você ainda não atuou nesse setor. Use o controle PT-BR / EN-US de cada pergunta ou aprofundamento; uma escolha não altera as demais.
 
 ### Decisões e execução
 
@@ -86,12 +86,29 @@ São 12 perguntas comportamentais, em português e inglês. Cada par PT/EN repre
 
 ## Aprofundamentos
 
-1. Quais fatos você conhecia no momento e quais eram apenas suposições?
-2. Que resultado poderia refutar sua hipótese e como você procurou esse resultado?
-3. Quem trouxe uma perspectiva diferente e o que mudou por causa dela?
-4. Por que a informação disponível era suficiente para decidir naquele momento?
-5. O resultado confirmou a previsão? Como você separa bom julgamento de um desfecho favorável por acaso?
-6. Qual sinal faria você rever a decisão e que mudança de método aplicou depois?
+1. <a id="lp04-f01"></a> Quais fatos você conhecia no momento e quais eram apenas suposições?
+
+   **EN:** Which facts did you know at the time, and which were only assumptions?
+
+2. <a id="lp04-f02"></a> Que resultado poderia refutar sua hipótese e como você procurou esse resultado?
+
+   **EN:** What result could have disproved your hypothesis, and how did you look for that result?
+
+3. <a id="lp04-f03"></a> Quem trouxe uma perspectiva diferente e o que mudou por causa dela?
+
+   **EN:** Who brought a different perspective, and what changed because of it?
+
+4. <a id="lp04-f04"></a> Por que a informação disponível era suficiente para decidir naquele momento?
+
+   **EN:** Why was the available information sufficient to make a decision at that point?
+
+5. <a id="lp04-f05"></a> O resultado confirmou a previsão? Como você separa bom julgamento de um desfecho favorável por acaso?
+
+   **EN:** Did the outcome confirm your prediction? How do you distinguish good judgment from a favorable outcome that happened by chance?
+
+6. <a id="lp04-f06"></a> Qual sinal faria você rever a decisão e que mudança de método aplicou depois?
+
+   **EN:** What signal would make you reconsider the decision, and what change to your method did you apply afterward?
 
 ## Evidências e revisão da resposta
 

@@ -362,6 +362,10 @@ body.header-unpinned .topbar { position: static; }
 .story-question { margin-block: 2rem; padding-top: 1rem; border-top: 1px solid var(--border); }
 .story-question .story-language-controls { margin-bottom: .75rem; padding-block: .25rem; border-bottom: 0; }
 .prose .story-question h3 { margin-top: .5rem; }
+[data-lp-question-locale][hidden] { display: none !important; }
+.prose .lp-question { margin-block: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--border); }
+.lp-question-anchor { display: block; }
+.lp-question .lp-question-language-controls { margin-bottom: .5rem; padding-block: .25rem; border-bottom: 0; }
 @media print { .story-language-controls { display: none !important; } }
 .text-controls { display: inline-flex; align-items: center; flex-wrap: wrap; gap: 8px; }
 .text-size-label { padding: 0 4px; color: var(--muted); }

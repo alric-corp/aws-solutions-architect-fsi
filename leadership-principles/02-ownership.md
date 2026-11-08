@@ -26,7 +26,7 @@ Ser dono não significa fazer tudo sozinho. Mostre como definiu responsáveis, b
 
 ## Perguntas para prática
 
-São 12 perguntas comportamentais, em português e inglês. Cada par PT/EN representa uma pergunta. Para o contexto de SA/FSI, use uma experiência equivalente se você ainda não atuou nesse setor.
+São 12 perguntas comportamentais, em português e inglês. Cada par PT/EN representa uma pergunta. Para o contexto de SA/FSI, use uma experiência equivalente se você ainda não atuou nesse setor. Use o controle PT-BR / EN-US de cada pergunta ou aprofundamento; uma escolha não altera as demais.
 
 ### Decisões e execução
 
@@ -86,12 +86,29 @@ São 12 perguntas comportamentais, em português e inglês. Cada par PT/EN repre
 
 ## Aprofundamentos
 
-1. Qual era seu escopo formal e por que você decidiu assumir o problema?
-2. Como sua iniciativa atendia ao conjunto da organização, além do seu time?
-3. Que prioridades renegociou e quem precisava aprovar a mudança?
-4. O que você resolveu pessoalmente e o que coordenou com outras pessoas?
-5. Que verificação mostrou que o problema estava encerrado, inclusive após a entrega?
-6. Quem ficou responsável depois e qual mecanismo evitou criar dependência permanente de você?
+1. <a id="lp02-f01"></a> Qual era seu escopo formal e por que você decidiu assumir o problema?
+
+   **EN:** What was your formal scope, and why did you decide to take responsibility for the problem?
+
+2. <a id="lp02-f02"></a> Como sua iniciativa atendia ao conjunto da organização, além do seu time?
+
+   **EN:** How did your initiative serve the organization as a whole, beyond your own team?
+
+3. <a id="lp02-f03"></a> Que prioridades renegociou e quem precisava aprovar a mudança?
+
+   **EN:** Which priorities did you renegotiate, and who needed to approve the change?
+
+4. <a id="lp02-f04"></a> O que você resolveu pessoalmente e o que coordenou com outras pessoas?
+
+   **EN:** What did you resolve personally, and what did you coordinate with other people?
+
+5. <a id="lp02-f05"></a> Que verificação mostrou que o problema estava encerrado, inclusive após a entrega?
+
+   **EN:** What verification showed that the problem was resolved, including after delivery?
+
+6. <a id="lp02-f06"></a> Quem ficou responsável depois e qual mecanismo evitou criar dependência permanente de você?
+
+   **EN:** Who took responsibility afterward, and what mechanism prevented a permanent dependency on you?
 
 ## Evidências e revisão da resposta
 

@@ -1,6 +1,7 @@
 import { normalize, tokenize, rankSearch } from './search.mjs';
 import { participatesInMainStudy, continuityScopeFor, isStandalone, isStandaloneReference } from './collection-policy.mjs';
 import { initStoryLocales } from './story-locales.mjs';
+import { initLpQuestionLocales } from './lp-question-locales.mjs';
 
 const $ = selector => document.querySelector(selector);
 const $$ = selector => [...document.querySelectorAll(selector)];
@@ -42,6 +43,7 @@ let preferences = storage.get(preferenceKey, {});
 if (!preferences || typeof preferences !== 'object' || Array.isArray(preferences)) preferences = {};
 const savePreferences = () => storage.set(preferenceKey, preferences);
 const storyLocales = initStoryLocales({ onStorageError: storageWarning });
+initLpQuestionLocales({ onStorageError: storageWarning });
 
 const themeSelect = $('#theme-preference');
 const systemTheme = matchMedia('(prefers-color-scheme: dark)');

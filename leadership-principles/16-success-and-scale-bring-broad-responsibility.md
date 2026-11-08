@@ -26,7 +26,7 @@ Escala amplifica valor e erros. Mostre como reduziu risco sem declarar que uma s
 
 ## Perguntas para prática
 
-São 12 perguntas comportamentais, em português e inglês. Cada par PT/EN representa uma pergunta. Para o contexto de SA/FSI, use uma experiência equivalente se você ainda não atuou nesse setor.
+São 12 perguntas comportamentais, em português e inglês. Cada par PT/EN representa uma pergunta. Para o contexto de SA/FSI, use uma experiência equivalente se você ainda não atuou nesse setor. Use PT-BR / EN-US em cada pergunta ou aprofundamento; as escolhas de idioma são independentes.
 
 ### Decisões e execução
 
@@ -86,12 +86,29 @@ São 12 perguntas comportamentais, em português e inglês. Cada par PT/EN repre
 
 ## Aprofundamentos
 
-1. Quais públicos eram afetados direta e indiretamente, inclusive fora da equipe ou da empresa?
-2. Como você identificou o impacto e quais perspectivas faltavam inicialmente?
-3. Que escolha mudou por causa desse efeito, além de apenas registrar a preocupação?
-4. Como você comparou benefício, consequência negativa e alternativas disponíveis?
-5. Que evidência sustenta o impacto observado? Você está distinguindo consumo de recursos de impacto ambiental medido?
-6. Quem passou a acompanhar as consequências após a expansão e que sinal exigiria nova intervenção?
+1. <a id="lp16-f01"></a> Quais públicos eram afetados direta e indiretamente, inclusive fora da equipe ou da empresa?
+
+   **EN:** Which groups were affected directly and indirectly, including outside the team or company?
+
+2. <a id="lp16-f02"></a> Como você identificou o impacto e quais perspectivas faltavam inicialmente?
+
+   **EN:** How did you identify the impact, and which perspectives were initially missing?
+
+3. <a id="lp16-f03"></a> Que escolha mudou por causa desse efeito, além de apenas registrar a preocupação?
+
+   **EN:** What choice changed because of that effect, beyond simply recording the concern?
+
+4. <a id="lp16-f04"></a> Como você comparou benefício, consequência negativa e alternativas disponíveis?
+
+   **EN:** How did you compare the benefit, negative consequences, and available alternatives?
+
+5. <a id="lp16-f05"></a> Que evidência sustenta o impacto observado? Você está distinguindo consumo de recursos de impacto ambiental medido?
+
+   **EN:** What evidence supports the observed impact? Are you distinguishing resource consumption from measured environmental impact?
+
+6. <a id="lp16-f06"></a> Quem passou a acompanhar as consequências após a expansão e que sinal exigiria nova intervenção?
+
+   **EN:** Who began monitoring the consequences after the expansion, and what signal would require another intervention?
 
 ## Evidências e revisão da resposta
 

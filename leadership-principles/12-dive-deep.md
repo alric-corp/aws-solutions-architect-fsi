@@ -26,7 +26,7 @@ Aprofundar não significa recitar todas as linhas de um log. Selecione o detalhe
 
 ## Perguntas para prática
 
-São 12 perguntas comportamentais, em português e inglês. Cada par PT/EN representa uma pergunta. Para o contexto de SA/FSI, use uma experiência equivalente se você ainda não atuou nesse setor.
+São 12 perguntas comportamentais, em português e inglês. Cada par PT/EN representa uma pergunta. Para o contexto de SA/FSI, use uma experiência equivalente se você ainda não atuou nesse setor. Use PT-BR / EN-US em cada pergunta ou aprofundamento; as escolhas de idioma são independentes.
 
 ### Decisões e execução
 
@@ -86,12 +86,29 @@ São 12 perguntas comportamentais, em português e inglês. Cada par PT/EN repre
 
 ## Aprofundamentos
 
-1. Quais hipóteses você formulou e que evidência eliminou cada uma?
-2. De onde vieram os dados e como você verificou completude, período e definição?
-3. Como você relacionou o relato do cliente à telemetria disponível?
-4. Que detalhe mudou a decisão e por que ele era relevante para o negócio?
-5. Como você confirmou a causa, distinguindo-a de uma correlação ou de uma mitigação?
-6. Qual verificação ou auditoria ficou em funcionamento para detectar recorrência?
+1. <a id="lp12-f01"></a> Quais hipóteses você formulou e que evidência eliminou cada uma?
+
+   **EN:** What hypotheses did you form, and what evidence ruled out each one?
+
+2. <a id="lp12-f02"></a> De onde vieram os dados e como você verificou completude, período e definição?
+
+   **EN:** Where did the data come from, and how did you verify its completeness, time period, and definition?
+
+3. <a id="lp12-f03"></a> Como você relacionou o relato do cliente à telemetria disponível?
+
+   **EN:** How did you connect the customer’s account of the problem to the available telemetry?
+
+4. <a id="lp12-f04"></a> Que detalhe mudou a decisão e por que ele era relevante para o negócio?
+
+   **EN:** What detail changed the decision, and why was it relevant to the business?
+
+5. <a id="lp12-f05"></a> Como você confirmou a causa, distinguindo-a de uma correlação ou de uma mitigação?
+
+   **EN:** How did you confirm the cause and distinguish it from a correlation or a mitigation?
+
+6. <a id="lp12-f06"></a> Qual verificação ou auditoria ficou em funcionamento para detectar recorrência?
+
+   **EN:** What verification or audit remained in place to detect recurrence?
 
 ## Evidências e revisão da resposta
 

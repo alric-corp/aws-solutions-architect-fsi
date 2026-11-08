@@ -26,7 +26,7 @@ Visão ampla não justifica construir uma plataforma para todos antes de atender
 
 ## Perguntas para prática
 
-São 12 perguntas comportamentais, em português e inglês. Cada par PT/EN representa uma pergunta. Para o contexto de SA/FSI, use uma experiência equivalente se você ainda não atuou nesse setor.
+São 12 perguntas comportamentais, em português e inglês. Cada par PT/EN representa uma pergunta. Para o contexto de SA/FSI, use uma experiência equivalente se você ainda não atuou nesse setor. Use o controle PT-BR / EN-US de cada pergunta ou aprofundamento; uma escolha não altera as demais.
 
 ### Decisões e execução
 
@@ -86,12 +86,29 @@ São 12 perguntas comportamentais, em português e inglês. Cada par PT/EN repre
 
 ## Aprofundamentos
 
-1. Qual oportunidade para o cliente justificava ampliar a visão?
-2. Que sinais e evidências sustentavam a proposta?
-3. Como você comunicou o futuro desejado em termos que outras pessoas entenderam?
-4. O que ficou deliberadamente fora da primeira entrega e por quê?
-5. Que resultado foi observado no piloto e o que continuava sendo apenas potencial?
-6. Como o feedback mudou as próximas etapas ou levou você a interromper parte da proposta?
+1. <a id="lp08-f01"></a> Qual oportunidade para o cliente justificava ampliar a visão?
+
+   **EN:** What customer opportunity justified broadening the vision?
+
+2. <a id="lp08-f02"></a> Que sinais e evidências sustentavam a proposta?
+
+   **EN:** What signals and evidence supported the proposal?
+
+3. <a id="lp08-f03"></a> Como você comunicou o futuro desejado em termos que outras pessoas entenderam?
+
+   **EN:** How did you communicate the desired future in terms other people understood?
+
+4. <a id="lp08-f04"></a> O que ficou deliberadamente fora da primeira entrega e por quê?
+
+   **EN:** What did you deliberately leave out of the first delivery, and why?
+
+5. <a id="lp08-f05"></a> Que resultado foi observado no piloto e o que continuava sendo apenas potencial?
+
+   **EN:** What result was observed in the pilot, and what was still only potential?
+
+6. <a id="lp08-f06"></a> Como o feedback mudou as próximas etapas ou levou você a interromper parte da proposta?
+
+   **EN:** How did feedback change the next steps or lead you to stop part of the proposal?
 
 ## Evidências e revisão da resposta
 

@@ -26,7 +26,7 @@ Entregar não significa mover o prazo ou a definição de sucesso para esconder 
 
 ## Perguntas para prática
 
-São 12 perguntas comportamentais, em português e inglês. Cada par PT/EN representa uma pergunta. Para o contexto de SA/FSI, use uma experiência equivalente se você ainda não atuou nesse setor.
+São 12 perguntas comportamentais, em português e inglês. Cada par PT/EN representa uma pergunta. Para o contexto de SA/FSI, use uma experiência equivalente se você ainda não atuou nesse setor. Use PT-BR / EN-US em cada pergunta ou aprofundamento; as escolhas de idioma são independentes.
 
 ### Decisões e execução
 
@@ -86,12 +86,29 @@ São 12 perguntas comportamentais, em português e inglês. Cada par PT/EN repre
 
 ## Aprofundamentos
 
-1. Qual era a meta inicial, o prazo e o critério de qualidade?
-2. Quais fatores você podia influenciar diretamente e como os acompanhou?
-3. Qual obstáculo mais ameaçou o resultado e que prioridade mudou por causa dele?
-4. Que escopo, prazo ou critério foi renegociado e com quem?
-5. O que foi efetivamente entregue, adotado e observado, e o que ainda estava em andamento?
-6. O resultado se sustentou depois do lançamento? Que iteração ou aprendizado veio em seguida?
+1. <a id="lp14-f01"></a> Qual era a meta inicial, o prazo e o critério de qualidade?
+
+   **EN:** What were the initial goal, deadline, and quality criterion?
+
+2. <a id="lp14-f02"></a> Quais fatores você podia influenciar diretamente e como os acompanhou?
+
+   **EN:** Which factors could you influence directly, and how did you track them?
+
+3. <a id="lp14-f03"></a> Qual obstáculo mais ameaçou o resultado e que prioridade mudou por causa dele?
+
+   **EN:** Which obstacle posed the greatest threat to the outcome, and what priority changed because of it?
+
+4. <a id="lp14-f04"></a> Que escopo, prazo ou critério foi renegociado e com quem?
+
+   **EN:** What scope, deadline, or criterion was renegotiated, and with whom?
+
+5. <a id="lp14-f05"></a> O que foi efetivamente entregue, adotado e observado, e o que ainda estava em andamento?
+
+   **EN:** What was actually delivered, adopted, and observed, and what was still in progress?
+
+6. <a id="lp14-f06"></a> O resultado se sustentou depois do lançamento? Que iteração ou aprendizado veio em seguida?
+
+   **EN:** Did the result hold after launch? What iteration or learning followed?
 
 ## Evidências e revisão da resposta
 

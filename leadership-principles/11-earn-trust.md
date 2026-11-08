@@ -26,7 +26,7 @@ Evitar toda discordância pode preservar conforto e diminuir confiança. Mostre 
 
 ## Perguntas para prática
 
-São 12 perguntas comportamentais, em português e inglês. Cada par PT/EN representa uma pergunta. Para o contexto de SA/FSI, use uma experiência equivalente se você ainda não atuou nesse setor.
+São 12 perguntas comportamentais, em português e inglês. Cada par PT/EN representa uma pergunta. Para o contexto de SA/FSI, use uma experiência equivalente se você ainda não atuou nesse setor. Use PT-BR / EN-US em cada pergunta ou aprofundamento; as escolhas de idioma são independentes.
 
 ### Decisões e execução
 
@@ -86,12 +86,29 @@ São 12 perguntas comportamentais, em português e inglês. Cada par PT/EN repre
 
 ## Aprofundamentos
 
-1. Por que a confiança estava em risco e como você percebeu isso?
-2. Que fatos você conhecia e que incertezas precisou explicitar?
-3. Quando você comunicou o problema e o que assumiu como sua responsabilidade?
-4. Como ouviu a outra pessoa e verificou se havia entendido a preocupação dela?
-5. Qual compromisso concreto você cumpriu depois da conversa?
-6. Que retorno ou comportamento posterior indica confiança reconstruída, além da ausência de reclamações?
+1. <a id="lp11-f01"></a> Por que a confiança estava em risco e como você percebeu isso?
+
+   **EN:** Why was trust at risk, and how did you recognize that?
+
+2. <a id="lp11-f02"></a> Que fatos você conhecia e que incertezas precisou explicitar?
+
+   **EN:** What facts did you know, and what uncertainties did you need to make explicit?
+
+3. <a id="lp11-f03"></a> Quando você comunicou o problema e o que assumiu como sua responsabilidade?
+
+   **EN:** When did you communicate the problem, and what did you take responsibility for?
+
+4. <a id="lp11-f04"></a> Como ouviu a outra pessoa e verificou se havia entendido a preocupação dela?
+
+   **EN:** How did you listen to the other person and check that you had understood their concern?
+
+5. <a id="lp11-f05"></a> Qual compromisso concreto você cumpriu depois da conversa?
+
+   **EN:** What specific commitment did you fulfill after the conversation?
+
+6. <a id="lp11-f06"></a> Que retorno ou comportamento posterior indica confiança reconstruída, além da ausência de reclamações?
+
+   **EN:** What feedback or later behavior indicates that trust was rebuilt, beyond the absence of complaints?
 
 ## Evidências e revisão da resposta
 

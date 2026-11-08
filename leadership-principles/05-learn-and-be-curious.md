@@ -26,7 +26,7 @@ Curiosidade não exige colocar toda novidade em produção. Diferencie exploraç
 
 ## Perguntas para prática
 
-São 12 perguntas comportamentais, em português e inglês. Cada par PT/EN representa uma pergunta. Para o contexto de SA/FSI, use uma experiência equivalente se você ainda não atuou nesse setor.
+São 12 perguntas comportamentais, em português e inglês. Cada par PT/EN representa uma pergunta. Para o contexto de SA/FSI, use uma experiência equivalente se você ainda não atuou nesse setor. Use o controle PT-BR / EN-US de cada pergunta ou aprofundamento; uma escolha não altera as demais.
 
 ### Decisões e execução
 
@@ -86,12 +86,29 @@ São 12 perguntas comportamentais, em português e inglês. Cada par PT/EN repre
 
 ## Aprofundamentos
 
-1. Qual era a lacuna específica e como você a identificou?
-2. Como escolheu fontes, prática e pessoas para apoiar o aprendizado?
-3. Que teste mostrou que você conseguia aplicar o conhecimento?
-4. O que mudou na sua decisão ou no seu trabalho por causa do aprendizado?
-5. O que você ainda não sabia e como comunicou esse limite?
-6. Que aprendizado foi compartilhado e qual mudança continuou acontecendo depois?
+1. <a id="lp05-f01"></a> Qual era a lacuna específica e como você a identificou?
+
+   **EN:** What was the specific knowledge gap, and how did you identify it?
+
+2. <a id="lp05-f02"></a> Como escolheu fontes, prática e pessoas para apoiar o aprendizado?
+
+   **EN:** How did you choose sources, practice, and people to support your learning?
+
+3. <a id="lp05-f03"></a> Que teste mostrou que você conseguia aplicar o conhecimento?
+
+   **EN:** What test showed that you could apply the knowledge?
+
+4. <a id="lp05-f04"></a> O que mudou na sua decisão ou no seu trabalho por causa do aprendizado?
+
+   **EN:** What changed in your decision or your work because of what you learned?
+
+5. <a id="lp05-f05"></a> O que você ainda não sabia e como comunicou esse limite?
+
+   **EN:** What did you still not know, and how did you communicate that limit?
+
+6. <a id="lp05-f06"></a> Que aprendizado foi compartilhado e qual mudança continuou acontecendo depois?
+
+   **EN:** What learning did you share, and what change continued afterward?
 
 ## Evidências e revisão da resposta
 

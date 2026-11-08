@@ -26,7 +26,7 @@ Empatia não exige expor informação pessoal de um colega. Conte a mudança de 
 
 ## Perguntas para prática
 
-São 12 perguntas comportamentais, em português e inglês. Cada par PT/EN representa uma pergunta. Para o contexto de SA/FSI, use uma experiência equivalente se você ainda não atuou nesse setor.
+São 12 perguntas comportamentais, em português e inglês. Cada par PT/EN representa uma pergunta. Para o contexto de SA/FSI, use uma experiência equivalente se você ainda não atuou nesse setor. Use PT-BR / EN-US em cada pergunta ou aprofundamento; as escolhas de idioma são independentes.
 
 ### Decisões e execução
 
@@ -86,12 +86,29 @@ São 12 perguntas comportamentais, em português e inglês. Cada par PT/EN repre
 
 ## Aprofundamentos
 
-1. Quem era afetado e qual barreira ou condição de trabalho precisava mudar?
-2. Como você ouviu as pessoas sem presumir necessidades nem exigir exposição pessoal?
-3. Que mudança de processo você realizou dentro da sua responsabilidade?
-4. Como conciliou qualidade da entrega, carga de trabalho e desenvolvimento?
-5. Que retorno voluntário ou observação mostrou melhora? Houve efeitos diferentes entre as pessoas?
-6. Qual mudança permaneceu depois da urgência e o que ainda precisava melhorar?
+1. <a id="lp15-f01"></a> Quem era afetado e qual barreira ou condição de trabalho precisava mudar?
+
+   **EN:** Who was affected, and what barrier or working condition needed to change?
+
+2. <a id="lp15-f02"></a> Como você ouviu as pessoas sem presumir necessidades nem exigir exposição pessoal?
+
+   **EN:** How did you listen to people without assuming their needs or requiring personal disclosure?
+
+3. <a id="lp15-f03"></a> Que mudança de processo você realizou dentro da sua responsabilidade?
+
+   **EN:** What process change did you make within your area of responsibility?
+
+4. <a id="lp15-f04"></a> Como conciliou qualidade da entrega, carga de trabalho e desenvolvimento?
+
+   **EN:** How did you balance delivery quality, workload, and professional development?
+
+5. <a id="lp15-f05"></a> Que retorno voluntário ou observação mostrou melhora? Houve efeitos diferentes entre as pessoas?
+
+   **EN:** What voluntary feedback or observation showed improvement? Did the effects differ across people?
+
+6. <a id="lp15-f06"></a> Qual mudança permaneceu depois da urgência e o que ainda precisava melhorar?
+
+   **EN:** What change remained after the urgency had passed, and what still needed to improve?
 
 ## Evidências e revisão da resposta
 

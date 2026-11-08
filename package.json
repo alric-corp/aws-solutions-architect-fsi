@@ -7,11 +7,12 @@
   "engines": { "node": ">=22" },
   "scripts": {
     "build": "node scripts/build-site.mjs",
-    "check": "node scripts/check-site.mjs && node scripts/check-loop-public.mjs && node scripts/check-stories.mjs",
+    "check": "node scripts/check-site.mjs && node scripts/check-loop-public.mjs && node scripts/check-stories.mjs && node scripts/check-lp-questions.mjs",
     "preview": "node scripts/preview-site.mjs",
     "test:browser": "node scripts/check-browser.mjs",
     "test:loop": "node scripts/check-loop-public.mjs --browser",
     "test:stories": "node scripts/check-stories.mjs --browser",
+    "test:lp-questions": "node scripts/check-lp-questions.mjs --browser",
     "setup:aws": "bash scripts/setup_site.sh",
     "deploy": "bash scripts/deploy_frontend.sh"
   },

@@ -164,7 +164,7 @@ for (const asset of tracked.filter(file => publicPath(file) && allowedAssetExten
   if ((await fs.lstat(path.join(root, asset))).isSymbolicLink()) throw new Error(`Link simbólico não publicável: ${asset}`);
   await write(asset, await fs.readFile(path.join(root, asset)));
 }
-for (const name of ['site.css', 'site.js', 'theme-init.js', 'search.mjs', 'collection-policy.mjs', 'story-locales.mjs', 'favicon.svg']) await write(`assets/${name}`, await fs.readFile(path.join(root, 'site', name)));
+for (const name of ['site.css', 'site.js', 'theme-init.js', 'search.mjs', 'collection-policy.mjs', 'story-locales.mjs', 'lp-question-locales.mjs', 'favicon.svg']) await write(`assets/${name}`, await fs.readFile(path.join(root, 'site', name)));
 for (const [family, name] of [['source-sans-3', 'source-sans']]) {
   const filename = `${family}-latin-wght-normal.woff2`;
   await write(`assets/${name}.woff2`, await fs.readFile(path.join(root, 'node_modules', '@fontsource-variable', family, 'files', filename)));

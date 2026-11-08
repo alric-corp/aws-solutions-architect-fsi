@@ -26,7 +26,7 @@ Menor fatura não é necessariamente menor custo total. Inclua operação, indis
 
 ## Perguntas para prática
 
-São 12 perguntas comportamentais, em português e inglês. Cada par PT/EN representa uma pergunta. Para o contexto de SA/FSI, use uma experiência equivalente se você ainda não atuou nesse setor.
+São 12 perguntas comportamentais, em português e inglês. Cada par PT/EN representa uma pergunta. Para o contexto de SA/FSI, use uma experiência equivalente se você ainda não atuou nesse setor. Use PT-BR / EN-US em cada pergunta ou aprofundamento; as escolhas de idioma são independentes.
 
 ### Decisões e execução
 
@@ -86,12 +86,29 @@ São 12 perguntas comportamentais, em português e inglês. Cada par PT/EN repre
 
 ## Aprofundamentos
 
-1. Qual era a restrição real e que resultado precisava ser preservado?
-2. Qual referência de custo você usou e como normalizou volume e período?
-3. A economia foi medida, estimada ou apenas projetada? Como calculou?
-4. Quais custos de implantação, suporte e trabalho humano entraram na comparação?
-5. Que risco ou perda de capacidade foi evitado e quem participou dessa decisão?
-6. A redução se sustentou ao longo do tempo ou o custo foi transferido para outra equipe?
+1. <a id="lp10-f01"></a> Qual era a restrição real e que resultado precisava ser preservado?
+
+   **EN:** What was the actual constraint, and what outcome needed to be preserved?
+
+2. <a id="lp10-f02"></a> Qual referência de custo você usou e como normalizou volume e período?
+
+   **EN:** What cost baseline did you use, and how did you normalize volume and time period?
+
+3. <a id="lp10-f03"></a> A economia foi medida, estimada ou apenas projetada? Como calculou?
+
+   **EN:** Were the savings measured, estimated, or only projected? How did you calculate them?
+
+4. <a id="lp10-f04"></a> Quais custos de implantação, suporte e trabalho humano entraram na comparação?
+
+   **EN:** Which implementation, support, and human labor costs did you include in the comparison?
+
+5. <a id="lp10-f05"></a> Que risco ou perda de capacidade foi evitado e quem participou dessa decisão?
+
+   **EN:** What risk or loss of capability was avoided, and who participated in that decision?
+
+6. <a id="lp10-f06"></a> A redução se sustentou ao longo do tempo ou o custo foi transferido para outra equipe?
+
+   **EN:** Did the reduction hold over time, or was the cost shifted to another team?
 
 ## Evidências e revisão da resposta
 

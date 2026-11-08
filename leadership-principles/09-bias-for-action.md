@@ -26,7 +26,7 @@ Reversível precisa ter significado concreto. Retornar o código não reverte um
 
 ## Perguntas para prática
 
-São 12 perguntas comportamentais, em português e inglês. Cada par PT/EN representa uma pergunta. Para o contexto de SA/FSI, use uma experiência equivalente se você ainda não atuou nesse setor.
+São 12 perguntas comportamentais, em português e inglês. Cada par PT/EN representa uma pergunta. Para o contexto de SA/FSI, use uma experiência equivalente se você ainda não atuou nesse setor. Use PT-BR / EN-US em cada pergunta ou aprofundamento; as escolhas de idioma são independentes.
 
 ### Decisões e execução
 
@@ -86,12 +86,29 @@ São 12 perguntas comportamentais, em português e inglês. Cada par PT/EN repre
 
 ## Aprofundamentos
 
-1. Qual era o custo de esperar e que informação ainda faltava?
-2. O que poderia ser revertido de fato, em quanto tempo e com qual custo?
-3. Qual era o raio de impacto e como você o limitou?
-4. Quais sinais acionariam interrupção, rollback ou escalonamento?
-5. Quem tinha autoridade para agir e como você manteve as outras pessoas informadas?
-6. O que aconteceu após a ação e qual foi o custo total da escolha, inclusive dos erros?
+1. <a id="lp09-f01"></a> Qual era o custo de esperar e que informação ainda faltava?
+
+   **EN:** What was the cost of waiting, and what information was still missing?
+
+2. <a id="lp09-f02"></a> O que poderia ser revertido de fato, em quanto tempo e com qual custo?
+
+   **EN:** What could actually be reversed, how long would that take, and at what cost?
+
+3. <a id="lp09-f03"></a> Qual era o raio de impacto e como você o limitou?
+
+   **EN:** What was the blast radius, and how did you limit it?
+
+4. <a id="lp09-f04"></a> Quais sinais acionariam interrupção, rollback ou escalonamento?
+
+   **EN:** What signals would trigger a stop, rollback, or escalation?
+
+5. <a id="lp09-f05"></a> Quem tinha autoridade para agir e como você manteve as outras pessoas informadas?
+
+   **EN:** Who had the authority to act, and how did you keep others informed?
+
+6. <a id="lp09-f06"></a> O que aconteceu após a ação e qual foi o custo total da escolha, inclusive dos erros?
+
+   **EN:** What happened after the action, and what was the total cost of the choice, including mistakes?
 
 ## Evidências e revisão da resposta
 

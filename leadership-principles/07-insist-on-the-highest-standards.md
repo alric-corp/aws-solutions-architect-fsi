@@ -26,7 +26,7 @@ Qualidade e prazo precisam de decisão explícita. Explique quais riscos não er
 
 ## Perguntas para prática
 
-São 12 perguntas comportamentais, em português e inglês. Cada par PT/EN representa uma pergunta. Para o contexto de SA/FSI, use uma experiência equivalente se você ainda não atuou nesse setor.
+São 12 perguntas comportamentais, em português e inglês. Cada par PT/EN representa uma pergunta. Para o contexto de SA/FSI, use uma experiência equivalente se você ainda não atuou nesse setor. Use o controle PT-BR / EN-US de cada pergunta ou aprofundamento; uma escolha não altera as demais.
 
 ### Decisões e execução
 
@@ -86,12 +86,29 @@ São 12 perguntas comportamentais, em português e inglês. Cada par PT/EN repre
 
 ## Aprofundamentos
 
-1. Qual era o padrão e por que ele era necessário para o cliente?
-2. Como o defeito foi observado ou reproduzido?
-3. Qual era o custo de corrigir, adiar ou aceitar o risco?
-4. Quem participou da decisão e como o risco residual ficou explícito?
-5. Que mecanismo passou a impedir a recorrência ou a passagem do defeito para outra etapa?
-6. Que resultado posterior mostrou qualidade melhor, além de um teste isolado ter passado?
+1. <a id="lp07-f01"></a> Qual era o padrão e por que ele era necessário para o cliente?
+
+   **EN:** What was the standard, and why was it necessary for the customer?
+
+2. <a id="lp07-f02"></a> Como o defeito foi observado ou reproduzido?
+
+   **EN:** How was the defect observed or reproduced?
+
+3. <a id="lp07-f03"></a> Qual era o custo de corrigir, adiar ou aceitar o risco?
+
+   **EN:** What was the cost of fixing it, postponing the fix, or accepting the risk?
+
+4. <a id="lp07-f04"></a> Quem participou da decisão e como o risco residual ficou explícito?
+
+   **EN:** Who participated in the decision, and how was the residual risk made explicit?
+
+5. <a id="lp07-f05"></a> Que mecanismo passou a impedir a recorrência ou a passagem do defeito para outra etapa?
+
+   **EN:** What mechanism was introduced to prevent recurrence or stop the defect from reaching another stage?
+
+6. <a id="lp07-f06"></a> Que resultado posterior mostrou qualidade melhor, além de um teste isolado ter passado?
+
+   **EN:** What later result showed improved quality beyond a single test passing?
 
 ## Evidências e revisão da resposta
 

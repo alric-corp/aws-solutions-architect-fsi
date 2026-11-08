@@ -26,7 +26,7 @@ Entregar exatamente a tecnologia pedida pode não resolver o problema. Explique 
 
 ## Perguntas para prática
 
-São 12 perguntas comportamentais, em português e inglês. Cada par PT/EN representa uma pergunta. Para o contexto de SA/FSI, use uma experiência equivalente se você ainda não atuou nesse setor.
+São 12 perguntas comportamentais, em português e inglês. Cada par PT/EN representa uma pergunta. Para o contexto de SA/FSI, use uma experiência equivalente se você ainda não atuou nesse setor. Use o controle PT-BR / EN-US de cada pergunta ou aprofundamento; uma escolha não altera as demais.
 
 ### Decisões e execução
 
@@ -86,12 +86,29 @@ São 12 perguntas comportamentais, em português e inglês. Cada par PT/EN repre
 
 ## Aprofundamentos
 
-1. Quem era o cliente e qual problema ele precisava resolver? Como distinguiu usuário, patrocinador e equipe interna?
-2. Que observação ou conversa fez você mudar a hipótese inicial?
-3. Qual ação foi sua e qual dependeu de suporte, produto ou operação?
-4. Como decidiu entre atender o pedido literal e propor uma alternativa?
-5. Como mediu a experiência antes e depois? Uma queda de chamados poderia significar abandono?
-6. Que necessidade ficou sem atendimento e o que você mudou na forma de ouvir clientes depois?
+1. <a id="lp01-f01"></a> Quem era o cliente e qual problema ele precisava resolver? Como distinguiu usuário, patrocinador e equipe interna?
+
+   **EN:** Who was the customer, and what problem did they need to solve? How did you distinguish between the user, the sponsor, and the internal team?
+
+2. <a id="lp01-f02"></a> Que observação ou conversa fez você mudar a hipótese inicial?
+
+   **EN:** What observation or conversation made you change your initial hypothesis?
+
+3. <a id="lp01-f03"></a> Qual ação foi sua e qual dependeu de suporte, produto ou operação?
+
+   **EN:** Which action was yours, and which depended on support, product, or operations?
+
+4. <a id="lp01-f04"></a> Como decidiu entre atender o pedido literal e propor uma alternativa?
+
+   **EN:** How did you decide between fulfilling the literal request and proposing an alternative?
+
+5. <a id="lp01-f05"></a> Como mediu a experiência antes e depois? Uma queda de chamados poderia significar abandono?
+
+   **EN:** How did you measure the experience before and after? Could a drop in support tickets indicate abandonment?
+
+6. <a id="lp01-f06"></a> Que necessidade ficou sem atendimento e o que você mudou na forma de ouvir clientes depois?
+
+   **EN:** What need remained unmet, and what did you change about how you listened to customers afterward?
 
 ## Evidências e revisão da resposta
 

@@ -26,7 +26,7 @@ Comprometimento não autoriza violação de segurança ou obrigação aplicável
 
 ## Perguntas para prática
 
-São 12 perguntas comportamentais, em português e inglês. Cada par PT/EN representa uma pergunta. Para o contexto de SA/FSI, use uma experiência equivalente se você ainda não atuou nesse setor.
+São 12 perguntas comportamentais, em português e inglês. Cada par PT/EN representa uma pergunta. Para o contexto de SA/FSI, use uma experiência equivalente se você ainda não atuou nesse setor. Use PT-BR / EN-US em cada pergunta ou aprofundamento; as escolhas de idioma são independentes.
 
 ### Decisões e execução
 
@@ -86,12 +86,29 @@ São 12 perguntas comportamentais, em português e inglês. Cada par PT/EN repre
 
 ## Aprofundamentos
 
-1. Qual era exatamente a discordância e qual efeito sobre o cliente estava em jogo?
-2. Que evidências você apresentou e que argumentos contrários ouviu?
-3. Como você manteve o respeito mesmo sob diferença de autoridade ou pressão?
-4. Quem tinha responsabilidade pela decisão e como ela foi encerrada?
-5. O que você fez concretamente para apoiar a execução depois, sem depender de ter sua ideia escolhida?
-6. Algum fato novo exigiu reabrir o assunto? Como distinguiu isso de insistir na preferência anterior?
+1. <a id="lp13-f01"></a> Qual era exatamente a discordância e qual efeito sobre o cliente estava em jogo?
+
+   **EN:** What exactly was the disagreement, and what effect on the customer was at stake?
+
+2. <a id="lp13-f02"></a> Que evidências você apresentou e que argumentos contrários ouviu?
+
+   **EN:** What evidence did you present, and what opposing arguments did you hear?
+
+3. <a id="lp13-f03"></a> Como você manteve o respeito mesmo sob diferença de autoridade ou pressão?
+
+   **EN:** How did you remain respectful despite differences in authority or pressure?
+
+4. <a id="lp13-f04"></a> Quem tinha responsabilidade pela decisão e como ela foi encerrada?
+
+   **EN:** Who was responsible for the decision, and how was it finalized?
+
+5. <a id="lp13-f05"></a> O que você fez concretamente para apoiar a execução depois, sem depender de ter sua ideia escolhida?
+
+   **EN:** What specific actions did you take to support execution afterward, regardless of whether your idea was chosen?
+
+6. <a id="lp13-f06"></a> Algum fato novo exigiu reabrir o assunto? Como distinguiu isso de insistir na preferência anterior?
+
+   **EN:** Did any new fact require reopening the discussion? How did you distinguish that from insisting on your earlier preference?
 
 ## Evidências e revisão da resposta
 

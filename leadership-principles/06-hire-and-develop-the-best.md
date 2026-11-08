@@ -26,7 +26,7 @@ Fazer a tarefa pela pessoa pode resolver a urgência e prejudicar a autonomia. E
 
 ## Perguntas para prática
 
-São 12 perguntas comportamentais, em português e inglês. Cada par PT/EN representa uma pergunta. Para o contexto de SA/FSI, use uma experiência equivalente se você ainda não atuou nesse setor.
+São 12 perguntas comportamentais, em português e inglês. Cada par PT/EN representa uma pergunta. Para o contexto de SA/FSI, use uma experiência equivalente se você ainda não atuou nesse setor. Use o controle PT-BR / EN-US de cada pergunta ou aprofundamento; uma escolha não altera as demais.
 
 ### Decisões e execução
 
@@ -86,12 +86,29 @@ São 12 perguntas comportamentais, em português e inglês. Cada par PT/EN repre
 
 ## Aprofundamentos
 
-1. Qual habilidade ou comportamento precisava evoluir e como isso foi identificado?
-2. Qual objetivo a própria pessoa ajudou a definir?
-3. Como você combinou orientação, prática e espaço para ela decidir?
-4. Que evidência mostra autonomia ou qualidade maior depois?
-5. Como separa sua contribuição de mentoria do esforço e do mérito da pessoa?
-6. O que não funcionou no acompanhamento e como o mecanismo de desenvolvimento mudou?
+1. <a id="lp06-f01"></a> Qual habilidade ou comportamento precisava evoluir e como isso foi identificado?
+
+   **EN:** What skill or behavior needed to improve, and how was that identified?
+
+2. <a id="lp06-f02"></a> Qual objetivo a própria pessoa ajudou a definir?
+
+   **EN:** What goal did the person help define?
+
+3. <a id="lp06-f03"></a> Como você combinou orientação, prática e espaço para ela decidir?
+
+   **EN:** How did you combine guidance, practice, and room for the person to make decisions?
+
+4. <a id="lp06-f04"></a> Que evidência mostra autonomia ou qualidade maior depois?
+
+   **EN:** What evidence shows greater autonomy or quality afterward?
+
+5. <a id="lp06-f05"></a> Como separa sua contribuição de mentoria do esforço e do mérito da pessoa?
+
+   **EN:** How do you distinguish your mentoring contribution from the person's own effort and achievements?
+
+6. <a id="lp06-f06"></a> O que não funcionou no acompanhamento e como o mecanismo de desenvolvimento mudou?
+
+   **EN:** What did not work in the follow-up, and how did the development mechanism change?
 
 ## Evidências e revisão da resposta
 

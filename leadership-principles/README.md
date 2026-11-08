@@ -2,7 +2,7 @@
 
 Os 16 Leadership Principles (LPs) são princípios de liderança usados pela Amazon para orientar decisões e sua cultura. Na preparação para entrevistas, eles ajudam você a reconhecer comportamentos na própria trajetória e explicá-los com exemplos concretos. [Lista oficial da Amazon](https://www.amazon.jobs/content/en/our-workplace/leadership-principles).
 
-As 16 fichas reúnem **192 perguntas comportamentais em português e inglês e 96 aprofundamentos**. Cada par PT/EN conta como uma pergunta. Os nomes e o texto-base foram conferidos na fonte oficial em 26/10/2026; as traduções são didáticas e as perguntas são autorais.
+As 16 fichas reúnem **192 perguntas comportamentais e 96 aprofundamentos**, todos em português e inglês. Use o controle PT-BR / EN-US de cada item para escolher seu idioma de forma independente. Cada par PT/EN conta como uma pergunta. Os nomes e o texto-base foram conferidos na fonte oficial em 26/10/2026; as traduções são didáticas e as perguntas são autorais.
 
 ## ★ Foco do loop
 
