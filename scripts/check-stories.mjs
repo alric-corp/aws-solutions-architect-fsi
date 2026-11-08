@@ -7,7 +7,7 @@ import { authoredStories, storyLocaleMarkdown, isAuthoredStory, isAuthoredStoryU
 import { studentSearchMarkdown, detailsPolicy } from '../site/content-policy.mjs';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
-const review = path.join(root, '.site/stories-review');
+const review = path.join(root, '.site/story-independent-review');
 const args = process.argv.slice(2);
 assert.ok(args.every(value => value === '--browser'));
 const browserRequested = args.includes('--browser');
@@ -15,10 +15,10 @@ const base = process.env.STORIES_TEST_URL || 'http://127.0.0.1:4322';
 assert.ok(['127.0.0.1', 'localhost', '[::1]'].includes(new URL(base).hostname));
 const read = source => fs.readFile(path.join(root, source), 'utf8');
 const json = async source => JSON.parse(await read(source));
-const normalize = value => String(value).replace(/\s+/g, ' ').trim();
 const report = { checks: [], captures: [], limits: ['Leitura dos relatos fornecidos e Chromium local; não é auditoria das experiências ou métricas, teste com pessoas ou dispositivo físico.'] };
 const locales = ['pt-BR', 'en-US'];
-const localeKey = 'architecture-practice:story-language:v1';
+const legacyLocaleKey = 'architecture-practice:story-language:v1';
+const localeKeyPrefix = 'architecture-practice:story-languages:v2:';
 const counts = [13, 25, 18, 26, 18, 35, 27, 6, 4, 15];
 
 async function checkStatic() {
@@ -45,7 +45,7 @@ async function checkStatic() {
     ['Itaú', 'Cost Explorer', '6'], ['snapshot', 'DMS', '12'],
     ['Itaú', 'Open Finance', 'MCP', 'BFA', '50', '800'], [], ['Itaú', 'pom.xml'], ['Itaú', 'StackSpot', 'HN8', 'ECS', '200'],
   ];
-  const baseline = await json('.site/stories-review/baseline.json').catch(() => null);
+  const baseline = await json('.site/story-independent-review/baseline.json').catch(() => json('.site/stories-review/baseline.json').catch(() => null));
   let questions = 0;
   for (const [index, story] of authoredStories.entries()) {
     const markdown = await read(story.source);
@@ -105,6 +105,11 @@ async function checkBrowser() {
     page.on('console', message => { if (message.type() === 'error') errors.push(message.text()); });
     page.on('request', request => { if (/^https?:/.test(request.url()) && new URL(request.url()).origin !== new URL(base).origin) errors.push('Requisição externa não solicitada'); });
   };
+  const controls = (page, key) => page.locator(`[data-story-language-controls][data-story-block-key=${JSON.stringify(key)}]`);
+  const question = (page, key) => page.locator(`section[data-story-question][data-story-block-key=${JSON.stringify(key)}]`);
+  const panes = (page, key) => key === 'story'
+    ? page.locator('[data-story-part][data-story-block-key="story"] > [data-story-locale]')
+    : question(page, key).locator(':scope > [data-story-locale]');
   async function visit(page, story, hash = '') {
     const response = await page.goto(base + story.url + hash);
     // Chromium returns null for a same-document fragment navigation.
@@ -113,70 +118,140 @@ async function checkBrowser() {
     await page.locator('[data-story-locales][data-story-locales-initialized="true"]').waitFor();
     await page.evaluate(() => document.fonts.ready);
   }
-  async function active(page, locale) {
-    await page.waitForFunction(value => document.querySelector('[data-story-locales]')?.dataset.activeStoryLocale === value, locale);
-    assert.equal(await page.locator('[data-story-locales]').getAttribute('data-active-story-locale'), locale);
-    assert.equal(await page.locator('[data-story-locale]:visible').count(), 1);
-    assert.equal(await page.locator(`[data-story-locale="${locale}"]`).isVisible(), true);
-    assert.equal(await page.locator(`[data-story-language-option="${locale}"]`).getAttribute('aria-pressed'), 'true');
-    assert.equal(await page.locator('.prose > h1').getAttribute('lang'), locale);
-    assert.equal(await page.locator(`[data-story-locale="${locale}"] h3`).count(), counts[authoredStories.findIndex(story => page.url().includes(story.url))]);
-    const goodToc = await page.locator('#page-toc a[href^="#"]').evaluateAll(links => links.filter(link => link.getClientRects().length).every(link => {
-      const target = document.getElementById(decodeURIComponent(link.hash.slice(1)));
-      return !target?.closest('[data-story-locale]')?.hidden;
-    }));
-    assert.ok(goodToc, 'Sumário não deve direcionar para painel oculto');
-    assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1));
+  async function active(page, key, locale) {
+    const button = controls(page, key).locator(`[data-story-language-option="${locale}"]`);
+    await button.locator('xpath=self::*[@aria-pressed="true"]').waitFor();
+    assert.equal(await button.getAttribute('aria-pressed'), 'true');
+    assert.equal(await controls(page, key).count(), 1, 'Cada unidade tem somente um controle de idioma');
+    const state = await panes(page, key).evaluateAll(nodes => nodes.map(node => ({ locale: node.dataset.storyLocale, hidden: node.hidden })));
+    assert.ok(state.length >= 2 && state.length % 2 === 0, 'As duas traduções continuam presentes');
+    assert.ok(state.every(node => node.hidden === (node.locale !== locale)), `Só a tradução escolhida fica acessível em ${key}`);
+    if (key === 'story') assert.equal(await page.locator('.prose > h1').getAttribute('lang'), locale);
+  }
+  async function choose(page, key, locale, keyboard = false) {
+    const button = controls(page, key).locator(`[data-story-language-option="${locale}"]`);
+    if (keyboard) { await button.focus(); await page.keyboard.press('Enter'); }
+    else await button.click();
+    await active(page, key, locale);
+  }
+  async function questionKeys(page) {
+    return page.locator('section[data-story-question]').evaluateAll(nodes => nodes.map(node => node.dataset.storyBlockKey));
+  }
+  async function checkTocAndLayout(page) {
+    const state = await page.evaluate(() => {
+      const wrapper = document.querySelector('[data-story-locales]');
+      const headings = [...wrapper.querySelectorAll('h2[id],h3[id]')].filter(heading => !heading.closest('[data-story-locale]')?.hidden);
+      const links = [...document.querySelectorAll('#page-toc a[href^="#"]')];
+      return {
+        overflow: document.documentElement.scrollWidth > innerWidth + 1,
+        missing: headings.filter(heading => !links.some(link => {
+          const id = decodeURIComponent(link.hash.slice(1));
+          return id === heading.id && !link.hidden && !link.closest('li[hidden]');
+        })).map(heading => heading.id),
+        hiddenTargets: links.filter(link => !link.hidden && link.hash !== '#main').filter(link => {
+          const target = document.getElementById(decodeURIComponent(link.hash.slice(1)));
+          return target?.closest('[data-story-locale]')?.hidden;
+        }).map(link => link.hash),
+      };
+    });
+    assert.equal(state.overflow, false, 'Sem rolagem horizontal global');
+    assert.deepEqual(state.missing, [], 'Sumário precisa manter acessíveis perguntas em idioma diferente do H2 pai');
+    assert.deepEqual(state.hiddenTargets, [], 'Sumário não aponta para traduções ocultas');
+  }
+  async function capture(page, name) {
+    await page.screenshot({ path: path.join(review, name) }); report.captures.push(name);
   }
   try {
+    let mixedChecks = 0;
     for (const [width, theme] of [[1440, 'light'], [390, 'light'], [390, 'dark'], [768, 'dark']]) {
       const ctx = await context({ viewport: { width, height: width === 390 ? 844 : 1000 }, colorScheme: theme });
-      const page = await ctx.newPage(); monitor(page);
       await ctx.addInitScript(() => {
         localStorage.setItem('architecture-practice:preferences:v1', JSON.stringify({ theme: 'system', textSize: 0, fixture: 'KEEP_PREFERENCES' }));
         localStorage.setItem('stories-fixture-private-record', 'KEEP_PRIVATE_RECORD');
+        localStorage.setItem('architecture-practice:story-language:v1', JSON.stringify('en-US'));
       });
-      for (const story of authoredStories) {
+      const page = await ctx.newPage(); monitor(page);
+      for (const [index, story] of authoredStories.entries()) {
         await visit(page, story);
-        await page.locator('[data-story-language-option="pt-BR"]').click();
-        await active(page, 'pt-BR');
-        await page.locator('[data-story-language-option="en-US"]').focus();
-        await page.keyboard.press('Enter');
-        await active(page, 'en-US');
-        assert.equal(await page.evaluate(key => JSON.parse(localStorage.getItem(key)), localeKey), 'en-US');
+        const keys = await questionKeys(page);
+        assert.equal(keys.length, counts[index]);
+        assert.equal(await page.locator('[data-story-language-controls]').count(), counts[index] + 1, 'Um toggle de narrativa e um por pergunta');
+        assert.equal(new Set(keys).size, keys.length, 'Cada pergunta tem identidade própria');
+        await active(page, 'story', 'pt-BR');
+        for (const key of keys) await active(page, key, 'pt-BR');
+        assert.equal(await page.locator('[data-story-question] details[open]').count(), 0, 'Respostas inicialmente recolhidas');
+        const title = await page.title();
+        await choose(page, keys[0], 'en-US', true);
+        await active(page, 'story', 'pt-BR');
+        await active(page, keys[1], 'pt-BR');
+        assert.equal(await page.title(), title, 'Trocar uma pergunta não altera o título ou a narrativa');
+        await choose(page, 'story', 'en-US');
+        await active(page, keys[0], 'en-US');
+        for (const key of keys.slice(1)) await active(page, key, 'pt-BR');
+        const openAnswer = question(page, keys[0]).locator('[data-story-locale="en-US"] details').first();
+        await openAnswer.locator('summary').click();
+        assert.equal(await openAnswer.getAttribute('open'), '');
+        await choose(page, keys[0], 'pt-BR');
+        assert.equal(await question(page, keys[0]).locator('[data-story-locale="pt-BR"] details').first().getAttribute('open'), '', 'Resposta aberta preservada só entre as traduções da mesma pergunta');
+        assert.equal(await question(page, keys[1]).locator('details[open]').count(), 0, 'Outra pergunta permanece recolhida');
+        await choose(page, 'story', 'pt-BR');
+        await choose(page, keys[0], 'en-US');
+        await active(page, keys[1], 'pt-BR');
+        await checkTocAndLayout(page);
+        const id = await page.locator('body').getAttribute('data-content-id');
+        const stored = await page.evaluate(key => JSON.parse(localStorage.getItem(key)), localeKeyPrefix + id);
+        assert.equal(stored.story, 'pt-BR');
+        assert.equal(stored[keys[0]], 'en-US');
+        assert.ok(stored[keys[1]] === undefined || stored[keys[1]] === 'pt-BR');
+        assert.equal(await page.evaluate(key => JSON.parse(localStorage.getItem(key)), legacyLocaleKey), 'en-US', 'Preferência global antiga é ignorada e preservada');
         assert.equal(await page.evaluate(() => localStorage.getItem('stories-fixture-private-record')), 'KEEP_PRIVATE_RECORD');
         assert.equal(await page.evaluate(() => JSON.parse(localStorage.getItem('architecture-practice:preferences:v1')).fixture), 'KEEP_PREFERENCES');
         if (story.id === 'STAR-01' || story.id === 'STAR-10') {
-          const capture = `${story.id.toLowerCase()}-${width}-${theme}-en.png`;
-          await page.screenshot({ path: path.join(review, capture) }); report.captures.push(capture);
+          await question(page, keys[0]).scrollIntoViewIfNeeded();
+          await capture(page, `${story.id.toLowerCase()}-${width}-${theme}-mixed-questions.png`);
         }
-        await page.locator('[data-story-language-option="pt-BR"]').click();
-        await active(page, 'pt-BR');
         if (story.id === 'STAR-01') {
-          const capture = `star-01-${width}-${theme}-pt.png`;
-          await page.screenshot({ path: path.join(review, capture) }); report.captures.push(capture);
+          await page.locator('.prose > h1').scrollIntoViewIfNeeded();
+          await capture(page, `star-01-${width}-${theme}-story-pt.png`);
         }
+        mixedChecks++;
       }
       await ctx.close();
     }
     const ctx = await context({ viewport: { width: 1440, height: 1000 } });
     const page = await ctx.newPage(); monitor(page);
     await visit(page, authoredStories[0]);
-    assert.equal(await page.locator('[data-story-locale="pt-BR"] details[open]').count(), 0, 'Respostas inicialmente recolhidas');
-    await page.locator('[data-story-language-option="en-US"]').click();
-    await page.reload(); await active(page, 'en-US');
-    const enId = await page.locator('[data-story-locale="en-US"] h3').first().getAttribute('id');
-    const ptId = await page.locator('[data-story-locale="pt-BR"] h3').first().getAttribute('id');
-    await visit(page, authoredStories[0], '#' + encodeURIComponent(ptId)); await active(page, 'pt-BR');
-    await page.locator('[data-story-language-option="en-US"]').click(); await active(page, 'en-US');
-    assert.equal(decodeURIComponent(new URL(page.url()).hash.slice(1)), enId, 'Troca com fragmento preserva contexto e recarga no idioma escolhido');
-    await page.reload(); await active(page, 'en-US');
-    await page.evaluate(hash => { location.hash = hash; }, ptId); await active(page, 'pt-BR');
-    await page.evaluate(hash => { location.hash = hash; }, enId); await active(page, 'en-US');
-    await page.goBack(); await active(page, 'pt-BR');
-    await page.goForward(); await active(page, 'en-US');
+    const keys = await questionKeys(page);
+    const ptId = await question(page, keys[0]).locator('[data-story-locale="pt-BR"] h3').getAttribute('id');
+    const enId = await question(page, keys[0]).locator('[data-story-locale="en-US"] h3').getAttribute('id');
+    const secondEnId = await question(page, keys[1]).locator('[data-story-locale="en-US"] h3').getAttribute('id');
+    await choose(page, keys[0], 'en-US');
+    await choose(page, keys[1], 'pt-BR');
+    await choose(page, 'story', 'en-US');
+    await page.reload();
+    await active(page, 'story', 'en-US'); await active(page, keys[0], 'en-US'); await active(page, keys[1], 'pt-BR');
+    await visit(page, authoredStories[1]);
+    await active(page, 'story', 'pt-BR');
+    for (const key of await questionKeys(page)) await active(page, key, 'pt-BR');
+    await visit(page, authoredStories[0]);
+    await active(page, 'story', 'en-US'); await active(page, keys[0], 'en-US'); await active(page, keys[1], 'pt-BR');
+    await choose(page, 'story', 'pt-BR');
+    await visit(page, authoredStories[0], '#' + encodeURIComponent(ptId));
+    await active(page, keys[0], 'pt-BR'); await active(page, 'story', 'pt-BR'); await active(page, keys[1], 'pt-BR');
+    await choose(page, keys[0], 'en-US');
+    assert.equal(decodeURIComponent(new URL(page.url()).hash.slice(1)), enId, 'Toggle só atualiza fragmento quando pertence à pergunta alterada');
+    await page.reload(); await active(page, keys[0], 'en-US'); await active(page, 'story', 'pt-BR');
+    await page.evaluate(hash => { location.hash = hash; }, ptId); await active(page, keys[0], 'pt-BR');
+    await page.evaluate(hash => { location.hash = hash; }, enId); await active(page, keys[0], 'en-US');
+    await page.goBack(); await active(page, keys[0], 'pt-BR');
+    await page.goForward(); await active(page, keys[0], 'en-US');
+    await page.evaluate(hash => { location.hash = hash; }, secondEnId); await active(page, keys[1], 'en-US');
+    await choose(page, 'story', 'en-US');
+    assert.equal(decodeURIComponent(new URL(page.url()).hash.slice(1)), secondEnId, 'Trocar narrativa não altera a âncora de outra unidade');
+    await active(page, keys[0], 'en-US'); await active(page, keys[1], 'en-US');
+    await checkTocAndLayout(page);
     await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
-    const targetVisible = await page.locator(`[id="${enId}"]`).evaluate(node => node.getBoundingClientRect().top >= (document.querySelector('.topbar')?.getBoundingClientRect().bottom || 0) - 2);
+    const targetVisible = await page.locator(`[id=${JSON.stringify(secondEnId)}]`).evaluate(node => node.getBoundingClientRect().top >= (document.querySelector('.topbar')?.getBoundingClientRect().bottom || 0) - 2);
     assert.ok(targetVisible, 'Título de destino não pode ficar encoberto pelo header');
     const storyDoc = (await json('dist/content-manifest.json')).find(doc => doc.sourcePath === authoredStories[0].source);
     const fixture = {
@@ -185,49 +260,56 @@ async function checkBrowser() {
       resume: { student: { contentId: storyDoc.id, anchor: ptId, contentVersion: storyDoc.contentVersion }, instructor: { contentId: 'fixture-instructor', anchor: 'KEEP_PRIVATE_RESUME' } },
     };
     const saved = await context({ viewport: { width: 1440, height: 1000 } });
-    await saved.addInitScript(value => {
+    await saved.addInitScript(({ value, localeKey, secondKey }) => {
       if (!localStorage.getItem('stories-fixture-initialized')) {
         localStorage.setItem('architecture-practice:study:v2', JSON.stringify(value));
-        localStorage.setItem('architecture-practice:story-language:v1', JSON.stringify('en-US'));
+        localStorage.setItem(localeKey, JSON.stringify({ story: 'en-US', [secondKey]: 'en-US' }));
         localStorage.setItem('stories-fixture-initialized', 'true');
       }
-    }, fixture);
+    }, { value: fixture, localeKey: localeKeyPrefix + storyDoc.id, secondKey: keys[1] });
     const sp = await saved.newPage(); monitor(sp);
-    await visit(sp, authoredStories[0]);
-    await sp.locator('.read-toggle[aria-pressed="true"]').waitFor();
-    await active(sp, 'pt-BR'); // Saved reading position selects its language.
-    await sp.locator('[data-story-language-option="en-US"]').click(); await active(sp, 'en-US');
-    await sp.locator('.read-toggle[aria-pressed="true"]').waitFor();
+    await visit(sp, authoredStories[0]); await sp.locator('.read-toggle[aria-pressed="true"]').waitFor();
+    await active(sp, 'story', 'en-US'); await active(sp, keys[0], 'pt-BR'); await active(sp, keys[1], 'en-US');
+    await choose(sp, keys[0], 'en-US');
     const afterToggle = await sp.evaluate(() => JSON.parse(localStorage.getItem('architecture-practice:study:v2')));
-    assert.deepEqual(afterToggle.reading, fixture.reading, 'Alternar idioma preserva as leituras marcadas');
+    assert.deepEqual(afterToggle.reading, fixture.reading, 'Alternar idiomas preserva as leituras marcadas');
     assert.deepEqual(afterToggle.resume.instructor, fixture.resume.instructor);
     assert.equal(afterToggle.extension, fixture.extension);
-    assert.equal(await sp.locator('body').getAttribute('data-content-id'), storyDoc.id, 'Uma história tem a mesma identidade nos dois idiomas');
-    const delayed = await context({ viewport: { width: 1440, height: 1000 } });
-    await delayed.addInitScript(value => localStorage.setItem('architecture-practice:study:v2', JSON.stringify(value)), fixture);
-    const dp = await delayed.newPage(); monitor(dp);
-    let releaseCatalog;
-    const catalogGate = new Promise(resolve => { releaseCatalog = resolve; });
-    await dp.route('**/content-manifest.json', async route => { await catalogGate; await route.continue(); });
-    await visit(dp, authoredStories[0]);
-    await dp.locator('[data-story-language-option="en-US"]').click(); await active(dp, 'en-US');
-    releaseCatalog();
-    await dp.waitForFunction(({ id, anchor }) => JSON.parse(localStorage.getItem('architecture-practice:study:v2'))?.resume?.student?.contentId === id && JSON.parse(localStorage.getItem('architecture-practice:study:v2'))?.resume?.student?.anchor === anchor, { id: storyDoc.id, anchor: enId });
-    await active(dp, 'en-US');
+    assert.equal(await sp.locator('body').getAttribute('data-content-id'), storyDoc.id, 'As traduções mantêm a mesma identidade de leitura');
+    await sp.reload(); await sp.locator('.read-toggle[aria-pressed="true"]').waitFor();
+    await active(sp, keys[0], 'en-US'); await active(sp, keys[1], 'en-US'); await active(sp, 'story', 'en-US');
+    for (const [anchor, manualKeys] of [[ptId, ['story', keys[0]]], [enId, ['story', keys[1]]]]) {
+      const delayed = await context({ viewport: { width: 1440, height: 1000 } });
+      const delayedFixture = { ...fixture, resume: { ...fixture.resume, student: { ...fixture.resume.student, anchor } } };
+      await delayed.addInitScript(value => localStorage.setItem('architecture-practice:study:v2', JSON.stringify(value)), delayedFixture);
+      const dp = await delayed.newPage(); monitor(dp);
+      let releaseCatalog;
+      const catalogGate = new Promise(resolve => { releaseCatalog = resolve; });
+      await dp.route('**/content-manifest.json', async route => { await catalogGate; await route.continue(); });
+      await visit(dp, authoredStories[0]);
+      for (const key of manualKeys) await choose(dp, key, 'en-US');
+      releaseCatalog();
+      await dp.locator('.read-toggle[aria-pressed="true"]').waitFor();
+      await active(dp, 'story', 'en-US'); await active(dp, keys[0], 'en-US');
+      await active(dp, keys[1], manualKeys.includes(keys[1]) ? 'en-US' : 'pt-BR');
+      const resumed = await dp.evaluate(() => JSON.parse(localStorage.getItem('architecture-practice:study:v2')).resume.student.anchor);
+      assert.equal(resumed, enId, 'Retomada tardia respeita a escolha recente somente da unidade alvo');
+    }
     const blocked = await context({ viewport: { width: 390, height: 844 } });
     await blocked.addInitScript(() => Object.defineProperty(window, 'localStorage', { get() { throw new DOMException('Blocked', 'SecurityError'); } }));
     const bp = await blocked.newPage(); monitor(bp); await visit(bp, authoredStories[2]);
-    await bp.locator('[data-story-language-option="en-US"]').click(); await active(bp, 'en-US');
+    const blockedKeys = await questionKeys(bp);
+    await choose(bp, blockedKeys[0], 'en-US'); await active(bp, 'story', 'pt-BR'); await active(bp, blockedKeys[1], 'pt-BR');
+    await choose(bp, 'story', 'en-US'); await active(bp, blockedKeys[0], 'en-US'); await active(bp, blockedKeys[1], 'pt-BR');
     const nojs = await context({ javaScriptEnabled: false, viewport: { width: 390, height: 844 } });
     const np = await nojs.newPage(); await np.goto(base + authoredStories[0].url);
-    assert.equal(await np.locator('[data-story-locale]:visible').count(), 2);
+    assert.equal(await np.locator('[data-story-locale]:visible').count(), 2, 'Sem JS os dois textos integrais continuam disponíveis');
     assert.equal(await np.locator('[data-story-language-option]').count(), 0);
     assert.deepEqual(errors, [], 'Nenhum erro JS/CSP ou requisição externa no uso das histórias');
-    report.browser = { version: await browser.version(), widths: [390, 768, 1440], themes: ['light', 'dark'], localeChecks: 80, directAnchors: true, reload: true, history: true, readingAndPrivateRecordsPreserved: true, storageBlocked: true, noJavaScript: true };
-    report.checks.push('Toggle integral por teclado, idioma persistido, hash/retomada, sumário filtrado, mobile/temas e ausência de JavaScript ou storage bloqueado validados.');
+    report.browser = { version: await browser.version(), widths: [390, 768, 1440], themes: ['light', 'dark'], mixedStoryChecks: mixedChecks, storyAnd187QuestionsIndependent: true, legacyGlobalIgnored: true, perStoryPersistence: true, directAnchors: true, reload: true, history: true, delayedResumePerUnit: true, readingAndPrivateRecordsPreserved: true, storageBlocked: true, noJavaScript: true };
+    report.checks.push('Narrativa e cada pergunta alternam independentemente por teclado; escolhas mistas persistem por história, com sumário, âncoras, respostas recolhidas e registros preservados.');
   } finally { for (const ctx of contexts) await ctx.close().catch(() => {}); await browser.close(); }
 }
-
 await fs.mkdir(review, { recursive: true });
 try {
   await checkStatic();

@@ -2,7 +2,7 @@
 
 Esta página reúne os nove Leadership Principles destacados na conversa de preparação, marcados com ★ em todo o site, e as histórias reais disponíveis para cada um. Comece pelas lacunas: elas pedem tempo de memória, não de leitura.
 
-> As dez histórias autorais foram fornecidas pelo proprietário para publicação com os nomes e detalhes originais, em PT-BR e EN-US. A alternância de idioma está nas páginas das histórias. Os relatos não são uma auditoria de métricas ou execução; pendências e versões divergentes permanecem sinalizadas. Registros pessoais preenchidos durante o treino continuam privados.
+> As dez histórias autorais foram fornecidas pelo proprietário para publicação com os nomes e detalhes originais, em PT-BR e EN-US. Cada página tem um controle de idioma para a história e outro para cada pergunta e sua resposta; as escolhas são independentes. Os relatos não são uma auditoria de métricas ou execução; pendências e versões divergentes permanecem sinalizadas. Registros pessoais preenchidos durante o treino continuam privados.
 
 ## Os nove focos e suas histórias
 
@@ -66,4 +66,4 @@ STAR-01 a STAR-07 seguem a numeração original; STAR-08 trata do atraso, STAR-0
 2. Nas perguntas que você já preparou, responda em voz alta antes de abrir a resposta.
 3. No aprofundamento, responda antes de abrir o que a resposta precisa conter. Quando não souber um fato, diga que não sabe e como confirmaria. Uma versão plausível inventada não resiste ao follow-up seguinte.
 4. Busque variedade quando houver alternativas, sem impor um número universal de reutilizações. A história precisa responder à pergunta, e seus fatos permanecem iguais. Siga as orientações específicas recebidas no seu processo.
-5. Use o seletor PT-BR / EN-US para treinar a história completa ou os aprofundamentos. Mantenha os mesmos fatos e números nos dois idiomas; uma tradução não transforma proposta em ação passada.
+5. Selecione PT-BR / EN-US na história e em cada pergunta de forma independente. Mantenha os mesmos fatos e números nos dois idiomas; uma tradução não transforma proposta em ação passada.
