@@ -474,6 +474,12 @@ if (baseline) {
   // Reviewed hiring/interview references added by the Redes integration to
   // three study pages outside the networking track.
   const mentorshipReferences = new Set([
+    'https://c4model.com/diagrams/container',
+    'https://c4model.com/diagrams/system-context',
+    'https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Anomaly_Detection.html',
+    'https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Database-Insights-Database-Instance-Dashboard.html',
+    'https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_ModifyInstance.Settings.html',
+    'https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_RestoreFromSnapshot.html',
     'https://node-postgres.com/features/pooling',
     'https://opentelemetry.io/docs/concepts/signals/traces/'
   ].map(canonical));
@@ -516,7 +522,7 @@ if (baseline) {
   function isReviewedExternal(file, target) {
     if (file === 'technical-knowledge/learning-guide.html' && horizonteReferences.has(target)) return true;
     if (file.startsWith('technical-knowledge/01-fundamentals/redes/') && redesReferences.has(target)) return true;
-    if (file === 'interview/simulations/05-mentoria-transacoes/instrutor.html' && mentorshipReferences.has(target)) return true;
+    if ((file === 'interview/simulations/05-mentoria-transacoes/candidato.html' || file === 'interview/simulations/05-mentoria-transacoes/instrutor.html') && mentorshipReferences.has(target)) return true;
     if (file === networkReviewUrl.slice(1) && networkReviewReferences.has(target)) return true;
     if (file === 'leadership-principles/historias-com-evidencias.html' && leadershipReferences.has(target)) return true;
     if (file === 'references/sa-conversa-profissional.html' && professionalReferences.has(target)) return true;
