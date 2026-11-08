@@ -1,4 +1,5 @@
 import { collectionMetadataFor, isStandaloneReference } from './collection-policy.mjs';
+import { isAuthoredStory } from './story-policy.mjs';
 // Explicitly retired by the owner. Keep the lifecycle list central so old Git
 // entries cannot republish them and route audits exempt only these removals.
 export const retiredDocuments = [
@@ -109,7 +110,7 @@ export function metadataFor(source) {
 const text = value => value.replace(/<[^>]*>/g, '').replace(/[*_`]/g, '').trim();
 export function detailsPolicy(summary, surroundingHeading, source) {
   const label = normalize(text(summary));
-  if (/^(?:(?:ver|abrir) )?(?:resposta|solucao|gabarito)\b|sample answer|optional for the teacher/.test(label)) return 'answer';
+  if (/^(?:(?:ver|abrir) )?(?:resposta|solucao|gabarito)\b|^(?:(?:view|show|read|open) )?(?:prepared answer|answer)\b|sample answer|optional for the teacher/.test(label)) return 'answer';
   // Numbered questions in the curated case interview sections wrap their
   // answers in details. Keep the summary (the question), omit only the body.
   if (isStandaloneReference(source) && /perguntas.*respostas comentadas/.test(normalize(surroundingHeading)) && /^\d+\./.test(label)) return 'answer';
@@ -136,7 +137,7 @@ export function studentSearchMarkdown(markdown, source) {
     const summary = block.match(/<summary\b[^>]*>([\s\S]*?)<\/summary>/i)?.[1] || '';
     const headings = [...markdown.slice(0, match.index).matchAll(/^##\s+(.+)$/gm)];
     const policy = detailsPolicy(summary, headings.at(-1)?.[1] || '', source);
-    result += policy === 'answer' ? `\n${text(summary).replace(/Vitória/g, 'the candidate')}\n` : block;
+    result += policy === 'answer' ? `\n${isAuthoredStory(source) ? text(summary) : text(summary).replace(/Vitória/g, 'the candidate')}\n` : block;
     cursor = tags.lastIndex;
     opening.lastIndex = cursor;
   }
@@ -155,7 +156,7 @@ export function studentSearchMarkdown(markdown, source) {
   }).join('\n');
   // Paths/link labels for deliberate instructor access are not search material.
   result = result.replace(/\[([^\]]*)\]\(([^)]*(?:instrutor|diagnostico-inicial|rubrica|mock-script)[^)]*)\)/gi, '');
-  return result.replace(/Vitória(?:'s)?/g, 'the candidate');
+  return isAuthoredStory(source) ? result : result.replace(/Vitória(?:'s)?/g, 'the candidate');
 }
 
 // Explicit section mapping for the long cases; the full H2/H3 TOC remains.

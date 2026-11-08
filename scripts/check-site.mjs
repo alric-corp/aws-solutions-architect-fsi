@@ -10,6 +10,7 @@ import { rankSearch } from '../site/search.mjs';
 import { continuityScopeFor } from '../site/collection-policy.mjs';
 import { compilePublishedLoop, isLoopPublicRoute, isApprovedLoopData } from '../site/loop-publication.mjs';
 import { serializeLoopData } from './loop-private/build.mjs';
+import { isAuthoredStoryUrl } from '../site/story-policy.mjs';
 
 const publishedLoop = await compilePublishedLoop();
 
@@ -48,6 +49,7 @@ const namedMentorshipPages = new Set([
 ]);
 function hasUnexpectedPersonalData(file, content) {
   if (/\/Users\/tomasalric/.test(content)) return true;
+  if (/Tomas e Vitória/.test(content)) return true;
   // Only the exact owner-approved payload on its two explicit routes is
   // exempt. Names elsewhere and local filesystem paths remain disallowed.
   const scoped = content.replace(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi, (tag, attributes, raw) => isApprovedLoopData(file, attributes, raw, publishedLoop) ? '' : tag);
@@ -56,10 +58,14 @@ function hasUnexpectedPersonalData(file, content) {
     .replaceAll('Conversa técnica — Vitória e Adassa', 'Conversa técnica')
     .replaceAll('Mentoria técnica — Vitória e Cleber', 'Mentoria técnica');
   if (namedMentorshipPages.has(file)) checked = checked.replace(/Vitória|Vitória/g, 'participante');
+  if (isAuthoredStoryUrl(file)) checked = checked.replace(/Vitória|Vitória/g, 'autora');
   return /Vitória|Vitória|Tomas e Vitória/.test(checked);
 }
 assert.equal(hasUnexpectedPersonalData('index.html', 'Vitória'), true, 'Nome pessoal continua vedado fora do roteiro autorizado');
 assert.equal(hasUnexpectedPersonalData('index.html', 'Tomas e Vitória'), true, 'Avaliação ou relato pessoal não ganha liberação global');
+assert.equal(hasUnexpectedPersonalData('leadership-principles/stories/star-01-scaling-incident.html', 'Relato autoral de Vitória no Itaú'), false, 'História exata autorizada pode manter autoria e nomes');
+assert.equal(hasUnexpectedPersonalData('leadership-principles/stories/qualquer-perfil.html', 'Vitória'), true, 'A autorização não vale para outros arquivos de perfil');
+assert.equal(hasUnexpectedPersonalData('leadership-principles/stories/star-01-scaling-incident.html', '/Users/tomasalric/privado'), true, 'Autorizar autoria não autoriza caminhos privados');
 assert.equal(hasUnexpectedPersonalData('praticar/index.html', 'Conversa técnica — Vitória e Cleber'), false, 'Título solicitado pode identificar o acesso à mentoria');
 assert.equal(hasUnexpectedPersonalData('praticar/index.html', 'Conversa técnica — Vitória e Adassa'), false, 'Título da revisão de redes pode identificar seu acesso');
 assert.equal(hasUnexpectedPersonalData('interview/simulations/07-mentoria-redes/candidato.html', 'Vitória precisa melhorar'), true, 'O título não autoriza publicar avaliação pessoal na nova revisão');

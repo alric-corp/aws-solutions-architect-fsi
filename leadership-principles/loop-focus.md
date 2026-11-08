@@ -2,7 +2,7 @@
 
 Esta página reúne os nove Leadership Principles destacados na conversa de preparação, marcados com ★ em todo o site, e as histórias reais disponíveis para cada um. Comece pelas lacunas: elas pedem tempo de memória, não de leitura.
 
-> As histórias estão anonimizadas: empresa, sistemas internos e produtos em desenvolvimento aparecem pela função. Os números são os do relato original. Na entrevista, use o nível de detalhe que você pode compartilhar; o próprio briefing da apresentação sugere nomes fictícios para informações confidenciais.
+> As dez histórias autorais foram fornecidas pelo proprietário para publicação com os nomes e detalhes originais, em PT-BR e EN-US. A alternância de idioma está nas páginas das histórias. Os relatos não são uma auditoria de métricas ou execução; pendências e versões divergentes permanecem sinalizadas. Registros pessoais preenchidos durante o treino continuam privados.
 
 ## Os nove focos e suas histórias
 
@@ -11,7 +11,7 @@ A coluna de ênfase resume a orientação recebida. A escolha da história é um
 | Princípio | Ênfase indicada | História principal | Alternativa | Situação |
 |---|---|---|---|---|
 | [Dive Deep ★](12-dive-deep.md) | Análise por camadas, com métricas e causa raiz; associado à entrevista técnica | [STAR-04](stories/star-04-cmdb-ownership.md) | [STAR-02](stories/star-02-cache-latency.md) | Coberto |
-| [Have Backbone; Disagree and Commit ★](13-have-backbone-disagree-and-commit.md) | Discordâncias, contrapontos e apoio a uma decisão diferente da preferida | — | Investigar STAR-05, STAR-06 e STAR-04 | **Sem história** |
+| [Have Backbone; Disagree and Commit ★](13-have-backbone-disagree-and-commit.md) | Discordâncias, contrapontos e compromisso após a decisão | [STAR-10](stories/star-10-disagree-terraform.md) | Investigar STAR-05 e STAR-04 | **Relato adicionado:** ações após a decisão ainda a detalhar |
 | [Ownership ★](02-ownership.md) | Responsabilidades além do escopo inicial | [STAR-05](stories/star-05-unused-solution.md) | [STAR-03](stories/star-03-account-id-migration.md) | Coberto |
 | [Customer Obsession ★](01-customer-obsession.md) | Atuação consultiva, feedback e interações difíceis, inclusive dizer não | [STAR-03](stories/star-03-account-id-migration.md) | [STAR-07](stories/star-07-open-finance-agent.md) | **Parcial:** falta uma interação difícil ou um “não” |
 | [Deliver Results ★](14-deliver-results.md) | Resultados expressivos ou apesar de obstáculos | [STAR-02](stories/star-02-cache-latency.md) | [STAR-06](stories/star-06-emergency-db-migration.md) | Coberto |
@@ -22,7 +22,7 @@ A coluna de ênfase resume a orientação recebida. A escolha da história é um
 
 ### As lacunas, em ordem de prioridade
 
-1. **Have Backbone; Disagree and Commit.** Nenhuma história tem uma discordância real. Pistas para lembrar: alguém resistiu ao desligamento da solução sem uso (STAR-05)? Houve divergência sobre o acesso emergencial negado ou sobre snapshot versus DMS (STAR-06)? Alguém queria manter o agente de IA no CMDB (STAR-04)? Só use se aconteceu.
+1. **Have Backbone; Disagree and Commit.** [STAR-10](stories/star-10-disagree-terraform.md) agora oferece um episódio de discordância com evidências e migração gradual. Ainda é necessário recuperar a reação real, a duração e as ações individuais após a decisão. Ter a própria proposta adotada não demonstra, por si só, como apoiaria uma decisão contrária; essa parte continua como aprofundamento, sem inventar um conflito.
 2. **Influência entre equipes.** Na primeira entrevista, essa pergunta ficou no hipotético. STAR-03 e STAR-05 envolvem outras equipes, mas sem tensão descrita. Procure um episódio com duas partes querendo coisas diferentes e uma ação sua de alinhamento.
 3. **Customer Obsession com um “não”.** O cliente pode ser interno: área de negócio, PO ou time consumidor de uma API.
 4. **Think Big.** Se nenhuma ideia sua foi adotada além do time, diga isso e apresente a proposta como proposta.
@@ -45,11 +45,11 @@ A recrutadora descreveu quatro entrevistas com dois princípios cada, além da e
 
 ## As histórias
 
-STAR-01 a STAR-07 seguem a numeração da tabela original de histórias; STAR-08 é a entrega fora do prazo.
+STAR-01 a STAR-07 seguem a numeração original; STAR-08 trata do atraso, STAR-09 das credenciais expostas e STAR-10 da discordância sobre módulos de infraestrutura. A migração de idConta apareceu duas vezes no insumo e permanece uma única história, STAR-03.
 
 | ID | História | Uso sugerido no loop |
 |---|---|---|
-| [STAR-01](stories/star-01-scaling-incident.md) | Incidente de escalabilidade em produção | Bias for Action ★; Dive Deep só com causa raiz confirmada |
+| [STAR-01](stories/star-01-scaling-incident.md) | Incidente de escalabilidade em produção | Dive Deep ★ como foco declarado do relato; sustentar o diagnóstico; também Bias for Action ★ |
 | [STAR-02](stories/star-02-cache-latency.md) | Cache para duas dependências lentas | Deliver Results ★; alternativa para Dive Deep ★ |
 | [STAR-03](stories/star-03-account-id-migration.md) | Migração para idConta sem quebrar consumidores | Customer Obsession ★; alternativa para Ownership ★ |
 | [STAR-04](stories/star-04-cmdb-ownership.md) | Ownership de repositórios no CMDB | Dive Deep ★; alternativa para Learn and Be Curious ★ |
@@ -57,6 +57,8 @@ STAR-01 a STAR-07 seguem a numeração da tabela original de histórias; STAR-08
 | [STAR-06](stories/star-06-emergency-db-migration.md) | Migração emergencial de banco de dados | Alternativa para Deliver Results ★ e Bias for Action ★; ver o aviso acima |
 | [STAR-07](stories/star-07-open-finance-agent.md) | Saldo de Open Finance em um agente de IA | Learn and Be Curious ★; alternativa para Customer Obsession ★ |
 | [STAR-08](stories/star-08-missed-deadline.md) | Entrega fora do prazo | Earn Trust ★ |
+| [STAR-09](stories/star-09-exposed-credentials.md) | Identificação e comunicação de credenciais expostas | Ownership ★; julgamento e limites de atuação |
+| [STAR-10](stories/star-10-disagree-terraform.md) | Discordância sobre StackSpot e módulos Terraform do HN8 | Have Backbone ★; contribuição após a decisão a confirmar |
 
 ## Como treinar cada história
 
@@ -64,4 +66,4 @@ STAR-01 a STAR-07 seguem a numeração da tabela original de histórias; STAR-08
 2. Nas perguntas que você já preparou, responda em voz alta antes de abrir a resposta.
 3. No aprofundamento, responda antes de abrir o que a resposta precisa conter. Quando não souber um fato, diga que não sabe e como confirmaria. Uma versão plausível inventada não resiste ao follow-up seguinte.
 4. Busque variedade quando houver alternativas, sem impor um número universal de reutilizações. A história precisa responder à pergunta, e seus fatos permanecem iguais. Siga as orientações específicas recebidas no seu processo.
-5. Treine também em inglês as respostas marcadas como EN, mantendo os mesmos números.
+5. Use o seletor PT-BR / EN-US para treinar a história completa ou os aprofundamentos. Mantenha os mesmos fatos e números nos dois idiomas; uma tradução não transforma proposta em ação passada.

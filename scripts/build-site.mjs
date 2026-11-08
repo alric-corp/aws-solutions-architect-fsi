@@ -13,6 +13,7 @@ import { siteName, firstLesson, sections, publicRoots, allowedAssetExtensions, s
 import { coverAssetPath } from './lib/project-paths.mjs';
 import { focusTitle, focusHeading, focusHub } from '../site/focus-policy.mjs';
 import { compilePublishedLoop, loopPageUrl, renderPublishedLoop } from '../site/loop-publication.mjs';
+import { authoredStoryFor, storyLocaleMarkdown } from '../site/story-policy.mjs';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 const output = path.join(root, 'dist');
@@ -38,8 +39,10 @@ for (const source of sources) {
   const title = focusTitle(source.endsWith('/english-practice-60-min.md') ? 'English speaking practice — 60-minute session' : visibleHeadingTitle(plain(markdown.match(/^#\s+(.+)$/m)?.[1] || source), source), source);
   const searchableMarkdown = metadata.search ? studentSearchMarkdown(markdown, source).replace(/^(#{1,6}\s+)(.+)$/gm, (_,prefix,title)=>prefix+visibleHeadingTitle(title,source)) : '';
   const contentVersion = createHash('sha256').update(originalMarkdown).digest('hex').slice(0,16);
-  const description = plain((metadata.standalone ? markdown : searchableMarkdown || title).split('\n\n').find(block => !/^(#|\||```|<|\[|\*\*ID)/.test(block) && block.length > 70) || title).slice(0, 220);
-  documents.set(source, { ...metadata, source, markdown, searchableMarkdown, contentVersion, title, description, url: urlFor(source), section: sectionFor(source), minutes: Math.max(1, Math.ceil(plain(markdown).split(' ').length / 220)), headings: [] });
+  const story = authoredStoryFor(source);
+  const description = story?.description || plain((metadata.standalone ? markdown : searchableMarkdown || title).split('\n\n').find(block => !/^(#|\||```|<|\[|\*\*ID)/.test(block) && block.length > 70) || title).slice(0, 220);
+  const readingMarkdown = story ? storyLocaleMarkdown(markdown, 'pt-BR') || markdown : markdown;
+  documents.set(source, { ...metadata, source, markdown, searchableMarkdown, contentVersion, title, description, url: urlFor(source), section: sectionFor(source), minutes: Math.max(1, Math.ceil(plain(readingMarkdown).split(' ').length / 220)), headings: [] });
   let directory = path.posix.dirname(source);
   while (directory !== '.') {
     directories.add(directory);
@@ -161,7 +164,7 @@ for (const asset of tracked.filter(file => publicPath(file) && allowedAssetExten
   if ((await fs.lstat(path.join(root, asset))).isSymbolicLink()) throw new Error(`Link simbólico não publicável: ${asset}`);
   await write(asset, await fs.readFile(path.join(root, asset)));
 }
-for (const name of ['site.css', 'site.js', 'theme-init.js', 'search.mjs', 'collection-policy.mjs', 'favicon.svg']) await write(`assets/${name}`, await fs.readFile(path.join(root, 'site', name)));
+for (const name of ['site.css', 'site.js', 'theme-init.js', 'search.mjs', 'collection-policy.mjs', 'story-locales.mjs', 'favicon.svg']) await write(`assets/${name}`, await fs.readFile(path.join(root, 'site', name)));
 for (const [family, name] of [['source-sans-3', 'source-sans']]) {
   const filename = `${family}-latin-wght-normal.woff2`;
   await write(`assets/${name}.woff2`, await fs.readFile(path.join(root, 'node_modules', '@fontsource-variable', family, 'files', filename)));

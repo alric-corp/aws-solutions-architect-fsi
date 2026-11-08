@@ -351,6 +351,14 @@ body.header-unpinned .topbar { position: static; }
 .reader-toolbar { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; padding: 12px 0 20px; margin-bottom: 24px; border-bottom: 1px solid var(--border); font-size: .875rem; }
 .reader-toolbar button { min-height: 40px; border: 1px solid var(--border-strong); border-radius: 4px; background: var(--surface); color: var(--ink); padding: 7px 11px; }
 .reader-toolbar button[aria-pressed='true'] { background: var(--active-surface); border-color: var(--link); }
+.story-language-controls { display: flex; align-items: center; flex-wrap: wrap; gap: .75rem 1rem; margin: 0 0 1.5rem; padding: .75rem 0; border-bottom: 1px solid var(--border); }
+.story-language-label { color: var(--muted); font-size: .9375rem; font-weight: 600; }
+.story-language-buttons { display: flex; flex-wrap: wrap; gap: .5rem; }
+.story-language-buttons button { min-width: 4.5rem; min-height: 2.75rem; padding: .5rem .75rem; border: 1px solid var(--border-strong); border-radius: .25rem; color: var(--ink); background: var(--surface); font: inherit; cursor: pointer; }
+.story-language-buttons button[aria-pressed='true'] { border-color: var(--link); background: var(--active-surface); font-weight: 700; box-shadow: inset 0 -3px var(--link); }
+.story-language-buttons button:focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; }
+[data-story-locales] [data-story-locale][hidden] { display: none !important; }
+@media print { .story-language-controls { display: none !important; } }
 .text-controls { display: inline-flex; align-items: center; flex-wrap: wrap; gap: 8px; }
 .text-size-label { padding: 0 4px; color: var(--muted); }
 .case-sections { display: flex; flex-wrap: wrap; gap: 8px 18px; margin: 18px 0 24px; padding-bottom: 18px; border-bottom: 1px solid var(--border); font-size: .875rem; }

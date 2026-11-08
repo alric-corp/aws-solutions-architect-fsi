@@ -1,5 +1,6 @@
 import { normalize, tokenize, rankSearch } from './search.mjs';
 import { participatesInMainStudy, continuityScopeFor, isStandalone, isStandaloneReference } from './collection-policy.mjs';
+import { initStoryLocales } from './story-locales.mjs';
 
 const $ = selector => document.querySelector(selector);
 const $$ = selector => [...document.querySelectorAll(selector)];
@@ -40,6 +41,7 @@ const feedback = message => notice('interaction-status', message);
 let preferences = storage.get(preferenceKey, {});
 if (!preferences || typeof preferences !== 'object' || Array.isArray(preferences)) preferences = {};
 const savePreferences = () => storage.set(preferenceKey, preferences);
+const storyLocales = initStoryLocales({ onStorageError: storageWarning });
 
 const themeSelect = $('#theme-preference');
 const systemTheme = matchMedia('(prefers-color-scheme: dark)');
@@ -390,6 +392,7 @@ let restoredAnchor = '';
 const getAnchor = hash => { try { return decodeURIComponent(hash.replace(/^#/, '')); } catch { return ''; } };
 function revealAnchor(id, scroll = true) {
   const target = id ? document.getElementById(id) : null; if (!target) return false;
+  storyLocales?.revealAnchor(id);
   let parent = target.parentElement;
   while (parent) { if (parent.tagName === 'DETAILS') parent.open = true; parent = parent.parentElement; }
   if (scroll) target.scrollIntoView({ block: 'start', behavior: 'instant' }); return true;
@@ -526,7 +529,8 @@ const studyReady = fetch('/content-manifest.json').then(response => {
       currentAnchor = hashId;
       if (!revealAnchor(hashId, !userInteracted)) notice('resume-notice', 'A seção deste link não foi encontrada. O material está disponível desde o início.');
     } else if (validResume(record) && record.contentId === current.id && record.anchor) {
-      if (revealAnchor(record.anchor, !userInteracted)) { restoredAnchor = record.anchor; currentAnchor = record.anchor; }
+      const resumeAnchor = storyLocales?.resumeAnchor(record.anchor) || record.anchor;
+      if (revealAnchor(resumeAnchor, !userInteracted)) { restoredAnchor = resumeAnchor; currentAnchor = resumeAnchor; }
       else notice('resume-notice', 'A seção salva mudou ou não está mais disponível. A leitura foi aberta no início do material.');
       if (record.contentVersion && current.version && record.contentVersion !== current.version) notice('resume-notice', 'Este material foi atualizado desde sua última visita. A seção foi retomada quando ainda disponível.');
     }
