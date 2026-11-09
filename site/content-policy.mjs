@@ -88,6 +88,12 @@ export const redesCourse = {
 export const courses = [redesCourse, acidCourse];
 export const isAcidSource = source => typeof source === 'string' && source.startsWith(acidCourse.prefix);
 export const isRedesSource = source => typeof source === 'string' && source.startsWith(redesCourse.prefix);
+// The owner approved this supplied assessment for named publication, separately
+// from the ten authored stories. Other assessments and local records stay private.
+export const phoneScreenReview = Object.freeze({
+  source: 'interview/phone-screen/instrutor.md',
+  url: '/interview/phone-screen/instrutor.html'
+});
 const instructorPaths = new Set([
   'interview/simulations/04-troubleshooting/guia-do-instrutor.md',
   'interview/simulations/04-troubleshooting/diagnostico-inicial.md',
@@ -103,6 +109,10 @@ export function metadataFor(source) {
     audience, publication: 'public', ...collectionMetadataFor(source, audience),
     ...(['interview/simulations/05-mentoria-transacoes/candidato.md', 'interview/simulations/07-mentoria-redes/candidato.md'].includes(source) ? { readingLabel: 'Revisão da conversa · próximos passos' } : {}),
     ...(source === 'interview/simulations/05-mentoria-transacoes/instrutor.md' ? { instructorNotice: 'Apoio de revisão com perguntas e fichas em branco. Material público; mantenha respostas preenchidas e evidências internas em uma cópia privada.' } : {}),
+    ...(source === phoneScreenReview.source ? {
+      readingLabel: 'Revisão do Phone Screen · plano de treino',
+      instructorNotice: 'Análise do Phone Screen publicada com autorização do proprietário, com nomes e detalhes do insumo. Acesso público, sem autenticação. Registros de novos ensaios continuam privados; esta revisão fica fora da busca e do progresso de estudo.'
+    } : {}),
     topics: !isStandaloneReference(source) && /06-databases|02-pedido-durante/.test(source) ? ['transacoes-idempotencia'] : [],
     tracks: isAcidSource(source) ? [acidCourse.id] : isRedesSource(source) && audience === 'student' ? [redesCourse.id] : [], prerequisites: [], relatedPractice: !isStandaloneReference(source) && /06-databases/.test(source) ? [pilot.practice] : []
   };

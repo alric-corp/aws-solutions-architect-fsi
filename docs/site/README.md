@@ -31,6 +31,8 @@ npm run deploy
 
 Notas ignoradas pelo Git, `scratchpad/`, credenciais, `site/`, `scripts/` e os metadados do repositório não são copiados para o site. Os templates de acompanhamento publicados permanecem em branco; preenchimentos pessoais devem continuar na área privada.
 
+A análise escrita do Phone Screen fornecida pelo proprietário tem autorização específica para publicação com nomes e detalhes em `interview/phone-screen/instrutor.md`. O acesso aparece em **Praticar → Sou instrutor**, fora da busca e do progresso de estudo. A autorização não se estende a outros relatórios, transcrições não fornecidas ou registros preenchidos. A página distingue o relato recebido de sugestões para novos ensaios e mantém as pendências factuais.
+
 A capa global tem uma fonte explícita em `assets/amazon.jpg` e continua publicada em `/assets/amazon.jpg`. Mover a fonte não altera o endereço usado pela homepage.
 
 ## Recursos provisionados

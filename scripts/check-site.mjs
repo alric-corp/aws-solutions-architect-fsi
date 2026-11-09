@@ -5,7 +5,7 @@ import { execFileSync } from 'node:child_process';
 import crypto from 'node:crypto';
 import assert from 'node:assert/strict';
 import { publicRoots } from '../site/content.mjs';
-import { metadataFor, studentSearchMarkdown, retiredDocuments, isRetiredSource, isRetiredUrl } from '../site/content-policy.mjs';
+import { metadataFor, studentSearchMarkdown, retiredDocuments, isRetiredSource, isRetiredUrl, phoneScreenReview } from '../site/content-policy.mjs';
 import { rankSearch } from '../site/search.mjs';
 import { continuityScopeFor } from '../site/collection-policy.mjs';
 import { compilePublishedLoop, isLoopPublicRoute, isApprovedLoopData } from '../site/loop-publication.mjs';
@@ -59,6 +59,9 @@ function hasUnexpectedPersonalData(file, content) {
     .replaceAll('Mentoria técnica — Vitória e Cleber', 'Mentoria técnica');
   if (namedMentorshipPages.has(file)) checked = checked.replace(/Vitória|Vitória/g, 'participante');
   if (isAuthoredStoryUrl(file)) checked = checked.replace(/Vitória|Vitória/g, 'autora');
+  // Separate, explicit authorization for the supplied Phone Screen assessment.
+  // Keep local-path checks above and all other assessments outside this scope.
+  if (`/${file}` === phoneScreenReview.url) checked = checked.replace(/Vitória|Vitória/g, 'participante');
   return /Vitória|Vitória|Tomas e Vitória/.test(checked);
 }
 assert.equal(hasUnexpectedPersonalData('index.html', 'Vitória'), true, 'Nome pessoal continua vedado fora do roteiro autorizado');
@@ -71,6 +74,9 @@ assert.equal(hasUnexpectedPersonalData('praticar/index.html', 'Conversa técnica
 assert.equal(hasUnexpectedPersonalData('interview/simulations/07-mentoria-redes/candidato.html', 'Vitória precisa melhorar'), true, 'O título não autoriza publicar avaliação pessoal na nova revisão');
 assert.equal(hasUnexpectedPersonalData('interview/simulations/05-mentoria-transacoes/candidato.html', 'Vitória explica primeiro'), false, 'Nomes solicitados no roteiro autorizado');
 assert.equal(hasUnexpectedPersonalData('interview/simulations/05-mentoria-transacoes/instrutor.html', '/Users/tomasalric/privado'), true, 'Caminhos locais continuam vedados também na mentoria');
+assert.equal(hasUnexpectedPersonalData('interview/phone-screen/instrutor.html', 'Vitória respondeu sobre o pedido'), false, 'Avaliação exata do Phone Screen tem autorização de publicação com nomes');
+assert.equal(hasUnexpectedPersonalData('interview/phone-screen/outro-relatorio.html', 'Vitória respondeu sobre o pedido'), true, 'Autorização do Phone Screen não libera outros relatórios');
+assert.equal(hasUnexpectedPersonalData('interview/phone-screen/instrutor.html', '/Users/tomasalric/privado'), true, 'A avaliação aprovada não autoriza caminhos privados');
 const loopDataAttributes = ' id="loop-data" type="application/json"';
 const firstLoopRoute = `/praticar/loop/${publishedLoop[0].pageId}/index.html`;
 const firstLoopJson = serializeLoopData(publishedLoop[0]);
@@ -104,6 +110,18 @@ for (const file of files) {
 const index = JSON.parse(await fs.readFile(path.join(directory, 'search-index.json'), 'utf8'));
 const manifest = JSON.parse(await fs.readFile(path.join(directory, 'content-manifest.json'), 'utf8'));
 const manifestByUrl = new Map(manifest.map(item => [item.canonicalUrl, item]));
+const phoneScreen = manifestByUrl.get(phoneScreenReview.url);
+assert.ok(phoneScreen, 'A avaliação autorizada precisa ser publicada');
+assert.equal(phoneScreen.sourcePath, phoneScreenReview.source);
+assert.equal(phoneScreen.audience, 'instructor', 'Avaliação disponível pelo acesso deliberado do instrutor');
+assert.equal(phoneScreen.search, false, 'A avaliação do Phone Screen fica fora da busca');
+assert.equal(phoneScreen.progress, false, 'A avaliação do Phone Screen fica fora do progresso de estudo');
+assert.ok(!index.some(item => item.url.split('#')[0] === phoneScreenReview.url), 'Nenhum trecho da avaliação deve entrar no índice de busca');
+const phoneScreenHtml = html.get(phoneScreenReview.url.slice(1));
+assert.ok(phoneScreenHtml.includes('Vitória'), 'Preservar o nome na avaliação autorizada');
+assert.ok(phoneScreenHtml.includes('análise escrita fornecida pelo proprietário'), 'Declarar a origem da avaliação sem alegar acesso à transcrição');
+const instructorEntry = html.get('praticar/index.html').match(/<section class="instructor-entry"[\s\S]*?<\/section>/)?.[0] || '';
+assert.ok(instructorEntry.includes(`href="${phoneScreenReview.url}"`), 'A avaliação deve ser encontrável em Praticar → Instrutor');
 for (const retired of retiredDocuments) {
   if (fileSet.has(retired.url.slice(1))) errors.push(`Página retirada reapareceu no artefato: ${retired.url}`);
   if (manifest.some(item => isRetiredSource(item.sourcePath))) errors.push(`Documento retirado reapareceu no manifesto: ${retired.source}`);
