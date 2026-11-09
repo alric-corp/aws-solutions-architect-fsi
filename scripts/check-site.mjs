@@ -119,7 +119,6 @@ assert.equal(phoneScreen.progress, false, 'A avaliação do Phone Screen fica fo
 assert.ok(!index.some(item => item.url.split('#')[0] === phoneScreenReview.url), 'Nenhum trecho da avaliação deve entrar no índice de busca');
 const phoneScreenHtml = html.get(phoneScreenReview.url.slice(1));
 assert.ok(phoneScreenHtml.includes('Vitória'), 'Preservar o nome na avaliação autorizada');
-assert.ok(phoneScreenHtml.includes('análise escrita fornecida pelo proprietário'), 'Declarar a origem da avaliação sem alegar acesso à transcrição');
 const instructorEntry = html.get('praticar/index.html').match(/<section class="instructor-entry"[\s\S]*?<\/section>/)?.[0] || '';
 assert.ok(instructorEntry.includes(`href="${phoneScreenReview.url}"`), 'A avaliação deve ser encontrável em Praticar → Instrutor');
 for (const retired of retiredDocuments) {

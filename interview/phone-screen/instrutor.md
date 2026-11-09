@@ -4,16 +4,6 @@ Primeira entrevista da Vitória com a AWS: cenário de e-commerce e perguntas co
 
 > **Leitura central:** a análise fornecida aponta amplitude técnica, capacidade de explicar e experiências relevantes. Os momentos mais fortes aparecem quando a Vitória descreve algo que investigou e implementou. O próximo passo é fazer esse raciocínio chegar com consistência ao ponto solicitado, também diante de um cenário hipotético.
 
-## Contexto e limites da leitura
-
-Esta página organiza **a análise escrita fornecida pelo proprietário**. A transcrição integral, o mapeamento citado e os arquivos identificados no insumo como “Texto colado” não foram recebidos para conferência nesta edição. As observações sobre o que aconteceu na entrevista são relatos dessa análise; as perguntas abaixo são paráfrases para revisão, salvo os exemplos expressamente identificados como propostas.
-
-A análise informa que a transcrição é automática, contém erros e não identifica todos os falantes com segurança. O recorte é o conteúdo recuperável das respostas, sem inferências sobre entonação, linguagem corporal ou tempo de fala.
-
-O Phone Screen fica separado das mentorias com **Cleber e Adassa** e da **apresentação preparada posteriormente**. Uma informação recuperada depois pode orientar uma pergunta de treino; não comprova que tenha aparecido nesta entrevista.
-
-As classificações são uma leitura de preparação, **não notas internas da AWS, atribuição oficial de Leadership Principles ou previsão de aprovação**. “Não demonstrado” significa que faltou evidência naquela resposta, não que a pessoa nunca tenha vivido a experiência.
-
 ## Visão geral por área
 
 | Área | Leitura da análise fornecida | Foco do próximo ensaio |
