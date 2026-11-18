@@ -19,17 +19,32 @@ const normalize = value => String(value).replace(/[*`]/g, '').replace(/\s+/g, ' 
 const urlFor = source => '/' + source.replace(/\.md$/, '.html');
 const prefixFor = source => 'lp' + path.basename(source).slice(0, 2);
 const localeKeyPrefix = 'architecture-practice:lp-question-languages:v1:';
+const expandedBankCounts = {
+  lp11: { primary: 17, followups: 8 },
+  lp13: { primary: 18, followups: 12 },
+};
+const countsFor = source => expandedBankCounts[prefixFor(source)] || { primary: 12, followups: 6 };
+const idsFor = source => {
+  const prefix = prefixFor(source), counts = countsFor(source);
+  return [
+    ...Array.from({ length: counts.primary }, (_, i) => `${prefix}-q${String(i + 1).padStart(2, '0')}`),
+    ...Array.from({ length: counts.followups }, (_, i) => `${prefix}-f${String(i + 1).padStart(2, '0')}`),
+  ];
+};
+const addedIdsFor = source => idsFor(source).filter(id => Number(id.slice(-2)) > (id.includes('-q') ? 12 : 6));
+// The LP11/LP13 training revisions refine equivalent prompts without changing their
+// IDs. All other existing bilingual pairs remain identical to the baseline.
+const revisedIds = new Set([
+  'lp11-q02', 'lp11-q03', 'lp11-f01', 'lp11-f04', 'lp11-f06',
+  'lp13-q01', 'lp13-q02', 'lp13-q07', 'lp13-q08', 'lp13-q09', 'lp13-q10', 'lp13-q12',
+  'lp13-f02', 'lp13-f03', 'lp13-f04', 'lp13-f05', 'lp13-f06',
+]);
 const report = { checks: [], captures: [], limits: ['Chromium local e verificações do conteúdo versionado; não é teste com pessoas ou dispositivo físico.'] };
 
 function pairs(markdown) {
   return [...markdown.matchAll(/^\d+\.\s+<a id="(lp\d{2}-[qf]\d{2})"><\/a>\s+(.+)\n\n\s+\*\*EN:\*\*\s+(.+)$/gm)]
     .map(([, id, pt, en]) => ({ id, pt, en }));
 }
-function followupText(markdown) {
-  const section = markdown.split(/^## Aprofundamentos\s*$/m)[1]?.split(/^## /m)[0] || '';
-  return [...section.matchAll(/^\d+\.\s+(?:<a id="[^"]+"><\/a>\s+)?(.+)$/gm)].map(match => match[1]);
-}
-
 async function checkStatic() {
   assert.equal(principleQuestionSources.length, 16);
   assert.equal(new Set(principleQuestionSources).size, 16);
@@ -43,16 +58,16 @@ async function checkStatic() {
     const markdown = await read(source);
     const html = await read('dist' + urlFor(source));
     const prefix = prefixFor(source);
-    const expectedIds = [
-      ...Array.from({ length: 12 }, (_, i) => `${prefix}-q${String(i + 1).padStart(2, '0')}`),
-      ...Array.from({ length: 6 }, (_, i) => `${prefix}-f${String(i + 1).padStart(2, '0')}`),
-    ];
+    const expectedIds = idsFor(source), counts = countsFor(source);
     const translations = pairs(markdown);
-    assert.deepEqual(translations.map(pair => pair.id), expectedIds, `${source}: doze perguntas e seis aprofundamentos completos`);
+    assert.deepEqual(translations.map(pair => pair.id).sort(), [...expectedIds].sort(), `${source}: ${counts.primary} perguntas e ${counts.followups} aprofundamentos completos, sem IDs duplicados`);
     assert.ok(translations.every(pair => pair.pt.length > 15 && pair.en.length > 15));
     const old = execFileSync('git', ['show', `${baseline?.head || 'HEAD'}:${source}`], { cwd: root, encoding: 'utf8' });
-    assert.deepEqual(translations.filter(pair => pair.id.includes('-q')), pairs(old).filter(pair => pair.id.includes('-q')), `${source}: preservar PT/EN e IDs primários`);
-    assert.deepEqual(followupText(markdown), followupText(old), `${source}: preservar o PT dos aprofundamentos`);
+    const currentPairs = new Map(translations.map(pair => [pair.id, pair]));
+    for (const pair of pairs(old)) {
+      assert.ok(currentPairs.has(pair.id), `${pair.id}: preservar o ID anterior`);
+      if (!revisedIds.has(pair.id)) assert.deepEqual(currentPairs.get(pair.id), pair, `${pair.id}: preservar PT/EN fora das revisões de LP11/LP13`);
+    }
     const doc = manifest.find(item => item.sourcePath === source);
     assert.equal(doc?.id, source.replace(/\.md$/, ''));
     assert.equal(doc?.canonicalUrl, urlFor(source));
@@ -72,14 +87,20 @@ async function checkStatic() {
       assert.ok(indexed.includes(normalize(pair.pt)), `${pair.id}: pergunta PT pesquisável`);
       assert.ok(indexed.includes(normalize(pair.en)), `${pair.id}: pergunta EN pesquisável`);
     }
+    if (prefix === 'lp13') {
+      for (const answer of ['Eu avaliaria o ganho de demanda', 'I would assess the increase in demand', 'Eu compararia transações concluídas', 'I would compare completed transactions']) {
+        assert.ok(!indexed.includes(answer), 'Respostas hipotéticas PT/EN ficam fora da busca');
+        assert.ok(html.includes(answer), 'Respostas hipotéticas PT/EN continuam disponíveis na ficha');
+      }
+    }
     assert.ok(index.includes(urlFor(source)), `${source}: acessível pelo índice dos princípios`);
-    primary += 12; followups += 6;
+    primary += counts.primary; followups += counts.followups;
   }
   const htmlFiles = manifest.filter(doc => principleQuestionSources.includes(doc.sourcePath));
   assert.equal(htmlFiles.length, 16);
   assert.ok(!(await read('dist/search-index.json')).includes('KEEP_LP_PRIVATE_RECORD'));
-  report.static = { principles: 16, primaryQuestions: primary, followups, bilingualUnits: primary + followups, documents: manifest.length, originalContentCompared: true, baselineAnchorsCompared: Boolean(baseline) };
-  report.checks.push('16 princípios, 192 pares primários preservados, 96 aprofundamentos bilíngues, âncoras canônicas, busca e progresso preservados.');
+  report.static = { principles: 16, primaryQuestions: primary, followups, bilingualUnits: primary + followups, documents: manifest.length, originalContentCompared: true, revisedIds: [...revisedIds], baselineAnchorsCompared: Boolean(baseline) };
+  report.checks.push(`16 princípios, ${primary} perguntas e ${followups} aprofundamentos bilíngues, IDs anteriores e pares fora das revisões de LP11/LP13 preservados, âncoras canônicas, busca e progresso preservados.`);
 }
 
 async function chromiumPath() {
@@ -152,8 +173,8 @@ async function checkBrowser() {
         const prefix = prefixFor(source);
         const ids = ['q01', 'q02', 'q03', 'f01', 'f02'].map(suffix => `${prefix}-${suffix}`);
         await visit(page, source);
-        assert.equal(await page.locator('li[data-lp-question]').count(), 18);
-        assert.equal(await page.locator('[data-lp-language-controls]').count(), 18);
+        assert.equal(await page.locator('li[data-lp-question]').count(), idsFor(source).length);
+        assert.equal(await page.locator('[data-lp-language-controls]').count(), idsFor(source).length);
         assert.equal(await page.locator('[data-story-language-controls]').count(), 0, 'Não há toggle global ou de história no princípio');
         for (const id of ids) await active(page, id, 'pt-BR');
         const title = await page.title();
@@ -172,6 +193,27 @@ async function checkBrowser() {
         if (prefix === 'lp01' || prefix === 'lp12') {
           await question(page, ids[1]).scrollIntoViewIfNeeded();
           await capture(page, `${prefix}-${width}-${theme}-mixed.png`);
+        }
+        const addedIds = addedIdsFor(source);
+        if (addedIds.length) {
+          const counts = countsFor(source);
+          const lastQuestion = `${prefix}-q${String(counts.primary).padStart(2, '0')}`;
+          const lastFollowup = `${prefix}-f${String(counts.followups).padStart(2, '0')}`;
+          for (const id of addedIds) {
+            await active(page, id, 'pt-BR');
+            await choose(page, id, 'en-US', true);
+          }
+          await page.reload();
+          await active(page, `${prefix}-q02`, 'en-US');
+          await active(page, lastQuestion, 'en-US');
+          await active(page, lastFollowup, 'en-US');
+          assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1));
+          await question(page, lastFollowup).scrollIntoViewIfNeeded();
+          await capture(page, `${prefix}-${width}-${theme}-expanded.png`);
+          if (prefix === 'lp11') {
+            await page.locator('#prioridades-de-treino').scrollIntoViewIfNeeded();
+            await capture(page, `${prefix}-${width}-${theme}-priorities.png`);
+          }
         }
         mixedChecks++;
       }
@@ -227,8 +269,8 @@ async function checkBrowser() {
     assert.equal(await np.locator('a[id^="lp01-"]').count(), 18);
     assert.equal(await np.locator('.prose strong').filter({ hasText: /^EN:$/ }).count(), 18, 'Sem JS, ambos os textos continuam disponíveis');
     assert.deepEqual(errors, [], 'Sem erros JS/CSP ou requisições externas');
-    report.browser = { version: await browser.version(), widths: [390, 768, 1440], themes: ['light', 'dark'], mixedChecks, independentUnits: 288, perPrinciplePersistence: true, reload: true, canonicalAnchors: true, history: true, recordsPreserved: true, storageBlocked: true, malformedStorage: true, noJavaScript: true };
-    report.checks.push('Toggles independentes nas16páginas, idiomas mistos, persistência por pergunta/LP, teclado, layout, âncoras, histórico e registros preservados.');
+    report.browser = { version: await browser.version(), widths: [390, 768, 1440], themes: ['light', 'dark'], mixedChecks, independentUnits: report.static.bilingualUnits, lp11AddedUnits: 7, lp13AddedUnits: 12, perPrinciplePersistence: true, reload: true, canonicalAnchors: true, history: true, recordsPreserved: true, storageBlocked: true, malformedStorage: true, noJavaScript: true };
+    report.checks.push('Toggles independentes nas 16 páginas, novos itens de LP11/LP13, idiomas mistos, persistência por pergunta/LP, teclado, layout, âncoras, histórico e registros preservados.');
   } finally { for (const ctx of contexts) await ctx.close().catch(() => {}); await browser.close(); }
 }
 

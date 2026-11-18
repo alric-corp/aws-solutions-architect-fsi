@@ -8,7 +8,7 @@ export function initLpQuestionLocales({ onStorageError } = {}) {
   const prefix = article.dataset.lpQuestionBank;
   if (!/^lp(?:0[1-9]|1[0-6])$/.test(prefix)) return;
   const units = new Map();
-  const idPattern = new RegExp(`^${prefix}-(?:q(?:0[1-9]|1[0-2])|f0[1-6])$`);
+  const idPattern = new RegExp(`^${prefix}-[qf](?:0[1-9]|[1-9]\\d)$`);
   const storageKey = `architecture-practice:lp-question-languages:v1:${document.body.dataset.contentId}`;
   let preferences = {};
   let storageBlocked = false;

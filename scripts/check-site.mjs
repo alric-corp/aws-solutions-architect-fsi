@@ -601,6 +601,9 @@ if (baseline) {
     'https://www.amazon.jobs/content/en/how-we-hire/remote-interview',
     'https://www.amazon.jobs/pt/jobs/10581001/solutions-architect-brazil-solutions-architecture-fsi'
   ].map(canonical));
+  // Primary source checked for the LP13 training revision, scoped to its
+  // principle page and the source catalog; no global external-link exception.
+  const backboneReference = canonical('https://www.aboutamazon.com/news/company-news/2016-letter-to-shareholders');
   function isReviewedExternal(file, target) {
     if (file === 'technical-knowledge/learning-guide.html' && horizonteReferences.has(target)) return true;
     if (file.startsWith('technical-knowledge/01-fundamentals/redes/') && redesReferences.has(target)) return true;
@@ -608,6 +611,7 @@ if (baseline) {
     if (file === networkReviewUrl.slice(1) && networkReviewReferences.has(target)) return true;
     if (file === 'leadership-principles/historias-com-evidencias.html' && leadershipReferences.has(target)) return true;
     if (file === 'references/sa-conversa-profissional.html' && professionalReferences.has(target)) return true;
+    if ((file === 'leadership-principles/13-have-backbone-disagree-and-commit.html' || file === 'references/index.html') && target === backboneReference) return true;
     return false;
   }
   for (const [file, content] of html) for (const match of content.matchAll(/(?:href|src)=["'](https?:[^"']+)/g)) {

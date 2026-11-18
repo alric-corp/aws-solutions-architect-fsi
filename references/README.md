@@ -1,6 +1,6 @@
 # Referências e proveniência
 
-> Revisão editorial: 28/09/2026; fontes S07 e T31–T36 acrescentadas e verificadas em 01/10/2026. Fontes S02 e S04 conferidas novamente em 26/10/2026 para a revisão da trilha de Leadership Principles. Links de documentação podem mudar; confirme novamente antes da entrevista ou de um laboratório.
+> Revisão editorial: 28/09/2026; fontes S07 e T31–T36 acrescentadas e verificadas em 01/10/2026. Fontes S02 e S04 conferidas novamente em 26/10/2026 para a revisão da trilha de Leadership Principles. Fonte S08 consultada em 11/11/2026 para o treino de Have Backbone. Links de documentação podem mudar; confirme novamente antes da entrevista ou de um laboratório.
 
 Este repositório mantém três camadas explícitas: **anotações privadas de estudo**, que não fazem parte do repositório; **fontes públicas**, listadas abaixo; e **conteúdo autoral**, que são as sínteses, os exercícios e os critérios dos módulos. Os exercícios, critérios de autoavaliação e tempos sugeridos não são uma rubrica oficial da Amazon.
 
@@ -75,6 +75,11 @@ As indicações abaixo delimitam o que cada fonte sustenta; um link não valida 
 ### S07 — Andy Jassy explica os Leadership Principles (vídeo)
 
 [Consultar a fonte](https://www.youtube.com/watch?v=My-2-MyxamQ). “The Leadership Principles Explained by Amazon CEO Andy Jassy | Full Length Video”, publicado em 21/05/2024 pelo canal oficial Inside Amazon: vídeo completo (56:49) em que o CEO da Amazon comenta os 16 princípios. Os minutos citados nas seções “Como Andy Jassy explica” referem-se a este vídeo; as seções são sínteses autorais, não transcrição.
+
+<a id="s08"></a>
+### S08 — Jeff Bezos — 2016 Letter to Shareholders
+
+[Consultar a fonte](https://www.aboutamazon.com/news/company-news/2016-letter-to-shareholders). Carta de 2016, publicada em 17/04/2017; consultada em 11/11/2026. Na seção sobre decisões, Bezos relata o compromisso com uma produção do Amazon Studios apesar de discordar da avaliação da equipe e discute o escalonamento de desalinhamentos. A aplicação a arquitetura, os follow-ups e os exercícios de fornecedores e SA/FSI são autorais.
 
 <a id="t01"></a>
 ### T01 — Fielding — REST architectural style

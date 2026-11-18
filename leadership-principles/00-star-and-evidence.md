@@ -87,7 +87,7 @@ Antes de escolher a história, identifique que evidência a pergunta solicita. O
 
 Treine perguntas como: por que essa opção? O que você fez pessoalmente? Como mediu? Quem discordou? Qual erro foi seu? O que teria acontecido sem sua ação? O que mudou depois?
 
-O [guia de prática](practice-guide.md) reúne caminhos para escolher entre 192 perguntas em português e inglês, além de rodadas que cobrem os 16 princípios. Cada pergunta tem um ID, como `LP04-Q05`; registre esse ID junto do episódio para variar os ensaios e saber qual aprofundamento precisa revisar.
+O [guia de prática](practice-guide.md) reúne caminhos para escolher entre 203 perguntas em português e inglês, além de rodadas que cobrem os 16 princípios. Cada pergunta tem um ID, como `LP04-Q05`; registre esse ID junto do episódio para variar os ensaios e saber qual aprofundamento precisa revisar.
 
 ## Critério de revisão
 

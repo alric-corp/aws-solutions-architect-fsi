@@ -2,9 +2,9 @@
 
 [Índice da trilha](README.md) · [STAR e evidências](00-star-and-evidence.md) · [Simulação comportamental](../interview/simulations/01-behavioral/mock-script.md)
 
-O banco contém **192 perguntas principais: 12 por princípio, cada uma em português e inglês**, além de seis aprofundamentos por princípio. As perguntas completas ficam nas fichas; este guia oferece caminhos para selecioná-las sem duplicar o conteúdo.
+O banco contém **203 perguntas principais e 104 aprofundamentos, todos em português e inglês**. Quatorze princípios têm 12 perguntas e seis aprofundamentos cada; Earn Trust tem 17 perguntas e oito aprofundamentos; Have Backbone tem 18 perguntas e 12 aprofundamentos. As perguntas completas ficam nas fichas; este guia oferece caminhos para selecioná-las sem duplicar o conteúdo.
 
-Cada ID identifica uma pergunta: `LP04-Q05` é a quinta pergunta de Are Right, A Lot. As versões PT/EN compartilham o mesmo ID. Registre os IDs ensaiados junto da história em sua cópia privada do [template STAR](../templates/star-story.md).
+Cada ID identifica uma pergunta: `LP04-Q05` identifica uma pergunta de Are Right, A Lot. As versões PT/EN compartilham o mesmo ID. Use o ID para localizar e registrar a pergunta, independentemente de sua posição na página. Registre os IDs ensaiados junto da história em sua cópia privada do [template STAR](../templates/star-story.md).
 
 Para uma aula com professora de inglês sem contexto técnico, use a [sessão de 60 minutos](english-practice-60-min.md). O roteiro é autônomo, mistura os 16 princípios em oito perguntas principais e inclui oito reservas, aprofundamentos e respostas fictícias em blocos expansíveis.
 
@@ -42,12 +42,16 @@ As quatro categorias são eixos de treino. Uma pergunta pode evidenciar mais de 
 | [08 — Think Big](08-think-big.md) | [Q01–Q03](08-think-big.md#lp08-q01) | [Q04–Q06](08-think-big.md#lp08-q04) | [Q07–Q09](08-think-big.md#lp08-q07) | [Q10–Q12](08-think-big.md#lp08-q10) |
 | [09 — Bias for Action](09-bias-for-action.md) | [Q01–Q03](09-bias-for-action.md#lp09-q01) | [Q04–Q06](09-bias-for-action.md#lp09-q04) | [Q07–Q09](09-bias-for-action.md#lp09-q07) | [Q10–Q12](09-bias-for-action.md#lp09-q10) |
 | [10 — Frugality](10-frugality.md) | [Q01–Q03](10-frugality.md#lp10-q01) | [Q04–Q06](10-frugality.md#lp10-q04) | [Q07–Q09](10-frugality.md#lp10-q07) | [Q10–Q12](10-frugality.md#lp10-q10) |
-| [11 — Earn Trust](11-earn-trust.md) | [Q01–Q03](11-earn-trust.md#lp11-q01) | [Q04–Q06](11-earn-trust.md#lp11-q04) | [Q07–Q09](11-earn-trust.md#lp11-q07) | [Q10–Q12](11-earn-trust.md#lp11-q10) |
+| [11 — Earn Trust](11-earn-trust.md) | [Q01–Q03](11-earn-trust.md#lp11-q01), [Q13](11-earn-trust.md#lp11-q13), [Q15](11-earn-trust.md#lp11-q15) | [Q04–Q06](11-earn-trust.md#lp11-q04) | [Q07–Q09](11-earn-trust.md#lp11-q07), [Q14](11-earn-trust.md#lp11-q14), [Q16–Q17](11-earn-trust.md#lp11-q16) | [Q10–Q12](11-earn-trust.md#lp11-q10) |
 | [12 — Dive Deep](12-dive-deep.md) | [Q01–Q03](12-dive-deep.md#lp12-q01) | [Q04–Q06](12-dive-deep.md#lp12-q04) | [Q07–Q09](12-dive-deep.md#lp12-q07) | [Q10–Q12](12-dive-deep.md#lp12-q10) |
-| [13 — Have Backbone; Disagree and Commit](13-have-backbone-disagree-and-commit.md) | [Q01–Q03](13-have-backbone-disagree-and-commit.md#lp13-q01) | [Q04–Q06](13-have-backbone-disagree-and-commit.md#lp13-q04) | [Q07–Q09](13-have-backbone-disagree-and-commit.md#lp13-q07) | [Q10–Q12](13-have-backbone-disagree-and-commit.md#lp13-q10) |
+| [13 — Have Backbone; Disagree and Commit](13-have-backbone-disagree-and-commit.md) | [Q01–Q03](13-have-backbone-disagree-and-commit.md#lp13-q01) | [Q04–Q06](13-have-backbone-disagree-and-commit.md#lp13-q04), [Q13](13-have-backbone-disagree-and-commit.md#lp13-q13) | [Q07–Q09](13-have-backbone-disagree-and-commit.md#lp13-q07), [Q14–Q15](13-have-backbone-disagree-and-commit.md#lp13-q14), [Q17–Q18](13-have-backbone-disagree-and-commit.md#lp13-q17) | [Q10–Q12](13-have-backbone-disagree-and-commit.md#lp13-q10), [Q16](13-have-backbone-disagree-and-commit.md#lp13-q16) |
 | [14 — Deliver Results](14-deliver-results.md) | [Q01–Q03](14-deliver-results.md#lp14-q01) | [Q04–Q06](14-deliver-results.md#lp14-q04) | [Q07–Q09](14-deliver-results.md#lp14-q07) | [Q10–Q12](14-deliver-results.md#lp14-q10) |
 | [15 — Strive to be Earth’s Best Employer](15-strive-to-be-earths-best-employer.md) | [Q01–Q03](15-strive-to-be-earths-best-employer.md#lp15-q01) | [Q04–Q06](15-strive-to-be-earths-best-employer.md#lp15-q04) | [Q07–Q09](15-strive-to-be-earths-best-employer.md#lp15-q07) | [Q10–Q12](15-strive-to-be-earths-best-employer.md#lp15-q10) |
 | [16 — Success and Scale Bring Broad Responsibility](16-success-and-scale-bring-broad-responsibility.md) | [Q01–Q03](16-success-and-scale-bring-broad-responsibility.md#lp16-q01) | [Q04–Q06](16-success-and-scale-bring-broad-responsibility.md#lp16-q04) | [Q07–Q09](16-success-and-scale-bring-broad-responsibility.md#lp16-q07) | [Q10–Q12](16-success-and-scale-bring-broad-responsibility.md#lp16-q10) |
+
+Para Earn Trust, a [seleção de oito perguntas por prioridade de treino](11-earn-trust.md#prioridades-de-treino) começa por feedback recebido, comunicação de mudanças, influência e compromissos não cumpridos. Aprofunde [o que mudou após ouvir](11-earn-trust.md#lp11-f04) e [que retorno ou comportamento indica confiança](11-earn-trust.md#lp11-f06).
+
+Para Have Backbone, a [seleção de 13 perguntas por objetivo](13-have-backbone-disagree-and-commit.md#perguntas-para-prática) organiza três rodadas: discordar e executar, defender uma posição ou resolver um impasse, e reavaliar a própria posição. Comece por [LP13-Q02](13-have-backbone-disagree-and-commit.md#lp13-q02) e aprofunde [a etapa que foi sua](13-have-backbone-disagree-and-commit.md#lp13-f05) e [como ajudou a abordagem escolhida a funcionar](13-have-backbone-disagree-and-commit.md#lp13-f09).
 
 ## Seleção por tema
 

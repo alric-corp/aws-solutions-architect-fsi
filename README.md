@@ -65,7 +65,7 @@ O [README de Technical Knowledge](technical-knowledge/README.md) mostra a progre
 
 ## Leadership Principles
 
-Os 16 Leadership Principles da Amazon, o método STAR e a preparação de respostas a partir de experiências reais. As fichas trazem 192 perguntas em português e inglês e 96 aprofundamentos. Comece pelo [índice dos princípios](leadership-principles/README.md), use o [guia STAR](leadership-principles/00-star-and-evidence.md) e selecione perguntas por tema ou rodada no [guia de prática](leadership-principles/practice-guide.md).
+Os 16 Leadership Principles da Amazon, o método STAR e a preparação de respostas a partir de experiências reais. As fichas trazem 203 perguntas em português e inglês e 104 aprofundamentos. Comece pelo [índice dos princípios](leadership-principles/README.md), use o [guia STAR](leadership-principles/00-star-and-evidence.md) e selecione perguntas por tema ou rodada no [guia de prática](leadership-principles/practice-guide.md).
 
 ## Interview
 

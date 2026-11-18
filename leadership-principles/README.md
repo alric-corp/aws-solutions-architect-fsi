@@ -2,7 +2,7 @@
 
 Os 16 Leadership Principles (LPs) são princípios de liderança usados pela Amazon para orientar decisões e sua cultura. Na preparação para entrevistas, eles ajudam você a reconhecer comportamentos na própria trajetória e explicá-los com exemplos concretos. [Lista oficial da Amazon](https://www.amazon.jobs/content/en/our-workplace/leadership-principles).
 
-As 16 fichas reúnem **192 perguntas comportamentais e 96 aprofundamentos**, todos em português e inglês. Use o controle PT-BR / EN-US de cada item para escolher seu idioma de forma independente. Cada par PT/EN conta como uma pergunta. Os nomes e o texto-base foram conferidos na fonte oficial em 26/10/2026; as traduções são didáticas e as perguntas são autorais.
+As 16 fichas reúnem **203 perguntas comportamentais e 104 aprofundamentos**, todos em português e inglês. Use o controle PT-BR / EN-US de cada item para escolher seu idioma de forma independente. Cada par PT/EN conta como uma pergunta. Os nomes e o texto-base foram conferidos na fonte oficial em 26/10/2026; as traduções são didáticas e as perguntas são autorais.
 
 ## ★ Foco do loop
 
@@ -65,8 +65,8 @@ Uma resposta útil explica contexto, responsabilidade individual, alternativas, 
 Todas seguem a mesma sequência:
 
 1. **Significado prático:** texto do princípio, comportamento a evidenciar, experiência a procurar e trade-off.
-2. **Perguntas para prática:** 12 pares PT/EN divididos em decisões e execução, falhas e aprendizado, colaboração e influência e atuação de SA/FSI.
-3. **Aprofundamentos:** seis perguntas para examinar autoria, julgamento, evidência e aprendizado.
+2. **Perguntas para prática:** uma base de 12 pares PT/EN divididos em decisões e execução, falhas e aprendizado, colaboração e influência e atuação de SA/FSI. Earn Trust amplia o banco para 17, com uma seleção de oito perguntas por prioridade de treino. Have Backbone tem 18 e oferece um percurso de 13 perguntas por objetivo de treino.
+3. **Aprofundamentos:** uma base de seis perguntas por princípio para examinar autoria, julgamento, evidência e aprendizado. Earn Trust tem oito, com foco nas ações e nos indícios de confiança. Have Backbone tem 12, incluindo um trade-off hipotético com fornecedores e sua adaptação para SA/FSI.
 4. **Evidências e revisão:** o que observar e quais respostas ficam vagas ou inconsistentes.
 5. **Aplicação FSI:** cenário hipotético ligado aos cases do repositório.
 6. **Leitura complementar:** síntese de Andy Jassy com link para o minuto do vídeo de 2024.
