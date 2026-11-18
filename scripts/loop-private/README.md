@@ -1,6 +1,6 @@
 # Condução local e privada
 
-A interface também atende o roteiro público do Dia 11. Em Praticar → Instrutor, o Dia 10 oferece duas leituras separadas, a entrevista com Edu e a apresentação do case. No Dia 11, os cartões de Rica e Fer abrem as respectivas avaliações. A página de Fernanda Spinardi também oferece acesso ao roteiro interativo de Fer. Bru e Luca abrem as demais rodadas de treino. Os registros de treino preenchidos permanecem no navegador, em namespace separado. O build público usa as fontes versionadas em `site/loop-training/`.
+A interface também atende o roteiro público do Dia 11. Em Praticar → Instrutor, o Dia 10 oferece duas leituras separadas, a entrevista com Edu e a apresentação do case. No Dia 11, os cartões de Rica, Fer e Luca abrem as respectivas avaliações. As páginas de Fernanda Spinardi e de Lucas Lins também oferecem acesso ao roteiro de treino de cada sessão. O cartão de Bru abre o treino diretamente. Os registros de treino preenchidos permanecem no navegador, em namespace separado. O build público usa as fontes versionadas em `site/loop-training/`.
 
 O gerador lê exclusivamente `.site/loop-privado/source/agenda.json`, `behavioral.json` e `technical.json`. As configurações personalizadas, a saída e os relatórios ficam sob `.site/`, ignorada pelo Git e fora da seleção pública. Não copie esses arquivos para conteúdo, assets, issues ou commits do repositório público.
 

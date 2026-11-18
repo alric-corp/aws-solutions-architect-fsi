@@ -38,8 +38,8 @@
         "title": "Dia 10 — Entrevista técnica e apresentação",
         "url": "/praticar/loop/dia-10/index.html"
       },
-      "intro": "Os horários das sessões seguem o fuso de São Paulo. Os cartões de Rica e Fer abrem as avaliações escritas das entrevistas. Os roteiros de Bru, Fer e Luca trazem perguntas autorais e hipóteses de Leadership Principles.",
-      "privacyNotice": "Os roteiros de treino e as avaliações escritas de Rica e Fer são materiais públicos do instrutor. Compartilhe somente a janela da seleção durante o treino. Os registros que você preencher ficam neste navegador. Não use GenAI durante a entrevista real.",
+      "intro": "Os horários das sessões seguem o fuso de São Paulo. Os cartões de Rica, Fer e Luca abrem as avaliações escritas das entrevistas. Os roteiros de Bru, Fer e Luca trazem perguntas autorais e hipóteses de Leadership Principles.",
+      "privacyNotice": "Os roteiros de treino e as avaliações escritas de Rica, Fer e Luca são materiais públicos do instrutor. Compartilhe somente a janela da seleção durante o treino. Os registros que você preencher ficam neste navegador. Não use GenAI durante a entrevista real.",
       "sessions": [
         {
           "id": "bruna",
@@ -234,6 +234,7 @@
           "name": "Luca",
           "role": "Sr. Manager, Solutions Architecture",
           "time": "15h30–16h30",
+          "reviewUrl": "/praticar/loop/dia-11/lucas/index.html",
           "hypothesis": [
             "Think Big",
             "Learn and Be Curious"

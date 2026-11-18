@@ -13,7 +13,7 @@ import { serializeLoopData } from './loop-private/build.mjs';
 import { isAuthoredStoryUrl } from '../site/story-policy.mjs';
 
 const publishedLoop = await compilePublishedLoop();
-const [eduReview, presentationReview, ricardoReview, fernandaReview] = loopReviewSessions;
+const reviewsById = Object.fromEntries(loopReviewSessions.map(session => [session.id, session]));
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 const directory = path.join(root, 'dist');
@@ -424,6 +424,10 @@ if (baseline) {
     'https://www.aboutamazon.com.br/quem-somos/principios-de-lideranca',
     'https://docs.aws.amazon.com/comprehend/latest/APIReference/API_DetectSentiment.html'
   ].map(canonical));
+  const lucasReferences = new Set([
+    'https://www.aboutamazon.com.br/noticias/trabalhar-na-amazon/6-erros-comuns-que-candidatos-cometem-durante-entrevistas-de-emprego-na-amazon-e-como-evita-los',
+    'https://www.aboutamazon.com.br/quem-somos/principios-de-lideranca'
+  ].map(canonical));
   // Reviewed primary references added by Loja Horizonte. The historic UI baseline
   // remains intact; only these exact links in the maintenance guide are new.
   const horizonteReferences = new Set([
@@ -602,10 +606,11 @@ if (baseline) {
   }
   for (const [file, content] of html) for (const match of content.matchAll(/(?:href|src)=["'](https?:[^"']+)/g)) {
     const target = canonical(match[1]);
-    if (file === eduReview.url.slice(1) && loopReviewReferences.has(target)) continue;
-    if (file === presentationReview.url.slice(1) && presentationReferences.has(target)) continue;
-    if (file === ricardoReview.url.slice(1) && ricardoReferences.has(target)) continue;
-    if (file === fernandaReview.url.slice(1) && fernandaReferences.has(target)) continue;
+    if (file === reviewsById.eduardo.url.slice(1) && loopReviewReferences.has(target)) continue;
+    if (file === reviewsById.apresentacao.url.slice(1) && presentationReferences.has(target)) continue;
+    if (file === reviewsById.ricardo.url.slice(1) && ricardoReferences.has(target)) continue;
+    if (file === reviewsById.fernanda.url.slice(1) && fernandaReferences.has(target)) continue;
+    if (file === reviewsById.lucas.url.slice(1) && lucasReferences.has(target)) continue;
     if (!beforeExternal.has(target) && !isReviewedExternal(file, target)) errors.push(`Novo destino externo em ${file}: ${match[1]}`);
   }
 }

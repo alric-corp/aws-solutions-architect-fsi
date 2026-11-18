@@ -19,13 +19,15 @@ const review = path.join(root, '.site/loop-public-review');
 const routeRoot = '/praticar/loop/';
 const pageIds = ['dia-10', 'dia-11'];
 const routes = pageIds.map(id => `${routeRoot}${id}/index.html`);
-const [eduReview, presentationReview, ricardoReview, fernandaReview] = loopReviewSessions;
-const publishedRoutes = [...routes, presentationReview.url, ricardoReview.url, fernandaReview.url];
+const { eduardo: eduReview, apresentacao: presentationReview, ricardo: ricardoReview, fernanda: fernandaReview, lucas: lucasReview } =
+  Object.fromEntries(loopReviewSessions.map(session => [session.id, session]));
+const publishedRoutes = [...routes, presentationReview.url, ricardoReview.url, fernandaReview.url, lucasReview.url];
 const reviewCases = [
   { session: eduReview, prefix: 'E', count: 25, sections: 9, fragments: ['6,0/10', '6,5', 'não uma nota da AWS', 'confiança na avaliação geral é moderada', 'As três prioridades de desenvolvimento'] },
   { session: presentationReview, prefix: 'P', count: 6, sections: 8, fragments: ['8,0/10', 'não uma nota oficial da AWS', 'Uma semana:', 'Dois meses posteriores:', 'aproximadamente 45%', 'aproximadamente 40%', 'setembro de 2023'] },
   { session: ricardoReview, prefix: 'R', count: 24, sections: 10, fragments: ['8,0/10', 'Gabriel', '9,1/10', '700 → 2.500', '1.000.000 × 80% = 800.000', 'voto puramente hipotético', 'Leaning Inclined'] },
   { session: fernandaReview, prefix: 'F', count: 26, sections: 9, fragments: ['8,4/10', '8,0/10', 'Fernanda da recrutação', '78 pontos percentuais', '39 pendências', 'Nesta entrevista, Vitória mencionou 12', 'Pendente', 'Inclined', 'Não representa um voto da Fernanda'] },
+  { session: lucasReview, prefix: 'L', count: 15, sections: 12, fragments: ['8,3/10', '9,0/10', '−0,7', 'Confiança moderada', '8,9/10', '7,1/10', '12% → 90%', 'parece ser StackSets', '1,5 a 2 semanas', 'A avaliar', 'Inclined, com ressalvas', 'Não é possível inferir se Lucas realmente atribuiu esse parecer'] },
 ];
 const namespace = 'loop-practice:v1';
 const remainingLPIds = ['LP01-Q09', 'LP11-Q08', 'LP11-Q02', 'LP01-Q07', 'LP02-Q08', 'LP14-Q01', 'LP02-Q01', 'LP14-Q05', 'LP08-Q01', 'LP05-Q01', 'LP05-Q11', 'LP08-Q02'];
@@ -144,7 +146,7 @@ async function checkStatic() {
   assert.deepEqual(agenda.pages[1].sessions.map(session => session.name), ['Bru', 'Rica', 'Fer', 'Luca']);
   const allFiles = await filesIn(dist);
   const loopFiles = allFiles.filter(file => file.startsWith(path.join(dist, 'praticar/loop') + path.sep));
-  assert.deepEqual(loopFiles.filter(file => file.endsWith('.html')).map(file => '/' + path.relative(dist, file).split(path.sep).join('/')).sort(), [...publishedRoutes].sort(), 'Somente os quatro pareceres e o painel do Dia 11 entram no loop público');
+  assert.deepEqual(loopFiles.filter(file => file.endsWith('.html')).map(file => '/' + path.relative(dist, file).split(path.sep).join('/')).sort(), [...publishedRoutes].sort(), 'Somente os cinco pareceres e o painel do Dia 11 entram no loop público');
   const manifest = await readJSON('dist/content-manifest.json');
   const search = await readJSON('dist/search-index.json');
   // Match the build's actual Markdown selection, so adding legitimate study
@@ -202,18 +204,20 @@ async function checkStatic() {
     const questionIds = Array.from({ length: count }, (_, i) => prefix + String(i + 1).padStart(2, '0'));
     assert.deepEqual([...article.matchAll(/<td>([A-Z]\d{2})<\/td>/g)].map(match => match[1]), questionIds);
     for (const fragment of fragments) assert.ok(article.includes(fragment), `Trecho ausente em ${session.id}: ${fragment}`);
-    assert.doesNotMatch(html, /Texto colado\(|id="loop-data"|loop-app\.(?:js|css)|DD-V[123]|AP-\d{2}-\d{2}|FUNC-(?:RICARDO|FERNANDA)|<form\b|data-record-field|read-toggle/);
+    assert.doesNotMatch(html, /Texto colado\(|id="loop-data"|loop-app\.(?:js|css)|DD-V[123]|AP-\d{2}-\d{2}|FUNC-(?:RICARDO|FERNANDA|LUCAS)|<form\b|data-record-field|read-toggle/);
     assert.deepEqual([...html.matchAll(/class="review-session" data-session-id="([^"]+)"/g)].map(match => match[1]), session.sessions.map(item => item.id));
     assert.equal((html.match(/aria-current="page"/g) || []).length, 1);
   }
   day11 = embeddedData(htmlPages.get(routes[1]));
   assert.deepEqual(day11.otherPage, { title: agenda.pages[0].title, url: routes[0] });
   assert.doesNotMatch(htmlPages.get(routes[1]), /FUNC-RICARDO|LP13-Q02|LP09-Q01|LP13-Q07|LP09-Q10/);
-  for (const session of [ricardoReview, fernandaReview]) {
+  for (const session of [ricardoReview, fernandaReview, lucasReview]) {
     assert.ok(htmlPages.get(routes[1]).includes(`href="${session.url}"`), 'O parecer tem acesso também sem JavaScript');
   }
-  assert.equal(fernandaReview.trainingUrl, `${routes[1]}?sessao=fernanda`);
-  assert.ok(htmlPages.get(fernandaReview.url).includes(`href="${fernandaReview.trainingUrl}"`), 'O roteiro de treino de Fer continua acessível pelo parecer');
+  for (const session of [fernandaReview, lucasReview]) {
+    assert.equal(session.trainingUrl, `${routes[1]}?sessao=${session.id}`);
+    assert.ok(htmlPages.get(session.url).includes(`href="${session.trainingUrl}"`), 'O roteiro de treino continua acessível pelo respectivo parecer');
+  }
 
   const seenLP = [];
   let questions = 0;
@@ -285,7 +289,7 @@ async function checkStatic() {
   const stack = await readJSON('site/aws-stack.json');
   publicPolicy = stack.Resources.ResponseHeaders.Properties.ResponseHeadersPolicyConfig.SecurityHeadersConfig.ContentSecurityPolicy.ContentSecurityPolicy;
   report.static = { pages: publishedRoutes.length, reviews: reviewCases.map(({ session, count }) => ({ session: session.id, questions: count })), trainingSessions: day11.sessions.filter(session => session.questions?.length).length, questions, lpQuestions: seenLP.length, manifestDocuments: manifest.length, deliberateLinks };
-  report.checks.push('Edu E01–E25, apresentação P01–P06, Ricardo R01–R24 e Fernanda F01–F26 em leituras distintas. Bru, Fer e Luca preservam suas rodadas e os cinco cartões da conversa consultiva.');
+  report.checks.push('Edu E01–E25, apresentação P01–P06, Ricardo R01–R24, Fernanda F01–F26 e Lucas L01–L15 em leituras distintas. Bru, Fer e Luca preservam suas rodadas e os cinco cartões da conversa consultiva.');
   report.checks.push(`${manifest.length} documentos correspondem à seleção pública atual; roteiros fora da busca/progresso/sitemap; somente duas entradas em Praticar#instrutor; registros publicados em branco.`);
 }
 
@@ -425,6 +429,7 @@ async function checkBrowser() {
     }
     report.checks.push('390/768/1440px, claro/escuro/Sistema, pareceres separados e três rodadas de treino, texto ampliado, notas fechadas e registros vazios.');
     const ctx = await context({ acceptDownloads: true });
+    const previousLucasNote = 'FIXTURE_LUCAS_ANTERIOR';
     const protectedStorage = {
       'loop-private:v1:theme': 'dark',
       'loop-private:v1:dia-10:fixture': 'FIXTURE_PRIVADA_INTACTA',
@@ -432,6 +437,7 @@ async function checkBrowser() {
       [`${namespace}:dia-10:apresentacao`]: JSON.stringify({ episodio: 'FIXTURE_APRESENTACAO_ANTERIOR' }),
       [`${namespace}:dia-11:ricardo`]: JSON.stringify({ episodio: 'FIXTURE_RICARDO_ANTERIOR' }),
       [`${namespace}:dia-11:fernanda`]: JSON.stringify({ episodio: 'FIXTURE_FERNANDA_ANTERIOR' }),
+      [`${namespace}:dia-11:lucas`]: JSON.stringify({ schemaVersion: 1, pageId: 'dia-11', sessionId: 'lucas', episodio: previousLucasNote }),
       'architecture-practice:study:v2': JSON.stringify({ version: 2, reading: {}, resume: {}, fixture: 'FIXTURE_ESTUDO_INTACTA' }),
       'public-study-fixture': 'FIXTURE_ALHEIA_INTACTA',
     };
@@ -510,7 +516,8 @@ async function checkBrowser() {
     assert.equal(await page.locator('[data-record-field="episodio"]').inputValue(), fixture);
     assert.equal(await page.locator('[data-session-record] img').count(), 0, 'Registro deve ser texto inerte');
     await page.locator('[data-session-id="lucas"]').click();
-    assert.equal(await page.locator('[data-record-field="episodio"]').inputValue(), '');
+    await page.getByRole('link', { name: 'Abrir o roteiro de treino de Luca' }).click();
+    assert.equal(await page.locator('[data-record-field="episodio"]').inputValue(), previousLucasNote);
     await page.locator(`[data-session-id="${firstSession.id}"]`).click();
     const downloadPending = page.waitForEvent('download');
     await page.locator('[data-action="export-record"]').click();
@@ -535,11 +542,14 @@ async function checkBrowser() {
     report.checks.push('Cronômetro manual, texto inerte, persistência e isolamento por rodada/dia, exportação só do registro e storage público/privado preservado.');
     const blocked = await context();
     await blocked.addInitScript(() => Object.defineProperty(window, 'localStorage', { get() { throw new DOMException('Blocked', 'SecurityError'); } }));
-    const blockedPage = await blocked.newPage(); monitor(blockedPage); await visit(blockedPage, day11.pageId);
+    const blockedPage = await blocked.newPage(); monitor(blockedPage);
+    await blockedPage.goto(`${base}${lucasReview.trainingUrl}`); await ready(blockedPage);
     assert.equal(await blockedPage.locator('#loop-storage-warning').isVisible(), true);
+    await blockedPage.locator('[data-record-field="episodio"]').fill('FIXTURE_LUCA_APENAS_MEMORIA');
+    await blockedPage.locator(`[data-session-id="${firstSession.id}"]`).click();
+    assert.equal(await blockedPage.locator('[data-record-field="episodio"]').inputValue(), '');
     await blockedPage.locator('[data-record-field="episodio"]').fill('FIXTURE_APENAS_MEMORIA');
-    await blockedPage.locator('[data-session-id="lucas"]').click();
-    await blockedPage.locator(`[data-session-id="${day11.sessions[0].id}"]`).click();
+    await blockedPage.locator(`[data-session-id="${firstSession.id}"]`).click();
     assert.equal(await blockedPage.locator('[data-record-field="episodio"]').inputValue(), 'FIXTURE_APENAS_MEMORIA');
     const popupBlocked = await context();
     await popupBlocked.addInitScript(() => { window.open = () => null; });

@@ -16,6 +16,7 @@ const reviewSources = new Map([
   ['/praticar/loop/dia-10/apresentacao/index.html', { source: 'site/loop-training/dia-10-apresentacao.md', title: 'Dia 10 — Apresentação do case' }],
   ['/praticar/loop/dia-11/ricardo/index.html', { source: 'site/loop-training/dia-11-ricardo.md', title: 'Dia 11 — Entrevista com Ricardo' }],
   ['/praticar/loop/dia-11/fernanda/index.html', { source: 'site/loop-training/dia-11-fernanda.md', title: 'Dia 11 — Entrevista com Fernanda Spinardi' }],
+  ['/praticar/loop/dia-11/lucas/index.html', { source: 'site/loop-training/dia-11-lucas.md', title: 'Dia 11 — Entrevista com Lucas Lins' }],
 ]);
 export const loopPublicPages = agenda.pages.map(page => ({
   id: page.pageId, title: page.title, url: loopPageUrl(page.pageId), entryLabel: page.entryLabel,
