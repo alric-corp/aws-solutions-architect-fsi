@@ -14,6 +14,7 @@ export const loopPageUrl = id => `/praticar/loop/${id}/index.html`;
 const reviewSources = new Map([
   [loopPageUrl('dia-10'), { source: 'site/loop-training/dia-10-avaliacao.md', title: 'Dia 10 — Entrevista técnica com Edu' }],
   ['/praticar/loop/dia-10/apresentacao/index.html', { source: 'site/loop-training/dia-10-apresentacao.md', title: 'Dia 10 — Apresentação do case' }],
+  ['/praticar/loop/dia-11/bruna/index.html', { source: 'site/loop-training/dia-11-bruna.md', title: 'Dia 11 — Entrevista com Bruna Franzoni' }],
   ['/praticar/loop/dia-11/ricardo/index.html', { source: 'site/loop-training/dia-11-ricardo.md', title: 'Dia 11 — Entrevista com Ricardo' }],
   ['/praticar/loop/dia-11/fernanda/index.html', { source: 'site/loop-training/dia-11-fernanda.md', title: 'Dia 11 — Entrevista com Fernanda Spinardi' }],
   ['/praticar/loop/dia-11/lucas/index.html', { source: 'site/loop-training/dia-11-lucas.md', title: 'Dia 11 — Entrevista com Lucas Lins' }],

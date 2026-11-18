@@ -393,6 +393,17 @@ function startApp() {
       return control;
     }),
   ]);
+  const trainingSessions = data.sessions.filter(session => session.questions?.length);
+  const trainingSelect = isPublic && trainingSessions.length > 1 && trainingSessions.some(session => session.reviewUrl)
+    ? node('select', { id: 'loop-training-session', 'aria-controls': 'loop-session-panel' }, trainingSessions.map(session =>
+        node('option', { value: session.id, text: session.name })))
+    : null;
+  if (trainingSelect) {
+    sessionNav.append(node('div', { className: 'loop-field' }, [
+      node('label', { for: 'loop-training-session', text: 'Roteiro de treino' }), trainingSelect,
+    ]));
+    trainingSelect.addEventListener('change', () => selectSession(data.sessions.findIndex(session => session.id === trainingSelect.value)));
+  }
   const main = node('main', { id: 'loop-session-panel', className: 'loop-main', 'aria-labelledby': 'loop-session-title' });
   const warning = node('p', { id: 'loop-storage-warning', className: 'loop-warning', role: 'status', hidden: !storageBlocked, text: 'O armazenamento do navegador está indisponível. As alterações ficam apenas nesta aba; exporte o registro em JSON antes de fechar.' });
   app.replaceChildren(
@@ -780,6 +791,7 @@ function startApp() {
   function selectSession(index, focus = true) {
     activeSessionIndex = index;
     const session = selectedSession();
+    if (trainingSelect) trainingSelect.value = session.id;
     for (const control of sessionNav.querySelectorAll('button[data-session-id]')) control.setAttribute('aria-pressed', String(control.dataset.sessionId === session.id));
     for (const link of sessionNav.querySelectorAll('a[data-session-id]')) link.setAttribute('aria-current', String(link.dataset.sessionId === session.id));
     if (isPublic && focus) {

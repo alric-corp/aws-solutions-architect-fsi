@@ -428,6 +428,12 @@ if (baseline) {
     'https://www.aboutamazon.com.br/noticias/trabalhar-na-amazon/6-erros-comuns-que-candidatos-cometem-durante-entrevistas-de-emprego-na-amazon-e-como-evita-los',
     'https://www.aboutamazon.com.br/quem-somos/principios-de-lideranca'
   ].map(canonical));
+  const brunaReferences = new Set([
+    'https://support.atlassian.com/jira-software-cloud/docs/view-and-understand-the-control-chart/',
+    'https://dora.dev/guides/dora-metrics/',
+    'https://sre.google/sre-book/service-level-objectives/',
+    'https://www.aboutamazon.com.br/quem-somos/principios-de-lideranca'
+  ].map(canonical));
   // Reviewed primary references added by Loja Horizonte. The historic UI baseline
   // remains intact; only these exact links in the maintenance guide are new.
   const horizonteReferences = new Set([
@@ -611,6 +617,7 @@ if (baseline) {
     if (file === reviewsById.ricardo.url.slice(1) && ricardoReferences.has(target)) continue;
     if (file === reviewsById.fernanda.url.slice(1) && fernandaReferences.has(target)) continue;
     if (file === reviewsById.lucas.url.slice(1) && lucasReferences.has(target)) continue;
+    if (file === reviewsById.bruna.url.slice(1) && brunaReferences.has(target)) continue;
     if (!beforeExternal.has(target) && !isReviewedExternal(file, target)) errors.push(`Novo destino externo em ${file}: ${match[1]}`);
   }
 }

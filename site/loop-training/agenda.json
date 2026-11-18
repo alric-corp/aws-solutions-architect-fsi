@@ -38,14 +38,15 @@
         "title": "Dia 10 — Entrevista técnica e apresentação",
         "url": "/praticar/loop/dia-10/index.html"
       },
-      "intro": "Os horários das sessões seguem o fuso de São Paulo. Os cartões de Rica, Fer e Luca abrem as avaliações escritas das entrevistas. Os roteiros de Bru, Fer e Luca trazem perguntas autorais e hipóteses de Leadership Principles.",
-      "privacyNotice": "Os roteiros de treino e as avaliações escritas de Rica, Fer e Luca são materiais públicos do instrutor. Compartilhe somente a janela da seleção durante o treino. Os registros que você preencher ficam neste navegador. Não use GenAI durante a entrevista real.",
+      "intro": "Os horários das sessões seguem o fuso de São Paulo. Cada cartão abre o parecer da entrevista. O de Bru também reúne a avaliação das cinco entrevistas e da apresentação do case. Os roteiros de Bru, Fer e Luca trazem perguntas autorais e hipóteses de Leadership Principles.",
+      "privacyNotice": "Os roteiros de treino e os pareceres são materiais públicos do instrutor. Compartilhe somente a janela da seleção durante o treino. Os registros que você preencher ficam neste navegador. Não use GenAI durante a entrevista real.",
       "sessions": [
         {
           "id": "bruna",
           "name": "Bru",
           "role": "Enterprise Account Manager",
           "time": "10h30–11h30",
+          "reviewUrl": "/praticar/loop/dia-11/bruna/index.html",
           "hypothesis": [
             "Customer Obsession",
             "Earn Trust"
@@ -326,7 +327,7 @@
       ],
       "publication": "public",
       "returnUrl": "/praticar/index.html#instrutor",
-      "entryLabel": "roteiros e avaliações"
+      "entryLabel": "roteiros, avaliações e consolidação do Loop"
     }
   ]
 }
