@@ -781,6 +781,7 @@ function startApp() {
     activeSessionIndex = index;
     const session = selectedSession();
     for (const control of sessionNav.querySelectorAll('button[data-session-id]')) control.setAttribute('aria-pressed', String(control.dataset.sessionId === session.id));
+    for (const link of sessionNav.querySelectorAll('a[data-session-id]')) link.setAttribute('aria-current', String(link.dataset.sessionId === session.id));
     if (isPublic && focus) {
       const url = new URL(location.href);
       url.searchParams.set('sessao', session.id);
@@ -1235,7 +1236,7 @@ function startApp() {
 
   const requestedId = isPublic ? new URLSearchParams(location.search).get('sessao') : null;
   const initial = Math.max(0, data.sessions.findIndex(session => session.id === requestedId));
-  if (isPublic && data.sessions[initial].reviewUrl) {
+  if (isPublic && data.sessions[initial].reviewUrl && !data.sessions[initial].questions?.length) {
     location.replace(safeLocalUrl(data.sessions[initial].reviewUrl));
     return;
   }

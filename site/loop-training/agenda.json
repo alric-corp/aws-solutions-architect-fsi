@@ -38,8 +38,8 @@
         "title": "Dia 10 — Entrevista técnica e apresentação",
         "url": "/praticar/loop/dia-10/index.html"
       },
-      "intro": "Os horários das sessões estão em America/Sao_Paulo. A rodada de Rica abre a avaliação escrita da entrevista. As outras rodadas são propostas de treino com perguntas autorais e hipóteses de Leadership Principles.",
-      "privacyNotice": "Material público do instrutor: os roteiros de treino e a avaliação escrita da sessão de Rica podem ser consultados por qualquer pessoa. Compartilhe somente a janela da seleção durante o treino. Os registros que você preencher ficam neste navegador. Não use GenAI durante a entrevista real.",
+      "intro": "Os horários das sessões seguem o fuso de São Paulo. Os cartões de Rica e Fer abrem as avaliações escritas das entrevistas. Os roteiros de Bru, Fer e Luca trazem perguntas autorais e hipóteses de Leadership Principles.",
+      "privacyNotice": "Os roteiros de treino e as avaliações escritas de Rica e Fer são materiais públicos do instrutor. Compartilhe somente a janela da seleção durante o treino. Os registros que você preencher ficam neste navegador. Não use GenAI durante a entrevista real.",
       "sessions": [
         {
           "id": "bruna",
@@ -140,6 +140,7 @@
           "name": "Fer",
           "role": "Brazil Customer Success Manager Leader",
           "time": "14h–15h",
+          "reviewUrl": "/praticar/loop/dia-11/fernanda/index.html",
           "hypothesis": [
             "Ownership",
             "Deliver Results"
@@ -324,7 +325,7 @@
       ],
       "publication": "public",
       "returnUrl": "/praticar/index.html#instrutor",
-      "entryLabel": "roteiros e avaliação"
+      "entryLabel": "roteiros e avaliações"
     }
   ]
 }

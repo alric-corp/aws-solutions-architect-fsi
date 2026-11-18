@@ -103,6 +103,7 @@ export function tocFor(doc, initiallyOpen = true) {
 }
 export function renderLoopReview(doc, html) {
   const toc = tocFor({ headings: doc.headings.filter(heading => heading.level === 'h2') }, false);
+  const training = doc.trainingUrl ? `<p><a href="${escape(doc.trainingUrl)}">Abrir o roteiro de treino de ${escape(doc.name)}</a></p>` : '';
   const sessions = doc.sessions.map(session => `<a class="review-session" data-session-id="${session.id}" href="${session.url}"${session.id === doc.id ? ' aria-current="page"' : ''}>
     <span>${escape(session.time)}</span><strong>${escape(session.name)}</strong><span>${escape(session.role)}</span></a>`).join('');
   return `<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
@@ -111,7 +112,7 @@ export function renderLoopReview(doc, html) {
   <body><a class="skip-link" href="#avaliacao">Pular para a avaliação</a><div class="review-container">
   <nav class="article-kicker" aria-label="Material do instrutor"><a href="/praticar/index.html#instrutor">← Praticar · Instrutor</a><a href="${escape(doc.otherPage.url)}">${escape(doc.otherPage.title)} →</a></nav>
   <main id="main" class="review-layout" tabindex="-1"><aside class="review-sidebar">
-  <nav class="review-sessions" aria-labelledby="sessoes"><h2 id="sessoes">Sessões</h2>${sessions}</nav>${toc}</aside>
+  <nav class="review-sessions" aria-labelledby="sessoes"><h2 id="sessoes">Sessões</h2>${sessions}</nav>${training}${toc}</aside>
   <div class="review-reading"><article class="prose" id="avaliacao" tabindex="-1">${html}</article>
   <nav class="article-pagination" aria-label="Continuar a leitura"><a href="#sessoes">↑ Voltar às sessões</a><a href="/praticar/index.html#instrutor">Voltar a Praticar</a></nav>
   </div></main></div></body></html>`;

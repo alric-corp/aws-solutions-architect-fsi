@@ -217,7 +217,8 @@
 }
 .loop-app .loop-session-button:hover { border-color: var(--border-strong); }
 .loop-app a.loop-session-button { text-decoration: none; }
-.loop-app .loop-session-button[aria-pressed='true'] { border-color: var(--border-strong); border-left-color: var(--action); background: var(--active-surface); }
+.loop-app .loop-session-button[aria-pressed='true'],
+.loop-app .loop-session-button[aria-current='true'] { border-color: var(--border-strong); border-left-color: var(--action); background: var(--active-surface); }
 .loop-app .loop-session-button strong { font-weight: 700; }
 .loop-app .loop-session-button small { color: var(--muted); font-size: .875rem; }
 .loop-app .loop-main,

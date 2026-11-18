@@ -15,20 +15,23 @@ const reviewSources = new Map([
   [loopPageUrl('dia-10'), { source: 'site/loop-training/dia-10-avaliacao.md', title: 'Dia 10 — Entrevista técnica com Edu' }],
   ['/praticar/loop/dia-10/apresentacao/index.html', { source: 'site/loop-training/dia-10-apresentacao.md', title: 'Dia 10 — Apresentação do case' }],
   ['/praticar/loop/dia-11/ricardo/index.html', { source: 'site/loop-training/dia-11-ricardo.md', title: 'Dia 11 — Entrevista com Ricardo' }],
+  ['/praticar/loop/dia-11/fernanda/index.html', { source: 'site/loop-training/dia-11-fernanda.md', title: 'Dia 11 — Entrevista com Fernanda Spinardi' }],
 ]);
 export const loopPublicPages = agenda.pages.map(page => ({
   id: page.pageId, title: page.title, url: loopPageUrl(page.pageId), entryLabel: page.entryLabel,
-  interactive: page.sessions.some(session => !session.reviewUrl),
+  interactive: page.sessions.some(session => session.questions?.length),
 }));
 const interactivePages = loopPublicPages.filter(page => page.interactive);
 export const loopReviewSessions = agenda.pages.flatMap(day => {
+  const trainingUrl = id => `${loopPageUrl(day.pageId)}?sessao=${encodeURIComponent(id)}`;
   const sessions = day.sessions.map(({ id, name, time, role, reviewUrl }) => ({
-    id, name, time, role, url: reviewUrl || `${loopPageUrl(day.pageId)}?sessao=${encodeURIComponent(id)}`,
+    id, name, time, role, url: reviewUrl || trainingUrl(id),
   }));
   return day.sessions.filter(session => session.reviewUrl).map(session => {
     const source = reviewSources.get(session.reviewUrl);
     if (!source) throw new Error(`Avaliação sem fonte pública autorizada: ${session.id}`);
-    return { ...source, id: session.id, dayId: day.pageId, url: session.reviewUrl, sessions, otherPage: day.otherPage };
+    return { ...source, id: session.id, name: session.name, dayId: day.pageId, url: session.reviewUrl,
+      trainingUrl: session.questions?.length ? trainingUrl(session.id) : null, sessions, otherPage: day.otherPage };
   });
 });
 export const isInteractiveLoopRoute = value => interactivePages.some(page => page.url === `/${String(value).replace(/^\//, '')}`);

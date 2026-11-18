@@ -13,7 +13,7 @@ import { serializeLoopData } from './loop-private/build.mjs';
 import { isAuthoredStoryUrl } from '../site/story-policy.mjs';
 
 const publishedLoop = await compilePublishedLoop();
-const [eduReview, presentationReview, ricardoReview] = loopReviewSessions;
+const [eduReview, presentationReview, ricardoReview, fernandaReview] = loopReviewSessions;
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 const directory = path.join(root, 'dist');
@@ -420,6 +420,10 @@ if (baseline) {
     'https://docs.aws.amazon.com/comprehend/latest/APIReference/API_DetectSentiment.html',
     'https://docs.aws.amazon.com/AmazonECS/latest/developerguide/service-auto-scaling.html'
   ].map(canonical));
+  const fernandaReferences = new Set([
+    'https://www.aboutamazon.com.br/quem-somos/principios-de-lideranca',
+    'https://docs.aws.amazon.com/comprehend/latest/APIReference/API_DetectSentiment.html'
+  ].map(canonical));
   // Reviewed primary references added by Loja Horizonte. The historic UI baseline
   // remains intact; only these exact links in the maintenance guide are new.
   const horizonteReferences = new Set([
@@ -601,6 +605,7 @@ if (baseline) {
     if (file === eduReview.url.slice(1) && loopReviewReferences.has(target)) continue;
     if (file === presentationReview.url.slice(1) && presentationReferences.has(target)) continue;
     if (file === ricardoReview.url.slice(1) && ricardoReferences.has(target)) continue;
+    if (file === fernandaReview.url.slice(1) && fernandaReferences.has(target)) continue;
     if (!beforeExternal.has(target) && !isReviewedExternal(file, target)) errors.push(`Novo destino externo em ${file}: ${match[1]}`);
   }
 }

@@ -19,12 +19,13 @@ const review = path.join(root, '.site/loop-public-review');
 const routeRoot = '/praticar/loop/';
 const pageIds = ['dia-10', 'dia-11'];
 const routes = pageIds.map(id => `${routeRoot}${id}/index.html`);
-const [eduReview, presentationReview, ricardoReview] = loopReviewSessions;
-const publishedRoutes = [...routes, presentationReview.url, ricardoReview.url];
+const [eduReview, presentationReview, ricardoReview, fernandaReview] = loopReviewSessions;
+const publishedRoutes = [...routes, presentationReview.url, ricardoReview.url, fernandaReview.url];
 const reviewCases = [
   { session: eduReview, prefix: 'E', count: 25, sections: 9, fragments: ['6,0/10', '6,5', 'não uma nota da AWS', 'confiança na avaliação geral é moderada', 'As três prioridades de desenvolvimento'] },
   { session: presentationReview, prefix: 'P', count: 6, sections: 8, fragments: ['8,0/10', 'não uma nota oficial da AWS', 'Uma semana:', 'Dois meses posteriores:', 'aproximadamente 45%', 'aproximadamente 40%', 'setembro de 2023'] },
   { session: ricardoReview, prefix: 'R', count: 24, sections: 10, fragments: ['8,0/10', 'Gabriel', '9,1/10', '700 → 2.500', '1.000.000 × 80% = 800.000', 'voto puramente hipotético', 'Leaning Inclined'] },
+  { session: fernandaReview, prefix: 'F', count: 26, sections: 9, fragments: ['8,4/10', '8,0/10', 'Fernanda da recrutação', '78 pontos percentuais', '39 pendências', 'Nesta entrevista, Vitória mencionou 12', 'Pendente', 'Inclined', 'Não representa um voto da Fernanda'] },
 ];
 const namespace = 'loop-practice:v1';
 const remainingLPIds = ['LP01-Q09', 'LP11-Q08', 'LP11-Q02', 'LP01-Q07', 'LP02-Q08', 'LP14-Q01', 'LP02-Q01', 'LP14-Q05', 'LP08-Q01', 'LP05-Q01', 'LP05-Q11', 'LP08-Q02'];
@@ -143,7 +144,7 @@ async function checkStatic() {
   assert.deepEqual(agenda.pages[1].sessions.map(session => session.name), ['Bru', 'Rica', 'Fer', 'Luca']);
   const allFiles = await filesIn(dist);
   const loopFiles = allFiles.filter(file => file.startsWith(path.join(dist, 'praticar/loop') + path.sep));
-  assert.deepEqual(loopFiles.filter(file => file.endsWith('.html')).map(file => '/' + path.relative(dist, file).split(path.sep).join('/')).sort(), [...publishedRoutes].sort(), 'Somente os três pareceres e o painel do Dia 11 entram no loop público');
+  assert.deepEqual(loopFiles.filter(file => file.endsWith('.html')).map(file => '/' + path.relative(dist, file).split(path.sep).join('/')).sort(), [...publishedRoutes].sort(), 'Somente os quatro pareceres e o painel do Dia 11 entram no loop público');
   const manifest = await readJSON('dist/content-manifest.json');
   const search = await readJSON('dist/search-index.json');
   // Match the build's actual Markdown selection, so adding legitimate study
@@ -199,16 +200,20 @@ async function checkStatic() {
     assert.equal(visible(article), visible(markdown(await read(session.source))), `Publicar somente o parecer integral de ${session.id}`);
     assert.equal((article.match(/<h2\b/g) || []).length, sections);
     const questionIds = Array.from({ length: count }, (_, i) => prefix + String(i + 1).padStart(2, '0'));
-    assert.deepEqual([...article.matchAll(/<td>([EPR]\d{2})<\/td>/g)].map(match => match[1]), questionIds);
+    assert.deepEqual([...article.matchAll(/<td>([A-Z]\d{2})<\/td>/g)].map(match => match[1]), questionIds);
     for (const fragment of fragments) assert.ok(article.includes(fragment), `Trecho ausente em ${session.id}: ${fragment}`);
-    assert.doesNotMatch(html, /Texto colado\(|id="loop-data"|loop-app\.(?:js|css)|DD-V[123]|AP-\d{2}-\d{2}|FUNC-RICARDO|<form\b|data-record-field|read-toggle/);
+    assert.doesNotMatch(html, /Texto colado\(|id="loop-data"|loop-app\.(?:js|css)|DD-V[123]|AP-\d{2}-\d{2}|FUNC-(?:RICARDO|FERNANDA)|<form\b|data-record-field|read-toggle/);
     assert.deepEqual([...html.matchAll(/class="review-session" data-session-id="([^"]+)"/g)].map(match => match[1]), session.sessions.map(item => item.id));
     assert.equal((html.match(/aria-current="page"/g) || []).length, 1);
   }
   day11 = embeddedData(htmlPages.get(routes[1]));
   assert.deepEqual(day11.otherPage, { title: agenda.pages[0].title, url: routes[0] });
   assert.doesNotMatch(htmlPages.get(routes[1]), /FUNC-RICARDO|LP13-Q02|LP09-Q01|LP13-Q07|LP09-Q10/);
-  assert.ok(htmlPages.get(routes[1]).includes(`href="${ricardoReview.url}"`), 'A leitura de Ricardo tem acesso também sem JavaScript');
+  for (const session of [ricardoReview, fernandaReview]) {
+    assert.ok(htmlPages.get(routes[1]).includes(`href="${session.url}"`), 'O parecer tem acesso também sem JavaScript');
+  }
+  assert.equal(fernandaReview.trainingUrl, `${routes[1]}?sessao=fernanda`);
+  assert.ok(htmlPages.get(fernandaReview.url).includes(`href="${fernandaReview.trainingUrl}"`), 'O roteiro de treino de Fer continua acessível pelo parecer');
 
   const seenLP = [];
   let questions = 0;
@@ -279,8 +284,8 @@ async function checkStatic() {
   assert.match(appScripts[0], /(?:const|let) STORAGE_PREFIX\s*=\s*(?:isPublic\s*\?\s*)?['"]loop-practice:v1['"]/);
   const stack = await readJSON('site/aws-stack.json');
   publicPolicy = stack.Resources.ResponseHeaders.Properties.ResponseHeadersPolicyConfig.SecurityHeadersConfig.ContentSecurityPolicy.ContentSecurityPolicy;
-  report.static = { pages: publishedRoutes.length, reviews: reviewCases.map(({ session, count }) => ({ session: session.id, questions: count })), trainingSessions: day11.sessions.filter(session => !session.reviewUrl).length, questions, lpQuestions: seenLP.length, manifestDocuments: manifest.length, deliberateLinks };
-  report.checks.push('Edu E01–E25, apresentação P01–P06 e Ricardo R01–R24 em leituras distintas. Bru, Fer e Luca preservam suas rodadas e os cinco cartões da conversa consultiva.');
+  report.static = { pages: publishedRoutes.length, reviews: reviewCases.map(({ session, count }) => ({ session: session.id, questions: count })), trainingSessions: day11.sessions.filter(session => session.questions?.length).length, questions, lpQuestions: seenLP.length, manifestDocuments: manifest.length, deliberateLinks };
+  report.checks.push('Edu E01–E25, apresentação P01–P06, Ricardo R01–R24 e Fernanda F01–F26 em leituras distintas. Bru, Fer e Luca preservam suas rodadas e os cinco cartões da conversa consultiva.');
   report.checks.push(`${manifest.length} documentos correspondem à seleção pública atual; roteiros fora da busca/progresso/sitemap; somente duas entradas em Praticar#instrutor; registros publicados em branco.`);
 }
 
@@ -387,15 +392,20 @@ async function checkBrowser() {
       assert.equal(await page.locator('details[open]').count(), 0, 'Notas, gabaritos e aprofundamentos começam fechados');
       for (const session of day11.sessions) {
         if (session.reviewUrl) {
+          const reading = loopReviewSessions.find(item => item.url === session.reviewUrl);
           await page.locator(`[data-session-id="${session.id}"]`).click();
-          assert.equal(await page.locator('article h1').innerText(), ricardoReview.title);
-          assert.equal(await page.locator('.review-session[aria-current="page"]').getAttribute('data-session-id'), 'ricardo');
+          assert.equal(await page.locator('article h1').innerText(), reading.title);
+          assert.equal(await page.locator('.review-session[aria-current="page"]').getAttribute('data-session-id'), session.id);
           await noOverflow(page);
-          await page.locator('[data-session-id="fernanda"]').click();
-          assert.equal(await page.locator('#loop-session-title').innerText(), 'Fer');
-          continue;
+          if (!reading.trainingUrl) {
+            await page.locator('[data-session-id="bruna"]').click();
+            continue;
+          }
+          await page.getByRole('link', { name: `Abrir o roteiro de treino de ${session.name}` }).click();
+          assert.equal(await page.locator(`a[data-session-id="${session.id}"]`).getAttribute('aria-current'), 'true');
+        } else {
+          await page.locator(`[data-session-id="${session.id}"]`).click();
         }
-        await page.locator(`[data-session-id="${session.id}"]`).click();
         assert.equal(await page.locator('#loop-session-title').innerText(), session.name);
         assert.equal(await page.locator('details[open]').count(), 0);
         assert.equal(await page.locator('details[data-evaluator-guide], details[data-assessment], [data-deep-dive-training]').count(), 0);
@@ -421,6 +431,7 @@ async function checkBrowser() {
       [`${namespace}:dia-10:eduardo`]: JSON.stringify({ episodio: 'FIXTURE_REGISTRO_ANTERIOR' }),
       [`${namespace}:dia-10:apresentacao`]: JSON.stringify({ episodio: 'FIXTURE_APRESENTACAO_ANTERIOR' }),
       [`${namespace}:dia-11:ricardo`]: JSON.stringify({ episodio: 'FIXTURE_RICARDO_ANTERIOR' }),
+      [`${namespace}:dia-11:fernanda`]: JSON.stringify({ episodio: 'FIXTURE_FERNANDA_ANTERIOR' }),
       'architecture-practice:study:v2': JSON.stringify({ version: 2, reading: {}, resume: {}, fixture: 'FIXTURE_ESTUDO_INTACTA' }),
       'public-study-fixture': 'FIXTURE_ALHEIA_INTACTA',
     };
@@ -498,7 +509,7 @@ async function checkBrowser() {
     await page.reload(); await ready(page);
     assert.equal(await page.locator('[data-record-field="episodio"]').inputValue(), fixture);
     assert.equal(await page.locator('[data-session-record] img').count(), 0, 'Registro deve ser texto inerte');
-    await page.locator(`[data-session-id="fernanda"]`).click();
+    await page.locator('[data-session-id="lucas"]').click();
     assert.equal(await page.locator('[data-record-field="episodio"]').inputValue(), '');
     await page.locator(`[data-session-id="${firstSession.id}"]`).click();
     const downloadPending = page.waitForEvent('download');
@@ -527,7 +538,7 @@ async function checkBrowser() {
     const blockedPage = await blocked.newPage(); monitor(blockedPage); await visit(blockedPage, day11.pageId);
     assert.equal(await blockedPage.locator('#loop-storage-warning').isVisible(), true);
     await blockedPage.locator('[data-record-field="episodio"]').fill('FIXTURE_APENAS_MEMORIA');
-    await blockedPage.locator(`[data-session-id="fernanda"]`).click();
+    await blockedPage.locator('[data-session-id="lucas"]').click();
     await blockedPage.locator(`[data-session-id="${day11.sessions[0].id}"]`).click();
     assert.equal(await blockedPage.locator('[data-record-field="episodio"]').inputValue(), 'FIXTURE_APENAS_MEMORIA');
     const popupBlocked = await context();
