@@ -8,11 +8,12 @@ import { publicRoots } from '../site/content.mjs';
 import { metadataFor, studentSearchMarkdown, retiredDocuments, isRetiredSource, isRetiredUrl, phoneScreenReview } from '../site/content-policy.mjs';
 import { rankSearch } from '../site/search.mjs';
 import { continuityScopeFor } from '../site/collection-policy.mjs';
-import { compilePublishedLoop, isLoopPublicRoute, isApprovedLoopData } from '../site/loop-publication.mjs';
+import { compilePublishedLoop, isInteractiveLoopRoute, isApprovedLoopData, loopReviewSessions } from '../site/loop-publication.mjs';
 import { serializeLoopData } from './loop-private/build.mjs';
 import { isAuthoredStoryUrl } from '../site/story-policy.mjs';
 
 const publishedLoop = await compilePublishedLoop();
+const [eduReview, presentationReview, ricardoReview] = loopReviewSessions;
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 const directory = path.join(root, 'dist');
@@ -50,8 +51,7 @@ const namedMentorshipPages = new Set([
 function hasUnexpectedPersonalData(file, content) {
   if (/\/Users\/tomasalric/.test(content)) return true;
   if (/Tomas e Vitória/.test(content)) return true;
-  // Only the exact owner-approved payload on its two explicit routes is
-  // exempt. Names elsewhere and local filesystem paths remain disallowed.
+  // The interactive page embeds only its exact approved training payload.
   const scoped = content.replace(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi, (tag, attributes, raw) => isApprovedLoopData(file, attributes, raw, publishedLoop) ? '' : tag);
   let checked = scoped
     .replaceAll('Conversa técnica — Vitória e Cleber', 'Conversa técnica')
@@ -59,9 +59,8 @@ function hasUnexpectedPersonalData(file, content) {
     .replaceAll('Mentoria técnica — Vitória e Cleber', 'Mentoria técnica');
   if (namedMentorshipPages.has(file)) checked = checked.replace(/Vitória|Vitória/g, 'participante');
   if (isAuthoredStoryUrl(file)) checked = checked.replace(/Vitória|Vitória/g, 'autora');
-  // Separate, explicit authorization for the supplied Phone Screen assessment.
-  // Keep local-path checks above and all other assessments outside this scope.
-  if (`/${file}` === phoneScreenReview.url) checked = checked.replace(/Vitória|Vitória/g, 'participante');
+  // Only these written assessments have explicit permission for names.
+  if (`/${file}` === phoneScreenReview.url || loopReviewSessions.some(session => session.url === `/${file}`)) checked = checked.replace(/Vitória|Vitória/g, 'participante');
   return /Vitória|Vitória|Tomas e Vitória/.test(checked);
 }
 assert.equal(hasUnexpectedPersonalData('index.html', 'Vitória'), true, 'Nome pessoal continua vedado fora do roteiro autorizado');
@@ -80,6 +79,12 @@ assert.equal(hasUnexpectedPersonalData('interview/phone-screen/instrutor.html', 
 const loopDataAttributes = ' id="loop-data" type="application/json"';
 const firstLoopRoute = `/praticar/loop/${publishedLoop[0].pageId}/index.html`;
 const firstLoopJson = serializeLoopData(publishedLoop[0]);
+for (const { url } of loopReviewSessions) {
+  assert.equal(hasUnexpectedPersonalData(url.slice(1), 'Vitória respondeu sobre o banco'), false);
+  assert.equal(hasUnexpectedPersonalData(url.slice(1), '/Users/tomasalric/privado'), true);
+  assert.equal(isApprovedLoopData(url, loopDataAttributes, firstLoopJson, publishedLoop), false, 'Os pareceres estáticos não aceitam dados de sessão');
+}
+assert.equal(hasUnexpectedPersonalData('praticar/loop/dia-10/outro-relatorio.html', 'Vitória'), true);
 assert.equal(isApprovedLoopData(firstLoopRoute, loopDataAttributes, firstLoopJson, publishedLoop), true, 'Dados inertes aprovados são permitidos só na rota autorizada');
 assert.equal(isApprovedLoopData('index.html', loopDataAttributes, firstLoopJson, publishedLoop), false, 'A exceção não se estende a outras páginas');
 assert.equal(isApprovedLoopData(firstLoopRoute, ' id="loop-data" type="text/javascript"', firstLoopJson, publishedLoop), false, 'Script executável não recebe exceção');
@@ -229,7 +234,8 @@ for (const [file, content] of html) {
     if (file === 'biblioteca/index.html' && target.origin === 'https://site.invalid' && target.pathname === '/cases/index.html' && !target.hash) collectionEntries++;
     else errors.push(`Link para cases fora do ponto de entrada permitido: ${file} → ${match[1]}`);
   }
-  const visibleText = decode(content.replace(/<[^>]*>/g, ' '));
+  // Keep adjacent cells distinct (e.g. the session name "Apresentação do case" and its score).
+  const visibleText = decode(content.replace(/<\/t[dh]>/gi, ' | ').replace(/<[^>]*>/g, ' '));
   if (file !== 'biblioteca/index.html' && (/\bCases FSI\b|\bFSI(?:0[1-9]|10)\b|\bCase\s+\d{1,2}\b/i.test(visibleText) || collectionMention.test(visibleText))) errors.push(`Recomendação ou identificação de case apresentada fora da coleção: ${file}`);
 }
 if (collectionEntries !== 1) errors.push(`Biblioteca deve ter um único ponto de entrada para cases; encontrado: ${collectionEntries}`);
@@ -390,6 +396,30 @@ if (baseline) {
   }
   const canonical = value => new URL(decode(value)).href;
   const beforeExternal = new Set(baseline.externalDestinations.map(canonical));
+  const loopReviewReferences = new Set([
+    'https://docs.aws.amazon.com/sns/latest/dg/SendMessageToHttp.prepare.html',
+    'https://developer.hashicorp.com/terraform/cli/commands/plan',
+    'https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/CHAP_BestPractices.html',
+    'https://docs.aws.amazon.com/prescriptive-guidance/latest/modernization-data-persistence/cqrs-pattern.html',
+    'https://docs.aws.amazon.com/prescriptive-guidance/latest/best-practices-migration-cutover/cutover-stage.html',
+    'https://docs.langchain.com/oss/python/concepts/memory',
+    'https://sre.google/sre-book/monitoring-distributed-systems/',
+    'https://sre.google/sre-book/service-level-objectives/',
+    'https://docs.aws.amazon.com/wellarchitected/latest/devops-guidance/metrics-for-continuous-monitoring.html',
+    'https://docs.aws.amazon.com/AmazonECS/latest/developerguide/capacity-availability-best-practice.html',
+    'https://amazon.jobs/content/en/our-workplace/leadership-principles'
+  ].map(canonical));
+  const presentationReferences = new Set([
+    'https://docs.aws.amazon.com/dms/latest/userguide/CHAP_Tasks.Creating.html',
+    'https://docs.aws.amazon.com/dms/latest/userguide/CHAP_Task.CDC.html',
+    'https://www.itau.com.br/download-file/v2/d/42787847-4cf6-4461-94a5-40ed237dca33/15ce52e3-fdd5-1bd2-4929-0674f0f3ce57?origin=2#page=65',
+    'https://amazon.jobs/content/en/our-workplace/leadership-principles'
+  ].map(canonical));
+  const ricardoReferences = new Set([
+    'https://docs.aws.amazon.com/comprehend/latest/dg/how-it-works.html',
+    'https://docs.aws.amazon.com/comprehend/latest/APIReference/API_DetectSentiment.html',
+    'https://docs.aws.amazon.com/AmazonECS/latest/developerguide/service-auto-scaling.html'
+  ].map(canonical));
   // Reviewed primary references added by Loja Horizonte. The historic UI baseline
   // remains intact; only these exact links in the maintenance guide are new.
   const horizonteReferences = new Set([
@@ -568,6 +598,9 @@ if (baseline) {
   }
   for (const [file, content] of html) for (const match of content.matchAll(/(?:href|src)=["'](https?:[^"']+)/g)) {
     const target = canonical(match[1]);
+    if (file === eduReview.url.slice(1) && loopReviewReferences.has(target)) continue;
+    if (file === presentationReview.url.slice(1) && presentationReferences.has(target)) continue;
+    if (file === ricardoReview.url.slice(1) && ricardoReferences.has(target)) continue;
     if (!beforeExternal.has(target) && !isReviewedExternal(file, target)) errors.push(`Novo destino externo em ${file}: ${match[1]}`);
   }
 }
@@ -578,7 +611,7 @@ for (const [file, content] of html) {
     if (isApprovedLoopData(file, attributes, raw, publishedLoop)) approvedPayloads++;
     else errors.push(`Script inline incompatível com CSP: ${file}`);
   }
-  if (isLoopPublicRoute(file) && approvedPayloads !== 1) errors.push(`Roteiro público deve ter um único payload aprovado: ${file}`);
+  if (isInteractiveLoopRoute(file) && approvedPayloads !== 1) errors.push(`Roteiro público deve ter um único payload aprovado: ${file}`);
   if (file.includes('/candidato.html') && /href=["'][^"']*(?:instrutor\.html|guia-do-instrutor\.html|diagnostico-inicial\.html)/.test(content)) errors.push(`Atalho para gabarito na página da candidata: ${file}`);
   if (hasUnexpectedPersonalData(file, content)) errors.push(`Dado pessoal ou caminho local no HTML: ${file}`);
 }

@@ -84,7 +84,7 @@ export function layout({title, description, body, active, toc='', isHome=false, 
   <dialog id="diagram-dialog" class="diagram-dialog" aria-labelledby="diagram-title"><div class="diagram-toolbar"><h2 id="diagram-title">Diagrama ampliado</h2><div><button data-diagram-zoom="out" aria-label="Reduzir diagrama">−</button><button data-diagram-zoom="fit">Ajustar</button><button data-diagram-zoom="in" aria-label="Ampliar diagrama">+</button><button data-diagram-close>Fechar ${icon('close')}</button></div></div><div class="diagram-stage" tabindex="0" aria-label="Diagrama ampliado com rolagem"></div></dialog>
   <noscript><p class="noscript-notice">O conteúdo e os links funcionam sem JavaScript. Busca, preferências, retomada e ampliação de diagramas precisam de JavaScript.</p></noscript></body></html>`;
 }
-export function tocFor(doc) {
+export function tocFor(doc, initiallyOpen = true) {
   let items='', previousLevel='';
   for (const heading of doc.headings) {
     if(heading.level==='h2') {
@@ -99,7 +99,22 @@ export function tocFor(doc) {
   }
   if(previousLevel==='h3') items+='</ol></li>';
   else if(previousLevel==='h2') items+='</li>';
-  return `<details class="toc" id="page-toc" open><summary>Nesta página</summary><nav aria-label="Sumário do documento"><ol>${items}</ol></nav><a class="back-top" href="#main">Voltar ao início ↑</a></details>`;
+  return `<details class="toc" id="page-toc"${initiallyOpen ? ' open' : ''}><summary>Nesta página</summary><nav aria-label="Sumário do documento"><ol>${items}</ol></nav><a class="back-top" href="#main">Voltar ao início ↑</a></details>`;
+}
+export function renderLoopReview(doc, html) {
+  const toc = tocFor({ headings: doc.headings.filter(heading => heading.level === 'h2') }, false);
+  const sessions = doc.sessions.map(session => `<a class="review-session" data-session-id="${session.id}" href="${session.url}"${session.id === doc.id ? ' aria-current="page"' : ''}>
+    <span>${escape(session.time)}</span><strong>${escape(session.name)}</strong><span>${escape(session.role)}</span></a>`).join('');
+  return `<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,follow"><title>${escape(doc.title)} · ${siteName}</title>
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml"><script src="/assets/theme-init.js"></script><link rel="stylesheet" href="/assets/site.css"><link rel="stylesheet" href="/assets/loop-review.css"></head>
+  <body><a class="skip-link" href="#avaliacao">Pular para a avaliação</a><div class="review-container">
+  <nav class="article-kicker" aria-label="Material do instrutor"><a href="/praticar/index.html#instrutor">← Praticar · Instrutor</a><a href="${escape(doc.otherPage.url)}">${escape(doc.otherPage.title)} →</a></nav>
+  <main id="main" class="review-layout" tabindex="-1"><aside class="review-sidebar">
+  <nav class="review-sessions" aria-labelledby="sessoes"><h2 id="sessoes">Sessões</h2>${sessions}</nav>${toc}</aside>
+  <div class="review-reading"><article class="prose" id="avaliacao" tabindex="-1">${html}</article>
+  <nav class="article-pagination" aria-label="Continuar a leitura"><a href="#sessoes">↑ Voltar às sessões</a><a href="/praticar/index.html#instrutor">Voltar a Praticar</a></nav>
+  </div></main></div></body></html>`;
 }
 export function articleBody(doc, html, docs) {
   const sequence=contextualDocuments(doc,docs), position=sequence.indexOf(doc), next=sequence[position+1], previous=sequence[position-1], course=activeCourseFor(doc.source);
@@ -141,7 +156,7 @@ export function hubs(docs) {
   const values=[...docs.values()], students=values.filter(doc=>doc.audience==='student'&&!isStandalone(doc));
   return [
     {url:'/biblioteca/index.html',title:'Biblioteca',body:libraryBody(docs)},
-    {url:'/praticar/index.html',title:'Praticar',body:collectionBody('Praticar','Escolha uma abertura e investigue oralmente. Peça evidências ao instrutor conforme suas hipóteses; não é preciso digitar respostas.',students.filter(doc=>doc.type==='practice'))+`<section class="instructor-entry" id="instrutor"><details><summary>Sou instrutor: consultar roteiros e gabaritos públicos</summary><p>A abertura da candidata fica separada dos roteiros. Estes links oferecem acesso deliberado a respostas públicas; não há autenticação.</p><ul>${loopPublicPages.map(page=>`<li><a href="${page.url}">${escape(page.title)} · roteiro interativo completo</a></li>`).join('')}${values.filter(doc=>doc.audience==='instructor').map(doc=>`<li><a href="${doc.url}">${escape(doc.title)} · ${escape(doc.source.includes('/instrutor.md')?doc.source.split('/').at(-2).replace(/^\d+-/,'').replaceAll('-',' '):'guia')}</a></li>`).join('')}</ul></details></section>`},
+    {url:'/praticar/index.html',title:'Praticar',body:collectionBody('Praticar','Escolha uma abertura e investigue oralmente. Peça evidências ao instrutor conforme suas hipóteses; não é preciso digitar respostas.',students.filter(doc=>doc.type==='practice'))+`<section class="instructor-entry" id="instrutor"><details><summary>Sou instrutor: consultar avaliações, roteiros e gabaritos públicos</summary><p>A abertura da candidata fica separada dos roteiros. Aqui você pode consultar avaliações, roteiros e respostas públicas.</p><ul>${loopPublicPages.map(page=>`<li><a href="${page.url}">${escape(page.title)} · ${escape(page.entryLabel)}</a></li>`).join('')}${values.filter(doc=>doc.audience==='instructor').map(doc=>`<li><a href="${doc.url}">${escape(doc.title)} · ${escape(doc.source.includes('/instrutor.md')?doc.source.split('/').at(-2).replace(/^\d+-/,'').replaceAll('-',' '):'guia')}</a></li>`).join('')}</ul></details></section>`},
     {url:'/meu-estudo/index.html',title:'Meu estudo',body:`<section class="collection"><span class="eyebrow">REGISTROS LOCAIS</span><h1>Meu estudo</h1><p>Acompanhe o plano até a entrevista, retome uma seção ou consulte suas marcações de leitura neste navegador. Uma leitura marcada não representa domínio do assunto. Os registros do instrutor não entram na retomada de estudante.</p>${renderStudyPlan()}${resume}<p><strong id="read-count">0</strong> leituras marcadas neste navegador.</p><div class="progress-track" role="progressbar" aria-label="Leituras marcadas" aria-valuemin="0" aria-valuemax="${values.filter(participatesInMainStudy).length}" aria-valuenow="0"><span id="read-progress"></span></div><h2>Leituras marcadas</h2><div class="study-history"><p>Ative JavaScript para consultar os registros locais.</p></div><p>Os dados ficam neste navegador e podem ser removidos por suas configurações. Não há sincronização entre dispositivos.</p></section>`},
     {url:pilot.topic,title:'Transações e idempotência',body:`<section class="collection topic-page"><span class="eyebrow">PERCURSO DE ESTUDO</span><h1>Transações e idempotência</h1><p>O cliente recebeu um timeout. O que isso permite concluir sobre a operação? Construa o raciocínio em dois passos, sem antecipar a solução do simulado.</p><ol class="journey-steps"><li><h2>1. Entenda o mecanismo no F06</h2><p>Estude concorrência e idempotência, depois a fronteira da transação e o significado de uma resposta incerta. Essa base explica o que pode ser garantido.</p><a href="${pilot.foundation}">Abrir F06 na seção de idempotência →</a></li><li><h2>2. Investigue como candidata</h2><p>Use somente a abertura do pedido durante falha do banco. Sustente as hipóteses com as evidências solicitadas e comunique o grau de certeza.</p><a href="${pilot.practice}">Abrir simulado sem gabarito →</a></li></ol><a href="/biblioteca/index.html">← Voltar à Biblioteca</a></section>`}
   ];

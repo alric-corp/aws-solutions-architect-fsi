@@ -8,11 +8,11 @@ import { createHash } from 'node:crypto';
 import { isStandalone, caseCollection } from '../site/collection-policy.mjs';
 import { projectMainMarkdown, visibleHeadingTitle } from '../site/case-reference-policy.mjs';
 import { metadataFor, studentSearchMarkdown, isRetiredSource } from '../site/content-policy.mjs';
-import { layout, tocFor, articleBody, homeBody, collectionBody, hubs, standaloneCollectionBody } from '../site/templates.mjs';
+import { layout, tocFor, articleBody, homeBody, collectionBody, hubs, standaloneCollectionBody, renderLoopReview } from '../site/templates.mjs';
 import { siteName, firstLesson, sections, publicRoots, allowedAssetExtensions, sectionFor } from '../site/content.mjs';
 import { coverAssetPath } from './lib/project-paths.mjs';
 import { focusTitle, focusHeading, focusHub } from '../site/focus-policy.mjs';
-import { compilePublishedLoop, loopPageUrl, renderPublishedLoop } from '../site/loop-publication.mjs';
+import { compilePublishedLoop, loopPageUrl, renderPublishedLoop, readLoopReviews } from '../site/loop-publication.mjs';
 import { authoredStoryFor, storyLocaleMarkdown } from '../site/story-policy.mjs';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
@@ -88,6 +88,7 @@ md.core.ruler.push('site-links-and-headings', state => {
 });
 const originalHeadingClose = md.renderer.rules.heading_close || ((tokens, index, options, env, self) => self.renderToken(tokens, index, options));
 md.renderer.rules.heading_close = (tokens, index, options, env, self) => {
+  if (env.staticReading) return originalHeadingClose(tokens,index,options,env,self);
   const opening = tokens[index - 2];
   const copy = ['h2', 'h3'].includes(opening?.tag) ? `<button class="heading-link" data-heading-id="${escape(opening.attrGet('id'))}" aria-label="Copiar link para ${escape(env.doc.headings.find(h => h.id === opening.attrGet('id'))?.title || 'esta seção')}">#</button>` : '';
   return copy + originalHeadingClose(tokens,index,options,env,self);
@@ -155,6 +156,11 @@ for (const directory of directories) {
 await write('index.html', layout({ title: 'Sua biblioteca de arquitetura', description: 'Trilhas de arquitetura AWS, fundamentos e prática de entrevista.', body: homeBody(documents), isHome: true, docs: documents }));
 await write('404.html', layout({ title: 'Página não encontrada', description: 'Volte à biblioteca para continuar seu estudo.', body: '<section class="not-found"><h1>Vamos voltar ao percurso.</h1><p>Esta página não está disponível. Explore a biblioteca ou use a busca.</p><a href="/index.html">Voltar ao início →</a></section>', docs: documents }));
 for(const hub of hubs(documents)) await write(hub.url.slice(1), layout({ title:hub.title,description:hub.title,body:hub.body,global:hub.url,docs:documents }));
+for (const session of await readLoopReviews()) {
+  const doc = { ...session, headings: [] };
+  const html = md.render(doc.markdown, { doc, staticReading: true });
+  await write(doc.url.slice(1), renderLoopReview(doc, html));
+}
 for (const page of await compilePublishedLoop()) await write(loopPageUrl(page.pageId).slice(1), renderPublishedLoop(page));
 for (const [source, target] of [['app.js','loop-app.js'],['app.css','loop-app.css']]) await write(`assets/${target}`, await fs.readFile(path.join(root, 'scripts/loop-private', source)));
 await write('search-index.json', JSON.stringify(searchIndex));
@@ -164,7 +170,7 @@ for (const asset of tracked.filter(file => publicPath(file) && allowedAssetExten
   if ((await fs.lstat(path.join(root, asset))).isSymbolicLink()) throw new Error(`Link simbólico não publicável: ${asset}`);
   await write(asset, await fs.readFile(path.join(root, asset)));
 }
-for (const name of ['site.css', 'site.js', 'theme-init.js', 'search.mjs', 'collection-policy.mjs', 'story-locales.mjs', 'lp-question-locales.mjs', 'favicon.svg']) await write(`assets/${name}`, await fs.readFile(path.join(root, 'site', name)));
+for (const name of ['site.css', 'loop-review.css', 'site.js', 'theme-init.js', 'search.mjs', 'collection-policy.mjs', 'story-locales.mjs', 'lp-question-locales.mjs', 'favicon.svg']) await write(`assets/${name}`, await fs.readFile(path.join(root, 'site', name)));
 for (const [family, name] of [['source-sans-3', 'source-sans']]) {
   const filename = `${family}-latin-wght-normal.woff2`;
   await write(`assets/${name}.woff2`, await fs.readFile(path.join(root, 'node_modules', '@fontsource-variable', family, 'files', filename)));

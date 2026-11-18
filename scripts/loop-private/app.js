@@ -380,11 +380,15 @@ function startApp() {
   const sessionNav = node('nav', { className: 'loop-sessions', 'aria-label': 'Selecionar sessão' }, [
     node('h2', { className: 'loop-eyebrow', text: 'Sessões' }),
     ...data.sessions.map((session, index) => {
+      const label = [node('span', { text: session.time }), node('strong', { text: session.name }), node('span', { text: session.role })];
+      if (isPublic && session.reviewUrl) {
+        return node('a', { className: 'loop-session-button', 'data-session-id': session.id, href: safeLocalUrl(session.reviewUrl) }, label);
+      }
       const control = button('', 'select-session', {
         id: `loop-session-${index}`, className: 'loop-session-button', 'data-session-id': session.id,
         'aria-pressed': String(index === 0), 'aria-controls': 'loop-session-panel',
       });
-      control.append(node('span', { text: session.time }), node('strong', { text: session.name }), node('span', { text: session.role }));
+      control.append(...label);
       control.addEventListener('click', () => selectSession(index));
       return control;
     }),
@@ -776,7 +780,12 @@ function startApp() {
   function selectSession(index, focus = true) {
     activeSessionIndex = index;
     const session = selectedSession();
-    for (const control of sessionNav.querySelectorAll('[data-session-id]')) control.setAttribute('aria-pressed', String(control.dataset.sessionId === session.id));
+    for (const control of sessionNav.querySelectorAll('button[data-session-id]')) control.setAttribute('aria-pressed', String(control.dataset.sessionId === session.id));
+    if (isPublic && focus) {
+      const url = new URL(location.href);
+      url.searchParams.set('sessao', session.id);
+      history.replaceState(history.state, '', url);
+    }
     main.dataset.activeSessionId = session.id;
     const practice = practiceSession(session);
     const state = sessionRuntime(practice);
@@ -1224,7 +1233,13 @@ function startApp() {
     }
   }
 
-  selectSession(0, false);
+  const requestedId = isPublic ? new URLSearchParams(location.search).get('sessao') : null;
+  const initial = Math.max(0, data.sessions.findIndex(session => session.id === requestedId));
+  if (isPublic && data.sessions[initial].reviewUrl) {
+    location.replace(safeLocalUrl(data.sessions[initial].reviewUrl));
+    return;
+  }
+  selectSession(initial, false);
   refreshTimer();
   setInterval(refreshTimer, 1000);
 }

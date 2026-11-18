@@ -81,6 +81,11 @@ export async function compileLoopPages({ agenda, behavioral, technical, urlForPa
   for (const page of agenda.pages) {
     const sessions = [];
     for (const session of page.sessions) {
+      if (page.publication === 'public' && session.reviewUrl) {
+        const { id, name, role, time, reviewUrl } = session;
+        sessions.push({ id, name, role, time, reviewUrl });
+        continue;
+      }
       async function resolveQuestion(recipe) {
         let question = recipe;
         if (recipe.lpId) {
